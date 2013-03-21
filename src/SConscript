@@ -1,0 +1,14 @@
+
+Import( 'project', 'libs' )
+
+libraries = [
+                libs.boost_filesystem,
+                libs.boost_program_options,
+        ]
+
+qc = project.Program(
+                target='mikqc',
+                dirs=['.'],
+                includes=['.'],
+                libraries=libraries
+        )
