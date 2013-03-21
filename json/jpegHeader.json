@@ -1,0 +1,97 @@
+{
+    "fileType": {
+        "name": "JPEG",
+        "extension": [
+            "jpg",
+            "jpeg",
+            "jpe",
+            "jfi",
+            "jfif",
+            "j",
+            "jif",
+            "jmh"
+        ]
+    },
+    "header": [
+        {
+            "shortId": "magicNumber",
+            "id": "magic number",
+            "type": "hexa",
+            "length": 2,
+            "value": "ffd8"
+        },
+        {
+            "shortId": "segMarker",
+            "id": "segment marker",
+            "type": "hexa",
+            "length": 2,
+            "value": "ffe0"
+        },
+        {
+            "shortId": "segLength",
+            "id": "segment length",
+            "type": "int",
+            "length": 2
+        },
+        {
+            "shortId": "id",
+            "id": "identifier",
+            "type": "hexa",
+            "length": 5,
+            "value": "4a46494600"
+        },
+        {
+            "shortId": "version",
+            "id": "jfif version",
+            "type": "version",
+            "length": 2
+        },
+        {
+            "shortId": "densityUnit",
+            "id": "density unit",
+            "type": "label",
+            "length": 1,
+            "labels": [
+                {
+                    "id": "pixel aspect ratio",
+                    "type": "hexa",
+                    "value": "00"
+                },
+                {
+                    "id": "dots per inch",
+                    "type": "hexa",
+                    "value": "01"
+                },
+                {
+                    "id": "dots per cm",
+                    "type": "hexa",
+                    "value": "02"
+                }
+            ]
+        },
+        {
+            "shortId": "xDensity",
+            "id": "horizontal pixel density",
+            "type": "int",
+            "length": 2
+        },
+        {
+            "shortId": "yDensity",
+            "id": "vertical pixel density",
+            "type": "int",
+            "length": 2
+        },
+        {
+            "shortId": "tw",
+            "id": "thumbnail width",
+            "type": "int",
+            "length": 1
+        },
+        {
+            "shortId": "th",
+            "id": "thumbnail height",
+            "type": "int",
+            "length": 1
+        }
+    ]
+}

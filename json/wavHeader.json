@@ -1,0 +1,93 @@
+{
+    "fileType": {
+        "name": "WAVE",
+        "extension": [
+            "wav",
+            "wave"
+        ]
+    },
+    "header": [
+        {
+            "shortId": "chunkId",
+            "id": "file bloc id",
+            "type": "ascii",
+            "length": 4,
+            "value": "RIFF"
+        },
+        {
+            "shortId": "chunkSize",
+            "id": "file size",
+            "type": "int",
+            "length": 4
+        },
+        {
+            "shortId": "format",
+            "id": "format id",
+            "type": "ascii",
+            "length": 4,
+            "value": "WAVE"
+        },
+        {
+            "shortId": "subChunk1Id",
+            "id": "format bloc1 id",
+            "type": "hexa",
+            "length": 4,
+            "value": "666d7420"
+        },
+        {
+            "shortId": "subChunk1Size",
+            "id": "bloc1 size",
+            "type": "int",
+            "length": 4
+        },
+        {
+            "shortId": "audioFormat",
+            "id": "audio format",
+            "type": "int",
+            "length": 2
+        },
+        {
+            "shortId": "channelNumber",
+            "id": "channel number",
+            "type": "int",
+            "length": 2
+        },
+        {
+            "shortId": "sampleRate",
+            "id": "sample rate",
+            "type": "int",
+            "length": 4
+        },
+        {
+            "shortId": "byteRate",
+            "id": "byte per second",
+            "type": "float",
+            "length": 4
+        },
+        {
+            "shortId": "blockAlign",
+            "id": "byte per block",
+            "type": "float",
+            "length": 2
+        },
+        {
+            "shortId": "bitsPerSample",
+            "id": "bits per sample",
+            "type": "int",
+            "length": 2
+        },
+        {
+            "shortId": "subChunk2Id",
+            "id": "format bloc2 id",
+            "type": "ascii",
+            "length": 4,
+            "value": "data"
+        },
+        {
+            "shortId": "subChunk2Size",
+            "id": "bloc2 size",
+            "type": "int",
+            "length": 4
+        }
+    ]
+}
