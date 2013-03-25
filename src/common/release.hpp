@@ -1,0 +1,28 @@
+#ifndef _COMMON_RELEASE_HPP_
+#define _COMMON_RELEASE_HPP_
+
+/*
+ * In release mode, COMMON_COUT_*_DEBUG are disabled.
+ */
+
+/// @see COMMON_COUT
+#define COMMON_COUT_DEBUG(... )
+/// @see  COMMON_COUT_INFOS
+#define COMMON_COUT_INFOS_DEBUG
+/// @see  COMMON_COUT_INFOS
+#define COMMON_COUT_WITHINFOS_DEBUG(... )
+/// @see COMMON_IF_DEBUG
+#define COMMON_IF_DEBUG(... )
+
+#define COMMON_COUT_X_DEBUG( N, ... )
+#define COMMON_COUT_VAR_DEBUG(... )
+#define COMMON_COUT_VAR2_DEBUG(... )
+#define COMMON_COUT_VAR3_DEBUG(... )
+#define COMMON_COUT_VAR4_DEBUG(... )
+#define COMMON_COUT_WITHINFOS_DEBUG(... )
+#define COMMON_COUT_WARNING_DEBUG(... )
+#define COMMON_COUT_ERROR_DEBUG(... )
+#define COMMON_COUT_FATALERROR_DEBUG(... )
+#define COMMON_COUT_EXCEPTION_DEBUG(... )
+
+#endif

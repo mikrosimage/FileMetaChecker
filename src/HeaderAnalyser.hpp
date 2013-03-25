@@ -19,6 +19,8 @@ enum HeaderSegmentStatus
 	pass
 };
 
+std::ostream& operator<<( std::ostream& out, HeaderSegmentStatus status );
+
 
 class HeaderAnalyser
 {
@@ -29,13 +31,12 @@ class HeaderAnalyser
 		bool analyseFileHeader( bpt::ptree &pt );
 		HeaderSegmentStatus testNode( Node &n , char* buffer, unsigned int size);
 
-		void printReport( const bpt::ptree &pt );
+		void writeReport( const bpt::ptree &pt );
 
 	public:
-		JsonParser	_jp;	// json parser
-		FileReader	_fr;	// raw file reader (bit --> char*)
+		FileReader  _fileReader;
 
-		std::string _sh;	// display the file header (hexa)		
+		std::string _hexaHeader;
 };
 
 #endif

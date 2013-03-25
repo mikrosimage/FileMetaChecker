@@ -5,14 +5,19 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <ostream>
+
+#include <boost/filesystem.hpp>
+
+namespace bfs = boost::filesystem;
 
 struct FileInfo
 {
-	std::string 	name;
-	std::string 	extension;
-	size_t      	size;
-	std::string    	permissions;
-	bool 			status;
+	size_t      size;
+	std::string name;
+	std::string extension;
+	std::string permissions;
+	std::string status;
 };
 
 
@@ -25,17 +30,19 @@ class FileReader
 		void setFilePath( const std::string& filePath );
 
 		void extractFileInfo();
-		void printFileInfo();
 
 		void openFile();
-		// std::string readHeaderSegment( size_t length );
 
 	private:
 		std::string _filePath;
 
 	public:
-		FileInfo 	_fi;
+		FileInfo     _fileInfo;
 		std::fstream _file;
 };
+
+std::ostream& operator<<( std::ostream& out, const bfs::file_type& fileType );
+std::ostream& operator<<( std::ostream& out, const FileInfo& fileReader );
+std::ostream& operator<<( std::ostream& out, const FileReader& fileReader );
 
 #endif

@@ -11,15 +11,15 @@ namespace bpt = boost::property_tree;
 
 class JsonParser
 {
-	public:
-		JsonParser();
-		// JsonParser( const std::string& filePath );
+public:
+	JsonParser();
+	// JsonParser( const std::string& filePath );
 
-		void parseJsonFile( const std::string& filePath );
-		void readJsonFolder( const std::string& folderPath );
+	void parseJsonFile( const std::string& filePath );
+	void readJsonFolder( const std::string& folderPath );
 
-	public:
-		std::vector<bpt::ptree> _ptreeList;
+public:
+	std::vector<bpt::ptree> _ptreeList;
 };
 
 #endif
