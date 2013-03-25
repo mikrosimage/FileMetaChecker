@@ -14,7 +14,7 @@ HeaderAnalyser::HeaderAnalyser( const std::string& filePath )
 	_fr.extractFileInfo();
 	_fr.printFileInfo();
 
-	_jp.readJsonFolder( "/datas/van/QualityCheck/finalHeaders" );
+	_jp.readJsonFolder( "./json" );
 
 	bpt::ptree pt;
 
@@ -30,16 +30,19 @@ HeaderAnalyser::HeaderAnalyser( const std::string& filePath )
 	}
 
 	_fr.openFile();
+
+
+	std::cout << "===================================="<< std::endl;
 	if ( analyseFileHeader( pt ) )
 	{
 		std::cout << "Header : OK" << std::endl;
-		std::cout << ">>> " << _sh << std::endl;
 	}
 	else
 	{
 		std::cout << "Header : Error" << std::endl;
-		std::cout << ">>> " << _sh << std::endl;
 	}
+	
+	std::cout << ">>> " << _sh << std::endl;
 	printReport( pt );
 }
 
@@ -72,7 +75,6 @@ bool HeaderAnalyser::testExtension( bpt::ptree &pt, const std::string& extension
 bool HeaderAnalyser::analyseFileHeader( bpt::ptree &pt )
 {
 	bool isValid = false;
-	int index = 0;
 	_sh = "";
 
 	// header :	
@@ -98,41 +100,100 @@ bool HeaderAnalyser::analyseFileHeader( bpt::ptree &pt )
 	// Header test :	
 		HeaderSegmentStatus nodeStatus = testNode( n , buffer, size);
 
+		displayResults( n.second.get<std::string>("id"), nodeStatus );
+
 		switch ( nodeStatus )
 		{
-			case 0: 
-			{
-				std::cout << "Segment " << index << " : " << n.second.get<std::string>("id") << " : Error" << std::endl;
-				isValid = false;
-			}
-			break;
-
-			case 1:
-			{
-				std::cout << "Segment " << index << " : " << n.second.get<std::string>("id") << " : OK" << std::endl;
-				isValid = true;
-			}
-			break;
-
-			case 2:
-			{
-				std::cout << "Segment " << index << " : " << n.second.get<std::string>("id") << " : Pass" << std::endl;
-				isValid = true;
-			}
-			break;
-
-			default :
-			{
-				std::cout << "Problème !!!" << std::endl;
-			}
-			break;
+			case 0: isValid = false;	break;
+			case 1: isValid = true;		break;
+			case 2: isValid = true;		break;
+			default : std::cout << "Problème !!!" << std::endl;	break;
 		}
-
-		index++;
     }
     return isValid;
+}
 
 
+HeaderSegmentStatus HeaderAnalyser::analyseChunkNode( Node &n )
+{
+	HeaderSegmentStatus chunkNodeValid = isNotValid;
+	std::cout << "Chunk : " << n.second.get<std::string>("shortId") << std::endl;
+
+	// header :	
+	unsigned int dataSize = 0;
+
+	BOOST_FOREACH( Node &f, n.second.get_child("values") )
+	{
+		unsigned int size;
+		
+		HeaderSegmentStatus fieldStatus = isNotValid;
+
+		if( boost::optional<bpt::ptree &> length = f.second.get_child_optional("length") ) 
+		{
+			size = f.second.get<unsigned int>("length");
+			// dataSize -= size;
+			// std::cout << "length : " << size << std::endl;
+
+			char buffer[size];
+		// Header to buffer :
+			if (_fr._file.is_open()) 
+			{	
+				_fr._file.read(buffer, size);
+			}
+
+			std::stringstream ssh;
+			for (int i = 0; i < size; ++i)
+			{
+				ssh << std::hex << std::setw(2) << std::setfill('0') << (int)(unsigned char)buffer[i];
+			}
+			_sh = _sh + ssh.str();
+
+			fieldStatus = testNode( f , buffer, size);
+
+			if( f.second.get<std::string>("id") == "subChunk size" ) 
+			{
+				std::stringstream ss;
+				for (int i = size-1; i >=0; --i)
+				{
+					ss << std::hex << std::setw(2) << std::setfill('0') << (int)(unsigned char)buffer[i];
+				}
+				int buff;
+				ss >> buff;
+				std::cout << "buff : " << buff << " : " << ss.str() << std::endl;
+				dataSize += buff;
+			}	
+		}
+		else
+		{
+			size = dataSize;
+			std::cout << "size :" << size << std::endl;	
+
+			char buffer[size];
+		// Header to buffer :
+			if (_fr._file.is_open()) 
+			{	
+				_fr._file.read(buffer, size);
+			}
+
+			std::stringstream ssh;
+			// for (int i = 0; i < size; ++i)
+			// {
+			// 	ssh << std::hex << std::setw(2) << std::setfill('0') << (int)(unsigned char)buffer[i];
+			// }
+			// _sh = _sh + ssh.str();
+
+			// fieldStatus = testNode( f , buffer, size);
+			fieldStatus = pass;
+		}
+
+
+		displayResults( f.second.get<std::string>("shortId"), fieldStatus );
+
+		chunkNodeValid = fieldStatus;
+
+		// chunkNodeindex++;
+	}
+    return chunkNodeValid;
 }
 
 
@@ -150,10 +211,10 @@ HeaderSegmentStatus HeaderAnalyser::testNode( Node &n , char* buffer, unsigned i
 		{
 			ss << std::hex << std::setw(2) << std::setfill('0') << (int)(unsigned char)buffer[i];
 		}
-		// std::cout << "HEXA : " << ss.str();
+		std::cout << "HEXA : " << ss.str() << " : ";
 		if( boost::optional<bpt::ptree &> value = n.second.get_child_optional("value") )
 		{
-			// std::cout << " | " << n.second.get<std::string>("value") << std::endl;
+			std::cout << " | " << n.second.get<std::string>("value") << std::endl;
 			if( ss.str() == n.second.get<std::string>("value") )
 			{
 				nodeValid = isValid;
@@ -165,8 +226,6 @@ HeaderSegmentStatus HeaderAnalyser::testNode( Node &n , char* buffer, unsigned i
 		}
 		n.second.put("value", ss.str());
 		n.second.put("status", nodeValid);
-
-
 	}
 
 /** ASCII **/
@@ -180,7 +239,7 @@ HeaderSegmentStatus HeaderAnalyser::testNode( Node &n , char* buffer, unsigned i
 			str.push_back((char) std::strtol(ss.str().c_str(), NULL, 16));
 			// str.push_back((char)buffer[i]);
 		}
-		std::cout << "ASCII : " << str;
+		std::cout << "ASCII : " << str << " : " << ss.str() << " : ";
 		if( boost::optional<bpt::ptree &> value = n.second.get_child_optional("value") )
 		{
 			// std::cout << " | " << n.second.get<std::string>("value") << std::endl;
@@ -198,21 +257,30 @@ HeaderSegmentStatus HeaderAnalyser::testNode( Node &n , char* buffer, unsigned i
 
 	}
 
-
-
-
-
 /** INT **/
 	if( n.second.get<std::string>("type") == "int" )
 	{
 		std::stringstream ss;
-		for (int i = 0; i < size; ++i)
+
+		if( n.second.get<std::string>("endian") == "little" )
 		{
-			ss << std::hex << (int)(unsigned char)buffer[i];
+			for (int i = size-1; i >= 0; --i)
+			{
+				ss << std::hex << std::setw(2) << std::setfill('0') << (int)(unsigned char)buffer[i];
+			}
+		}
+		else
+		{
+			for (int i = 0; i < size; ++i)
+			{
+				ss << std::hex << std::setw(2) << std::setfill('0') << (int)(unsigned char)buffer[i];
+			}
 		}
 		int buff;
 		ss >> buff;
-		// std::cout << "INT : " << buff << std::endl;
+		std::cout << "INT : " << buff << " : " << ss.str() << " : ";
+		
+
 		if( boost::optional<bpt::ptree &> value = n.second.get_child_optional("value") )
 		{
 			if( buff == n.second.get<int>("value") )
@@ -232,6 +300,19 @@ HeaderSegmentStatus HeaderAnalyser::testNode( Node &n , char* buffer, unsigned i
 				}
 			}
 		}
+		/** INTERVAL **/
+		else if( boost::optional<bpt::ptree &> choice = n.second.get_child_optional("interval") ) 
+		{
+			std::vector<int> minMax;
+			BOOST_FOREACH( Node &m, *choice)
+			{
+				minMax.push_back( m.second.get_value<int>() );
+			}
+			if( minMax.at(0) < buff && buff < minMax.at(1) )
+			{
+				nodeValid = isValid;
+			}
+		}
 		else
 		{
 			nodeValid = pass;
@@ -245,12 +326,22 @@ HeaderSegmentStatus HeaderAnalyser::testNode( Node &n , char* buffer, unsigned i
 	if( n.second.get<std::string>("type") == "float" )
 	{
 		std::stringstream ss;
-		for (int i = 0; i < size; ++i)
+		if( n.second.get<std::string>("endian") == "little" )
 		{
-			ss << std::dec << (int)(unsigned char)buffer[i];
+			for (int i = size-1; i >= 0; --i)
+			{
+				ss << std::dec << std::setw(2) << std::setfill('0') << (int)(unsigned char)buffer[i];
+			}
+		}
+		else
+		{
+			for (int i = 0; i < size; ++i)
+			{
+				ss << std::dec << std::setw(2) << std::setfill('0') << (int)(unsigned char)buffer[i];
+			}
 		}
 		float buff = strtof(ss.str().c_str(), NULL);
-		// std::cout << "FLOAT : " << buff << std::endl;
+		std::cout << "FLOAT : " << buff << " : "<< ss.str() << " : ";
 		if( boost::optional<bpt::ptree &> value = n.second.get_child_optional("value") )
 		{
 			if( buff == n.second.get<float>("value") )
@@ -359,7 +450,41 @@ HeaderSegmentStatus HeaderAnalyser::testNode( Node &n , char* buffer, unsigned i
 		}
 	}
 
+/** RCHOICE **/
+	if( n.second.get<std::string>("type") == "chunk" )
+	{
+		if( boost::optional<bpt::ptree &> chunks = n.second.get_child_optional("rChoice") ) 
+		{
+			BOOST_FOREACH( Node &m, *chunks)
+			{
+				if ( isValid == testNode( m , buffer, m.second.get<int>("length") ) )
+				{
+				// Chunk test :	
+					HeaderSegmentStatus chunkStatus = analyseChunkNode( m );				
+					displayResults( m.second.get<std::string>("shortId"), chunkStatus );
+					nodeValid = chunkStatus;
+				// // Header to buffer :
+				//     if (_fr._file.is_open()) 
+				// 	{	
+				// 		_fr._file.read(buffer, size);
+				// 	}				
+				}
+			}
+			// Ne passe pas au suivant : avancer dans le buffer !	
+		}
+		else
+		{
+			std::cout << "Pas NORMAL !!" << std::endl;
+		}
+	}
 	return nodeValid;
+}
+
+
+
+void HeaderAnalyser::displayResults( std::string id, HeaderSegmentStatus status )
+{
+	std::cout << id << " : " << status << std::endl;
 }
 
 
@@ -367,4 +492,16 @@ HeaderSegmentStatus HeaderAnalyser::testNode( Node &n , char* buffer, unsigned i
 void HeaderAnalyser::printReport( const bpt::ptree &pt )
 {
 	write_json("/datas/van/QualityCheck/output.json", pt);
+}
+
+std::ostream& operator<<( std::ostream& str, const HeaderSegmentStatus& status )
+{
+	switch ( status )
+	{
+		case 0:   str << "Error"; break;
+		case 1:   str << "OK"; break;
+		case 2:   str << "Pass"; break;
+		default : str << "!!! Problem !!!"; break;
+	}
+	return str;
 }

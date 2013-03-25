@@ -20,6 +20,8 @@ enum HeaderSegmentStatus
 };
 
 
+
+
 class HeaderAnalyser
 {
 	public:
@@ -29,6 +31,10 @@ class HeaderAnalyser
 		bool analyseFileHeader( bpt::ptree &pt );
 		HeaderSegmentStatus testNode( Node &n , char* buffer, unsigned int size);
 
+		HeaderSegmentStatus analyseChunkNode( Node &n );
+
+		void displayResults( std::string id, HeaderSegmentStatus status );
+
 		void printReport( const bpt::ptree &pt );
 
 	public:
@@ -37,5 +43,7 @@ class HeaderAnalyser
 
 		std::string _sh;	// display the file header (hexa)		
 };
+
+std::ostream& operator<<( std::ostream& str, const HeaderSegmentStatus& status );
 
 #endif
