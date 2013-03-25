@@ -8,7 +8,7 @@
 #include <boost/program_options.hpp>
 #include <boost/foreach.hpp>
 
-#include "HeaderAnalyser.hpp"
+#include "analyser/Header.hpp"
 
 namespace bpo = boost::program_options;
 
@@ -92,12 +92,14 @@ int main( int argc, char** argv )
 		return 0;
 	}
 
-	// system and header info :
 	BOOST_FOREACH( std::string& path, paths )
 	{
 		try
 		{
-			HeaderAnalyser headerAnalyser( path );
+			Header headerAnalyser;
+			headerAnalyser.analyseFileHeader( path );
+			headerAnalyser.printReport();
+			//headerAnalyser.writeReport();
 		}
 		catch( ... )
 		{
