@@ -22,6 +22,8 @@ enum HeaderSegmentStatus
 std::ostream& operator<<( std::ostream& out, HeaderSegmentStatus status );
 
 
+
+
 class HeaderAnalyser
 {
 	public:
@@ -29,13 +31,16 @@ class HeaderAnalyser
 
 		bool testExtension( bpt::ptree &pt, const std::string& extension );
 		bool analyseFileHeader( bpt::ptree &pt );
+		
 		HeaderSegmentStatus testNode( Node &n , char* buffer, unsigned int size);
-
+		HeaderSegmentStatus analyseChunkNode( Node &n );
+		
 		void writeReport( const bpt::ptree &pt );
+
+		void displayResults( std::string id, HeaderSegmentStatus status );
 
 	public:
 		FileReader  _fileReader;
-
 		std::string _hexaHeader;
 };
 

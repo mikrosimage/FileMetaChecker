@@ -12,82 +12,584 @@
             "id": "file bloc id",
             "type": "ascii",
             "length": 4,
+            "endian": "big",
             "value": "RIFF"
         },
         {
             "shortId": "chunkSize",
             "id": "file size",
             "type": "int",
-            "length": 4
+            "length": 4,
+            "endian": "little"
         },
         {
-            "shortId": "format",
-            "id": "format id",
+            "shortId": "riffType",
+            "id": "riff type id",
             "type": "ascii",
             "length": 4,
+            "endian": "big",
             "value": "WAVE"
         },
         {
-            "shortId": "subChunk1Id",
-            "id": "format bloc1 id",
-            "type": "hexa",
+            "shortId": "subChunks",
+            "id": "subChunks",
+            "type": "chunk",
             "length": 4,
-            "value": "666d7420"
-        },
-        {
-            "shortId": "subChunk1Size",
-            "id": "bloc1 size",
-            "type": "int",
-            "length": 4
-        },
-        {
-            "shortId": "audioFormat",
-            "id": "audio format",
-            "type": "int",
-            "length": 2
-        },
-        {
-            "shortId": "channelNumber",
-            "id": "channel number",
-            "type": "int",
-            "length": 2
-        },
-        {
-            "shortId": "sampleRate",
-            "id": "sample rate",
-            "type": "int",
-            "length": 4
-        },
-        {
-            "shortId": "byteRate",
-            "id": "byte per second",
-            "type": "float",
-            "length": 4
-        },
-        {
-            "shortId": "blockAlign",
-            "id": "byte per block",
-            "type": "float",
-            "length": 2
-        },
-        {
-            "shortId": "bitsPerSample",
-            "id": "bits per sample",
-            "type": "int",
-            "length": 2
-        },
-        {
-            "shortId": "subChunk2Id",
-            "id": "format bloc2 id",
-            "type": "ascii",
-            "length": 4,
-            "value": "data"
-        },
-        {
-            "shortId": "subChunk2Size",
-            "id": "bloc2 size",
-            "type": "int",
-            "length": 4
+            "rChoice": [
+                {
+                    "shortId": "fmt ",
+                    "id": "format",
+                    "type": "hexa",
+                    "length": 4,
+                    "endian": "big",
+                    "value": "666d7420",
+                    "optional": true,
+                    "ordered": false,
+                    "values": [
+                        {
+                            "shortId": "fmtSize",
+                            "id": "subChunk size",
+                            "type": "int",
+                            "length": 4,
+                            "endian": "little"
+                        },
+                        {
+                            "shortId": "audioFormat",
+                            "id": "audio format",
+                            "type": "int",
+                            "length": 2,
+                            "endian": "little",
+                            "choice":[      // --> label
+                                0,
+                                1,
+                                2,
+                                6,
+                                7,
+                                17,
+                                20,
+                                49,
+                                64,
+                                80,
+                                65536
+                            ]
+                        },
+                        {
+                            "shortId": "channelNumber",
+                            "id": "channel number",
+                            "type": "int",
+                            "length": 2,
+                            "endian": "little"
+                        },
+                        {
+                            "shortId": "sampleRate",
+                            "id": "sample rate",
+                            "type": "int",
+                            "length": 4,
+                            "endian": "little"
+                        },
+                        {
+                            "shortId": "byteRate",
+                            "id": "byte per second",
+                            "type": "int",
+                            "length": 4,
+                            "endian": "little"
+                        },
+                        {
+                            "shortId": "blockAlign",
+                            "id": "byte per block",
+                            "type": "int",
+                            "length": 2,
+                            "endian": "little"
+                        },
+                        {                                   // if audio format == 1
+                            "shortId": "bitsPerSample",
+                            "id": "bits per sample",
+                            "type": "int",
+                            "length": 2,
+                            "endian": "little"
+                        },
+                        {
+                            "shortId": "extraFormatBytes",
+                            "id": "extra format bytes",
+                            "type": "data"
+                            // "endian": "little"                     
+                        }
+                    ]
+                }
+                ,
+                {
+                    "shortId": "fact",
+                    "id": "fact",
+                    "type": "hexa",
+                    "length": 4,
+                    "endian": "big",
+                    "value": "66616374",
+                    "optional": true,
+                    "ordered": false,
+                    "values": [
+                        {
+                            "shortId": "factSize",
+                            "id": "subChunk size",
+                            "type": "int",
+                            "length": 4,
+                            "endian": "little"
+                        },
+                        {
+                            "shortId": "dataSamples",
+                            "id": "data samples number",
+                            "type": "int",
+                            "length": 4,
+                            "endian": "little"
+                        },
+                        {
+                            "shortId": "formatDependantData",
+                            "id": "format dependant data",
+                            "type": "data"                        
+                        }
+                    ]
+                },
+                {
+                    "shortId": "data",
+                    "id": "data",
+                    "type": "hexa",
+                    "length": 4,
+                    "endian": "big",
+                    "value": "64617461",
+                    "optional": false,
+                    "ordered": false,
+                    "values": [
+                        {
+                            "shortId": "dataSize",
+                            "id": "subChunk size",
+                            "type": "int",
+                            "length": 4,
+                            "endian": "little"
+                        }
+                        ,
+                        {
+                            "shortId": "sampleData",
+                            "id": "sample data",
+                            "type": "data"
+                        }
+                    ]
+                }
+                ,
+                {
+                    "shortId": "wavl",
+                    "id": "wave list",
+                    "type": "hexa",
+                    "length": 4,
+                    "endian": "big",
+                    "value": "7761766c",
+                    "optional": true,
+                    "ordered": false,
+                    "values": [
+                        {
+                            "shortId": "wavlSize",
+                            "id": "wave list bloc size",
+                            "type": "int",
+                            "length": 4,
+                            "endian": "little"
+                        },
+                        {
+                            "shortId": "sampleData",
+                            "id": "sample data",
+                            "type": "data"
+                        }
+                    ]
+                }
+                ,
+                {
+                    "shortId": "slnt",
+                    "id": "silent",
+                    "type": "hexa",
+                    "length": 4,
+                    "endian": "big",
+                    "value": "736c6e74",
+                    "optional": true,
+                    "ordered": false,
+                    "values": [
+                        {
+                            "shortId": "slntSize",
+                            "id": "silent bloc size",
+                            "type": "int",
+                            "length": 4,
+                            "endian": "little"
+                        },
+                        {
+                            "shortId": "silentSamples",
+                            "id": "silent samples number",
+                            "type": "int",
+                            "length": 4,
+                            "endian": "little"
+                        }
+                    ]
+                }
+                ,
+                {
+                    "shortId": "cue ",
+                    "id": "cue",
+                    "type": "hexa",
+                    "length": 4,
+                    "endian": "big",
+                    "value": "63756520",
+                    "optional": true,
+                    "ordered": false,
+                    "values": [
+                        {
+                            "shortId": "cueSize",
+                            "id": "cue bloc size",
+                            "type": "int",
+                            "length": 4,
+                            "endian": "little"
+                        },
+                        {
+                            "shortId": "cuePoints",
+                            "id": "cue points number",
+                            "type": "int",
+                            "length": 4,
+                            "endian": "little"
+                        },
+                        {
+                            "shortId": "cuePointsList",
+                            "id": "cue points list",
+                            "type": "data"
+                        }
+                    ]
+                }
+                ,
+                {
+                    "shortId": "plst",
+                    "id": "playlist",
+                    "type": "hexa",
+                    "length": 4,
+                    "endian": "big",
+                    "value": "706c7374",
+                    "optional": true,
+                    "ordered": false,
+                    "values": [
+                        {
+                            "shortId": "plstSize",
+                            "id": "playlist bloc size",
+                            "type": "int",
+                            "length": 4,
+                            "endian": "little"
+                        },
+                        {
+                            "shortId": "plstSegments",
+                            "id": "playlist segments number",
+                            "type": "int",
+                            "length": 4,
+                            "endian": "little"
+                        },
+                        {
+                            "shortId": "plstSegmentsList",
+                            "id": "playlist segments list",
+                            "type": "data"
+                        }
+                    ]
+                }
+                ,
+                {
+                    "shortId": "list",
+                    "id": "associated data list",
+                    "type": "hexa",
+                    "length": 4,
+                    "endian": "big",
+                    "value": "6c697374",
+                    "optional": true,
+                    "ordered": false,
+                    "values": [
+                        {
+                            "shortId": "plstSize",
+                            "id": "associated data list bloc size",
+                            "type": "int",
+                            "length": 4,
+                            "endian": "little"
+                        },
+                        {
+                            "shortId": "typeId",
+                            "id": "associated data list type id",
+                            "type": "ascii",
+                            "length": 4,
+                            "value": "adtl"
+                        },
+                        {
+                            "shortId": "labelsAndNamesList",
+                            "id": "text labels and names list",
+                            "type": "data"
+                        }
+                    ]
+                }
+                ,
+                {
+                    "shortId": "labl",
+                    "id": "label",
+                    "type": "hexa",
+                    "length": 4,
+                    "endian": "big",
+                    "value": "6c61626c",
+                    "optional": true,
+                    "ordered": false,
+                    "values": [
+                        {
+                            "shortId": "lablSize",
+                            "id": "label bloc size",
+                            "type": "int",
+                            "length": 4,
+                            "endian": "little"
+                        },
+                        {
+                            "shortId": "cuePointId",
+                            "id": "cue point id",
+                            "type": "hexa",
+                            "length": 4,
+                            "endian": "little"
+                        },
+                        {
+                            "shortId": "lablText",
+                            "id": "label text",
+                            "type": "data"
+                        }
+                    ]
+                }
+                ,
+                {
+                    "shortId": "ltxt",
+                    "id": "labeled text",
+                    "type": "hexa",
+                    "length": 4,
+                    "endian": "big",
+                    "value": "6c747874",
+                    "optional": true,
+                    "ordered": false,
+                    "values": [
+                        {
+                            "shortId": "ltxtSize",
+                            "id": "labeled text bloc size",
+                            "type": "int",
+                            "length": 4,
+                            "endian": "little"
+                        },
+                        {
+                            "shortId": "cuePointId",
+                            "id": "cue point id",
+                            "type": "hexa",
+                            "length": 4
+                        },
+                        {
+                            "shortId": "sampleLength",
+                            "id": "sample length",
+                            "type": "int",
+                            "length": 4,
+                            "endian": "little"
+                        },
+                        {
+                            "shortId": "PurposeId",
+                            "id": "purpose id",
+                            "type": "hexa",
+                            "length": 4
+                        },                        
+                        {
+                            "shortId": "countryId",
+                            "id": "country id",
+                            "type": "hexa",
+                            "length": 2
+                        },
+                        {
+                            "shortId": "languageId",
+                            "id": "language id",
+                            "type": "hexa",
+                            "length": 2
+                        },
+                        {
+                            "shortId": "dialectId",
+                            "id": "dialect id",
+                            "type": "hexa",
+                            "length": 2
+                        },
+                        {
+                            "shortId": "pageCode",
+                            "id": "page code",
+                            "type": "hexa",
+                            "length": 2
+                        },
+                        {
+                            "shortId": "labledText",
+                            "id": "labeled text",
+                            "type": "data"
+                        }
+                    ]
+                }
+                ,
+                {
+                    "shortId": "smpl",
+                    "id": "sampler",
+                    "type": "hexa",
+                    "length": 4,
+                    "endian": "big",
+                    "value": "736d706c",
+                    "optional": true,
+                    "ordered": false,
+                    "values": [
+                        {
+                            "shortId": "smplSize",
+                            "id": "sampler bloc size",
+                            "type": "int",
+                            "length": 4,
+                            "endian": "little"
+                        },
+                        {
+                            "shortId": "manufacturerId",
+                            "id": "manufacturer id",
+                            "type": "hexa",
+                            "length": 4
+                        },
+                        {
+                            "shortId": "productId",
+                            "id": "product id",
+                            "type": "int",
+                            "length": 4
+                        },
+                        {
+                            "shortId": "samplePeriod",
+                            "id": "sample period",
+                            "type": "int",
+                            "length": 4,
+                            "endian": "little"
+                        },                        
+                        {
+                            "shortId": "midiUnitNote",
+                            "id": "midi unit note",
+                            "type": "int",
+                            "length": 4,
+                            "endian": "little",
+                            "interval": [
+                                0,
+                                127
+                            ]
+                        },
+                        {
+                            "shortId": "midiPitchFraction",
+                            "id": "midi pitch fraction",
+                            "type": "hexa",
+                            "length": 2
+                        },
+                        {
+                            "shortId": "smpteFormat",
+                            "id": "smpte format",
+                            "type": "int",
+                            "length": 4,
+                            "endian": "little",
+                            "choice": [
+                                0,
+                                24,
+                                25,
+                                29,
+                                30
+                            ]
+                        },
+                        {
+                            "shortId": "smpteOffset",
+                            "id": "smpte offset",
+                            "type": "hexa",
+                            "length": 2
+                        },
+                        {
+                            "shortId": "numSampleLoops",
+                            "id": "sample loops number",
+                            "type": "int",
+                            "length": 4,
+                            "endian": "little"
+                        },
+                        {
+                            "shortId": "samplerDataSize",
+                            "id": "sampler data size",
+                            "type": "int",
+                            "length": 4,
+                            "endian": "little"
+                        },
+                        {
+                            "shortId": "sampleLoopsList",
+                            "id": "sample loops list",
+                            "type": "data"
+                        }                       
+                    ]
+                }
+                ,
+                {
+                    "shortId": "inst",
+                    "id": "instrument",
+                    "type": "hexa",
+                    "length": 4,
+                    "endian": "big",
+                    "value": "696e7374",
+                    "optional": true,
+                    "ordered": false,
+                    "values": [
+                        {
+                            "shortId": "instSize",
+                            "id": "instrument bloc size",
+                            "type": "int",
+                            "length": 4,
+                            "endian": "little"
+                        },
+                        {
+                            "shortId": "unshiftedNote",
+                            "id": "unshifted note",
+                            "type": "int",
+                            "length": 1,
+                            "endian": "little"
+                        },
+                        {
+                            "shortId": "fineTune",
+                            "id": "fine tune",
+                            "type": "int",
+                            "length": 1,
+                            "endian": "little",
+                            "interval": [
+                                -50,
+                                50
+                            ]
+                        },
+                        {
+                            "shortId": "gain",
+                            "id": "gain",
+                            "type": "int",
+                            "length": 1,
+                            "endian": "little",
+                            "interval": [
+                                -64,
+                                64
+                            ]
+                        },                        
+                        {
+                            "shortId": "lowVelocity",
+                            "id": "low velocity",
+                            "type": "int",
+                            "length": 1,
+                            "endian": "little",
+                            "interval": [
+                                1,
+                                127
+                            ]
+                        },
+                        {
+                            "shortId": "highVelocity",
+                            "id": "high velocity",
+                            "type": "int",
+                            "length": 1,
+                            "endian": "little",
+                            "interval": [
+                                1,
+                                127
+                            ]
+                        }               
+                    ]
+                }
+
+
+            ]
         }
     ]
 }

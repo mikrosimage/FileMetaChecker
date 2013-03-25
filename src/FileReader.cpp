@@ -40,6 +40,10 @@ void FileReader::extractFileInfo()
 	{
 		_fileInfo.size = bfs::file_size( filepath );
 	}
+	else
+	{
+		_fileInfo.size = 0;
+	}
 
 	std::stringstream ss;
 	ss << std::oct << fileStatus.permissions();

@@ -52,10 +52,10 @@ bool HeaderAnalyser::testExtension( bpt::ptree &pt, const std::string& extension
 	// format extension :
 	std::string ext = extension;
 	std::transform( ext.begin(), ext.end(), ext.begin(), ::tolower );
-	ext.erase(0,1);
+	ext.erase( 0, 1 );
 
 	// read extension list :
-	BOOST_FOREACH( Node &node, pt.get_child("fileType.extension") )
+	BOOST_FOREACH( Node &node, pt.get_child( "fileType.extension" ) )
 	{
 		if ( ext == node.second.data())
 		{
@@ -72,16 +72,14 @@ bool HeaderAnalyser::testExtension( bpt::ptree &pt, const std::string& extension
 bool HeaderAnalyser::analyseFileHeader( bpt::ptree &pt )
 {
 	bool isValid = false;
-	int index = 0;
 	_hexaHeader = "";
 
-	// header :	
-	BOOST_FOREACH( Node &n, pt.get_child("header") )
+	BOOST_FOREACH( Node &n, pt.get_child( "header" ) )
 	{
-		unsigned int size = n.second.get<unsigned int>("length");
+		unsigned int size = n.second.get<unsigned int>( "length" );
 		char buffer[size];
 
-		// Header to buffer
+		// read header information
 		if( _fileReader._file.is_open() )
 		{	
 			_fileReader._file.read( buffer, size );
@@ -97,20 +95,92 @@ bool HeaderAnalyser::analyseFileHeader( bpt::ptree &pt )
 		// Header test
 		HeaderSegmentStatus nodeStatus = testNode( n , buffer, size);
 
-		COMMON_COUT( "Segment " << index << " : " << n.second.get<std::string>("id") << " : " << nodeStatus );
+		COMMON_COUT( n.second.get<std::string>("id") << " : " << nodeStatus );
 
-		if( nodeStatus == isNotValid )
+		isValid = ( nodeStatus == isNotValid ) ? false : true;
+	}
+
+	return isValid;
+}
+
+HeaderSegmentStatus HeaderAnalyser::analyseChunkNode( Node &n )
+{
+	HeaderSegmentStatus chunkNodeValid = isNotValid;
+	COMMON_COUT( "Chunk : " << n.second.get<std::string>("shortId") );
+	
+	// header
+	unsigned int dataSize = 0;
+
+	BOOST_FOREACH( Node &f, n.second.get_child("values") )
+	{
+		unsigned int size;
+		
+		HeaderSegmentStatus fieldStatus = isNotValid;
+
+		if( boost::optional<bpt::ptree &> length = f.second.get_child_optional("length") ) 
 		{
-			isValid = false;
+			size = f.second.get<unsigned int>("length");
+			// dataSize -= size;
+			// COMMON_COUT( "length : " << size );
+
+			char buffer[size];
+			// Header to buffer
+			if (_fileReader._file.is_open()) 
+			{	
+				_fileReader._file.read(buffer, size);
+			}
+			std::stringstream ssh;
+			for( size_t i = 0; i < size; ++i )
+			{
+				ssh << std::hex << std::setw(2) << std::setfill('0') << (int)(unsigned char)buffer[i];
+			}
+			_hexaHeader = _hexaHeader + ssh.str();
+
+			fieldStatus = testNode( f , buffer, size);
+
+			if( f.second.get<std::string>("id") == "subChunk size" ) 
+			{
+				std::stringstream ss;
+				for (int i = size-1; i >=0; --i)
+				{
+					ss << std::hex << std::setw(2) << std::setfill('0') << (int)(unsigned char)buffer[i];
+				}
+				int buff;
+				ss >> buff;
+				std::cout << "buff : " << buff << " : " << ss.str() << std::endl;
+				dataSize += buff;
+			}	
 		}
 		else
 		{
-			isValid = true;
+			size = dataSize;
+			std::cout << "size :" << size << std::endl;	
+
+			char buffer[size];
+			// Header to buffer :
+			if (_fileReader._file.is_open()) 
+			{	
+				_fileReader._file.read(buffer, size);
+			}
+
+			//std::stringstream ssh;
+			//for (int i = 0; i < size; ++i)
+			//{
+			//	ssh << std::hex << std::setw(2) << std::setfill('0') << (int)(unsigned char)buffer[i];
+			//}
+			//_hexaHeader = _hexaHeader + ssh.str();
+			//fieldStatus = testNode( f , buffer, size);
+			fieldStatus = pass;
 		}
 
-		index++;
+
+		displayResults( f.second.get<std::string>("shortId"), fieldStatus );
+
+		chunkNodeValid = fieldStatus;
+
+		// chunkNodeindex++;
 	}
-	return isValid;
+	return chunkNodeValid;
 }
 
 
@@ -128,10 +198,10 @@ HeaderSegmentStatus HeaderAnalyser::testNode( Node &n , char* buffer, unsigned i
 		{
 			ss << std::hex << std::setw(2) << std::setfill('0') << (int)(unsigned char)buffer[i];
 		}
-		// std::cout << "HEXA : " << ss.str();
+		std::cout << "HEXA : " << ss.str() << " : ";
 		if( boost::optional<bpt::ptree &> value = n.second.get_child_optional("value") )
 		{
-			// std::cout << " | " << n.second.get<std::string>("value") << std::endl;
+			std::cout << " | " << n.second.get<std::string>("value") << std::endl;
 			if( ss.str() == n.second.get<std::string>("value") )
 			{
 				nodeValid = isValid;
@@ -156,7 +226,7 @@ HeaderSegmentStatus HeaderAnalyser::testNode( Node &n , char* buffer, unsigned i
 			str.push_back((char) std::strtol(ss.str().c_str(), NULL, 16));
 			// str.push_back((char)buffer[i]);
 		}
-		std::cout << "ASCII : " << str;
+		std::cout << "ASCII : " << str << " : " << ss.str() << " : ";
 		if( boost::optional<bpt::ptree &> value = n.second.get_child_optional("value") )
 		{
 			// std::cout << " | " << n.second.get<std::string>("value") << std::endl;
@@ -177,13 +247,26 @@ HeaderSegmentStatus HeaderAnalyser::testNode( Node &n , char* buffer, unsigned i
 	if( n.second.get<std::string>("type") == "int" )
 	{
 		std::stringstream ss;
-		for( size_t i = 0; i < size; ++i)
+		for( size_t i = 0; i < size; ++i )
+		if( n.second.get<std::string>("endian") == "little" )
 		{
-			ss << std::hex << (int)(unsigned char)buffer[i];
+			for( int i = size-1; i >= 0; --i )
+			{
+				ss << std::hex << std::setw( 2 ) << std::setfill( '0' ) << (int)(unsigned char)buffer[i];
+			}
+		}
+		else
+		{
+			for( size_t i = 0; i < size; ++i )
+			{
+				ss << std::hex << std::setw( 2 ) << std::setfill( '0' ) << (int)(unsigned char)buffer[i];
+			}
 		}
 		int buff;
 		ss >> buff;
-		// std::cout << "INT : " << buff << std::endl;
+		COMMON_COUT( "INT : " << buff << " : " << ss.str() << " : " );
+		
+
 		if( boost::optional<bpt::ptree &> value = n.second.get_child_optional("value") )
 		{
 			if( buff == n.second.get<int>("value") )
@@ -203,6 +286,19 @@ HeaderSegmentStatus HeaderAnalyser::testNode( Node &n , char* buffer, unsigned i
 				}
 			}
 		}
+		/** INTERVAL **/
+		else if( boost::optional<bpt::ptree &> choice = n.second.get_child_optional("interval") ) 
+		{
+			std::vector<int> minMax;
+			BOOST_FOREACH( Node &m, *choice)
+			{
+				minMax.push_back( m.second.get_value<int>() );
+			}
+			if( minMax.at(0) < buff && buff < minMax.at(1) )
+			{
+				nodeValid = isValid;
+			}
+		}
 		else
 		{
 			nodeValid = pass;
@@ -218,10 +314,15 @@ HeaderSegmentStatus HeaderAnalyser::testNode( Node &n , char* buffer, unsigned i
 		std::stringstream ss;
 		for( size_t i = 0; i < size; ++i)
 		{
-			ss << std::dec << (int)(unsigned char)buffer[i];
+			for( int i = size-1; i >= 0; --i )
+			{
+				ss << std::dec << std::setw( 2 ) << std::setfill( '0' ) << (int)(unsigned char)buffer[i];
+			}
 		}
-		float buff = strtof(ss.str().c_str(), NULL);
-		// std::cout << "FLOAT : " << buff << std::endl;
+		
+		float buff = strtof( ss.str().c_str(), NULL );
+		COMMON_COUT( "FLOAT : " << buff << " : "<< ss.str() << " : " );
+		
 		if( boost::optional<bpt::ptree &> value = n.second.get_child_optional("value") )
 		{
 			if( buff == n.second.get<float>("value") )
@@ -266,7 +367,7 @@ HeaderSegmentStatus HeaderAnalyser::testNode( Node &n , char* buffer, unsigned i
 		}
 		else
 		{
-			std::cout << "Pas NORMAL !!" << std::endl;
+			COMMON_COUT( "Not standard !!" );
 		}
 	}
 
@@ -326,15 +427,45 @@ HeaderSegmentStatus HeaderAnalyser::testNode( Node &n , char* buffer, unsigned i
 		}
 		else
 		{
-			std::cout << "Pas NORMAL !!" << std::endl;
+			COMMON_COUT( "Not standard !!" );
+		}
+	}
+	/** RCHOICE **/
+	if( n.second.get<std::string>("type") == "chunk" )
+	{
+		if( boost::optional<bpt::ptree &> chunks = n.second.get_child_optional("rChoice") ) 
+		{
+			BOOST_FOREACH( Node &m, *chunks)
+			{
+				if ( isValid == testNode( m , buffer, m.second.get<int>("length") ) )
+				{
+					// Chunk test :	
+					HeaderSegmentStatus chunkStatus = analyseChunkNode( m );				
+					displayResults( m.second.get<std::string>("shortId"), chunkStatus );
+					nodeValid = chunkStatus;
+					// Header to buffer :
+					//if (_fileReader._file.is_open()) 
+					//{	
+					//	_fileReader._file.read(buffer, size);
+					//	}
+				}
+			}
+			// Ne passe pas au suivant : avancer dans le buffer !
+		}
+		else
+		{
+			COMMON_COUT( "Not standard !!" );
 		}
 	}
 	return nodeValid;
 }
 
-
+void HeaderAnalyser::displayResults( std::string id, HeaderSegmentStatus status )
+{
+	COMMON_COUT( id << " : " << status );
+}
 
 void HeaderAnalyser::writeReport( const bpt::ptree &pt )
 {
-	write_json("output.json", pt);
+	write_json( "output.json", pt );
 }

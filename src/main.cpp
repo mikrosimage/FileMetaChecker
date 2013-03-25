@@ -20,7 +20,7 @@ int main( int argc, char** argv )
 	bpo::variables_map vm;
 
 	std::vector<std::string> paths;
-
+	
 	/*** OPTIONS ***/
 	// Declare the supported options
 	cmdlineOptions.add_options()
