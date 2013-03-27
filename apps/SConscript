@@ -15,6 +15,7 @@ mikSystemInfo = project.Program(
 		libs.boost_filesystem,
 		libs.boost_program_options,
 		libs.common,
+		libs.report,
 		libs.systemInfo,
 	]
 )

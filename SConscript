@@ -32,8 +32,8 @@ project.commonLibs.append( qualityCheck )
 SConscript(
 		project.scanFiles( [
 				'libraries/common',
-				'libraries/systemInfo',
 				'libraries/report',
+				'libraries/systemInfo',
 				'apps',
 			], accept=['SConscript'] )
 	)

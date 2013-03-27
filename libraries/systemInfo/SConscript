@@ -4,6 +4,9 @@ project.StaticLibrary(
 		'systemInfo',
 		dirs      = ['src'],
 		includes  = ['src'],
-		libraries = [ libs.common ],
+		libraries = [
+			libs.common,
+			libs.report,
+		],
 		shared = True
 	)

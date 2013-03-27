@@ -9,6 +9,8 @@
 
 #include <boost/filesystem.hpp>
 
+#include <report/Report.hpp>
+
 namespace bfs = boost::filesystem;
 
 class FileSystemInfo
@@ -18,8 +20,8 @@ public:
 
 	~FileSystemInfo();
 
-	void extractFileInfo();
-
+	void getReport( Report& report );
+	
 	std::string getFilename() const;
 	std::string getAbsoluteFilename() const;
 	
@@ -31,6 +33,8 @@ public:
 	void getOwnerPermissions( bool& read, bool& write, bool& exec ) const;
 	void getGroupPermissions( bool& read, bool& write, bool& exec ) const;
 	void getOtherPermissions( bool& read, bool& write, bool& exec ) const;
+	
+	
 	
 private:
 	char getRightStatus( bool status, char c ) const;
