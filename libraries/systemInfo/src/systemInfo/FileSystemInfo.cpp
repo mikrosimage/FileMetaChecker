@@ -3,41 +3,25 @@
 
 #include <sstream>
 
-FileSystemInfo::FileSystemInfo()
-	: _filePath( "" )
-{
-}
-
 FileSystemInfo::FileSystemInfo( const std::string& filePath )
 	: _filePath( filePath )
 {
-	_filename = _filePath.stem().string();
+	_status = bfs::status( _filePath );
+	_permissions = _status.permissions();
 }
 
 FileSystemInfo::~FileSystemInfo()
 {
-	if( _file.is_open() )
-	{
-		_file.close();
-	}
-}
-
-void FileSystemInfo::setFilePath( const std::string& filePath )
-{
-	_filePath = bfs::path( filePath );
-}
-
-void FileSystemInfo::extractFileInfo()
-{
-	_status = getFileStatus();
-	_extension = getExt();
-	_size = getSize();
-	_permissions = getPermissions();
 }
 
 std::string FileSystemInfo::getFilename() const
 {
-	return _filename;
+	return _filePath.stem().string();
+}
+
+std::string FileSystemInfo::getAbsoluteFilename() const
+{
+	return absolute( _filePath ).string();
 }
 
 std::string FileSystemInfo::getExt() const
@@ -47,24 +31,21 @@ std::string FileSystemInfo::getExt() const
 
 size_t FileSystemInfo::getSize() const
 {
-	if( is_regular( bfs::status( _filePath ) ) )
-	{
+	if( is_regular( _status ) )
 		return bfs::file_size( _filePath );
-	}
-
 	return 0;
 }
 
 std::string FileSystemInfo::getFileStatus() const
 {
 	std::stringstream status;
-	status << bfs::status( _filePath ).type();
+	status << _status.type();
 	return status.str();
 }
 
-char FileSystemInfo::getStatus( bool status, char c ) const
+char FileSystemInfo::getRightStatus( bool permission, char c ) const
 {
-	return ( status ? c : '-' );
+	return ( permission ? c : '-' );
 }
 
 std::string FileSystemInfo::getPermissions() const
@@ -78,43 +59,40 @@ std::string FileSystemInfo::getPermissions() const
 	getGroupPermissions( groupRead, groupWrite, groupExe );
 	getOtherPermissions( othersRead, othersWrite, othersExe );
 	
-	rights += getStatus( ownerRead,  'r' );
-	rights += getStatus( ownerWrite, 'w' );
-	rights += getStatus( ownerExe,   'x' );
+	rights += getRightStatus( ownerRead,  'r' );
+	rights += getRightStatus( ownerWrite, 'w' );
+	rights += getRightStatus( ownerExe,   'x' );
 	
-	rights += getStatus( groupRead,  'r' );
-	rights += getStatus( groupWrite, 'w' );
-	rights += getStatus( groupExe,   'x' );
+	rights += getRightStatus( groupRead,  'r' );
+	rights += getRightStatus( groupWrite, 'w' );
+	rights += getRightStatus( groupExe,   'x' );
 	
-	rights += getStatus( othersRead,  'r' );
-	rights += getStatus( othersWrite, 'w' );
-	rights += getStatus( othersExe,   'x' );
+	rights += getRightStatus( othersRead,  'r' );
+	rights += getRightStatus( othersWrite, 'w' );
+	rights += getRightStatus( othersExe,   'x' );
 	
 	return rights;
 }
 
 void FileSystemInfo::getOwnerPermissions( bool& read, bool& write, bool& exec ) const
 {
-	bfs::perms perms = bfs::status( _filePath ).permissions();
-	read  = ( bfs::owner_read  & perms ) != 0;
-	write = ( bfs::owner_write & perms ) != 0;
-	exec  = ( bfs::owner_exe   & perms ) != 0;
+	read  = ( bfs::owner_read  & _permissions ) != 0;
+	write = ( bfs::owner_write & _permissions ) != 0;
+	exec  = ( bfs::owner_exe   & _permissions ) != 0;
 }
 
 void FileSystemInfo::getGroupPermissions( bool& read, bool& write, bool& exec ) const
 {
-	bfs::perms perms = bfs::status( _filePath ).permissions();
-	read  = ( bfs::group_read  & perms ) != 0;
-	write = ( bfs::group_write & perms ) != 0;
-	exec  = ( bfs::group_exe   & perms ) != 0;
+	read  = ( bfs::group_read  & _permissions ) != 0;
+	write = ( bfs::group_write & _permissions ) != 0;
+	exec  = ( bfs::group_exe   & _permissions ) != 0;
 }
 
 void FileSystemInfo::getOtherPermissions( bool& read, bool& write, bool& exec ) const
 {
-	bfs::perms perms = bfs::status( _filePath ).permissions();
-	read  = ( bfs::others_read  & perms ) != 0;
-	write = ( bfs::others_write & perms ) != 0;
-	exec  = ( bfs::others_exe   & perms ) != 0;
+	read  = ( bfs::others_read  & _permissions ) != 0;
+	write = ( bfs::others_write & _permissions ) != 0;
+	exec  = ( bfs::others_exe   & _permissions ) != 0;
 }
 
 std::ostream& operator<<( std::ostream& out, const bfs::file_type& fileType )
@@ -139,11 +117,12 @@ std::ostream& operator<<( std::ostream& out, const bfs::file_type& fileType )
 
 std::ostream& operator<<( std::ostream& out, const FileSystemInfo& fileReader )
 {
-	out << "name          " << fileReader.getFilename() << std::endl;
-	out << "extension     " << fileReader.getExt() << std::endl;
-	out << "size          " << fileReader.getSize() << std::endl;
-	out << "permissions   " << fileReader.getPermissions() << std::endl;
-	out << "status        " << fileReader.getFileStatus() << std::endl;
+	out << "filename           " << fileReader.getFilename() << std::endl;
+	out << "absolute filename  " << fileReader.getAbsoluteFilename() << std::endl;
+	out << "extension          " << fileReader.getExt() << std::endl;
+	out << "size               " << fileReader.getSize() << std::endl;
+	out << "permissions        " << fileReader.getPermissions() << std::endl;
+	out << "status             " << fileReader.getFileStatus() << std::endl;
 
 	return out;
 }

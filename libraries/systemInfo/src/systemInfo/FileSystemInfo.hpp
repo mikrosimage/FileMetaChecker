@@ -14,16 +14,15 @@ namespace bfs = boost::filesystem;
 class FileSystemInfo
 {
 public:
-	FileSystemInfo();
 	FileSystemInfo( const std::string& filePath );
 
 	~FileSystemInfo();
-	
-	void setFilePath( const std::string& filePath );
 
 	void extractFileInfo();
 
 	std::string getFilename() const;
+	std::string getAbsoluteFilename() const;
+	
 	std::string getExt() const;
 	size_t      getSize() const;
 	std::string getFileStatus() const;
@@ -34,16 +33,12 @@ public:
 	void getOtherPermissions( bool& read, bool& write, bool& exec ) const;
 	
 private:
-	char getStatus( bool status, char c ) const;
+	char getRightStatus( bool status, char c ) const;
 	
 private:
-	bfs::path    _filePath;
-	std::string  _filename;
-	std::string  _extension;
-	std::string  _permissions;
-	std::string  _status;
-	std::fstream _file;
-	size_t       _size;
+	bfs::path        _filePath;
+	bfs::perms       _permissions;
+	bfs::file_status _status;
 };
 
 std::ostream& operator<<( std::ostream& out, const bfs::file_type& fileType );
