@@ -1,5 +1,5 @@
-#ifndef _FILE_SYSTEM_INFO_HPP
-#define _FILE_SYSTEM_INFO_HPP
+#ifndef _SYSTEM_INFO_FILE_SYSTEM_INFO_HPP_
+#define _SYSTEM_INFO_FILE_SYSTEM_INFO_HPP_
 
 #include <iostream>
 #include <string>

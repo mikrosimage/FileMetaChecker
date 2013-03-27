@@ -1,9 +1,9 @@
-#ifndef _WINDOWSMEMORYLEAKS_HPP_
-#define _WINDOWSMEMORYLEAKS_HPP_
+#ifndef _COMMON_SYSTEM_WINDOWS_MEMORYLEAKS_HPP_
+#define _COMMON_SYSTEM_WINDOWS_MEMORYLEAKS_HPP_
 
 #ifdef __WINDOWS__
 
- #include <tuttle/common/patterns/StaticSingleton.hpp>
+ #include <common/patterns/StaticSingleton.hpp>
  #include <crtdbg.h>
 
 /**

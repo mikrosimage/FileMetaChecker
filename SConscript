@@ -33,6 +33,7 @@ SConscript(
 		project.scanFiles( [
 				'libraries/common',
 				'libraries/systemInfo',
+				'libraries/report',
 				'apps',
 			], accept=['SConscript'] )
 	)

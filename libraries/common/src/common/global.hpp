@@ -1,5 +1,5 @@
-#ifndef _COMMON_UTILS_GLOBAL_HPP_
-#define _COMMON_UTILS_GLOBAL_HPP_
+#ifndef _COMMON_GLOBAL_HPP_
+#define _COMMON_GLOBAL_HPP_
 
 //#define COMMON_NO_COUT
 
