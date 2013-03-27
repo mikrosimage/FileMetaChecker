@@ -1,0 +1,9 @@
+Import( 'project', 'libs' )
+
+project.StaticLibrary(
+		'report',
+		dirs      = ['src'],
+		includes  = ['src'],
+		libraries = [ libs.boost ],
+		shared = True
+	)
