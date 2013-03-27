@@ -1,0 +1,29 @@
+Import( 'project', 'libs' )
+
+libraries = [
+	libs.boost_filesystem,
+	libs.boost_program_options,
+	libs.common,
+	libs.systemInfo,
+]
+
+mikSystemInfo = project.Program(
+	target='miksi',
+	dirs=['mikSystemInfo'],
+	includes=['mikSystemInfo'],
+	libraries = [
+		libs.boost_filesystem,
+		libs.boost_program_options,
+		libs.common,
+		libs.systemInfo,
+	]
+)
+
+
+#qc = project.Program(
+#	target='mikqc',
+#	dirs=['mikqc'],
+#	includes=['mikqc'],
+#	libraries = libraries
+#)
+

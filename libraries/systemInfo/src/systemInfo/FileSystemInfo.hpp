@@ -23,12 +23,6 @@ public:
 
 	void extractFileInfo();
 
-	bool open();
-	bool isOpen();
-	bool close();
-	
-	bool read( char* buffer, size_t length );
-
 	std::string getFilename() const;
 	std::string getExt() const;
 	size_t      getSize() const;

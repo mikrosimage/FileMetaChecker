@@ -33,9 +33,10 @@
         {
             "shortId": "subChunks",
             "id": "subChunks",
-            "type": "chunk",
+            "type": "group",
+            "ordered" : "false",
             "length": 4,
-            "rChoice": [
+            "values": [
                 {
                     "shortId": "fmt ",
                     "id": "format",

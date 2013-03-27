@@ -31,7 +31,9 @@ project.commonLibs.append( qualityCheck )
 ### Load all SConscript files (in the correct order)
 SConscript(
 		project.scanFiles( [
-				'src',
+				'libraries/common',
+				'libraries/systemInfo',
+				'apps',
 			], accept=['SConscript'] )
 	)
 

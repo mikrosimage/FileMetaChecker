@@ -1,0 +1,9 @@
+Import( 'project', 'libs' )
+
+project.StaticLibrary(
+		'common',
+		dirs      = ['src'],
+		includes  = ['src'],
+		libraries = [ libs.boost_system ],
+		shared = True
+	)

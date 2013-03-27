@@ -35,33 +35,6 @@ void FileSystemInfo::extractFileInfo()
 	_permissions = getPermissions();
 }
 
-
-bool FileSystemInfo::open()
-{
-	_file.open( _filePath.string().c_str(), std::ios::in | std::ios::binary );
-	return true;
-}
-
-bool FileSystemInfo::isOpen()
-{
-	return _file.is_open();
-}
-
-bool FileSystemInfo::close()
-{
-	if( _file.is_open() )
-	{
-		_file.close();
-	}
-	return true;
-}
-
-bool FileSystemInfo::read( char* buffer, size_t length )
-{
-	_file.read( buffer, length );
-	return true;
-}
-
 std::string FileSystemInfo::getFilename() const
 {
 	return _filename;
@@ -166,7 +139,6 @@ std::ostream& operator<<( std::ostream& out, const bfs::file_type& fileType )
 
 std::ostream& operator<<( std::ostream& out, const FileSystemInfo& fileReader )
 {
-	out << "INPUT FILE :" << std::endl;
 	out << "name          " << fileReader.getFilename() << std::endl;
 	out << "extension     " << fileReader.getExt() << std::endl;
 	out << "size          " << fileReader.getSize() << std::endl;

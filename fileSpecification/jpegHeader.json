@@ -30,8 +30,7 @@
         {
             "shortId": "segLength",
             "id": "segment length",
-            "type": "int",
-            "length": 2
+            "type": "uint16"
         },
         {
             "shortId": "id",
@@ -51,7 +50,7 @@
             "id": "density unit",
             "type": "label",
             "length": 1,
-            "labels": [
+            "choice": [
                 {
                     "id": "pixel aspect ratio",
                     "type": "hexa",
@@ -72,26 +71,22 @@
         {
             "shortId": "xDensity",
             "id": "horizontal pixel density",
-            "type": "int",
-            "length": 2
+            "type": "uint16"
         },
         {
             "shortId": "yDensity",
             "id": "vertical pixel density",
-            "type": "int",
-            "length": 2
+            "type": "uint16"
         },
         {
             "shortId": "tw",
             "id": "thumbnail width",
-            "type": "int",
-            "length": 1
+            "type": "uint8"
         },
         {
             "shortId": "th",
             "id": "thumbnail height",
-            "type": "int",
-            "length": 1
+            "type": "uint8"
         }
     ]
 }

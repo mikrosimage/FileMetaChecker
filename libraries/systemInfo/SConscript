@@ -1,0 +1,9 @@
+Import( 'project', 'libs' )
+
+project.StaticLibrary(
+		'systemInfo',
+		dirs      = ['src'],
+		includes  = ['src'],
+		libraries = [ libs.common ],
+		shared = True
+	)
