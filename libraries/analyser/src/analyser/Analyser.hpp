@@ -4,7 +4,7 @@
 class Analyser
 {
 public:
-    Analyser();
+	Analyser();
 };
 
 #endif

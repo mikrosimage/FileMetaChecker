@@ -16,4 +16,3 @@ void Report::exportReport( const std::string& filename )
 	Export e;
 	e.writeXml( reportTree, filename );
 }
-

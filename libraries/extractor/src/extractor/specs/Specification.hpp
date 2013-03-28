@@ -10,10 +10,10 @@ namespace bpt = boost::property_tree;
 class Specification
 {
 public:
-    Specification();
-
+	Specification();
+	
 private:
-    std::vector<bpt::ptree> specList;
+	std::vector<bpt::ptree> specList;
 };
 
 #endif

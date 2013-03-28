@@ -1,9 +1,9 @@
 Import( 'project', 'libs' )
 
 project.StaticLibrary(
-                'extractor',
-                dirs      = ['src'],
-                includes  = ['src'],
-                libraries = [ libs.boost ],
-                shared = True
-        )
+	'extractor',
+	dirs      = ['src'],
+	includes  = ['src'],
+	libraries = [ libs.boost ],
+	shared = True
+)

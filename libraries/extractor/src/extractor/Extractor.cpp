@@ -4,5 +4,5 @@
 
 Extractor::Extractor()
 {
-    File f;
+	File f;
 }

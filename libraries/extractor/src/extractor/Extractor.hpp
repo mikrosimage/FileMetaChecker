@@ -4,7 +4,7 @@
 class Extractor
 {
 public:
-    Extractor();
+	Extractor();
 };
 
 #endif
