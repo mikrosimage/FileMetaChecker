@@ -1,4 +1,8 @@
-#include "common/global.hpp"
+#include <common/global.hpp>
+
+#include <extractor/Extractor.hpp>
+#include <systemInfo/FileSystemInfo.hpp>
+#include <report/Report.hpp>
 
 #include <iomanip>
 #include <string>
@@ -7,8 +11,6 @@
 #include <boost/exception/diagnostic_information.hpp>
 #include <boost/program_options.hpp>
 #include <boost/foreach.hpp>
-
-#include "analyser/Header.hpp"
 
 namespace bpo = boost::program_options;
 
@@ -96,10 +98,21 @@ int main( int argc, char** argv )
 	{
 		try
 		{
-			Header headerAnalyser;
-			headerAnalyser.analyseFileHeader( path );
-			headerAnalyser.printReport();
-			//headerAnalyser.writeReport();
+			Report report;
+			
+			FileSystemInfo fileSystemInfo( path );
+			COMMON_COUT( fileSystemInfo );
+			
+			fileSystemInfo.getReport( &report );
+			
+			Extractor extractor;
+			extractor.openFilename( path );
+			
+			extractor.closeFilename();
+			
+			extractor.getReport( &report );
+			
+			report.exportReport( path + ".xml" );
 		}
 		catch( ... )
 		{

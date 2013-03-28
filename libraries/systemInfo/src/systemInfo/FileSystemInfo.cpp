@@ -1,4 +1,7 @@
 #include <common/global.hpp>
+
+#include <report/Report.hpp>
+
 #include "FileSystemInfo.hpp"
 
 #include <sstream>
@@ -28,7 +31,7 @@ std::string to_string( const size_t size )
 	return ss.str();
 }
 
-void FileSystemInfo::getReport( Report& report )
+void FileSystemInfo::getReport( Report* report )
 {
 	const std::string si     = "systemInfo";
 	const std::string perm   = "permissions";
@@ -47,25 +50,25 @@ void FileSystemInfo::getReport( Report& report )
 	getOtherPermissions( othersRead, othersWrite, othersExe );
 	
 	
-	report.add( si + ".filename", getFilename() );
-	report.add( si + ".absolutePath", getAbsoluteFilename() );
-	report.add( si + ".extension", getExt() );
-	report.add( si + ".size",  to_string( getSize() ) );
+	report->add( si + ".filename", getFilename() );
+	report->add( si + ".absolutePath", getAbsoluteFilename() );
+	report->add( si + ".extension", getExt() );
+	report->add( si + ".size",  to_string( getSize() ) );
 
-	report.add( si + "." + perm + "." + owner + "." + read , to_string( ownerRead  ) );
-	report.add( si + "." + perm + "." + owner + "." + write, to_string( ownerWrite ) );
-	report.add( si + "." + perm + "." + owner + "." + exe  , to_string( ownerExe   ) );
+	report->add( si + "." + perm + "." + owner + "." + read , to_string( ownerRead  ) );
+	report->add( si + "." + perm + "." + owner + "." + write, to_string( ownerWrite ) );
+	report->add( si + "." + perm + "." + owner + "." + exe  , to_string( ownerExe   ) );
 	
-	report.add( si + "." + perm + "." + group + "." + read , to_string( ownerRead  ) );
-	report.add( si + "." + perm + "." + group + "." + write, to_string( ownerWrite ) );
-	report.add( si + "." + perm + "." + group + "." + exe  , to_string( ownerExe   ) );
+	report->add( si + "." + perm + "." + group + "." + read , to_string( ownerRead  ) );
+	report->add( si + "." + perm + "." + group + "." + write, to_string( ownerWrite ) );
+	report->add( si + "." + perm + "." + group + "." + exe  , to_string( ownerExe   ) );
 	
-	report.add( si + "." + perm + "." + others + "." + read , to_string( ownerRead  ) );
-	report.add( si + "." + perm + "." + others + "." + write, to_string( ownerWrite ) );
-	report.add( si + "." + perm + "." + others + "." + exe  , to_string( ownerExe   ) );
+	report->add( si + "." + perm + "." + others + "." + read , to_string( ownerRead  ) );
+	report->add( si + "." + perm + "." + others + "." + write, to_string( ownerWrite ) );
+	report->add( si + "." + perm + "." + others + "." + exe  , to_string( ownerExe   ) );
 	
 	
-	report.add( si + ".filestatus", getFileStatus() );
+	report->add( si + ".filestatus", getFileStatus() );
 }
 
 std::string FileSystemInfo::getFilename() const

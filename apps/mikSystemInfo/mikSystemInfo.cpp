@@ -1,6 +1,7 @@
 #include <common/global.hpp>
 
 #include <systemInfo/FileSystemInfo.hpp>
+#include <report/Report.hpp>
 
 #include <iomanip>
 #include <string>
@@ -9,8 +10,6 @@
 #include <boost/exception/diagnostic_information.hpp>
 #include <boost/program_options.hpp>
 #include <boost/foreach.hpp>
-
-#include <report/Report.hpp>
 
 namespace bpo = boost::program_options;
 
@@ -97,7 +96,7 @@ int main( int argc, char** argv )
 		FileSystemInfo fileSystemInfo( path );
 		COMMON_COUT( fileSystemInfo );
 		
-		fileSystemInfo.getReport( report );
+		fileSystemInfo.getReport( &report );
 		
 		report.exportReport( path + ".xml" );
 	}

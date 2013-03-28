@@ -1,12 +1,5 @@
 Import( 'project', 'libs' )
 
-libraries = [
-	libs.boost_filesystem,
-	libs.boost_program_options,
-	libs.common,
-	libs.systemInfo,
-]
-
 mikSystemInfo = project.Program(
 	target='miksi',
 	dirs=['mikSystemInfo'],
@@ -21,10 +14,18 @@ mikSystemInfo = project.Program(
 )
 
 
-#qc = project.Program(
-#	target='mikqc',
-#	dirs=['mikqc'],
-#	includes=['mikqc'],
-#	libraries = libraries
-#)
+qc = project.Program(
+	target='mikqc',
+	dirs=['mikQualityCheck'],
+	includes=['mikQualityCheck'],
+	libraries = [
+		libs.boost_filesystem,
+		libs.boost_program_options,
+		libs.common,
+		libs.report,
+		libs.analyser,
+		libs.extractor,
+		libs.systemInfo,
+	]
+)
 

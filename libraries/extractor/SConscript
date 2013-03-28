@@ -4,6 +4,10 @@ project.StaticLibrary(
 	'extractor',
 	dirs      = ['src'],
 	includes  = ['src'],
-	libraries = [ libs.boost ],
+	libraries = [
+		libs.boost_filesystem,
+		libs.common,
+		libs.report,
+		],
 	shared = True
 )

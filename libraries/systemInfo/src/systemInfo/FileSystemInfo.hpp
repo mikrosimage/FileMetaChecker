@@ -9,9 +9,9 @@
 
 #include <boost/filesystem.hpp>
 
-#include <report/Report.hpp>
-
 namespace bfs = boost::filesystem;
+
+class Report;
 
 class FileSystemInfo
 {
@@ -20,7 +20,7 @@ public:
 
 	~FileSystemInfo();
 
-	void getReport( Report& report );
+	void getReport( Report* report );
 	
 	std::string getFilename() const;
 	std::string getAbsoluteFilename() const;

@@ -7,13 +7,31 @@
 
 namespace bpt = boost::property_tree;
 
+typedef bpt::ptree Spec;
+typedef std::vector< Spec > Specs;
+
 class Specification
 {
 public:
 	Specification();
 	
+	void init();
+
+	void updateList();
+	
+	void getSpec( Spec& spec, const size_t index ) const
+	{
+		spec = specList.at( index );
+	}
+	
+	void getSpecList( Specs& specs ) const
+	{
+		specs = specList;
+	}
+	
 private:
-	std::vector<bpt::ptree> specList;
+	Specs specList;
+	std::vector< std::string > paths;
 };
 
 #endif
