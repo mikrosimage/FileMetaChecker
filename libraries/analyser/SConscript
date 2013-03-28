@@ -1,0 +1,9 @@
+Import( 'project', 'libs' )
+
+project.StaticLibrary(
+                'analyser',
+                dirs      = ['src'],
+                includes  = ['src'],
+                libraries = [ ],
+                shared = True
+        )
