@@ -1,25 +1,11 @@
 #ifndef _EXTRACTOR_INPUT_FILE_TRANSLATOR_HPP_
 #define _EXTRACTOR_INPUT_FILE_TRANSLATOR_HPP_
 
+#include "types.hpp"
+
 #include <cstring>
 #include <sstream>
 #include <iomanip>
-
-typedef          char       int8;
-typedef   signed char      sint8;
-typedef unsigned char      uint8;
-typedef          short      int16;
-typedef unsigned short     uint16;
-typedef          int        int32;
-typedef unsigned int       uint32;
-typedef          long long  int64;
-typedef   signed long long  int64;
-typedef unsigned long long uint64;
-
-struct Hexa{
-	std::string value;
-};
-typedef struct Hexa Hexa;
 
 template< typename DataType >
 class Translator
@@ -34,11 +20,23 @@ public:
 };
 
 template<>
-Hexa Translator<Hexa>::translate( const char* data, const size_t, const bool )
+Hexa Translator<Hexa>::translate( const char* data, const size_t size, const bool )
 {
 	Hexa ret;
 	std::ostringstream os;
-	os << std::hex << std::setfill('0') << std::setw(2) << (int)(unsigned char)data[0];
+	for( size_t i = 0; i < size; ++i )
+		os << std::hex << std::setfill('0') << std::setw(2) << (int)(unsigned char)data[i];
+	ret.value = os.str();
+	return ret;
+}
+
+template<>
+Ascii Translator<Ascii>::translate( const char* data, const size_t size, const bool )
+{
+	Ascii ret;
+	std::ostringstream os;
+	for( size_t index = 0; index < size; ++index )
+		os << (unsigned char)data[ index ];
 	ret.value = os.str();
 	return ret;
 }
@@ -99,11 +97,16 @@ uint32 Translator<uint32>::translate( const char* data, const size_t, const bool
 	const size_t pos1 = bigEndian ? 1 : 2;
 	const size_t pos2 = bigEndian ? 2 : 1;
 	const size_t pos3 = bigEndian ? 3 : 0;
-	
-	return  ( (unsigned int) data[ pos0 ] << 24 ) +
-			( (unsigned int) data[ pos1 ] << 16 ) +
-			( (unsigned int) data[ pos2 ] << 8  ) +
-			(unsigned int) data[ pos3 ];
+
+	/*std::ostringstream os;
+	for( size_t i=0; i<4; ++i )
+		os << std::hex << std::setfill('0') << std::setw(2) << (int)(unsigned char)data[ bigEndian ? i : 3 - i ];
+	COMMON_COUT_VAR( os.str() );*/
+
+	return (size_t)( ( (size_t)(unsigned char)data[ pos0 ] ) << 24 ) |
+		   (size_t)( ( (size_t)(unsigned char)data[ pos1 ] ) << 16 ) |
+		   (size_t)( ( (size_t)(unsigned char)data[ pos2 ] ) << 8 ) |
+		   (size_t)(unsigned char)data[ pos3 ];
 }
 
 #endif

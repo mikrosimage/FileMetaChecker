@@ -2,64 +2,54 @@
 
 #include <common/global.hpp>
 
-#include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
-#include <boost/algorithm/string.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
-#include <iterator>
+const std::string kStandard  = "standard";
+const std::string kLabel     = "label";
+const std::string kId        = "id";
+const std::string kType      = "type";
+const std::string kExtension = "extension";
+const std::string kHeader    = "header";
 
-namespace bfs = boost::filesystem;
+const std::string kFooter    = "footer";
 
 Specification::Specification()
 {
 	
 }
 
-void Specification::init()
+void Specification::setSpecTree( const Spec& spec )
 {
-	paths.clear();
-	if( const char* env_options = std::getenv( "QC_SPECS_DIR" ) )
-	{
-		boost::algorithm::split( paths, env_options, boost::algorithm::is_any_of(" ") );
-	}
+	_spec = spec;
 }
 
-void Specification::updateList()
+std::string Specification::getId( )
 {
-	BOOST_FOREACH( std::string filepath, paths )
+	return _spec.get< std::string >( kStandard + "." + kId );
+}
+
+std::string Specification::getLabel( )
+{
+	return _spec.get< std::string >( kStandard + "." + kLabel );
+}
+
+std::string Specification::getType( )
+{
+	return _spec.get< std::string >( kStandard + "." + kType );
+}
+
+std::vector< std::string > Specification::getsupportedExtensions( )
+{
+	std::vector< std::string > list;
+	BOOST_FOREACH( Node &node, _spec.get_child( kStandard + "." + kExtension ) )
 	{
-		bfs::path path( filepath );
-		try
-		{
-			if( exists( path ) )
-			{
-				if( is_directory( path ) )
-				{
-					bfs::directory_iterator end_itr;
-					for( bfs::directory_iterator itr( path ); itr != end_itr; ++itr )
-					{
-						if ( is_regular( itr->status() ) )
-						{
-							bpt::ptree pt;
-							bpt::read_json( itr->path().string(), pt );
-							specList.push_back( pt );
-						}
-					}
-				}
-				else
-				{
-					COMMON_CERR( "Specification load: " << path.string() << " exists, but is neither a regular file nor a directory" );
-				}
-			}
-			else
-			{
-				COMMON_CERR( "Specification load: " << path.string() << " does not exist" );
-			}
-		}
-		catch( const bfs::filesystem_error& ex )
-		{
-			COMMON_CERR( "Specification load: " <<  ex.what() );
-		}
+		list.push_back( node.second.data() );
 	}
+	return list;
+}
+
+SpecIt Specification::getHeader( )
+{
+	return _spec.find( kHeader );
 }

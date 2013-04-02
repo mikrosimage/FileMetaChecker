@@ -1,0 +1,93 @@
+{
+	"standard": {
+		"label": "Jpeg",
+		"id": "jpeg",
+		"type": "image",
+		"extension": [
+			".jpg",
+			".jpeg",
+			".jpe",
+			".jfi",
+			".jfif",
+			".j",
+			".jif",
+			".jmh"
+		]
+	},
+	"header": [
+		{
+            "id": "magicNumber",
+            "label": "Magic number",
+			"hexa": "ffd8"
+		},
+		{
+            "id": "segMarker",
+            "label": "Segment marker",
+			"hexa": "ffe0"
+		},
+		{
+            "id": "segLength",
+            "label": "Segment length",
+			"type": "uint16"
+		},
+		{
+            "id": "id",
+            "label": "Identifier",
+			"hexa": "4a46494600"
+		},
+        {
+            "id": "majorVersion",
+            "label": "Jfif major version",
+            "type": "uint8"
+        },
+		{
+            "id": "minorVersion",
+            "label": "Jfif minor version",
+            "type": "uint8"
+		},
+		{
+            "id": "densityUnit",
+            "label": "Density unit",
+            "type": "uint8",
+            "map": [
+                { "00": "pixel aspect ratio" },
+                { "01": "dots per inch" },
+                { "02": "dots per cm" }
+            ],
+			"choice": [
+				{
+					"id": "pixel aspect ratio",
+					"hexa": "00"
+				},
+				{
+					"id": "dots per inch",
+					"hexa": "01"
+				},
+				{
+					"id": "dots per cm",
+					"hexa": "02"
+				}
+			]
+		},
+		{
+            "id": "xDensity",
+            "label": "Horizontal pixel density",
+			"type": "uint16"
+		},
+		{
+            "id": "yDensity",
+            "label": "Vertical pixel density",
+			"type": "uint16"
+		},
+		{
+            "id": "tw",
+            "label": "Thumbnail width",
+			"type": "uint8"
+		},
+		{
+            "id": "th",
+            "label": "Thumbnail height",
+			"type": "uint8"
+		}
+	]
+}

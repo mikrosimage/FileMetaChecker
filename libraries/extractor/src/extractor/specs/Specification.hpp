@@ -8,30 +8,25 @@
 namespace bpt = boost::property_tree;
 
 typedef bpt::ptree Spec;
-typedef std::vector< Spec > Specs;
-
+typedef bpt::ptree::value_type Node;
+typedef bpt::ptree::const_assoc_iterator SpecIt;
 class Specification
 {
 public:
 	Specification();
-	
-	void init();
 
-	void updateList();
-	
-	void getSpec( Spec& spec, const size_t index ) const
-	{
-		spec = specList.at( index );
-	}
-	
-	void getSpecList( Specs& specs ) const
-	{
-		specs = specList;
-	}
-	
+	void setSpecTree( const Spec& spec );
+
+	std::string getId( );
+	std::string getLabel( );
+	std::string getType( );
+
+	std::vector< std::string > getsupportedExtensions( );
+
+	SpecIt getHeader( );
+
 private:
-	Specs specList;
-	std::vector< std::string > paths;
+	Spec _spec;
 };
 
 #endif

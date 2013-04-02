@@ -5,7 +5,7 @@
 
 class Report;
 class File;
-class Specification;
+class Specifications;
 
 class Extractor
 {
@@ -19,11 +19,14 @@ public:
 	bool openFilename( const std::string& filename );
 	void closeFilename( );
 	
+	void analyse( );
+
 	void getReport( Report* report );
-	
+
 private:
-	File* _file;
-	Specification* _specs;
+	File*           _file;
+	Specifications* _specs;
+	std::string     _ext;
 };
 
 #endif

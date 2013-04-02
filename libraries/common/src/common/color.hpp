@@ -3,7 +3,6 @@
 
 #include <string>
 
-namespace qc {
 namespace common {
 
 namespace details {
@@ -76,7 +75,6 @@ struct Color
 
 };
 
-}
 }
 
 #endif

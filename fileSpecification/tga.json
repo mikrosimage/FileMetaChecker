@@ -1,21 +1,23 @@
 {
-    "fileType": {
-        "name": "TGA",
+    "standard": {
+	"label": "Truevision Targa",
+        "id": "tga",
+	"type":"image",
         "extension": [
-            "tga",
-            "tpic"
+            ".tga",
+            ".tpic"
         ]
     },
     "header": [
         {
-            "shortId": "idFieldSize",
-            "id": "id field size",
+            "id": "idFieldSize",
+            "label": "Id field size",
             "type": "int",
             "length": 1
         },
         {
-            "shortId": "colourMapType",
-            "id": "colour map type",
+            "id": "colourMapType",
+            "label": "Colour map type",
             "type": "label",
             "length": 1,
             "labels": [

@@ -1,8 +1,9 @@
 #ifndef _EXTRACTOR_INPUT_FILE_FILE_HPP_
 #define _EXTRACTOR_INPUT_FILE_FILE_HPP_
 
-#include "Translator.hpp"
+#include <common/global.hpp>
 
+#include <fstream>
 #include <cstdio>
 #include <vector>
 #include <string>
@@ -16,53 +17,29 @@ public:
 	
 	bool open( const std::string& filename )
 	{
-		pFile = fopen( filename.c_str() , "r" );
-		return pFile != NULL;
+		_file.open ( filename.c_str(), std::ios::in | std::ios::binary );
+		_file.seekg (0, std::ios::beg);
+		return _file.is_open();
 	}
 	
 	void close()
 	{
-		fclose( pFile );
+		_file.close();
 	}
-	
-	template< typename DataType >
-	DataType getData()
-	{
-		DataType t;
-		
-		size_t size = sizeof( DataType );
-		char buffer[ size ];
-		readData( buffer, size );
-		
-		Translator<DataType> tr;
-		t = translate( buffer, size );
-		
-		return t;
-	}
-	
-	
-	template< typename DataType >
-	std::vector<DataType> getData( size_t number )
-	{
-		std::vector< DataType > t;
-		return t;
-	}
-	
-private:
+
 	bool readData( char* data, size_t size )
 	{
-		while( ! feof( pFile ) )
-		{
-			if( fgets( data, size , pFile ) == NULL ) break;
-			fputs( data, stdout );
-		}
+		_file.read( data, size );
+		//_file >> data;
+/*
+		for (size_t i=0; i<size; ++i)
+			std::cout << "read : " << i << "  " << (unsigned char)data[i] << std::endl;
+*/
 		return true;
 	}
 	
 private:
-	FILE * pFile;
+	std::ifstream _file;
 };
-
-#include "File.tcc"
 
 #endif

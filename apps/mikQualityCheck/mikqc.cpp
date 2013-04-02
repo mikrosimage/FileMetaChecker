@@ -16,15 +16,14 @@ namespace bpo = boost::program_options;
 
 int main( int argc, char** argv )
 {
-	qc::common::Color color;
+	common::Color color;
 	bpo::options_description cmdlineOptions;
 	bpo::positional_options_description pod;
 	bpo::variables_map vm;
 
 	std::vector<std::string> paths;
-	
-	/*** OPTIONS ***/
-	// Declare the supported options
+
+	// Supported options
 	cmdlineOptions.add_options()
 		( "help,h", "produce help message" )
 		( "input,i", bpo::value< std::vector<std::string> >(), "input file" )
@@ -32,7 +31,7 @@ int main( int argc, char** argv )
 		( "script", "format the output such as it could be dump in a file" )
 	;
 
-	// define default options
+	// Default option
 	pod.add( "input", -1 );
 
 	// Parsing options
@@ -106,11 +105,17 @@ int main( int argc, char** argv )
 			fileSystemInfo.getReport( &report );
 			
 			Extractor extractor;
+			extractor.init();
+
 			extractor.openFilename( path );
 			
+			extractor.analyse();
+
 			extractor.closeFilename();
-			
+
 			extractor.getReport( &report );
+
+
 			
 			report.exportReport( path + ".xml" );
 		}

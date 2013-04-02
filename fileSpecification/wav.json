@@ -1,125 +1,97 @@
 {
-    "fileType": {
-        "name": "WAVE",
-        "extension": [
-            "wav",
-            "wave"
-        ]
-    },
-    "header": [
-        {
-            "shortId": "chunkId",
-            "id": "file bloc id",
-            "type": "ascii",
-            "length": 4,
-            "endian": "big",
-            "value": "RIFF"
-        },
-        {
-            "shortId": "chunkSize",
-            "id": "file size",
-            "type": "int",
-            "length": 4,
+	"standard": {
+		"label": "Waveform Audio File Format",
+		"id": "wav",
+		"type": "audio",
+		"extension": [
+			".wav",
+			".wave"
+		]
+	},
+	"header": [
+		{
+            "id": "chunkId",
+            "label": "File bloc id",
+			"endian": "big",
+			"ascii": "RIFF"
+		},
+		{
+            "id": "chunkSize",
+            "label": "File size",
+			"type": "uint32",
+			"endian": "little"
+		},
+		{
+            "id": "riffType",
+            "label": "Riff type id",
+			"endian": "big",
+			"ascii": "WAVE"
+		},
+		{
+            "id": "fmtSubChunks",
+            "label": "Format sub-chunk",
+			"ascii": "fmt ",
+			"endian": "big"
+		},
+		{
+            "id": "fmtSize",
+            "label": "Sub-chunk size",
+			"type": "uint32",
+			"endian": "little"
+		},
+		{
+            "id": "compressionCode",
+            "label": "Compression code",
+			"type": "uint16",
+			"endian": "little",
+			"map": [
+				{ "0": "unknown" },
+				{ "1": "PCM/uncompressed" },
+				{ "2": "Microsoft ADPCM" },
+				{ "6": "ITU G.711 a-law" },
+				{ "7": "ITU G.711 Âµ-law" },
+				{ "17": "IMA ADPCM" },
+				{ "20": "ITU G.723 ADPCM" },
+				{ "49": "GSM 6.10" },
+				{ "64": "ITU G.721 ADPCM" },
+				{ "80": "MPEG" },
+				{ "65536": "Experimental" }
+			]
+		},
+		{
+            "id": "numChannels",
+            "label": "Number of channels",
+			"type": "uint16",
+			"endian": "little"
+		},
+		{
+            "id": "sampleRate",
+            "label": "Sample rate",
+            "type": "uint32",
             "endian": "little"
-        },
-        {
-            "shortId": "riffType",
-            "id": "riff type id",
-            "type": "ascii",
-            "length": 4,
-            "endian": "big",
-            "value": "WAVE"
-        },
-        {
-            "shortId": "subChunks",
-            "id": "subChunks",
-            "type": "group",
-            "ordered" : "false",
-            "length": 4,
-            "values": [
+		},
+		{
+            "id": "byteRate",
+            "label": "Bytes per second",
+			"type": "uint32",
+			"endian": "little",
+			"expr": "sampleRate * blockAlign"
+		},
+		{
+            "id": "blockAlign",
+            "label": "Byte per block",
+			"type": "uint16",
+			"endian": "little",
+			"expr": "bitsPerSample / 8 * numChannels"
+		},
+		{
+            "id": "bitsPerSample",
+            "label": "Bits per sample",
+			"type": "uint16",
+			"endian": "little"
+		},
                 {
-                    "shortId": "fmt ",
-                    "id": "format",
-                    "type": "hexa",
-                    "length": 4,
-                    "endian": "big",
-                    "value": "666d7420",
-                    "optional": true,
-                    "ordered": false,
-                    "values": [
-                        {
-                            "shortId": "fmtSize",
-                            "id": "subChunk size",
-                            "type": "int",
-                            "length": 4,
-                            "endian": "little"
-                        },
-                        {
-                            "shortId": "audioFormat",
-                            "id": "audio format",
-                            "type": "int",
-                            "length": 2,
-                            "endian": "little",
-                            "choice":[      // --> label
-                                0,
-                                1,
-                                2,
-                                6,
-                                7,
-                                17,
-                                20,
-                                49,
-                                64,
-                                80,
-                                65536
-                            ]
-                        },
-                        {
-                            "shortId": "channelNumber",
-                            "id": "channel number",
-                            "type": "int",
-                            "length": 2,
-                            "endian": "little"
-                        },
-                        {
-                            "shortId": "sampleRate",
-                            "id": "sample rate",
-                            "type": "int",
-                            "length": 4,
-                            "endian": "little"
-                        },
-                        {
-                            "shortId": "byteRate",
-                            "id": "byte per second",
-                            "type": "int",
-                            "length": 4,
-                            "endian": "little"
-                        },
-                        {
-                            "shortId": "blockAlign",
-                            "id": "byte per block",
-                            "type": "int",
-                            "length": 2,
-                            "endian": "little"
-                        },
-                        {                                   // if audio format == 1
-                            "shortId": "bitsPerSample",
-                            "id": "bits per sample",
-                            "type": "int",
-                            "length": 2,
-                            "endian": "little"
-                        },
-                        {
-                            "shortId": "extraFormatBytes",
-                            "id": "extra format bytes",
-                            "type": "data"
-                            // "endian": "little"                     
-                        }
-                    ]
-                }
-                ,
-                {
-                    "shortId": "fact",
+                    "label": "fact",
                     "id": "fact",
                     "type": "hexa",
                     "length": 4,
@@ -129,52 +101,43 @@
                     "ordered": false,
                     "values": [
                         {
-                            "shortId": "factSize",
-                            "id": "subChunk size",
+                            "id": "factSize",
+                            "label": "subChunk size",
                             "type": "int",
                             "length": 4,
                             "endian": "little"
                         },
                         {
-                            "shortId": "dataSamples",
-                            "id": "data samples number",
+                            "id": "dataSamples",
+                            "label": "data samples number",
                             "type": "int",
                             "length": 4,
                             "endian": "little"
                         },
                         {
-                            "shortId": "formatDependantData",
-                            "id": "format dependant data",
-                            "type": "data"                        
+                            "id": "formatDependantData",
+                            "label": "format dependant data",
+                            "type": "data"
                         }
                     ]
                 },
                 {
-                    "shortId": "data",
-                    "id": "data",
-                    "type": "hexa",
-                    "length": 4,
-                    "endian": "big",
-                    "value": "64617461",
-                    "optional": false,
-                    "ordered": false,
-                    "values": [
-                        {
-                            "shortId": "dataSize",
-                            "id": "subChunk size",
-                            "type": "int",
-                            "length": 4,
-                            "endian": "little"
-                        }
-                        ,
-                        {
-                            "shortId": "sampleData",
-                            "id": "sample data",
-                            "type": "data"
-                        }
-                    ]
-                }
-                ,
+            "id": "data",
+			"id": "data",
+			"endian": "big",
+			"ascii": "data"
+		},
+		{
+			"shortId": "dataSize",
+			"id": "subChunk size",
+			"type": "uint32",
+			"endian": "little"
+		},
+		{
+			"shortId": "sampleData",
+			"id": "sample data",
+			"type": "data"
+		},
                 {
                     "shortId": "wavl",
                     "id": "wave list",
@@ -390,7 +353,7 @@
                             "id": "purpose id",
                             "type": "hexa",
                             "length": 4
-                        },                        
+                        },
                         {
                             "shortId": "countryId",
                             "id": "country id",
@@ -458,7 +421,7 @@
                             "type": "int",
                             "length": 4,
                             "endian": "little"
-                        },                        
+                        },
                         {
                             "shortId": "midiUnitNote",
                             "id": "midi unit note",
@@ -514,7 +477,7 @@
                             "shortId": "sampleLoopsList",
                             "id": "sample loops list",
                             "type": "data"
-                        }                       
+                        }
                     ]
                 }
                 ,
@@ -563,7 +526,7 @@
                                 -64,
                                 64
                             ]
-                        },                        
+                        },
                         {
                             "shortId": "lowVelocity",
                             "id": "low velocity",
@@ -585,12 +548,10 @@
                                 1,
                                 127
                             ]
-                        }               
+                        }
                     ]
                 }
 
 
             ]
         }
-    ]
-}
