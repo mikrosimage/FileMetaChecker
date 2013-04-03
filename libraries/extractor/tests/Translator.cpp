@@ -29,12 +29,12 @@ BOOST_AUTO_TEST_CASE( translator_hexa )
 {
 	{
 		Translator<Hexa> trChar;
-		Hexa ret = trChar.translate( dataInt8Low );
+		Hexa ret = trChar.translate( dataInt8Low, 1 );
 		BOOST_CHECK_EQUAL( ret.value, "00" );
 	}
 	{
 		Translator<Hexa> trChar;
-		Hexa ret = trChar.translate( dataInt8High );
+		Hexa ret = trChar.translate( dataInt8High, 1 );
 		BOOST_CHECK_EQUAL( ret.value, "ff" );
 	}
 }
@@ -172,7 +172,7 @@ BOOST_AUTO_TEST_CASE( translator_int32_be )
 	{
 		Translator<int32> trChar;
 		int32 ret = trChar.translate( dataInt32Full );
-		BOOST_CHECK_EQUAL( ret, -16843009 );
+		BOOST_CHECK_EQUAL( ret, -257 );
 	}
 }
 
@@ -181,7 +181,7 @@ BOOST_AUTO_TEST_CASE( translator_uint32_be )
 	{
 		Translator<uint32> trChar;
 		uint32 ret = trChar.translate( dataInt32Low );
-		BOOST_CHECK_EQUAL( ret, 4294967295 );
+		BOOST_CHECK_EQUAL( ret, 255 );
 	}
 	{
 		Translator<uint32> trChar;
@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE( translator_uint32_be )
 	{
 		Translator<uint32> trChar;
 		uint32 ret = trChar.translate( dataInt32Full );
-		BOOST_CHECK_EQUAL( ret, 4278124287 );
+		BOOST_CHECK_EQUAL( ret, std::numeric_limits<unsigned int>::max() );
 	}
 }
 
@@ -210,7 +210,7 @@ BOOST_AUTO_TEST_CASE( translator_int32_le )
 	{
 		Translator<int32> trChar;
 		int32 ret = trChar.translate( dataInt32Full, 2, false );
-		BOOST_CHECK_EQUAL( ret, -16843009 );
+		BOOST_CHECK_EQUAL( ret, -257 );
 	}
 }
 
@@ -224,12 +224,12 @@ BOOST_AUTO_TEST_CASE( translator_uint32_le )
 	{
 		Translator<uint32> trChar;
 		uint32 ret = trChar.translate( dataInt32High, 2, false );
-		BOOST_CHECK_EQUAL( ret, 4294967295 );
+		BOOST_CHECK_EQUAL( ret, 255 );
 	}
 	{
 		Translator<uint32> trChar;
 		uint32 ret = trChar.translate( dataInt32Full, 2, false );
-		BOOST_CHECK_EQUAL( ret, 4278124287 );
+		BOOST_CHECK_EQUAL( ret, std::numeric_limits<unsigned int>::max() );
 	}
 }
 

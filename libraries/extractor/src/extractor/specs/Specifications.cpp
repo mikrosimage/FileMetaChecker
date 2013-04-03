@@ -27,6 +27,7 @@ void Specifications::init()
 
 void Specifications::updateList()
 {
+	specList.clear();
 	BOOST_FOREACH( std::string filepath, paths )
 	{
 		COMMON_COUT_DEBUG( "Search specs in path : " << filepath );

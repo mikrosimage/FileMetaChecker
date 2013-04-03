@@ -65,7 +65,8 @@ int16 Translator<int16>::translate( const char* data, const size_t, const bool b
 	const size_t pos0 = bigEndian ? 0 : 1;
 	const size_t pos1 = bigEndian ? 1 : 0;
 	
-	return ( (unsigned char) data[ pos0 ] << 8 ) + (unsigned char) data[ pos1 ];
+	return ( (size_t)(unsigned char) data[ pos0 ] << 8 ) +
+		   (size_t)(unsigned char) data[ pos1 ];
 }
 
 template<>
@@ -73,7 +74,8 @@ uint16 Translator<uint16>::translate( const char* data, const size_t, const bool
 {
 	const size_t pos0 = bigEndian ? 0 : 1;
 	const size_t pos1 = bigEndian ? 1 : 0;
-	return ( (unsigned char) data[ pos0 ] << 8 ) + (unsigned char) data[ pos1 ];
+	return ( (size_t)(unsigned char) data[ pos0 ] << 8 ) +
+		   (size_t)(unsigned char) data[ pos1 ];
 }
 
 template<>
@@ -84,10 +86,10 @@ int32 Translator<int32>::translate( const char* data, const size_t, const bool b
 	const size_t pos2 = bigEndian ? 2 : 1;
 	const size_t pos3 = bigEndian ? 3 : 0;
 	
-	return  ( (unsigned int) data[ pos0 ] << 24 ) +
-			( (unsigned int) data[ pos1 ] << 16 ) +
-			( (unsigned int) data[ pos2 ] << 8  ) +
-			(unsigned int) data[ pos3 ];
+	return  ( ( (size_t)(unsigned char)data[ pos0 ] ) << 24 ) +
+			( ( (size_t)(unsigned char)data[ pos1 ] ) << 16 ) +
+			( ( (size_t)(unsigned char)data[ pos2 ] ) << 8  ) +
+			(size_t)(unsigned int) data[ pos3 ];
 }
 
 template<>
@@ -103,9 +105,9 @@ uint32 Translator<uint32>::translate( const char* data, const size_t, const bool
 		os << std::hex << std::setfill('0') << std::setw(2) << (int)(unsigned char)data[ bigEndian ? i : 3 - i ];
 	COMMON_COUT_VAR( os.str() );*/
 
-	return (size_t)( ( (size_t)(unsigned char)data[ pos0 ] ) << 24 ) |
-		   (size_t)( ( (size_t)(unsigned char)data[ pos1 ] ) << 16 ) |
-		   (size_t)( ( (size_t)(unsigned char)data[ pos2 ] ) << 8 ) |
+	return ( ( (size_t)(unsigned char)data[ pos0 ] ) << 24 ) |
+		   ( ( (size_t)(unsigned char)data[ pos1 ] ) << 16 ) |
+		   ( ( (size_t)(unsigned char)data[ pos2 ] ) << 8 ) |
 		   (size_t)(unsigned char)data[ pos3 ];
 }
 

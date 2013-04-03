@@ -1,6 +1,8 @@
 #ifndef _EXTRACTOR_INPUT_FILE_TYPE_HPP_
 #define _EXTRACTOR_INPUT_FILE_TYPE_HPP_
 
+#include <string>
+
 typedef          char       int8;
 typedef   signed char      sint8;
 typedef unsigned char      uint8;
