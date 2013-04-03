@@ -6,12 +6,20 @@
 #include <common/global.hpp>
 #include <iomanip>
 
-const std::string kId    = "id";
-const std::string kLabel = "label";
+const std::string kId     = "id";
+const std::string kLabel  = "label";
 
-const std::string kAscii = "ascii";
-const std::string kHexa  = "hexa";
-const std::string kType  = "type";
+const std::string kAscii  = "ascii";
+const std::string kHexa   = "hexa";
+const std::string kType   = "type";
+
+const std::string kEndian        = "endian";
+const std::string kEndianBig     = "big";
+const std::string kEndianLittle  = "little";
+
+const std::string kOptional      = "optional";
+const std::string kOptionalTrue  = "true";
+const std::string kOptionalFalse = "false";
 
 NodeSpecification::NodeSpecification( File* file, SubSpec& subSpec )
 	: _file ( file )
@@ -110,12 +118,13 @@ bool NodeSpecification::isValid()
 {
 	bool isValid = false;
 	std::string message;
-	std::string id = _subSpec.second.get< std::string >( kId );
-	std::string label = _subSpec.second.get< std::string >( kLabel, "" );
+	std::string id         = _subSpec.second.get< std::string >( kId );
+	std::string label      = _subSpec.second.get< std::string >( kLabel, "" );
 	std::string asciiValue = _subSpec.second.get< std::string >( kAscii, "" );
-	std::string hexaValue = _subSpec.second.get< std::string >( kHexa, "" );
-	std::string type = _subSpec.second.get< std::string >( "type", "" );
-	bool endianValue = ( _subSpec.second.get<std::string>( "endian", "big" ) == "big" );
+	std::string hexaValue  = _subSpec.second.get< std::string >( kHexa, "" );
+	std::string type       = _subSpec.second.get< std::string >( kType, "" );
+	bool endianValue = ( _subSpec.second.get<std::string>( kEndian, kEndianBig ) == kEndianBig );
+	bool optional    = ( _subSpec.second.get<std::string>( kOptional, kOptionalFalse ) == kOptionalFalse );
 
 	if( asciiValue != "" )
 	{
@@ -132,7 +141,12 @@ bool NodeSpecification::isValid()
 
 		isValid = ( asciiValue ==  value.value );
 
-		//COMMON_COUT_VAR2( asciiValue, value.value );
+		if( optional && !isValid )
+		{
+			_file->goBack( size );
+		}
+
+		COMMON_COUT_VAR2( asciiValue, value.value );
 	}
 
 	if( hexaValue != "" )
@@ -166,11 +180,7 @@ bool NodeSpecification::isValid()
 		bool validInt32  = isValidInt<int32> ( _file, message, type, endianValue );
 
 		isValid = validUInt8 | validInt8 | validUInt16 | validInt16 | validUInt32 | validInt32;
-
 	}
-
-
-
 
 	COMMON_COUT( ( isValid ? common::details::kColorGreen : common::details::kColorRed ) << "\t" << std::left << std::setw(40) << ( label + " - " + id ) << "\t" << common::details::kColorStd << message );
 	return isValid;

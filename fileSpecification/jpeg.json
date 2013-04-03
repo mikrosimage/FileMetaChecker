@@ -88,6 +88,12 @@
             "id": "th",
             "label": "Thumbnail height",
 			"type": "uint8"
-		}
+        },
+        {
+            "id": "thumbnailData",
+            "label": "Thumbnail data",
+            "type": "data",
+            "count": "3 * tw * th"
+        }
 	]
 }

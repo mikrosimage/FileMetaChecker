@@ -27,7 +27,7 @@ public:
 		_file.close();
 	}
 
-	bool readData( char* data, size_t size )
+	bool readData( char* data, const size_t size )
 	{
 		_file.read( data, size );
 		//_file >> data;
@@ -36,6 +36,11 @@ public:
 			std::cout << "read : " << i << "  " << (unsigned char)data[i] << std::endl;
 */
 		return true;
+	}
+
+	void goBack( const std::size_t size)
+	{
+		_file.seekg( _file.tellg() - (int)size );
 	}
 	
 private:

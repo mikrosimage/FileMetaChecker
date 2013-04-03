@@ -93,25 +93,19 @@
                 {
                     "label": "fact",
                     "id": "fact",
-                    "type": "hexa",
-                    "length": 4,
-                    "endian": "big",
-                    "value": "66616374",
+                    "ascii": "fact",
                     "optional": true,
-                    "ordered": false,
-                    "values": [
+                    "group": [
                         {
                             "id": "factSize",
-                            "label": "subChunk size",
-                            "type": "int",
-                            "length": 4,
+                            "label": "SubChunk size",
+                            "type": "uint32",
                             "endian": "little"
                         },
                         {
                             "id": "dataSamples",
-                            "label": "data samples number",
-                            "type": "int",
-                            "length": 4,
+                            "label": "Data samples number",
+                            "type": "uint32",
                             "endian": "little"
                         },
                         {
@@ -122,14 +116,15 @@
                     ]
                 },
                 {
-            "id": "data",
-			"id": "data",
+            "label": "Data sub-chunk",
+            "id": "dataSubChunck",
 			"endian": "big",
 			"ascii": "data"
 		},
 		{
-			"shortId": "dataSize",
-			"id": "subChunk size",
+            "label": "Sub-chunk size",
+            "id": "dataSize",
+            "id": "dataSize",
 			"type": "uint32",
 			"endian": "little"
 		},
@@ -139,12 +134,9 @@
 			"type": "data"
 		},
                 {
-                    "shortId": "wavl",
-                    "id": "wave list",
-                    "type": "hexa",
-                    "length": 4,
-                    "endian": "big",
-                    "value": "7761766c",
+                    "label": "Wave list",
+                    "id": "wavl",
+                    "ascii": "wavl",
                     "optional": true,
                     "ordered": false,
                     "values": [
@@ -164,12 +156,9 @@
                 }
                 ,
                 {
-                    "shortId": "slnt",
-                    "id": "silent",
-                    "type": "hexa",
-                    "length": 4,
-                    "endian": "big",
-                    "value": "736c6e74",
+                    "id": "slnt",
+                    "label": "Silent",
+                    "ascii": "slnt",
                     "optional": true,
                     "ordered": false,
                     "values": [
@@ -191,12 +180,9 @@
                 }
                 ,
                 {
-                    "shortId": "cue ",
-                    "id": "cue",
-                    "type": "hexa",
-                    "length": 4,
-                    "endian": "big",
-                    "value": "63756520",
+                    "label": "Cue",
+                    "id": "cue ",
+                    "ascii": "cue ",
                     "optional": true,
                     "ordered": false,
                     "values": [
@@ -223,12 +209,9 @@
                 }
                 ,
                 {
-                    "shortId": "plst",
-                    "id": "playlist",
-                    "type": "hexa",
-                    "length": 4,
-                    "endian": "big",
-                    "value": "706c7374",
+                    "id": "plst",
+                    "label": "Playlist",
+                    "ascii": "plst",
                     "optional": true,
                     "ordered": false,
                     "values": [
@@ -255,12 +238,9 @@
                 }
                 ,
                 {
-                    "shortId": "list",
-                    "id": "associated data list",
-                    "type": "hexa",
-                    "length": 4,
-                    "endian": "big",
-                    "value": "6c697374",
+                    "id": "list",
+                    "label": "Associated data list",
+                    "ascii": "list",
                     "optional": true,
                     "ordered": false,
                     "values": [
@@ -289,10 +269,7 @@
                 {
                     "shortId": "labl",
                     "id": "label",
-                    "type": "hexa",
-                    "length": 4,
-                    "endian": "big",
-                    "value": "6c61626c",
+                    "ascii": "labl",
                     "optional": true,
                     "ordered": false,
                     "values": [
