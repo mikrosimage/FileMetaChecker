@@ -124,21 +124,20 @@
 		{
             "label": "Sub-chunk size",
             "id": "dataSize",
-            "id": "dataSize",
 			"type": "uint32",
 			"endian": "little"
 		},
 		{
-			"shortId": "sampleData",
-			"id": "sample data",
-			"type": "data"
+			"id": "sampleData",
+			"label": "sample data",
+			"type": "data",
+            "count": "dataSize"
 		},
                 {
                     "label": "Wave list",
                     "id": "wavl",
                     "ascii": "wavl",
                     "optional": true,
-                    "ordered": false,
                     "values": [
                         {
                             "shortId": "wavlSize",
@@ -160,7 +159,6 @@
                     "label": "Silent",
                     "ascii": "slnt",
                     "optional": true,
-                    "ordered": false,
                     "values": [
                         {
                             "shortId": "slntSize",
@@ -184,7 +182,6 @@
                     "id": "cue ",
                     "ascii": "cue ",
                     "optional": true,
-                    "ordered": false,
                     "values": [
                         {
                             "shortId": "cueSize",
@@ -213,7 +210,6 @@
                     "label": "Playlist",
                     "ascii": "plst",
                     "optional": true,
-                    "ordered": false,
                     "values": [
                         {
                             "shortId": "plstSize",
@@ -242,7 +238,6 @@
                     "label": "Associated data list",
                     "ascii": "list",
                     "optional": true,
-                    "ordered": false,
                     "values": [
                         {
                             "shortId": "plstSize",
@@ -271,7 +266,6 @@
                     "id": "label",
                     "ascii": "labl",
                     "optional": true,
-                    "ordered": false,
                     "values": [
                         {
                             "shortId": "lablSize",
@@ -296,14 +290,10 @@
                 }
                 ,
                 {
-                    "shortId": "ltxt",
-                    "id": "labeled text",
-                    "type": "hexa",
-                    "length": 4,
-                    "endian": "big",
-                    "value": "6c747874",
+                    "id": "ltxt",
+                    "label": "labeled text",
+                    "ascii": "ltxt",
                     "optional": true,
-                    "ordered": false,
                     "values": [
                         {
                             "shortId": "ltxtSize",
@@ -364,12 +354,9 @@
                 }
                 ,
                 {
-                    "shortId": "smpl",
-                    "id": "sampler",
-                    "type": "hexa",
-                    "length": 4,
-                    "endian": "big",
-                    "value": "736d706c",
+                    "id": "smpl",
+                    "label": "sampler",
+                    "ascii": "smpl",
                     "optional": true,
                     "ordered": false,
                     "values": [
@@ -459,14 +446,10 @@
                 }
                 ,
                 {
-                    "shortId": "inst",
-                    "id": "instrument",
-                    "type": "hexa",
-                    "length": 4,
-                    "endian": "big",
-                    "value": "696e7374",
+                    "id": "inst",
+                    "label": "instrument",
+                    "ascii": "inst",
                     "optional": true,
-                    "ordered": false,
                     "values": [
                         {
                             "shortId": "instSize",

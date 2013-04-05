@@ -1,8 +1,8 @@
 {
     "standard": {
-	"label": "Truevision Targa",
+        "label": "Truevision Targa",
         "id": "tga",
-	"type":"image",
+        "type":"image",
         "extension": [
             ".tga",
             ".tpic"

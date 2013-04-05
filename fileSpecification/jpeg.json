@@ -53,21 +53,7 @@
                 { "00": "pixel aspect ratio" },
                 { "01": "dots per inch" },
                 { "02": "dots per cm" }
-            ],
-			"choice": [
-				{
-					"id": "pixel aspect ratio",
-					"hexa": "00"
-				},
-				{
-					"id": "dots per inch",
-					"hexa": "01"
-				},
-				{
-					"id": "dots per cm",
-					"hexa": "02"
-				}
-			]
+            ]
 		},
 		{
             "id": "xDensity",
