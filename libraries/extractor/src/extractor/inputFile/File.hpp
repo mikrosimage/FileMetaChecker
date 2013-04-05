@@ -29,18 +29,20 @@ public:
 
 	bool readData( char* data, const size_t size )
 	{
+		//COMMON_COUT( "read pos: " << _file.tellg() );
 		_file.read( data, size );
-		//_file >> data;
-/*
-		for (size_t i=0; i<size; ++i)
-			std::cout << "read : " << i << "  " << (unsigned char)data[i] << std::endl;
-*/
-		return true;
+/*		for (size_t i=0; i<size; ++i)
+			std::cout << "read : " << i << "  " << (unsigned char)data[i] << std::endl; */
+		
+		//COMMON_COUT_VAR2(_file.gcount(), (int)size);
+		
+		return ( _file.gcount() == (int)size );
 	}
 
-	void goBack( const std::size_t size)
+	void goBack( const std::size_t size )
 	{
-		_file.seekg( _file.tellg() - (int)size );
+		_file.seekg( - size, std::ios::cur );
+		//COMMON_COUT( "pos: " << _file.tellg() );
 	}
 	
 private:
