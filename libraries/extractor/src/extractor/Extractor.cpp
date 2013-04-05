@@ -68,11 +68,33 @@ void Extractor::analyse( )
 			COMMON_COUT( "-> Parse Header" );
 			SpecIt header = spec.getHeader( );
 
+			NodeSpecification ns( _file );
+			bool isValidFile = true;
+			
 			BOOST_FOREACH( SubSpec v, header->second )
 			{
-				NodeSpecification ns( _file, v );
-
-				ns.isValid( );
+				if( ! ns.isValid( v ) )
+				{
+					COMMON_COUT( v.second.get< std::string >( "id" ) );
+					isValidFile = false;
+				}
+			}
+			
+			if( isValidFile )
+			{
+				COMMON_COUT( common::details::kColorGreen );
+				COMMON_COUT_X( 80, "*" );
+				COMMON_COUT( "VALID " << spec.getLabel() );
+				COMMON_COUT_X( 80, "*" );
+				COMMON_COUT( common::details::kColorStd );
+			}
+			else
+			{
+				COMMON_COUT( common::details::kColorRed );
+				COMMON_COUT_X( 80, "*" );
+				COMMON_COUT( "NOT VALID " << spec.getLabel() );
+				COMMON_COUT_X( 80, "*" );
+				COMMON_COUT( common::details::kColorStd );
 			}
 		}
 	}
