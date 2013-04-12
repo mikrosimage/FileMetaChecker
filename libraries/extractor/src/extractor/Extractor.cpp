@@ -35,7 +35,8 @@ void Extractor::init()
 bool Extractor::openFilename( const std::string& filename )
 {
 	bfs::path path( filename );
-	_ext = boost::to_lower_copy( path.extension().string() );
+	_ext = path.extension().string();
+	boost::algorithm::to_lower( _ext );
 	return _file->open( filename );
 }
 
@@ -58,7 +59,6 @@ void Extractor::analyse( )
 
 		BOOST_FOREACH( std::string ext, exts )
 		{
-			COMMON_COUT( _ext );
 			if( ext == _ext )
 			{
 				extIsSupported = true;
