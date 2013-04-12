@@ -16,6 +16,7 @@ const std::string kAscii  = "ascii";
 const std::string kHexa   = "hexa";
 const std::string kType   = "type";
 const std::string kCount  = "count";
+const std::string kMap    = "map";
 
 const std::string kEndian        = "endian";
 const std::string kEndianBig     = "big";
@@ -127,6 +128,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec )
 	std::string hexaValue  = subSpec.second.get< std::string >( kHexa, "" );
 	std::string type       = subSpec.second.get< std::string >( kType, "" );
 	std::string count      = subSpec.second.get< std::string >( kCount, "" );
+	std::string map        = subSpec.second.get< std::string >( kMap, "" );
 	bool endianValue = ( subSpec.second.get<std::string>( kEndian, kEndianBig ) == kEndianBig );
 	bool optional    = ( subSpec.second.get<std::string>( kOptional, kOptionalFalse ) == kOptionalTrue );
 

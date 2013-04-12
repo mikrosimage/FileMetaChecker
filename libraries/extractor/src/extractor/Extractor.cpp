@@ -10,6 +10,7 @@
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/none.hpp>
+#include <boost/algorithm/string.hpp>
 
 namespace bfs = boost::filesystem;
 
@@ -34,7 +35,7 @@ void Extractor::init()
 bool Extractor::openFilename( const std::string& filename )
 {
 	bfs::path path( filename );
-	_ext = path.extension().string();
+	_ext = boost::to_lower_copy( path.extension().string() );
 	return _file->open( filename );
 }
 
@@ -51,12 +52,13 @@ void Extractor::analyse( )
 	BOOST_FOREACH( Specification spec, specs )
 	{
 		std::vector< std::string > exts = spec.getsupportedExtensions();
-		bool extIsSupported = false;
+		bool extIsSupported = false;			
 
 		COMMON_COUT( common::details::kColorBlue << "Analyse file as a : " << spec.getLabel() << common::details::kColorStd );
 
 		BOOST_FOREACH( std::string ext, exts )
 		{
+			COMMON_COUT( _ext );
 			if( ext == _ext )
 			{
 				extIsSupported = true;

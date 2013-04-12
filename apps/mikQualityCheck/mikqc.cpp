@@ -98,12 +98,11 @@ int main( int argc, char** argv )
 		try
 		{
 			Report report;
-			
+
 			FileSystemInfo fileSystemInfo( path );
 			COMMON_COUT( fileSystemInfo );
-			
 			fileSystemInfo.getReport( &report );
-			
+
 			Extractor extractor;
 			extractor.init();
 
