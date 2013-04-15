@@ -2,6 +2,7 @@
 
 #include <extractor/inputFile/File.hpp>
 #include <extractor/inputFile/Translator.hpp>
+#include <extractor/expressionParser/ExpressionParser.hpp>
 
 
 #include <boost/foreach.hpp>
@@ -267,18 +268,15 @@ bool NodeSpecification::isValid( SubSpec& subSpec )
 		{
 			size_t size = 0;
 			
-			// COMMON_COUT( "research: " << count << "        " << _headerElements.size() );
-			BOOST_FOREACH( ElementsPair pair, _headerElements )
+			ExpressionParser ep = ExpressionParser();
+			ep.setVariables( _headerElements );
+
+			if( count != "" )
 			{
-				// COMMON_COUT( "in " << pair.first );
-				if( pair.first == count )
-				{
-					// COMMON_COUT( "found " << count << " = " << pair.second );
-					size = pair.second;
-				}
+				size = ep.parseExpression( count );
 			}
 			
-			message += " ( " + getPrintable( size ) + " )";
+			message += " ( size = " + getPrintable( size ) + " )";
 			
 			char buffer[ size ];
 			if( ! _file->readData( buffer, size ) )
