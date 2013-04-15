@@ -8,6 +8,7 @@
 
 #include <common/global.hpp>
 #include <iomanip>
+#include <cstdlib>
 
 const std::string kId     = "id";
 const std::string kLabel  = "label";
@@ -98,25 +99,62 @@ std::string getPrintable<int8>( int8 value )
 	return os.str();
 }
 
+template< typename IntType >
+std::string getMap( SubSpec& subSpec, std::map< IntType, std::string >& map, const size_t size, const bool isBigEndian, const IntType value )
+{
+	std::string description = "";
+	if( boost::optional< const Spec& > mapNode = subSpec.second.get_child_optional( kMap ) )
+	{
+		Translator<Ascii> tr;
+		BOOST_FOREACH( SubSpec& m, mapNode.get() )
+		{
+			std::string index = m.second.ordered_begin()->first;
+			try
+			{
+				IntType i = atoi( index.c_str() );
+				if( value == i )
+				{
+					description = m.second.get<std::string>( index );
+				}
+			}
+			catch(...)
+			{
+				COMMON_COUT( "Can not convert index of map: " << index );
+			}
+		}
+	}
+	return description;
+}
 
 template< typename IntType >
-bool isValidInt( File* _file, std::string& message, const std::string& type, const bool isBigEndian, IntType& value )
+bool isValidInt( File* _file, std::string& message, const std::string& type, const bool isBigEndian, SubSpec& subSpec, IntType& value )
 {
 	if( type == getStringForType<IntType>() )
 	{
 		size_t size = sizeof( IntType );
 		char buffer[ size ];
-		_file->readData( buffer, size );
-
 		Translator<IntType> tr;
-		value = tr.translate( buffer, size, isBigEndian );
-
-		message += " = " + getPrintable( value );
+		std::map< IntType, std::string > map;
+		std::string stringValue;
 		
+		_file->readData( buffer, size );
+		value = tr.translate( buffer, size, isBigEndian );
+		stringValue = getMap( subSpec, map, size, isBigEndian, value );
+
+		message += " = ";
+		if( stringValue == "" )
+		{
+			message += getPrintable( value );
+		}
+		else
+		{
+			message += stringValue + " (" + getPrintable( value ) + ")";
+		}
 		return true;
 	}
 	return false;
 }
+
 
 bool NodeSpecification::isValid( SubSpec& subSpec )
 {
@@ -126,9 +164,9 @@ bool NodeSpecification::isValid( SubSpec& subSpec )
 	std::string label      = subSpec.second.get< std::string >( kLabel, "" );
 	std::string asciiValue = subSpec.second.get< std::string >( kAscii, "" );
 	std::string hexaValue  = subSpec.second.get< std::string >( kHexa, "" );
-	std::string type       = subSpec.second.get< std::string >( kType, "" );
+	std::string typeValue  = subSpec.second.get< std::string >( kType, "" );
 	std::string count      = subSpec.second.get< std::string >( kCount, "" );
-	std::string map        = subSpec.second.get< std::string >( kMap, "" );
+
 	bool endianValue = ( subSpec.second.get<std::string>( kEndian, kEndianBig ) == kEndianBig );
 	bool optional    = ( subSpec.second.get<std::string>( kOptional, kOptionalFalse ) == kOptionalTrue );
 
@@ -178,7 +216,6 @@ bool NodeSpecification::isValid( SubSpec& subSpec )
 		//COMMON_COUT_VAR2( hexaValue, value.value );
 	}
 
-	std::string typeValue = subSpec.second.get< std::string >( kType, "" );
 	if( typeValue != "" )
 	{
 		message += kType + " => " + typeValue;
@@ -190,19 +227,19 @@ bool NodeSpecification::isValid( SubSpec& subSpec )
 		uint32 uint32Val = 0;
 		int32  int32Val  = 0;
 		
-		bool validUInt8  = isValidInt<uint8> ( _file, message, type, endianValue, uint8Val );
-		bool validInt8   = isValidInt<int8>  ( _file, message, type, endianValue, int8Val );
-		bool validUInt16 = isValidInt<uint16>( _file, message, type, endianValue, uint16Val );
-		bool validInt16  = isValidInt<int16> ( _file, message, type, endianValue, int16Val );
-		bool validUInt32 = isValidInt<uint32>( _file, message, type, endianValue, uint32Val );
-		bool validInt32  = isValidInt<int32> ( _file, message, type, endianValue, int32Val );
+		bool validUInt8  = isValidInt<uint8> ( _file, message, typeValue, endianValue, subSpec, uint8Val );
+		bool validInt8   = isValidInt<int8>  ( _file, message, typeValue, endianValue, subSpec, int8Val );
+		bool validUInt16 = isValidInt<uint16>( _file, message, typeValue, endianValue, subSpec, uint16Val );
+		bool validInt16  = isValidInt<int16> ( _file, message, typeValue, endianValue, subSpec, int16Val );
+		bool validUInt32 = isValidInt<uint32>( _file, message, typeValue, endianValue, subSpec, uint32Val );
+		bool validInt32  = isValidInt<int32> ( _file, message, typeValue, endianValue, subSpec, int32Val );
 
 		bool validData = false;
 		
 		if( validUInt8 )
 		{
 			_headerElements[ id ] = uint8Val;
-			//COMMON_COUT( "add id : " << id << " = " << _headerElements[ id ] );
+			// COMMON_COUT( "add id : " << id << " = " << _headerElements[ id ] );
 		}
 		if( validInt8 )
 		{
@@ -226,17 +263,17 @@ bool NodeSpecification::isValid( SubSpec& subSpec )
 		}
 		
 		
-		if( type == "data" )
+		if( typeValue == "data" )
 		{
 			size_t size = 0;
 			
-			//COMMON_COUT( "research: " << count << "        " << _headerElements.size() );
+			// COMMON_COUT( "research: " << count << "        " << _headerElements.size() );
 			BOOST_FOREACH( ElementsPair pair, _headerElements )
 			{
-				//COMMON_COUT( "in " << pair.first );
+				// COMMON_COUT( "in " << pair.first );
 				if( pair.first == count )
 				{
-					//COMMON_COUT( "found " << count << " = " << pair.second );
+					// COMMON_COUT( "found " << count << " = " << pair.second );
 					size = pair.second;
 				}
 			}
