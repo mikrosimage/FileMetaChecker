@@ -4,6 +4,9 @@ project.StaticLibrary(
 		'report',
 		dirs      = ['src'],
 		includes  = ['src'],
-		libraries = [ libs.boost ],
+		libraries = [
+			libs.boost,
+			libs.common,
+			],
 		shared = True
 	)

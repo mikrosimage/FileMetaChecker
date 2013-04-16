@@ -49,11 +49,10 @@ void Extractor::analyse( )
 {
 	Specs specs;
 	_specs->getSpecList( specs );
-
 	BOOST_FOREACH( Specification spec, specs )
 	{
 		std::vector< std::string > exts = spec.getsupportedExtensions();
-		bool extIsSupported = false;			
+		bool extIsSupported = false;
 
 		COMMON_COUT( common::details::kColorBlue << "Analyse file as a : " << spec.getLabel() << common::details::kColorStd );
 
@@ -73,7 +72,7 @@ void Extractor::analyse( )
 			NodeSpecification ns( _file );
 			bool isValidFile = true;
 			
-			BOOST_FOREACH( SubSpec v, header->second )
+			BOOST_FOREACH( SubSpec& v, header->second )
 			{
 				if( ! ns.isValid( v ) )
 				{
@@ -84,6 +83,7 @@ void Extractor::analyse( )
 			
 			if( isValidFile )
 			{
+				_report.put( "status", "valid" );
 				COMMON_COUT( common::details::kColorGreen );
 				COMMON_COUT_X( 80, "*" );
 				COMMON_COUT( "VALID " << spec.getLabel() );
@@ -92,6 +92,7 @@ void Extractor::analyse( )
 			}
 			else
 			{
+				_report.put( "status", "not valid" );
 				COMMON_COUT( common::details::kColorRed );
 				COMMON_COUT_X( 80, "*" );
 				COMMON_COUT( "NOT VALID " << spec.getLabel() );
@@ -104,5 +105,6 @@ void Extractor::analyse( )
 
 void Extractor::getReport( Report* report )
 {
-	report->add( "header", "TODO" );
+	report->add( _report, "header" );
 }
+

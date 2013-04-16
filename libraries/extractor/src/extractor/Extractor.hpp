@@ -1,7 +1,11 @@
 #ifndef _EXTRACTOR_EXTRACTOR_HPP_
 #define _EXTRACTOR_EXTRACTOR_HPP_
 
+#include <boost/property_tree/ptree.hpp>
+
 #include <string>
+
+namespace bpt = boost::property_tree;
 
 class Report;
 class File;
@@ -13,7 +17,7 @@ public:
 	Extractor();
 	~Extractor();
 	
-	void init();
+	void init( );
 	void uninit();
 	
 	bool openFilename( const std::string& filename );
@@ -22,10 +26,11 @@ public:
 	void analyse( );
 
 	void getReport( Report* report );
-
+	
 private:
 	File*           _file;
 	Specifications* _specs;
+	bpt::ptree      _report;
 	std::string     _ext;
 };
 

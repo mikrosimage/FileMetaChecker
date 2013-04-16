@@ -11,6 +11,8 @@ public:
 	
 	void add( const std::string& entry, const std::string& value );
 	
+	void add(const bpt::ptree &tree, const std::string& rootpath );
+	
 	void exportReport( const std::string& filename );
 	
 private:
