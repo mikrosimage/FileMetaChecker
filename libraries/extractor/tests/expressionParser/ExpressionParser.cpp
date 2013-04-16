@@ -64,16 +64,26 @@ BOOST_AUTO_TEST_CASE( expressionParser_parseExpression )
 
 		expParser.setVariables( map );
 		expParser.addPythonHeader( "from math import *");
-		int result;
-		result = expParser.parseExpression( "ijkl + mnop + efgh" );
-		BOOST_CHECK_EQUAL( result, 6 );
-		result = expParser.parseExpression( "3 * abcd" );
-		BOOST_CHECK_EQUAL( result, 0 );
-		result = expParser.parseExpression( "mnop / 3" );
-		BOOST_CHECK_EQUAL( result, 1 );
-		BOOST_CHECK_THROW( expParser.parseExpression( " mnop / 3" ), boost::python::error_already_set );
-		BOOST_CHECK_THROW( expParser.parseExpression( "" ), boost::python::error_already_set );
-		BOOST_CHECK_THROW( expParser.parseExpression( " " ), boost::python::error_already_set );
+		
+		BOOST_CHECK_EQUAL( expParser.parseExpression<int>( "3 * abcd" ), 0 );
+		BOOST_CHECK_EQUAL( expParser.parseExpression<int>( "mnop / 3" ), 1 );
+
+		BOOST_REQUIRE_CLOSE( expParser.parseExpression<float>( "2.2*2" ), 4.40, 0.01 );
+		BOOST_REQUIRE_CLOSE( expParser.parseExpression<float>( "2.002*3" ), 6.006, 0.01 );
+
+		BOOST_CHECK_EQUAL( expParser.parseExpression<std::string>( "'2.002*3'" ), "2.002*3" );
+		BOOST_CHECK_EQUAL( expParser.parseExpression<std::string>( "str(2*3)" ), "6" );
+
+		BOOST_CHECK_EQUAL( expParser.parseExpression<size_t>( "3 * abcd" ), 0 );		 
+
+		BOOST_CHECK_THROW( expParser.parseExpression<int>        ( "3 * other" ), boost::python::error_already_set );
+		BOOST_CHECK_THROW( expParser.parseExpression<float>      ( " mnop / 3" ), boost::python::error_already_set );
+		BOOST_CHECK_THROW( expParser.parseExpression<int>        ( "" ),          boost::python::error_already_set );
+		BOOST_CHECK_THROW( expParser.parseExpression<size_t>     ( " " ),         boost::python::error_already_set );
+		BOOST_CHECK_THROW( expParser.parseExpression<std::string>( "2*3" ),       boost::python::error_already_set );
+
+		BOOST_CHECK_THROW( expParser.parseExpression<std::string>( "quotation marks are missing" ), boost::python::error_already_set );
+
 	}
 }
 

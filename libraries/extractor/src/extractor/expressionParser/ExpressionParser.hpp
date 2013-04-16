@@ -11,7 +11,6 @@
 typedef std::map<std::string, unsigned int> ElementsMap;
 typedef std::pair<std::string, unsigned int> ElementsPair;
 
-
 class ExpressionParser
 {
 public:
@@ -19,7 +18,10 @@ public:
 	~ExpressionParser();
 
 	void setVariables( const ElementsMap& headerElements );
-	int parseExpression( const std::string& expression );
+
+	template< typename Type >
+	Type parseExpression( const std::string& expression );
+
 	void addPythonHeader( const std::string& pythonString );
 	std::string getPythonHeader();
 
@@ -28,5 +30,7 @@ private:
 	boost::python::object _main_namespace;
 	std::string _contextString;
 };
+
+#include "ExpressionParser.tcc"
 
 #endif

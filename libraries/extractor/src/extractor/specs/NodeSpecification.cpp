@@ -273,7 +273,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec )
 
 			if( count != "" )
 			{
-				size = ep.parseExpression( count );
+				size = ep.parseExpression<size_t>( count );
 			}
 			
 			message += " ( size = " + getPrintable( size ) + " )";
