@@ -3,7 +3,7 @@
 #include <iostream>
 #include <limits>
 
-#define BOOST_TEST_MODULE extractor_translator
+#define BOOST_TEST_MODULE qc_extractor_translator
 #include <boost/test/unit_test.hpp>
 
 using namespace boost::unit_test;

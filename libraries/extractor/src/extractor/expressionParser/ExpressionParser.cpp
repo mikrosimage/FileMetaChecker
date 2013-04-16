@@ -37,17 +37,39 @@ int ExpressionParser::parseExpression( const std::string& expression )
 		boost::python::object returnText = boost::python::eval( expression.c_str(), _main_namespace );
 		result = boost::python::extract<int>( returnText );
 	}
-	// catch( boost::python::error_already_set const & )
-	catch(...)
+	catch( boost::python::error_already_set const & )
 	{
-		COMMON_COUT( "Can not parse this expression: " << expression );
+		PyErr_Print();
+		throw;
+
+		// PyObject *type, *value, *traceback;
+		// PyErr_Fetch(&type, &value, &traceback);
+		// std::string message = "Python error: ";
+		// if (type) {
+		//     type = PyObject_Str(type);
+		//     message += PyString_AsString(type);
+		// }
+		// if (value) {
+		//     value = PyObject_Str(value);
+		//     message += ": ";
+		//     message += "\n";
+		//     message += PyString_AsString(value);
+		// }
+		// Py_XDECREF(type);
+		// Py_XDECREF(value);
+		// Py_XDECREF(traceback);
+		// COMMON_CERR( message );
+		// reference : https://svn.boost.org/trac/boost/ticket/2781
 	}
 	return result;
 }
 
-void ExpressionParser::addPythonHeader( const std::string pythonString )
+void ExpressionParser::addPythonHeader( const std::string& pythonString )
 {
-	_contextString.insert(0, pythonString + "\n");
+	_contextString.insert( 0, pythonString + "\n" );
 }
 
-
+std::string ExpressionParser::getPythonHeader()
+{
+	return _contextString;
+}

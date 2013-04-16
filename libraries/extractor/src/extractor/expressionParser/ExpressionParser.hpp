@@ -17,10 +17,11 @@ class ExpressionParser
 public:
 	ExpressionParser();
 	~ExpressionParser();
-	
+
 	void setVariables( const ElementsMap& headerElements );
 	int parseExpression( const std::string& expression );
-	void addPythonHeader( const std::string pythonString );
+	void addPythonHeader( const std::string& pythonString );
+	std::string getPythonHeader();
 
 private:
 	boost::python::object _main_module;
