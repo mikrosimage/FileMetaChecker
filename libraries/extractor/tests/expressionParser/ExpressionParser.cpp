@@ -65,16 +65,19 @@ BOOST_AUTO_TEST_CASE( expressionParser_parseExpression )
 		expParser.setVariables( map );
 		expParser.addPythonHeader( "from math import *");
 		
+		BOOST_CHECK_EQUAL( expParser.parseExpression<size_t>( "8" ), 8 );
+		BOOST_CHECK_EQUAL( expParser.parseExpression<size_t>( "3 * abcd" ), 0 );
+		
 		BOOST_CHECK_EQUAL( expParser.parseExpression<int>( "3 * abcd" ), 0 );
 		BOOST_CHECK_EQUAL( expParser.parseExpression<int>( "mnop / 3" ), 1 );
+		BOOST_CHECK_EQUAL( expParser.parseExpression<int>( "8" ), 8 );
+		BOOST_CHECK_EQUAL( expParser.parseExpression<int>( "-8" ), -8 );
 
 		BOOST_REQUIRE_CLOSE( expParser.parseExpression<float>( "2.2*2" ), 4.40, 0.01 );
 		BOOST_REQUIRE_CLOSE( expParser.parseExpression<float>( "2.002*3" ), 6.006, 0.01 );
 
 		BOOST_CHECK_EQUAL( expParser.parseExpression<std::string>( "'2.002*3'" ), "2.002*3" );
-		BOOST_CHECK_EQUAL( expParser.parseExpression<std::string>( "str(2*3)" ), "6" );
-
-		BOOST_CHECK_EQUAL( expParser.parseExpression<size_t>( "3 * abcd" ), 0 );		 
+		BOOST_CHECK_EQUAL( expParser.parseExpression<std::string>( "str(2*3)" ), "6" );		 
 
 		BOOST_CHECK_THROW( expParser.parseExpression<int>        ( "3 * other" ), boost::python::error_already_set );
 		BOOST_CHECK_THROW( expParser.parseExpression<float>      ( " mnop / 3" ), boost::python::error_already_set );
