@@ -10,6 +10,7 @@
 #include <common/global.hpp>
 #include <iomanip>
 #include <cstdlib>
+#include <cmath>
 
 const std::string kId     = "id";
 const std::string kLabel  = "label";
@@ -76,6 +77,19 @@ std::string getStringForType<int32>()
 	return "int32";
 }
 
+template< >
+std::string getStringForType<float>()
+{
+	return "float";
+}
+
+template< >
+std::string getStringForType<double>()
+{
+	return "double";
+}
+
+
 template< typename Type >
 std::string getPrintable( Type value )
 {
@@ -100,22 +114,59 @@ std::string getPrintable<int8>( int8 value )
 	return os.str();
 }
 
-template< typename IntType >
-std::string getMap( SubSpec& subSpec, std::map< IntType, std::string >& map, const size_t size, const bool isBigEndian, const IntType value )
+
+template<typename Type>
+Type getValueFromString( const std::string& string )
+{
+	return atoi( string.c_str() );
+}
+
+template< >
+float getValueFromString<float>( const std::string& string )
+{
+	return atof( string.c_str() );
+}
+
+template< >
+double getValueFromString<double>( const std::string& string )
+{
+	return atof( string.c_str() );
+}
+
+template<typename Type>
+inline bool isEqual( const Type& val1, const Type& val2 )
+{
+	return val1 == val2;
+}
+
+template< >
+inline bool isEqual<float>( const float& val1, const float& val2 )
+{
+	return val1 == val2 || ( std::isnan( val1 ) && std::isnan( val2 ) );
+}
+
+template< >
+inline bool isEqual<double>( const double& val1, const double& val2 )
+{
+	return val1 == val2 || ( std::isnan( val1 ) && std::isnan( val2 ) );
+}
+
+
+template< typename Type >
+std::string getMap( SubSpec& subSpec, std::map< Type, std::string >& map, const size_t size, const bool isBigEndian, const Type value )
 {
 	std::string description = "";
 	if( boost::optional< const Spec& > mapNode = subSpec.second.get_child_optional( kMap ) )
 	{
-		Translator<Ascii> tr;
 		BOOST_FOREACH( SubSpec& m, mapNode.get() )
 		{
 			std::string index = m.second.ordered_begin()->first;
 			try
 			{
-				IntType i = atoi( index.c_str() );
-				if( value == i )
+				Type i = getValueFromString< Type >( index );
+				if( isEqual( value, i ) )
 				{
-					description = m.second.get<std::string>( index );
+					description = m.second.get< std::string >( index );
 				}
 			}
 			catch(...)
@@ -126,6 +177,7 @@ std::string getMap( SubSpec& subSpec, std::map< IntType, std::string >& map, con
 	}
 	return description;
 }
+
 
 template< typename IntType >
 bool isValidInt( File* _file, std::string& message, const std::string& type, const bool isBigEndian, SubSpec& subSpec, IntType& value )
@@ -157,6 +209,37 @@ bool isValidInt( File* _file, std::string& message, const std::string& type, con
 }
 
 
+template< typename RealType >
+bool isValidReal( File* _file, std::string& message, const std::string& type, const bool isBigEndian, SubSpec& subSpec, RealType& value )
+{
+	if( type == getStringForType<RealType>() )
+	{
+		size_t size = sizeof( RealType );
+		char buffer[ size ];
+		Translator<RealType> tr;
+		std::map< RealType, std::string > map;
+		std::string stringValue;
+		
+		_file->readData( buffer, size );
+		value = tr.translate( buffer, size, isBigEndian );
+		stringValue = getMap( subSpec, map, size, isBigEndian, value );
+
+		message += " = ";
+
+		if( stringValue == "" )
+		{
+			message += getPrintable<RealType>(value);
+		}
+		else
+		{
+			message += stringValue + " (" + getPrintable(value) + ")";
+		}
+		return true;
+	}
+	return false;
+}
+
+
 bool NodeSpecification::isValid( SubSpec& subSpec )
 {
 	bool isValid = false;
@@ -171,7 +254,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec )
 	bool endianValue = ( subSpec.second.get<std::string>( kEndian, kEndianBig ) == kEndianBig );
 	bool optional    = ( subSpec.second.get<std::string>( kOptional, kOptionalFalse ) == kOptionalTrue );
 
-	//COMMON_COUT( "label " << label );
+	// COMMON_COUT( "label " << label );
 	
 	if( asciiValue != "" )
 	{
@@ -227,6 +310,9 @@ bool NodeSpecification::isValid( SubSpec& subSpec )
 		int16  int16Val  = 0;
 		uint32 uint32Val = 0;
 		int32  int32Val  = 0;
+
+		float  floatVal  = 0;
+		double doubleVal = 0;
 		
 		bool validUInt8  = isValidInt<uint8> ( _file, message, typeValue, endianValue, subSpec, uint8Val );
 		bool validInt8   = isValidInt<int8>  ( _file, message, typeValue, endianValue, subSpec, int8Val );
@@ -234,6 +320,9 @@ bool NodeSpecification::isValid( SubSpec& subSpec )
 		bool validInt16  = isValidInt<int16> ( _file, message, typeValue, endianValue, subSpec, int16Val );
 		bool validUInt32 = isValidInt<uint32>( _file, message, typeValue, endianValue, subSpec, uint32Val );
 		bool validInt32  = isValidInt<int32> ( _file, message, typeValue, endianValue, subSpec, int32Val );
+
+		bool validFloat   = isValidReal<float> ( _file, message, typeValue, endianValue, subSpec, floatVal );
+		bool validDouble  = isValidReal<double>( _file, message, typeValue, endianValue, subSpec, doubleVal );
 
 		bool validData = false;
 		
@@ -262,6 +351,15 @@ bool NodeSpecification::isValid( SubSpec& subSpec )
 		{
 			_headerElements[ id ] = int32Val;
 		}
+
+		if( validFloat )
+		{
+			_headerElements[ id ] = floatVal;
+		}
+		if( validDouble )
+		{
+			_headerElements[ id ] = doubleVal;
+		}
 		
 		
 		if( typeValue == "data" )
@@ -287,7 +385,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec )
 			validData = true;
 		}
 		
-		isValid = validUInt8 | validInt8 | validUInt16 | validInt16 | validUInt32 | validInt32 | validData;
+		isValid = validUInt8 | validInt8 | validUInt16 | validInt16 | validUInt32 | validInt32 | validFloat | validDouble | validData;
 	}
 	
 	COMMON_COUT( ( isValid ? common::details::kColorGreen : common::details::kColorRed ) << "\t" << std::left << std::setw(40) << ( label + " - " + id ) << "\t" << common::details::kColorStd << message );
