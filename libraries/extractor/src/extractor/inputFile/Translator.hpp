@@ -16,6 +16,12 @@ namespace utils
 		float f;
 		unsigned char c[0];
 	};
+
+	union doubleConverter
+	{
+		double f;
+		unsigned char c[0];
+	};
 }
 
 
@@ -140,8 +146,32 @@ float Translator<float>::translate( const char* data, const size_t, const bool b
 		floatValue.c[2] = data[1];
 		floatValue.c[3] = data[0];
 	}
-	
+
 	return floatValue.f;
+}
+
+template<>
+double Translator<double>::translate( const char* data, const size_t, const bool bigEndian )
+{
+	utils::doubleConverter doubleValue;
+
+	if( bigEndian )
+	{
+		std::memcpy( doubleValue.c, data, 8);
+	}
+	else
+	{
+		doubleValue.c[0] = data[7];
+		doubleValue.c[1] = data[6];
+		doubleValue.c[2] = data[5];
+		doubleValue.c[3] = data[4];
+		doubleValue.c[4] = data[3];
+		doubleValue.c[5] = data[2];
+		doubleValue.c[6] = data[1];
+		doubleValue.c[7] = data[0];
+	}
+	
+	return doubleValue.f;
 }
 
 #endif

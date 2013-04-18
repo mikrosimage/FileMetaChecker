@@ -37,6 +37,19 @@ const char dataFloatMaxBigEndian[]    = { max_char, max_char, mid_char, mid_char
 const char dataFloatNegMaxBigEndian[] = { max_char, max_char, mid_char, max_char };
 const char dataFloatMinBigEndian[]    = { max_char, max_char, mid_char, min_char };
 
+
+const char dataDoubleZero[]               = { min_char, min_char, min_char, min_char, min_char, min_char, min_char, min_char };
+
+const char dataDoubleOneLittleEndian[]    = { 0x3f, 0xf0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+const char dataDoubleMaxLittleEndian[]    = { mid_char, 0xef, max_char, max_char, max_char, max_char, max_char, max_char };
+const char dataDoubleNegMaxLittleEndian[] = { max_char, 0xef, max_char, max_char, max_char, max_char, max_char, max_char };
+const char dataDoubleMinLittleEndian[]    = { min_char, 0x10, min_char, min_char, min_char, min_char, min_char, min_char };
+
+const char dataDoubleOneBigEndian[]    = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf0, 0x3f };
+const char dataDoubleMaxBigEndian[]    = { max_char, max_char, max_char, max_char, max_char, max_char, 0xef, mid_char };
+const char dataDoubleNegMaxBigEndian[] = { max_char, max_char, max_char, max_char, max_char, max_char, 0xef, max_char };
+const char dataDoubleMinBigEndian[]    = { min_char, min_char, min_char, min_char, min_char, min_char, 0x10, min_char };
+
 BOOST_AUTO_TEST_SUITE( translator_tests_suite01 )
 
 BOOST_AUTO_TEST_CASE( translator_hexa )
@@ -291,17 +304,75 @@ BOOST_AUTO_TEST_CASE( translator_float_be )
 	{
 		Translator<float> trFloat;
 		float ret = trFloat.translate( dataFloatMaxBigEndian, 0, true );
-		BOOST_CHECK_CLOSE( ret, 3.40282e+38, 0.001 );
+		BOOST_CHECK_CLOSE( ret, std::numeric_limits<float>::max(), 0.001 );
 	}
 	{
 		Translator<float> trFloat;
 		float ret = trFloat.translate( dataFloatNegMaxBigEndian, 0, true );
-		BOOST_CHECK_CLOSE( ret, -3.40282e+38, 0.001 );
+		BOOST_CHECK_CLOSE( ret, -std::numeric_limits<float>::max(), 0.001 );
 	}
 	{
 		Translator<float> trFloat;
 		float ret = trFloat.translate( dataFloatMinBigEndian, 0, true );
-		BOOST_CHECK_CLOSE( ret, 1.17549e-38, 0.001 );
+		BOOST_CHECK_CLOSE( ret, std::numeric_limits<float>::min(), 0.001 );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( translator_double_le )
+{
+	{
+		Translator<double> trFloat;
+		double ret = trFloat.translate( dataDoubleZero, 0, false );
+		BOOST_CHECK_CLOSE( ret, 0.00, 0.001 );
+	}
+	{
+		Translator<double> trFloat;
+		double ret = trFloat.translate( dataDoubleOneLittleEndian, 0, false );
+		BOOST_CHECK_CLOSE( ret, 1.00, 0.001 );
+	}
+	{
+		Translator<double> trFloat;
+		double ret = trFloat.translate( dataDoubleMaxLittleEndian, 0, false );
+		BOOST_CHECK_CLOSE( ret, std::numeric_limits<double>::max(), 0.001 );
+	}
+	{
+		Translator<double> trFloat;
+		double ret = trFloat.translate( dataDoubleNegMaxLittleEndian, 0, false );
+		BOOST_CHECK_CLOSE( ret, -std::numeric_limits<double>::max(), 0.001 );
+	}
+	{
+		Translator<double> trFloat;
+		double ret = trFloat.translate( dataDoubleMinLittleEndian, 0, false );
+		BOOST_CHECK_CLOSE( ret, std::numeric_limits<double>::min(), 0.001 );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( translator_double_be )
+{
+	{
+		Translator<double> trFloat;
+		double ret = trFloat.translate( dataDoubleZero, 0, true );
+		BOOST_CHECK_CLOSE( ret, 0.00, 0.001 );
+	}
+	{
+		Translator<double> trFloat;
+		double ret = trFloat.translate( dataDoubleOneBigEndian, 0, true );
+		BOOST_CHECK_CLOSE( ret, 1.00, 0.001 );
+	}
+	{
+		Translator<double> trFloat;
+		double ret = trFloat.translate( dataDoubleMaxBigEndian, 0, true );
+		BOOST_CHECK_CLOSE( ret, std::numeric_limits<double>::max(), 0.001 );
+	}
+	{
+		Translator<double> trFloat;
+		double ret = trFloat.translate( dataDoubleNegMaxBigEndian, 0, true );
+		BOOST_CHECK_CLOSE( ret, -std::numeric_limits<double>::max(), 0.001 );
+	}
+	{
+		Translator<double> trFloat;
+		double ret = trFloat.translate( dataDoubleMinBigEndian, 0, true );
+		BOOST_CHECK_CLOSE( ret, std::numeric_limits<double>::min(), 0.001 );
 	}
 }
 
