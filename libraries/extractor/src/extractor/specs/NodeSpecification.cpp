@@ -240,14 +240,35 @@ bool isValidReal( File* _file, std::string& message, const std::string& type, co
 }
 
 
+template< typename Type >
+std::vector< Type > getMultipleValues( SubSpec& subSpec, const std::string& nodeName )
+{
+	std::vector< Type > vector;
+	if( boost::optional< const Spec& > valuesNode = subSpec.second.get_child_optional( nodeName ) )
+	{
+		vector.push_back( subSpec.second.get< Type >( nodeName ) );
+
+		if( vector.size() == 1 && vector[0] == "" )
+		{
+			vector.clear();
+			BOOST_FOREACH( SubSpec& value, valuesNode.get( ) )
+			{
+				vector.push_back( value.second.get_value< Type >() );
+			}
+		}
+	}
+	return vector;
+}
+
+
 bool NodeSpecification::isValid( SubSpec& subSpec )
 {
 	bool isValid = false;
 	std::string message;
 	std::string id         = subSpec.second.get< std::string >( kId );
 	std::string label      = subSpec.second.get< std::string >( kLabel, "" );
-	std::string asciiValue = subSpec.second.get< std::string >( kAscii, "" );
-	std::string hexaValue  = subSpec.second.get< std::string >( kHexa, "" );
+	std::vector< std::string > asciiValues = getMultipleValues< std::string >( subSpec, kAscii );
+	std::vector< std::string > hexaValues  = getMultipleValues< std::string >( subSpec, kHexa  );
 	std::string typeValue  = subSpec.second.get< std::string >( kType, "" );
 	std::string count      = subSpec.second.get< std::string >( kCount, "" );
 
@@ -256,48 +277,72 @@ bool NodeSpecification::isValid( SubSpec& subSpec )
 
 	// COMMON_COUT( "label " << label );
 	
-	if( asciiValue != "" )
+	if( asciiValues.size() != 0 )
 	{
-		message += kAscii + " => " + asciiValue;
-		size_t size = asciiValue.size();
-		Ascii value;
+		message += kAscii + " => ";
 
-		//COMMON_COUT( "read data " << size );
-		char buffer[ size ];
-		if( ! _file->readData( buffer, size ) )
-			return optional;
-		
-		Translator<Ascii> tr;
-		value = tr.translate( buffer, size );
+		size_t size = asciiValues[0].size();
+		for( size_t i = 0; i < asciiValues.size(); i++ )
+		{
+			Ascii value;
 
-		isValid = ( asciiValue ==  value.value );
+			if( i > 0 )
+			{
+				_file->goBack( size );
+			}
+
+			//COMMON_COUT( "read data " << size );
+			char buffer[ size ];
+			if( ! _file->readData( buffer, size ) )
+				return optional;
+			
+			Translator<Ascii> tr;
+			value = tr.translate( buffer, size );
+
+			if( asciiValues[i] ==  value.value )
+			{
+				isValid = true;
+				message += asciiValues[i];
+			}
+			// COMMON_COUT_VAR2( asciiValues[i], value.value );
+		}
 		
 		if( optional && !isValid )
 		{
 			_file->goBack( size );
 			return true;
 		}
-
-		//COMMON_COUT_VAR2( asciiValue, value.value );
 	}
 
-	if( hexaValue != "" )
+	if( hexaValues.size() != 0 )
 	{
-		message += kHexa + " => " + hexaValue;
-		size_t size = 0.5 * hexaValue.size() ;
-		Hexa value;
+		message += kHexa + " => ";
+		size_t size = 0.5 * hexaValues[0].size() ;
+		
+		for( size_t i = 0; i < hexaValues.size(); i++ )
+		{
+			Hexa value;
 
-		//COMMON_COUT( "read data " << size );
-		char buffer[ size ];
-		if( ! _file->readData( buffer, size ) )
-			return optional;
+			if( i > 0 )
+			{
+				_file->goBack( size );
+			}
 
-		Translator<Hexa> tr;
-		value = tr.translate( buffer, size );
+			//COMMON_COUT( "read data " << size );
+			char buffer[ size ];
+			if( ! _file->readData( buffer, size ) )
+				return optional;
 
-		isValid = ( hexaValue ==  value.value );
+			Translator<Hexa> tr;
+			value = tr.translate( buffer, size );
 
-		//COMMON_COUT_VAR2( hexaValue, value.value );
+			if( hexaValues[i] ==  value.value )
+			{
+				isValid = true;
+				message += hexaValues[i];
+			}
+			// COMMON_COUT_VAR2( hexaValues[i], value.value );
+		}
 	}
 
 	if( typeValue != "" )
