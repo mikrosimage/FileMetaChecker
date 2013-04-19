@@ -8,6 +8,7 @@ project.StaticLibrary(
 		libs.boost_filesystem,
 		libs.common,
 		libs.report,
+		libs.boost_python,
 		],
 	shared = True
 )

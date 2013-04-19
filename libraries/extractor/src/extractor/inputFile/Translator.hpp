@@ -2,10 +2,29 @@
 #define _EXTRACTOR_INPUT_FILE_TRANSLATOR_HPP_
 
 #include "types.hpp"
+#include "common/global.hpp"
 
 #include <cstring>
 #include <sstream>
 #include <iomanip>
+#include <cstdlib>
+
+namespace utils
+{
+	union floatConverter
+	{
+		float f;
+		unsigned char c[0];
+	};
+
+	union doubleConverter
+	{
+		double f;
+		unsigned char c[0];
+	};
+}
+
+
 
 template< typename DataType >
 class Translator
@@ -109,6 +128,46 @@ uint32 Translator<uint32>::translate( const char* data, const size_t, const bool
 		   ( ( (size_t)(unsigned char)data[ pos1 ] ) << 16 ) |
 		   ( ( (size_t)(unsigned char)data[ pos2 ] ) << 8 ) |
 		   (size_t)(unsigned char)data[ pos3 ];
+}
+
+template<>
+float Translator<float>::translate( const char* data, const size_t, const bool bigEndian )
+{
+	utils::floatConverter floatValue;
+
+	if( bigEndian )
+	{
+		std::memcpy( floatValue.c, data, 4);
+	}
+	else
+	{
+		for( size_t i = 0; i < 4; i++ )
+		{
+			floatValue.c[i] = data[3-i];
+		}
+	}
+
+	return floatValue.f;
+}
+
+template<>
+double Translator<double>::translate( const char* data, const size_t, const bool bigEndian )
+{
+	utils::doubleConverter doubleValue;
+
+	if( bigEndian )
+	{
+		std::memcpy( doubleValue.c, data, 8);
+	}
+	else
+	{
+		for( size_t i = 0; i < 8; i++ )
+		{
+			doubleValue.c[i] = data[7-i];
+		}
+	}
+	
+	return doubleValue.f;
 }
 
 #endif
