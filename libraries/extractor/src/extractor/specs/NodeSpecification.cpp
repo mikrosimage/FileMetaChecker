@@ -246,15 +246,18 @@ std::vector< Type > getMultipleValues( SubSpec& subSpec, const std::string& node
 	std::vector< Type > vector;
 	if( boost::optional< const Spec& > valuesNode = subSpec.second.get_child_optional( nodeName ) )
 	{
-		vector.push_back( subSpec.second.get< Type >( nodeName ) );
+		std::string stringValue = subSpec.second.get< Type >( nodeName );
 
-		if( vector.size() == 1 && vector[0] == "" )
+		if( stringValue.length() == 0 )
 		{
-			vector.clear();
 			BOOST_FOREACH( SubSpec& value, valuesNode.get( ) )
 			{
 				vector.push_back( value.second.get_value< Type >() );
 			}
+		}
+		else
+		{
+			vector.push_back( stringValue );
 		}
 	}
 	return vector;
@@ -267,10 +270,10 @@ bool NodeSpecification::isValid( SubSpec& subSpec )
 	std::string message;
 	std::string id         = subSpec.second.get< std::string >( kId );
 	std::string label      = subSpec.second.get< std::string >( kLabel, "" );
-	std::vector< std::string > asciiValues = getMultipleValues< std::string >( subSpec, kAscii );
-	std::vector< std::string > hexaValues  = getMultipleValues< std::string >( subSpec, kHexa  );
 	std::string typeValue  = subSpec.second.get< std::string >( kType, "" );
 	std::string count      = subSpec.second.get< std::string >( kCount, "" );
+	std::vector< std::string > asciiValues = getMultipleValues< std::string >( subSpec, kAscii );
+	std::vector< std::string > hexaValues  = getMultipleValues< std::string >( subSpec, kHexa  );
 
 	bool endianValue = ( subSpec.second.get<std::string>( kEndian, kEndianBig ) == kEndianBig );
 	bool optional    = ( subSpec.second.get<std::string>( kOptional, kOptionalFalse ) == kOptionalTrue );
