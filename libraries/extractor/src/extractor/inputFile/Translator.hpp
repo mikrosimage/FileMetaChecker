@@ -141,10 +141,10 @@ float Translator<float>::translate( const char* data, const size_t, const bool b
 	}
 	else
 	{
-		floatValue.c[0] = data[3];
-		floatValue.c[1] = data[2];
-		floatValue.c[2] = data[1];
-		floatValue.c[3] = data[0];
+		for( size_t i = 0; i < 4; i++ )
+		{
+			floatValue.c[i] = data[3-i];
+		}
 	}
 
 	return floatValue.f;
@@ -161,14 +161,10 @@ double Translator<double>::translate( const char* data, const size_t, const bool
 	}
 	else
 	{
-		doubleValue.c[0] = data[7];
-		doubleValue.c[1] = data[6];
-		doubleValue.c[2] = data[5];
-		doubleValue.c[3] = data[4];
-		doubleValue.c[4] = data[3];
-		doubleValue.c[5] = data[2];
-		doubleValue.c[6] = data[1];
-		doubleValue.c[7] = data[0];
+		for( size_t i = 0; i < 8; i++ )
+		{
+			doubleValue.c[i] = data[7-i];
+		}
 	}
 	
 	return doubleValue.f;
