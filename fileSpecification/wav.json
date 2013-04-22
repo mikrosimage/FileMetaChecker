@@ -31,487 +31,480 @@
             "id": "fmtSubChunks",
             "label": "Format sub-chunk",
 			"ascii": "fmt ",
-			"endian": "big"
-		},
-		{
-            "id": "fmtSize",
-            "label": "Sub-chunk size",
-			"type": "uint32",
-			"endian": "little"
-		},
-		{
-            "id": "compressionCode",
-            "label": "Compression code",
-			"type": "uint16",
-			"endian": "little",
-			"map": [
-				{ "0": "unknown" },
-				{ "1": "PCM/uncompressed" },
-				{ "2": "Microsoft ADPCM" },
-				{ "6": "ITU G.711 a-law" },
-				{ "7": "ITU G.711 Âµ-law" },
-				{ "17": "IMA ADPCM" },
-				{ "20": "ITU G.723 ADPCM" },
-				{ "49": "GSM 6.10" },
-				{ "64": "ITU G.721 ADPCM" },
-				{ "80": "MPEG" },
-				{ "65536": "Experimental" }
-			]
-		},
-		{
-            "id": "numChannels",
-            "label": "Number of channels",
-			"type": "uint16",
-			"endian": "little"
-		},
-		{
-            "id": "sampleRate",
-            "label": "Sample rate",
-            "type": "uint32",
-            "endian": "little"
-		},
-		{
-            "id": "byteRate",
-            "label": "Bytes per second",
-			"type": "uint32",
-			"endian": "little",
-			"expr": "sampleRate * blockAlign"
-		},
-		{
-            "id": "blockAlign",
-            "label": "Byte per block",
-			"type": "uint16",
-			"endian": "little",
-			"expr": "bitsPerSample / 8 * numChannels"
-		},
-		{
-            "id": "bitsPerSample",
-            "label": "Bits per sample",
-			"type": "uint16",
-			"endian": "little"
-		},
+			"endian": "big",
+            "groupSize": "fmtSize + 4",
+            "group": [
                 {
-                    "label": "fact",
-                    "id": "fact",
-                    "ascii": "fact",
-                    "optional": true,
-                    "group": [
-                        {
-                            "id": "factSize",
-                            "label": "SubChunk size",
-                            "type": "uint32",
-                            "endian": "little"
-                        },
-                        {
-                            "id": "dataSamples",
-                            "label": "Data samples number",
-                            "type": "uint32",
-                            "endian": "little"
-                        },
-                        {
-                            "id": "formatDependantData",
-                            "label": "format dependant data",
-                            "type": "data"
-                        }
+                    "id": "fmtSize",
+                    "label": "Sub-chunk size",
+                    "type": "uint32",
+                    "endian": "little"
+                },
+                {
+                    "id": "compressionCode",
+                    "label": "Compression code",
+                    "type": "uint16",
+                    "endian": "little",
+                    "map": [
+                        { "0": "unknown" },
+                        { "1": "PCM/uncompressed" },
+                        { "2": "Microsoft ADPCM" },
+                        { "6": "ITU G.711 a-law" },
+                        { "7": "ITU G.711 Âµ-law" },
+                        { "17": "IMA ADPCM" },
+                        { "20": "ITU G.723 ADPCM" },
+                        { "49": "GSM 6.10" },
+                        { "64": "ITU G.721 ADPCM" },
+                        { "80": "MPEG" },
+                        { "65536": "Experimental" }
                     ]
                 },
                 {
+                    "id": "numChannels",
+                    "label": "Number of channels",
+                    "type": "uint16",
+                    "endian": "little"
+                },
+                {
+                    "id": "sampleRate",
+                    "label": "Sample rate",
+                    "type": "uint32",
+                    "endian": "little"
+                },
+                {
+                    "id": "byteRate",
+                    "label": "Bytes per second",
+                    "type": "uint32",
+                    "endian": "little",
+                    "expr": "sampleRate * blockAlign"
+                },
+                {
+                    "id": "blockAlign",
+                    "label": "Byte per block",
+                    "type": "uint16",
+                    "endian": "little",
+                    "expr": "bitsPerSample / 8 * numChannels"
+                },
+                {
+                    "id": "bitsPerSample",
+                    "label": "Bits per sample",
+                    "type": "uint16",
+                    "endian": "little",
+                    "required": "compressionCode == 1"
+                }
+            ]
+		},
+        {
+            "id": "factSubChunks",
+            "label": "Dact sub-chunk",
+            "ascii": "fact",
+            "endian": "big",
+            "groupSize": "factSize + 4",
+            "optional": true,
+            "group": [
+                {
+                    "id": "factSize",
+                    "label": "SubChunk size",
+                    "type": "uint32",
+                    "endian": "little"
+                },
+                {
+                    "id": "dataSamples",
+                    "label": "Data samples number",
+                    "type": "uint32",
+                    "endian": "little"
+                },
+                {
+                    "id": "formatDependantData",
+                    "label": "format dependant data",
+                    "type": "data",
+                    "count": "factSize - 4"
+                }
+            ]
+        },
+        {
+            "id": "dataSubChunks",
             "label": "Data sub-chunk",
-            "id": "dataSubChunck",
-			"endian": "big",
-			"ascii": "data"
-		},
-		{
-            "label": "Sub-chunk size",
-            "id": "dataSize",
-			"type": "uint32",
-			"endian": "little"
-		},
-		{
-			"id": "sampleData",
-			"label": "sample data",
-			"type": "data",
-            "count": "dataSize"
-		},
+            "ascii": "data",
+            "endian": "big",
+            "groupSize": "dataSize + 4",
+            // "optional": true,
+            "group": [
+        		{
+                    "id": "dataSize",
+                    "label": "Sub-chunk size",
+        			"type": "uint32",
+        			"endian": "little"
+        		},
+        		{
+        			"id": "sampleData",
+        			"label": "sample data",
+        			"type": "data",
+                    "count": "dataSize"
+        		}
+            ]
+        },
+        {
+            "id": "wavl",
+            "label": "Wave list",
+            "ascii": "wavl",
+            "groupSize": "wavlSize + 4",
+            "optional": true,
+            "group": [
                 {
-                    "label": "Wave list",
-                    "id": "wavl",
-                    "ascii": "wavl",
-                    "optional": true,
-                    "values": [
-                        {
-                            "shortId": "wavlSize",
-                            "id": "wave list bloc size",
-                            "type": "int",
-                            "length": 4,
-                            "endian": "little"
-                        },
-                        {
-                            "shortId": "sampleData",
-                            "id": "sample data",
-                            "type": "data"
-                        }
+                    "id": "wavlSize",
+                    "label": "wave list bloc size",
+                    "type": "uint32",
+                    "endian": "little"
+                },
+                {
+                    "id": "sampleData",
+                    "label": "sample data",
+                    "type": "data",
+                    "count": "wavlSize"
+                }
+            ]
+        },
+        {
+            "id": "slnt",
+            "label": "Silent",
+            "ascii": "slnt",
+            "groupSize": "slntSize + 4",
+            "optional": true,
+            "group": [
+                {
+                    "id": "slntSize",
+                    "label": "silent bloc size",
+                    "type": "uint32",
+                    "endian": "little"
+                },
+                {
+                    "id": "silentSamples",
+                    "label": "silent samples number",
+                    "type": "uint32",
+                    "endian": "little"
+                }
+            ]
+        },
+        {
+            "label": "Cue",
+            "id": "cue ",
+            "ascii": "cue ",
+            "groupSize": "cueSize + 4",
+            "optional": true,
+            "group": [
+                {
+                    "id": "cueSize",
+                    "label": "cue bloc size",
+                    "type": "uint32",
+                    "endian": "little"
+                },
+                {
+                    "id": "cuePoints",
+                    "label": "cue points number",
+                    "type": "uint32",
+                    "endian": "little"
+                },
+                {
+                    "id": "cuePointsList",
+                    "label": "cue points list",
+                    "type": "data",
+                    "count": "cueSize - 4"
+                }
+            ]
+        },
+        {
+            "id": "plst",
+            "label": "Playlist",
+            "ascii": "plst",
+            "groupSize": "plstSize + 4",
+            "optional": true,
+            "group": [
+                {
+                    "id": "plstSize",
+                    "label": "playlist bloc size",
+                    "type": "uint32",
+                    "endian": "little"
+                },
+                {
+                    "id": "plstSegments",
+                    "label": "playlist segments number",
+                    "type": "uint32",
+                    "endian": "little"
+                },
+                {
+                    "id": "plstSegmentsList",
+                    "label": "playlist segments list",
+                    "type": "data",
+                    "count": "plstSize - 4"
+                }
+            ]
+        },
+        {
+            "id": "list",
+            "label": "Associated data list",
+            "ascii": "list",
+            "groupSize": "listSize + 4",
+            "optional": true,
+            "group": [
+                {
+                    "id": "listSize",
+                    "label": "associated data list bloc size",
+                    "type": "uint32",
+                    "endian": "little"
+                },
+                {
+                    "id": "typeId",
+                    "label": "associated data list type id",
+                    "ascii": "adtl"
+                },
+                {
+                    "shortId": "labelsAndNamesList",
+                    "id": "text labels and names list",
+                    "type": "data",
+                    "count": "listSize - 4"
+                }
+            ]
+        },
+        {
+            "shortId": "labl",
+            "id": "label",
+            "ascii": "labl",
+            "groupSize": "lablSize + 4",
+            "optional": true,
+            "group": [
+                {
+                    "id": "lablSize",
+                    "label": "label bloc size",
+                    "type": "uint32",
+                    "endian": "little"
+                },
+                {
+                    "id": "cuePointId",
+                    "label": "cue point id",
+                    "endian": "little",
+                    "type": "data",     // hexa !
+                    "count": "4"
+                },
+                {
+                    "id": "lablText",
+                    "label": "label text",
+                    "type": "data",
+                    "count": "lablSize - 4"
+                }
+            ]
+        },
+        {
+            "id": "ltxt",
+            "label": "labeled text",
+            "ascii": "ltxt",
+            "groupSize": "ltxtSize + 4",
+            "optional": true,
+            "group": [
+                {
+                    "id": "ltxtSize",
+                    "label": "labeled text bloc size",
+                    "type": "uint32",
+                    "endian": "little"
+                },
+                {
+                    "id": "cuePointId",
+                    "label": "cue point id",
+                    "endian": "little",
+                    "type": "data",     // hexa !
+                    "count": "4"
+                },
+                {
+                    "id": "sampleLength",
+                    "label": "sample length",
+                    "type": "uint32",
+                    "endian": "little"
+                },
+                {
+                    "id": "PurposeId",
+                    "label": "purpose id",
+                    "type": "data",     // hexa !
+                    "count": "4"
+                },
+                {
+                    "id": "countryId",
+                    "label": "country id",
+                    "type": "data",     // hexa !
+                    "count": "2"
+                },
+                {
+                    "id": "languageId",
+                    "label": "language id",
+                    "type": "data",     // hexa !
+                    "count": "2"
+                },
+                {
+                    "id": "dialectId",
+                    "label": "dialect id",
+                    "type": "data",     // hexa !
+                    "count": "2"
+                },
+                {
+                    "id": "pageCode",
+                    "label": "page code",
+                    "type": "data",     // hexa !
+                    "count": "2"
+                },
+                {
+                    "shortId": "labledText",
+                    "id": "labeled text",
+                    "type": "data",
+                    "count": "ltxtSize - 20"
+                }
+            ]
+        },
+        {
+            "id": "smpl",
+            "label": "sampler",
+            "ascii": "smpl",
+            "groupSize": "smplSize + 4",
+            "optional": true,
+            "group": [
+                {
+                    "id": "smplSize",
+                    "label": "sampler bloc size",
+                    "type": "uint32",
+                    "endian": "little"
+                },
+                {
+                    "id": "manufacturerId",
+                    "label": "manufacturer id",
+                    "type": "data",     // hexa !
+                    "count": "4"
+                },
+                {
+                    "id": "productId",
+                    "label": "product id",
+                    "type": "uint32",
+                    "endian": "little"
+                },
+                {
+                    "id": "samplePeriod",
+                    "label": "sample period",
+                    "type": "uint32",
+                    "endian": "little"
+                },
+                {
+                    "id": "midiUnitNote",
+                    "label": "midi unit note",
+                    "type": "uint32",
+                    "endian": "little",
+                    "interval": [
+                        0,
+                        127
+                    ]
+                },
+                {
+                    "id": "midiPitchFraction",
+                    "label": "midi pitch fraction",
+                    "type": "data",     // hexa !
+                    "count": "4"
+                },
+                {
+                    "id": "smpteFormat",
+                    "id": "smpte format",
+                    "type": "uint32",
+                    "endian": "little",
+                    "map": [
+                        {  "0": "no SMPTE offset"},
+                        { "24": "24 frames per second"},
+                        { "25": "25 frames per second"},
+                        { "29": "30 frames per second with frame dropping (30 drop)"},
+                        { "30": "30 frames per second"}
+                    ]
+                },
+                {
+                    "id": "smpteOffset",
+                    "label": "smpte offset",
+                    "type": "data",     // hexa !
+                    "count": "4"
+                },
+                {
+                    "id": "numSampleLoops",
+                    "label": "sample loops number",
+                    "type": "uint32",
+                    "endian": "little"
+                },
+                {
+                    "id": "samplerDataSize",
+                    "label": "sampler data size",
+                    "type": "uint32",
+                    "endian": "little"
+                },
+                {
+                    "id": "sampleLoopsList",
+                    "label": "sample loops list",
+                    "type": "data",
+                    "count": "smplSize - 36"
+                }
+            ]
+        },
+        {
+            "id": "inst",
+            "label": "instrument",
+            "ascii": "inst",
+            "groupSize": "instSize + 4",
+            "optional": true,
+            "group": [
+                {
+                    "id": "instSize",
+                    "label": "instrument bloc size",
+                    "type": "uint32",
+                    "endian": "little"
+                },
+                {
+                    "id": "unshiftedNote",
+                    "label": "unshifted note",
+                    "type": "uint8",
+                    "endian": "little"
+                },
+                {
+                    "id": "fineTune",
+                    "label": "fine tune",
+                    "type": "uint8",
+                    "endian": "little",
+                    "interval": [
+                        -50,
+                        50
+                    ]
+                },
+                {
+                    "id": "gain",
+                    "label": "gain",
+                    "type": "uint8",
+                    "endian": "little",
+                    "interval": [
+                        -64,
+                        64
+                    ]
+                },
+                {
+                    "id": "lowVelocity",
+                    "label": "low velocity",
+                    "type": "uint8",
+                    "endian": "little",
+                    "interval": [
+                        1,
+                        127
+                    ]
+                },
+                {
+                    "id": "highVelocity",
+                    "label": "high velocity",
+                    "type": "uint8",
+                    "endian": "little",
+                    "interval": [
+                        1,
+                        127
                     ]
                 }
-                ,
-                {
-                    "id": "slnt",
-                    "label": "Silent",
-                    "ascii": "slnt",
-                    "optional": true,
-                    "values": [
-                        {
-                            "shortId": "slntSize",
-                            "id": "silent bloc size",
-                            "type": "int",
-                            "length": 4,
-                            "endian": "little"
-                        },
-                        {
-                            "shortId": "silentSamples",
-                            "id": "silent samples number",
-                            "type": "int",
-                            "length": 4,
-                            "endian": "little"
-                        }
-                    ]
-                }
-                ,
-                {
-                    "label": "Cue",
-                    "id": "cue ",
-                    "ascii": "cue ",
-                    "optional": true,
-                    "values": [
-                        {
-                            "shortId": "cueSize",
-                            "id": "cue bloc size",
-                            "type": "int",
-                            "length": 4,
-                            "endian": "little"
-                        },
-                        {
-                            "shortId": "cuePoints",
-                            "id": "cue points number",
-                            "type": "int",
-                            "length": 4,
-                            "endian": "little"
-                        },
-                        {
-                            "shortId": "cuePointsList",
-                            "id": "cue points list",
-                            "type": "data"
-                        }
-                    ]
-                }
-                ,
-                {
-                    "id": "plst",
-                    "label": "Playlist",
-                    "ascii": "plst",
-                    "optional": true,
-                    "values": [
-                        {
-                            "shortId": "plstSize",
-                            "id": "playlist bloc size",
-                            "type": "int",
-                            "length": 4,
-                            "endian": "little"
-                        },
-                        {
-                            "shortId": "plstSegments",
-                            "id": "playlist segments number",
-                            "type": "int",
-                            "length": 4,
-                            "endian": "little"
-                        },
-                        {
-                            "shortId": "plstSegmentsList",
-                            "id": "playlist segments list",
-                            "type": "data"
-                        }
-                    ]
-                }
-                ,
-                {
-                    "id": "list",
-                    "label": "Associated data list",
-                    "ascii": "list",
-                    "optional": true,
-                    "values": [
-                        {
-                            "shortId": "plstSize",
-                            "id": "associated data list bloc size",
-                            "type": "int",
-                            "length": 4,
-                            "endian": "little"
-                        },
-                        {
-                            "shortId": "typeId",
-                            "id": "associated data list type id",
-                            "type": "ascii",
-                            "length": 4,
-                            "value": "adtl"
-                        },
-                        {
-                            "shortId": "labelsAndNamesList",
-                            "id": "text labels and names list",
-                            "type": "data"
-                        }
-                    ]
-                }
-                ,
-                {
-                    "shortId": "labl",
-                    "id": "label",
-                    "ascii": "labl",
-                    "optional": true,
-                    "values": [
-                        {
-                            "shortId": "lablSize",
-                            "id": "label bloc size",
-                            "type": "int",
-                            "length": 4,
-                            "endian": "little"
-                        },
-                        {
-                            "shortId": "cuePointId",
-                            "id": "cue point id",
-                            "type": "hexa",
-                            "length": 4,
-                            "endian": "little"
-                        },
-                        {
-                            "shortId": "lablText",
-                            "id": "label text",
-                            "type": "data"
-                        }
-                    ]
-                }
-                ,
-                {
-                    "id": "ltxt",
-                    "label": "labeled text",
-                    "ascii": "ltxt",
-                    "optional": true,
-                    "values": [
-                        {
-                            "shortId": "ltxtSize",
-                            "id": "labeled text bloc size",
-                            "type": "int",
-                            "length": 4,
-                            "endian": "little"
-                        },
-                        {
-                            "shortId": "cuePointId",
-                            "id": "cue point id",
-                            "type": "hexa",
-                            "length": 4
-                        },
-                        {
-                            "shortId": "sampleLength",
-                            "id": "sample length",
-                            "type": "int",
-                            "length": 4,
-                            "endian": "little"
-                        },
-                        {
-                            "shortId": "PurposeId",
-                            "id": "purpose id",
-                            "type": "hexa",
-                            "length": 4
-                        },
-                        {
-                            "shortId": "countryId",
-                            "id": "country id",
-                            "type": "hexa",
-                            "length": 2
-                        },
-                        {
-                            "shortId": "languageId",
-                            "id": "language id",
-                            "type": "hexa",
-                            "length": 2
-                        },
-                        {
-                            "shortId": "dialectId",
-                            "id": "dialect id",
-                            "type": "hexa",
-                            "length": 2
-                        },
-                        {
-                            "shortId": "pageCode",
-                            "id": "page code",
-                            "type": "hexa",
-                            "length": 2
-                        },
-                        {
-                            "shortId": "labledText",
-                            "id": "labeled text",
-                            "type": "data"
-                        }
-                    ]
-                }
-                ,
-                {
-                    "id": "smpl",
-                    "label": "sampler",
-                    "ascii": "smpl",
-                    "optional": true,
-                    "ordered": false,
-                    "values": [
-                        {
-                            "shortId": "smplSize",
-                            "id": "sampler bloc size",
-                            "type": "int",
-                            "length": 4,
-                            "endian": "little"
-                        },
-                        {
-                            "shortId": "manufacturerId",
-                            "id": "manufacturer id",
-                            "type": "hexa",
-                            "length": 4
-                        },
-                        {
-                            "shortId": "productId",
-                            "id": "product id",
-                            "type": "int",
-                            "length": 4
-                        },
-                        {
-                            "shortId": "samplePeriod",
-                            "id": "sample period",
-                            "type": "int",
-                            "length": 4,
-                            "endian": "little"
-                        },
-                        {
-                            "shortId": "midiUnitNote",
-                            "id": "midi unit note",
-                            "type": "int",
-                            "length": 4,
-                            "endian": "little",
-                            "interval": [
-                                0,
-                                127
-                            ]
-                        },
-                        {
-                            "shortId": "midiPitchFraction",
-                            "id": "midi pitch fraction",
-                            "type": "hexa",
-                            "length": 2
-                        },
-                        {
-                            "shortId": "smpteFormat",
-                            "id": "smpte format",
-                            "type": "int",
-                            "length": 4,
-                            "endian": "little",
-                            "choice": [
-                                0,
-                                24,
-                                25,
-                                29,
-                                30
-                            ]
-                        },
-                        {
-                            "shortId": "smpteOffset",
-                            "id": "smpte offset",
-                            "type": "hexa",
-                            "length": 2
-                        },
-                        {
-                            "shortId": "numSampleLoops",
-                            "id": "sample loops number",
-                            "type": "int",
-                            "length": 4,
-                            "endian": "little"
-                        },
-                        {
-                            "shortId": "samplerDataSize",
-                            "id": "sampler data size",
-                            "type": "int",
-                            "length": 4,
-                            "endian": "little"
-                        },
-                        {
-                            "shortId": "sampleLoopsList",
-                            "id": "sample loops list",
-                            "type": "data"
-                        }
-                    ]
-                }
-                ,
-                {
-                    "id": "inst",
-                    "label": "instrument",
-                    "ascii": "inst",
-                    "optional": true,
-                    "values": [
-                        {
-                            "shortId": "instSize",
-                            "id": "instrument bloc size",
-                            "type": "int",
-                            "length": 4,
-                            "endian": "little"
-                        },
-                        {
-                            "shortId": "unshiftedNote",
-                            "id": "unshifted note",
-                            "type": "int",
-                            "length": 1,
-                            "endian": "little"
-                        },
-                        {
-                            "shortId": "fineTune",
-                            "id": "fine tune",
-                            "type": "int",
-                            "length": 1,
-                            "endian": "little",
-                            "interval": [
-                                -50,
-                                50
-                            ]
-                        },
-                        {
-                            "shortId": "gain",
-                            "id": "gain",
-                            "type": "int",
-                            "length": 1,
-                            "endian": "little",
-                            "interval": [
-                                -64,
-                                64
-                            ]
-                        },
-                        {
-                            "shortId": "lowVelocity",
-                            "id": "low velocity",
-                            "type": "int",
-                            "length": 1,
-                            "endian": "little",
-                            "interval": [
-                                1,
-                                127
-                            ]
-                        },
-                        {
-                            "shortId": "highVelocity",
-                            "id": "high velocity",
-                            "type": "int",
-                            "length": 1,
-                            "endian": "little",
-                            "interval": [
-                                1,
-                                127
-                            ]
-                        }
-                    ]
-                }
-
-
             ]
         }
+
+    ]
+}

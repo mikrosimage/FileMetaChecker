@@ -73,9 +73,11 @@ void Extractor::analyse( )
 			NodeSpecification ns( _file );
 			bool isValidFile = true;
 			
+			GroupProperties groupProp;
+
 			BOOST_FOREACH( SubSpec v, header->second )
 			{
-				if( ! ns.isValid( v ) )
+				if( ! ns.isValid( v, groupProp ) )
 				{
 					COMMON_COUT( v.second.get< std::string >( "id" ) );
 					isValidFile = false;
