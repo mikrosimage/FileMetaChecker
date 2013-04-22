@@ -15,12 +15,16 @@
 const std::string kId     = "id";
 const std::string kLabel  = "label";
 
-const std::string kAscii    = "ascii";
-const std::string kHexa     = "hexa";
-const std::string kType     = "type";
-const std::string kCount    = "count";
-const std::string kMap      = "map";
-const std::string kGroup    = "group";
+const std::string kAscii  = "ascii";
+const std::string kHexa   = "hexa";
+const std::string kType   = "type";
+const std::string kCount  = "count";
+const std::string kMap    = "map";
+const std::string kRange  = "range";
+const std::string kMin    = "min";
+const std::string kMax    = "max";
+
+const std::string kGroup  = "group";
 const std::string kGroupSize    = "groupSize";
 
 const std::string kEndian        = "endian";
@@ -180,6 +184,48 @@ std::string getMap( SubSpec& subSpec, std::map< Type, std::string >& map, const 
 	return description;
 }
 
+template< typename Type >
+bool getRange( SubSpec& subSpec, const Type value )
+{
+	bool isInRange = true;
+	if( boost::optional< const Spec& > rangeNode = subSpec.second.get_child_optional( kRange ) )
+	{
+		isInRange = false;
+		BOOST_FOREACH( SubSpec& m, rangeNode.get() )
+		{
+			if( m.second.get_child_optional( kMin ) && m.second.get_child_optional( kMax ) )
+			{
+				Type max = m.second.get< Type >( kMax );
+				Type min = m.second.get< Type >( kMin );
+				if( value >= min && value <= max )
+				{
+					isInRange = true;
+				}
+			}
+			if( !m.second.get_child_optional( kMin ) && m.second.get_child_optional( kMax ) )
+			{			
+				Type max = m.second.get< Type >( kMax );
+				if( value <= max )
+				{
+					isInRange = true;
+				}
+			}
+			if( m.second.get_child_optional( kMin ) && !m.second.get_child_optional( kMax ) )
+			{			
+				Type min = m.second.get< Type >( kMin );
+				if( value >= min )
+				{
+					isInRange = true;
+				}
+			}
+		}
+	}
+	if(!isInRange)
+	{
+		COMMON_COUT( common::details::kColorRed << "Value error : out of range" << common::details::kColorStd );
+	}
+	return isInRange;
+}
 
 template< typename IntType >
 bool isValidInt( File* _file, std::string& message, const std::string& type, const bool isBigEndian, SubSpec& subSpec, IntType& value )
@@ -205,7 +251,7 @@ bool isValidInt( File* _file, std::string& message, const std::string& type, con
 		{
 			message += stringValue + " (" + getPrintable( value ) + ")";
 		}
-		return true;
+		return getRange( subSpec, value );
 	}
 	return false;
 }
@@ -236,7 +282,7 @@ bool isValidReal( File* _file, std::string& message, const std::string& type, co
 		{
 			message += stringValue + " (" + getPrintable(value) + ")";
 		}
-		return true;
+		return getRange( subSpec, value );
 	}
 	return false;
 }
