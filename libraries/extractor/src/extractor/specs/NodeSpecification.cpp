@@ -440,11 +440,16 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupProp )
 			
 			message += " ( size = " + getPrintable( size ) + " )";
 			
-			char buffer[ size ];
-			if( ! _file->readData( buffer, size ) )
-			{
-				return optional;
-			}
+			// COMMON_COUT( "*** Before error ***" );
+			// char buffer[ size ];
+			// COMMON_COUT( "*** After error ***" );
+
+			// if( ! _file->readData( buffer, size ) )
+			// {
+			// 	return optional;
+			// }
+
+			_file->goForward( size );
 			
 			validData = true;
 			groupProp.addSize( size );
