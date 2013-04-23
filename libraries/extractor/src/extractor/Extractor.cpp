@@ -69,15 +69,24 @@ void Extractor::analyse( )
 			COMMON_COUT( "-> Parse Header" );
 			SpecIt header = spec.getHeader( );
 
+			_report.put( "specificationId", spec.getId() );
+			_report.put( "specificationLabel", spec.getLabel() );
+			_report.put( "specificationType", spec.getType() );
+			
 			NodeSpecification ns( _file );
 			bool isValidFile = true;
 			
 			BOOST_FOREACH( SubSpec& v, header->second )
 			{
-				if( ! ns.isValid( v ) )
+				bpt::ptree nodeReport;
+				if( ! ns.isValid( v, nodeReport ) )
 				{
 					COMMON_COUT( v.second.get< std::string >( "id" ) );
 					isValidFile = false;
+				}
+				else
+				{
+					_report.push_back( bpt::ptree::value_type( "element", nodeReport ) );
 				}
 			}
 			
@@ -105,6 +114,6 @@ void Extractor::analyse( )
 
 void Extractor::getReport( Report* report )
 {
-	report->add( _report, "header" );
+	report->add( _report, "specification" );
 }
 

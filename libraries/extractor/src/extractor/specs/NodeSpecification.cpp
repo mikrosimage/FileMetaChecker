@@ -264,7 +264,7 @@ std::vector< Type > getMultipleValues( SubSpec& subSpec, const std::string& node
 }
 
 
-bool NodeSpecification::isValid( SubSpec& subSpec )
+bool NodeSpecification::isValid( SubSpec& subSpec, bpt::ptree& nodeReport )
 {
 	bool isValid = false;
 	std::string message;
@@ -437,5 +437,9 @@ bool NodeSpecification::isValid( SubSpec& subSpec )
 	}
 	
 	COMMON_COUT( ( isValid ? common::details::kColorGreen : common::details::kColorRed ) << "\t" << std::left << std::setw(40) << ( label + " - " + id ) << "\t" << common::details::kColorStd << message );
+
+	nodeReport.put( "id", id );
+	nodeReport.put( "label", label );
+	nodeReport.put( "status", isValid );
 	return isValid;
 }

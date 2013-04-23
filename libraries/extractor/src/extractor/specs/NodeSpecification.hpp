@@ -24,7 +24,7 @@ class NodeSpecification
 public:
 	NodeSpecification( File* file );
 
-	bool isValid( SubSpec& subSpec );
+	bool isValid( SubSpec& subSpec, bpt::ptree& nodeReport );
 
 private:
 	File*       _file;

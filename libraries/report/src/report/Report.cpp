@@ -5,19 +5,21 @@
 
 #include <boost/foreach.hpp>
 
+static const std::string kRoot = "root";
+
 Report::Report()
 {
-	
+	reportTree.put( kRoot, "" );
 }
 
 void Report::add( const std::string& entry, const std::string& value )
 {
-	reportTree.put( entry, value );
+	reportTree.get_child( kRoot ).put( entry, value );
 }
 
 void Report::add( const bpt::ptree& tree, const std::string& rootpath )
 {
-	reportTree.push_back( bpt::ptree::value_type( rootpath, tree ) );
+	reportTree.get_child( kRoot ).push_back( bpt::ptree::value_type( rootpath, tree ) );
 }
 
 void Report::exportReport( const std::string& filename )
