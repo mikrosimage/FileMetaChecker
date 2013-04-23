@@ -44,6 +44,12 @@ public:
 		_file.seekg( - size, std::ios::cur );
 		//COMMON_COUT( "pos: " << _file.tellg() );
 	}
+
+	void goForward( const std::size_t size )
+	{
+		_file.seekg( size, std::ios::cur );
+		//COMMON_COUT( "pos: " << _file.tellg() );
+	}
 	
 private:
 	std::ifstream _file;

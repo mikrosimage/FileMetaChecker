@@ -76,10 +76,12 @@ void Extractor::analyse( )
 			NodeSpecification ns( _file );
 			bool isValidFile = true;
 			
-			BOOST_FOREACH( SubSpec& v, header->second )
+			GroupProperties groupProperties;
+
+			BOOST_FOREACH( SubSpec v, header->second )
 			{
 				bpt::ptree nodeReport;
-				if( ! ns.isValid( v, nodeReport ) )
+				if( ! ns.isValid( v, groupProperties, nodeReport ) )
 				{
 					COMMON_COUT( v.second.get< std::string >( "id" ) );
 					isValidFile = false;

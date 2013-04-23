@@ -20,6 +20,12 @@ const std::string kHexa   = "hexa";
 const std::string kType   = "type";
 const std::string kCount  = "count";
 const std::string kMap    = "map";
+const std::string kRange  = "range";
+const std::string kMin    = "min";
+const std::string kMax    = "max";
+
+const std::string kGroup  = "group";
+const std::string kGroupSize    = "groupSize";
 
 const std::string kEndian        = "endian";
 const std::string kEndianBig     = "big";
@@ -178,6 +184,48 @@ std::string getMap( SubSpec& subSpec, std::map< Type, std::string >& map, const 
 	return description;
 }
 
+template< typename Type >
+bool getRange( SubSpec& subSpec, const Type value )
+{
+	bool isInRange = true;
+	if( boost::optional< const Spec& > rangeNode = subSpec.second.get_child_optional( kRange ) )
+	{
+		isInRange = false;
+		BOOST_FOREACH( SubSpec& m, rangeNode.get() )
+		{
+			if( m.second.get_child_optional( kMin ) && m.second.get_child_optional( kMax ) )
+			{
+				Type max = m.second.get< Type >( kMax );
+				Type min = m.second.get< Type >( kMin );
+				if( value >= min && value <= max )
+				{
+					isInRange = true;
+				}
+			}
+			if( !m.second.get_child_optional( kMin ) && m.second.get_child_optional( kMax ) )
+			{			
+				Type max = m.second.get< Type >( kMax );
+				if( value <= max )
+				{
+					isInRange = true;
+				}
+			}
+			if( m.second.get_child_optional( kMin ) && !m.second.get_child_optional( kMax ) )
+			{			
+				Type min = m.second.get< Type >( kMin );
+				if( value >= min )
+				{
+					isInRange = true;
+				}
+			}
+		}
+	}
+	if(!isInRange)
+	{
+		COMMON_COUT( common::details::kColorRed << "Value error : out of range" << common::details::kColorStd );
+	}
+	return isInRange;
+}
 
 template< typename IntType >
 bool isValidInt( File* _file, std::string& message, const std::string& type, const bool isBigEndian, SubSpec& subSpec, IntType& value )
@@ -203,7 +251,7 @@ bool isValidInt( File* _file, std::string& message, const std::string& type, con
 		{
 			message += stringValue + " (" + getPrintable( value ) + ")";
 		}
-		return true;
+		return getRange( subSpec, value );
 	}
 	return false;
 }
@@ -234,7 +282,7 @@ bool isValidReal( File* _file, std::string& message, const std::string& type, co
 		{
 			message += stringValue + " (" + getPrintable(value) + ")";
 		}
-		return true;
+		return getRange( subSpec, value );
 	}
 	return false;
 }
@@ -264,7 +312,7 @@ std::vector< Type > getMultipleValues( SubSpec& subSpec, const std::string& node
 }
 
 
-bool NodeSpecification::isValid( SubSpec& subSpec, bpt::ptree& nodeReport )
+bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupProperties, bpt::ptree& nodeReport )
 {
 	bool isValid = false;
 	std::string message;
@@ -272,11 +320,14 @@ bool NodeSpecification::isValid( SubSpec& subSpec, bpt::ptree& nodeReport )
 	std::string label      = subSpec.second.get< std::string >( kLabel, "" );
 	std::string typeValue  = subSpec.second.get< std::string >( kType, "" );
 	std::string count      = subSpec.second.get< std::string >( kCount, "" );
+	std::string groupSize  = subSpec.second.get< std::string >( kGroupSize, "" );
 	std::vector< std::string > asciiValues = getMultipleValues< std::string >( subSpec, kAscii );
 	std::vector< std::string > hexaValues  = getMultipleValues< std::string >( subSpec, kHexa  );
 
 	bool endianValue = ( subSpec.second.get<std::string>( kEndian, kEndianBig ) == kEndianBig );
 	bool optional    = ( subSpec.second.get<std::string>( kOptional, kOptionalFalse ) == kOptionalTrue );
+	bool group       = subSpec.second.get_child_optional( kGroup );
+
 
 	// COMMON_COUT( "label " << label );
 	
@@ -319,6 +370,8 @@ bool NodeSpecification::isValid( SubSpec& subSpec, bpt::ptree& nodeReport )
 			_file->goBack( size );
 			return true;
 		}
+
+		groupProperties.addSize( size );
 	}
 
 	if( hexaValues.size() != 0 )
@@ -354,6 +407,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, bpt::ptree& nodeReport )
 			}
 			// COMMON_COUT_VAR2( hexaValues[i], value.value );
 		}
+		groupProperties.addSize( size );
 	}
 
 	if( typeValue != "" )
@@ -386,35 +440,43 @@ bool NodeSpecification::isValid( SubSpec& subSpec, bpt::ptree& nodeReport )
 		{
 			_headerElements[ id ] = uint8Val;
 			// COMMON_COUT( "add id : " << id << " = " << _headerElements[ id ] );
+			groupProperties.addSize( sizeof( uint8 ) );
 		}
 		if( validInt8 )
 		{
 			_headerElements[ id ] = int8Val;
+			groupProperties.addSize( sizeof( int8 ) );
 		}
 		if( validUInt16 )
 		{
 			_headerElements[ id ] = uint16Val;
+			groupProperties.addSize( sizeof( uint16 ) );
 		}
 		if( validInt16 )
 		{
 			_headerElements[ id ] = int16Val;
+			groupProperties.addSize( sizeof( int16 ) );
 		}
 		if( validUInt32 )
 		{
 			_headerElements[ id ] = uint32Val;
+			groupProperties.addSize( sizeof( uint32 ) );
 		}
 		if( validInt32 )
 		{
 			_headerElements[ id ] = int32Val;
+			groupProperties.addSize( sizeof( int32 ) );
 		}
 
 		if( validFloat )
 		{
 			_headerElements[ id ] = floatVal;
+			groupProperties.addSize( sizeof( float ) );
 		}
 		if( validDouble )
 		{
 			_headerElements[ id ] = doubleVal;
+			groupProperties.addSize( sizeof( double ) );
 		}
 		
 		
@@ -432,19 +494,66 @@ bool NodeSpecification::isValid( SubSpec& subSpec, bpt::ptree& nodeReport )
 			
 			message += " ( size = " + getPrintable( size ) + " )";
 			
-			char buffer[ size ];
-			if( ! _file->readData( buffer, size ) )
-			{
-				return optional;
-			}
+			// COMMON_COUT( "*** Before error ***" );
+			// char buffer[ size ];
+			// COMMON_COUT( "*** After error ***" );
+
+			// if( ! _file->readData( buffer, size ) )
+			// {
+			// 	return optional;
+			// }
+
+			_file->goForward( size );
 			
 			validData = true;
+			groupProperties.addSize( size );
 			nodeReport.put( "optional", optional );
 			nodeReport.put( "size", getPrintable( size ) );
 			nodeReport.put( "type", "data" );
 		}
 		
 		isValid = validUInt8 | validInt8 | validUInt16 | validInt16 | validUInt32 | validInt32 | validFloat | validDouble | validData;
+	}
+
+	if( group )
+	{
+		bool groupIsValid = true;
+
+		GroupProperties groupProp;
+
+		COMMON_COUT( "--- Chunk (begin) ---");
+		BOOST_FOREACH( SubSpec &n, subSpec.second.get_child( kGroup ) )
+		{
+			if( ! this->isValid( n, groupProp, nodeReport ) )
+			{
+				COMMON_COUT( n.second.get< std::string >( "id" ) );
+				groupIsValid = false;
+			}
+		}
+		COMMON_COUT( "--- Chunk (end) ---");
+
+		_file->goBack( groupProp.getSize() );
+
+		isValid = groupIsValid;
+
+		ExpressionParser groupLength = ExpressionParser();
+		groupLength.setVariables( _headerElements );
+
+		if( groupSize != "" )
+		{
+			size_t gSize = groupLength.parseExpression<size_t>( groupSize );
+			_file->goForward( gSize );
+
+			if( groupProp.getSize() < gSize )
+			{
+				COMMON_COUT( common::details::kColorYellow << "\tWarning : " << common::details::kColorStd << gSize - groupProp.getSize() << " unused bytes" );
+			}
+			if( groupProp.getSize() > gSize )
+			{
+				isValid = false;
+				COMMON_COUT( common::details::kColorRed << "\tError : " << groupProp.getSize() - gSize << " bytes difference" << common::details::kColorStd );
+			}
+		}
 	}
 	
 	COMMON_COUT( ( isValid ? common::details::kColorGreen : common::details::kColorRed ) << "\t" << std::left << std::setw(40) << ( label + " - " + id ) << "\t" << common::details::kColorStd << message );
