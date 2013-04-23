@@ -34,6 +34,7 @@ NodeSpecification::NodeSpecification( File* file )
 
 bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupProperties, bpt::ptree& nodeReport )
 {
+	message.clear();
 	isValidNode = false;
 	id          = subSpec.second.get< std::string >( kId );
 	label       = subSpec.second.get< std::string >( kLabel, "" );
