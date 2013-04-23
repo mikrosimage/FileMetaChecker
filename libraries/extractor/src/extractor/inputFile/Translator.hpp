@@ -11,13 +11,13 @@
 
 namespace utils
 {
-	union floatConverter
+	union FloatConverter
 	{
 		float f;
 		unsigned char c[0];
 	};
 
-	union doubleConverter
+	union DoubleConverter
 	{
 		double f;
 		unsigned char c[0];
@@ -133,7 +133,7 @@ uint32 Translator<uint32>::translate( const char* data, const size_t, const bool
 template<>
 float Translator<float>::translate( const char* data, const size_t, const bool bigEndian )
 {
-	utils::floatConverter floatValue;
+	utils::FloatConverter floatValue;
 
 	if( bigEndian )
 	{
@@ -143,7 +143,7 @@ float Translator<float>::translate( const char* data, const size_t, const bool b
 	{
 		for( size_t i = 0; i < 4; i++ )
 		{
-			floatValue.c[i] = data[3-i];
+			floatValue.c[ i ] = data[ 3 - i ];
 		}
 	}
 
@@ -153,7 +153,7 @@ float Translator<float>::translate( const char* data, const size_t, const bool b
 template<>
 double Translator<double>::translate( const char* data, const size_t, const bool bigEndian )
 {
-	utils::doubleConverter doubleValue;
+	utils::DoubleConverter doubleValue;
 
 	if( bigEndian )
 	{
@@ -163,7 +163,7 @@ double Translator<double>::translate( const char* data, const size_t, const bool
 	{
 		for( size_t i = 0; i < 8; i++ )
 		{
-			doubleValue.c[i] = data[7-i];
+			doubleValue.c[ i ] = data[ 7 - i ];
 		}
 	}
 	
