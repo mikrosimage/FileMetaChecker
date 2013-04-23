@@ -16,26 +16,11 @@ class NodeSpecification
 public:
 	NodeSpecification( File* file );
 
-	bool isValid( SubSpec& subSpec, GroupProperties& groupProperties, bpt::ptree& nodeReport );
+	bool isValid(SubSpec& subSpec, GroupProperties& groupProperties, bpt::ptree& nodeReport );
 
 private:
 	File*       _file;
 	ElementsMap _headerElements;
-	
-	std::string message;
-	std::string id;
-	std::string label;
-	std::string typeValue;
-	std::string count;
-	std::string groupSize;
-	
-	std::vector< std::string > asciiValues;
-	std::vector< std::string > hexaValues;
-
-	bool isValidNode;
-	bool endianValue;
-	bool optional;
-	bool group;
 };
 
 #endif

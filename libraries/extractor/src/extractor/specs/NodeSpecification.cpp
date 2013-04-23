@@ -16,40 +16,26 @@
 
 NodeSpecification::NodeSpecification( File* file )
 	: _file     ( file )
-	, message   ( "" )
-	, id        ( "" )
-	, label     ( "" )
-	, typeValue ( "" )
-	, count     ( "" )
-	, groupSize ( "" )
-	, asciiValues( )
-	, hexaValues( )
-	, isValidNode ( false )
-	, endianValue ( false )
-	, optional    ( false )
-	, group       ( false )
 {
 
 }
 
 bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupProperties, bpt::ptree& nodeReport )
 {
-	message.clear();
-	isValidNode = false;
-	id          = subSpec.second.get< std::string >( kId );
-	label       = subSpec.second.get< std::string >( kLabel, "" );
-	typeValue   = subSpec.second.get< std::string >( kType, "" );
-	count       = subSpec.second.get< std::string >( kCount, "" );
-	group       = subSpec.second.get_child_optional( kGroup );
-	groupSize   = subSpec.second.get< std::string >( kGroupSize, "" );
+	std::string message( "" );
+	std::string id          = subSpec.second.get< std::string >( kId );
+	std::string label       = subSpec.second.get< std::string >( kLabel, "" );
+	std::string typeValue   = subSpec.second.get< std::string >( kType, "" );
+	std::string count       = subSpec.second.get< std::string >( kCount, "" );
+	std::string groupSize   = subSpec.second.get< std::string >( kGroupSize, "" );
 	
-	asciiValues = getMultipleValues< std::string >( subSpec, kAscii );
-	hexaValues  = getMultipleValues< std::string >( subSpec, kHexa  );
+	std::vector< std::string > asciiValues = getMultipleValues< std::string >( subSpec, kAscii );
+	std::vector< std::string > hexaValues  = getMultipleValues< std::string >( subSpec, kHexa  );
 
-	endianValue = ( subSpec.second.get<std::string>( kEndian, kEndianBig ) == kEndianBig );
-	optional    = ( subSpec.second.get<std::string>( kOptional, kOptionalFalse ) == kOptionalTrue );
-
-
+	bool endianValue = ( subSpec.second.get<std::string>( kEndian, kEndianBig ) == kEndianBig );
+	bool optional    = ( subSpec.second.get<std::string>( kOptional, kOptionalFalse ) == kOptionalTrue );
+	bool group       = subSpec.second.get_child_optional( kGroup );
+	bool isValidNode = false;
 	// COMMON_COUT( "label " << label );
 	
 	if( asciiValues.size() != 0 )
@@ -91,7 +77,6 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 			_file->goBack( size );
 			return true;
 		}
-
 		groupProperties.addSize( size );
 	}
 
@@ -243,9 +228,9 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 		GroupProperties groupProp;
 
 		COMMON_COUT( "--- Chunk (begin) ---");
-		BOOST_FOREACH( SubSpec &n, subSpec.second.get_child( kGroup ) )
+		BOOST_FOREACH( SubSpec& n, subSpec.second.get_child( kGroup ) )
 		{
-			if( ! this->isValid( n, groupProp, nodeReport ) )
+			if( ! isValid( n, groupProp, nodeReport ) )
 			{
 				COMMON_COUT( n.second.get< std::string >( "id" ) );
 				groupIsValid = false;
@@ -259,7 +244,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 
 		ExpressionParser groupLength = ExpressionParser();
 		groupLength.setVariables( _headerElements );
-
+		
 		if( groupSize != "" )
 		{
 			size_t gSize = groupLength.parseExpression<size_t>( groupSize );
