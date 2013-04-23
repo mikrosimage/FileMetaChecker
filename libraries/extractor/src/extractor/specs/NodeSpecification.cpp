@@ -306,6 +306,10 @@ bool NodeSpecification::isValid( SubSpec& subSpec, bpt::ptree& nodeReport )
 			{
 				isValid = true;
 				message += asciiValues[i];
+
+				nodeReport.put( "optional", optional );
+				nodeReport.put( "value", asciiValues[i] );
+				nodeReport.put( "type", "ascii" );
 			}
 			// COMMON_COUT_VAR2( asciiValues[i], value.value );
 		}
@@ -343,6 +347,10 @@ bool NodeSpecification::isValid( SubSpec& subSpec, bpt::ptree& nodeReport )
 			{
 				isValid = true;
 				message += hexaValues[i];
+
+				nodeReport.put( "optional", optional );
+				nodeReport.put( "value", hexaValues[i] );
+				nodeReport.put( "type", "hexa" );
 			}
 			// COMMON_COUT_VAR2( hexaValues[i], value.value );
 		}
@@ -431,6 +439,9 @@ bool NodeSpecification::isValid( SubSpec& subSpec, bpt::ptree& nodeReport )
 			}
 			
 			validData = true;
+			nodeReport.put( "optional", optional );
+			nodeReport.put( "size", getPrintable( size ) );
+			nodeReport.put( "type", "data" );
 		}
 		
 		isValid = validUInt8 | validInt8 | validUInt16 | validInt16 | validUInt32 | validInt32 | validFloat | validDouble | validData;
