@@ -105,8 +105,7 @@ if options.filename:
 		pmd = PandocMarkdownWriter()
 
 		# HEADER #
-		pmd.addTitle( "QC Report")
-		pmd.addTitle( inputFile )
+		pmd.addTitle( inputFile.replace( ".xml", "" ) )
 
 		######   Write Document   ######
 		if options.fields :
