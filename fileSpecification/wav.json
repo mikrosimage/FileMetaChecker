@@ -151,8 +151,8 @@
                     ]
                 },
                 {
-                    "id": "wavl",
-                    "label": "Wave list",
+                    "id": "wavlSubChunks",
+                    "label": "Wave list sub-chunk",
                     "ascii": "wavl",
                     "groupSize": "wavlSize + 4",
                     "optional": true,
@@ -172,8 +172,8 @@
                     ]
                 },
                 {
-                    "id": "slnt",
-                    "label": "Silent",
+                    "id": "slntSubChunks",
+                    "label": "Silent sub-chunk",
                     "ascii": "slnt",
                     "groupSize": "slntSize + 4",
                     "optional": true,
@@ -193,8 +193,8 @@
                     ]
                 },
                 {
-                    "label": "Cue",
-                    "id": "cue ",
+                    "id": "cueSubChunks",
+                    "label": "Cue sub-chunk",
                     "ascii": "cue ",
                     "groupSize": "cueSize + 4",
                     "optional": true,
@@ -220,8 +220,8 @@
                     ]
                 },
                 {
-                    "id": "plst",
-                    "label": "Playlist",
+                    "id": "plstSubChunks",
+                    "label": "Playlist sub-chunk",
                     "ascii": "plst",
                     "groupSize": "plstSize + 4",
                     "optional": true,
@@ -247,8 +247,8 @@
                     ]
                 },
                 {
-                    "id": "list",
-                    "label": "Associated data list",
+                    "id": "listSubChunks",
+                    "label": "Associated data list sub-chunk",
                     "ascii": "list",
                     "groupSize": "listSize + 4",
                     "optional": true,
@@ -273,8 +273,8 @@
                     ]
                 },
                 {
-                    "shortId": "labl",
-                    "id": "label",
+                    "id": "lablSubChunks",
+                    "label": "Label sub-chunk",
                     "ascii": "labl",
                     "groupSize": "lablSize + 4",
                     "optional": true,
@@ -301,8 +301,8 @@
                     ]
                 },
                 {
-                    "id": "ltxt",
-                    "label": "labeled text",
+                    "id": "ltxtSubChunks",
+                    "label": "Labeled text sub-chunk",
                     "ascii": "ltxt",
                     "groupSize": "ltxtSize + 4",
                     "optional": true,
@@ -365,8 +365,8 @@
                     ]
                 },
                 {
-                    "id": "smpl",
-                    "label": "sampler",
+                    "id": "smplSubChunks",
+                    "label": "Sampler sub-chunk",
                     "ascii": "smpl",
                     "groupSize": "smplSize + 4",
                     "optional": true,
@@ -451,8 +451,8 @@
                     ]
                 },
                 {
-                    "id": "inst",
-                    "label": "instrument",
+                    "id": "instSubChunks",
+                    "label": "Instrument sub-chunk",
                     "ascii": "inst",
                     "groupSize": "instSize + 4",
                     "optional": true,

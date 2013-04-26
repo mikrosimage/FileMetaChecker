@@ -149,36 +149,42 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 			// COMMON_COUT( "add id : " << id << " = " << _headerElements[ id ] );
 			groupProperties.addSize( sizeof( uint8 ) );
 			nodeReport.put_value( uint8Val );
+			nodeReport.put( "<xmlattr>.type", "uint8" );
 		}
 		if( validInt8 )
 		{
 			_headerElements[ id ] = int8Val;
 			groupProperties.addSize( sizeof( int8 ) );
 			nodeReport.put_value( int8Val );
+			nodeReport.put( "<xmlattr>.type", "int8" );
 		}
 		if( validUInt16 )
 		{
 			_headerElements[ id ] = uint16Val;
 			groupProperties.addSize( sizeof( uint16 ) );
 			nodeReport.put_value( uint16Val );
+			nodeReport.put( "<xmlattr>.type", "uint16" );
 		}
 		if( validInt16 )
 		{
 			_headerElements[ id ] = int16Val;
 			groupProperties.addSize( sizeof( int16 ) );
 			nodeReport.put_value( int16Val );
+			nodeReport.put( "<xmlattr>.type", "int16" );
 		}
 		if( validUInt32 )
 		{
 			_headerElements[ id ] = uint32Val;
 			groupProperties.addSize( sizeof( uint32 ) );
 			nodeReport.put_value( uint32Val );
+			nodeReport.put( "<xmlattr>.type", "uint32" );
 		}
 		if( validInt32 )
 		{
 			_headerElements[ id ] = int32Val;
 			groupProperties.addSize( sizeof( int32 ) );
 			nodeReport.put_value( int32Val );
+			nodeReport.put( "<xmlattr>.type", "int32" );
 		}
 
 		if( validFloat )
@@ -186,12 +192,14 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 			_headerElements[ id ] = floatVal;
 			groupProperties.addSize( sizeof( float ) );
 			nodeReport.put_value( floatVal );
+			nodeReport.put( "<xmlattr>.type", "float" );
 		}
 		if( validDouble )
 		{
 			_headerElements[ id ] = doubleVal;
 			groupProperties.addSize( sizeof( double ) );
 			nodeReport.put_value( doubleVal );
+			nodeReport.put( "<xmlattr>.type", "double" );
 		}
 		
 		
@@ -239,10 +247,15 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 		COMMON_COUT( "--- Chunk (begin) ---");
 		BOOST_FOREACH( SubSpec& n, subSpec.second.get_child( kGroup ) )
 		{
-			if( ! isValid( n, groupProp, nodeReport ) )
+			bpt::ptree subNodeReport;
+			if( ! isValid( n, groupProp, subNodeReport ) )
 			{
 				COMMON_COUT( n.second.get< std::string >( "id" ) );
 				groupIsValid = false;
+			}
+			else
+			{
+				nodeReport.push_back( bpt::ptree::value_type( n.second.get< std::string >( "id" ), subNodeReport ) );
 			}
 		}
 		COMMON_COUT( "--- Chunk (end) ---");
