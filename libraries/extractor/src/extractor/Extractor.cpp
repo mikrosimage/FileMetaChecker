@@ -69,9 +69,9 @@ void Extractor::analyse( )
 			COMMON_COUT( "-> Parse Header" );
 			SpecIt header = spec.getHeader( );
 
-			_report.put( "specificationId", spec.getId() );
-			_report.put( "specificationLabel", spec.getLabel() );
-			_report.put( "specificationType", spec.getType() );
+			_report.put( "<xmlattr>.id", spec.getId() );
+			_report.put( "<xmlattr>.label", spec.getLabel() );
+			_report.put( "<xmlattr>.type", spec.getType() );
 			
 			NodeSpecification ns( _file );
 			bool isValidFile = true;
@@ -88,13 +88,13 @@ void Extractor::analyse( )
 				}
 				else
 				{
-					_report.push_back( bpt::ptree::value_type( "element", nodeReport ) );
+					_report.push_back( bpt::ptree::value_type( v.second.get< std::string >( "id" ), nodeReport ) );
 				}
 			}
 			
 			if( isValidFile )
 			{
-				_report.put( "status", "valid" );
+				_report.put( "<xmlattr>.status", "valid" );
 				COMMON_COUT( common::details::kColorGreen );
 				COMMON_COUT_X( 80, "*" );
 				COMMON_COUT( "VALID " << spec.getLabel() );
@@ -103,7 +103,7 @@ void Extractor::analyse( )
 			}
 			else
 			{
-				_report.put( "status", "not valid" );
+				_report.put( "<xmlattr>.status", "not valid" );
 				COMMON_COUT( common::details::kColorRed );
 				COMMON_COUT_X( 80, "*" );
 				COMMON_COUT( "NOT VALID " << spec.getLabel() );

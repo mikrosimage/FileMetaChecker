@@ -65,9 +65,9 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 				isValidNode = true;
 				message += asciiValues[i];
 
-				nodeReport.put( "optional", optional );
-				nodeReport.put( "value", asciiValues[i] );
-				nodeReport.put( "type", "ascii" );
+				nodeReport.put( "<xmlattr>.optional", optional );
+				nodeReport.put_value( asciiValues[i] );
+				nodeReport.put( "<xmlattr>.type", "ascii" );
 			}
 			// COMMON_COUT_VAR2( asciiValues[i], value.value );
 		}
@@ -107,9 +107,9 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 				isValidNode = true;
 				message += hexaValues[i];
 
-				nodeReport.put( "optional", optional );
-				nodeReport.put( "value", hexaValues[i] );
-				nodeReport.put( "type", "hexa" );
+				nodeReport.put( "<xmlattr>.optional", optional );
+				nodeReport.put_value( hexaValues[i] );
+				nodeReport.put( "<xmlattr>.type", "hexa" );
 			}
 			// COMMON_COUT_VAR2( hexaValues[i], value.value );
 		}
@@ -142,47 +142,56 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 
 		bool validData   = false;
 		
+
 		if( validUInt8 )
 		{
 			_headerElements[ id ] = uint8Val;
 			// COMMON_COUT( "add id : " << id << " = " << _headerElements[ id ] );
 			groupProperties.addSize( sizeof( uint8 ) );
+			nodeReport.put_value( uint8Val );
 		}
 		if( validInt8 )
 		{
 			_headerElements[ id ] = int8Val;
 			groupProperties.addSize( sizeof( int8 ) );
+			nodeReport.put_value( int8Val );
 		}
 		if( validUInt16 )
 		{
 			_headerElements[ id ] = uint16Val;
 			groupProperties.addSize( sizeof( uint16 ) );
+			nodeReport.put_value( uint16Val );
 		}
 		if( validInt16 )
 		{
 			_headerElements[ id ] = int16Val;
 			groupProperties.addSize( sizeof( int16 ) );
+			nodeReport.put_value( int16Val );
 		}
 		if( validUInt32 )
 		{
 			_headerElements[ id ] = uint32Val;
 			groupProperties.addSize( sizeof( uint32 ) );
+			nodeReport.put_value( uint32Val );
 		}
 		if( validInt32 )
 		{
 			_headerElements[ id ] = int32Val;
 			groupProperties.addSize( sizeof( int32 ) );
+			nodeReport.put_value( int32Val );
 		}
 
 		if( validFloat )
 		{
 			_headerElements[ id ] = floatVal;
 			groupProperties.addSize( sizeof( float ) );
+			nodeReport.put_value( floatVal );
 		}
 		if( validDouble )
 		{
 			_headerElements[ id ] = doubleVal;
 			groupProperties.addSize( sizeof( double ) );
+			nodeReport.put_value( doubleVal );
 		}
 		
 		
@@ -213,9 +222,9 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 			
 			validData = true;
 			groupProperties.addSize( size );
-			nodeReport.put( "optional", optional );
-			nodeReport.put( "size", getPrintable( size ) );
-			nodeReport.put( "type", "data" );
+			nodeReport.put( "<xmlattr>.optional", optional );
+			nodeReport.put( "<xmlattr>.size", getPrintable( size ) );
+			nodeReport.put( "<xmlattr>.type", "data" );
 		}
 		
 		isValidNode = validUInt8 | validInt8 | validUInt16 | validInt16 | validUInt32 | validInt32 | validFloat | validDouble | validData;
@@ -264,8 +273,8 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 	
 	COMMON_COUT( ( isValidNode ? common::details::kColorGreen : common::details::kColorRed ) << "\t" << std::left << std::setw(40) << ( label + " - " + id ) << "\t" << common::details::kColorStd << message );
 
-	nodeReport.put( "id", id );
-	nodeReport.put( "label", label );
-	nodeReport.put( "status", isValidNode );
+	// nodeReport.put( "<xmlattr>.id", id );
+	nodeReport.put( "<xmlattr>.label", label );
+	nodeReport.put( "<xmlattr>.status", isValidNode );
 	return isValidNode;
 }
