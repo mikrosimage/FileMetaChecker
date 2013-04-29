@@ -3,8 +3,11 @@
 #include <report/Report.hpp>
 
 #include "FileSystemInfo.hpp"
+#include <boost/property_tree/ptree.hpp>
 
 #include <sstream>
+
+namespace bpt = boost::property_tree;
 
 FileSystemInfo::FileSystemInfo( const std::string& filePath )
 	: _filePath( filePath )
@@ -49,26 +52,60 @@ void FileSystemInfo::getReport( Report* report )
 	getGroupPermissions( groupRead, groupWrite, groupExe );
 	getOtherPermissions( othersRead, othersWrite, othersExe );
 	
-	
-	report->add( si + ".filename", getFilename() );
-	report->add( si + ".absolutePath", getAbsoluteFilename() );
-	report->add( si + ".extension", getExt() );
-	report->add( si + ".size",  to_string( getSize() ) );
+	bpt::ptree fileSystemInfoReport;
+	bpt::ptree nodeReport;
 
-	report->add( si + "." + perm + "." + owner + "." + read , to_string( ownerRead  ) );
-	report->add( si + "." + perm + "." + owner + "." + write, to_string( ownerWrite ) );
-	report->add( si + "." + perm + "." + owner + "." + exe  , to_string( ownerExe   ) );
-	
-	report->add( si + "." + perm + "." + group + "." + read , to_string( ownerRead  ) );
-	report->add( si + "." + perm + "." + group + "." + write, to_string( ownerWrite ) );
-	report->add( si + "." + perm + "." + group + "." + exe  , to_string( ownerExe   ) );
-	
-	report->add( si + "." + perm + "." + others + "." + read , to_string( ownerRead  ) );
-	report->add( si + "." + perm + "." + others + "." + write, to_string( ownerWrite ) );
-	report->add( si + "." + perm + "." + others + "." + exe  , to_string( ownerExe   ) );
-	
-	
-	report->add( si + ".filestatus", getFileStatus() );
+	nodeReport.put_value( getFilename() );
+	nodeReport.put( "<xmlattr>.label", "Filename" );
+	fileSystemInfoReport.push_back( bpt::ptree::value_type( "filename", nodeReport ));
+
+	nodeReport.put_value( getAbsoluteFilename() );
+	nodeReport.put( "<xmlattr>.label", "Path" );
+	fileSystemInfoReport.push_back( bpt::ptree::value_type( "absolutePath", nodeReport ));
+
+	nodeReport.put_value( getExt() );
+	nodeReport.put( "<xmlattr>.label", "Extension" );
+	fileSystemInfoReport.push_back( bpt::ptree::value_type( "extension", nodeReport ));
+
+	nodeReport.put_value( to_string( getSize() ) );
+	nodeReport.put( "<xmlattr>.label", "Size" );
+	fileSystemInfoReport.push_back( bpt::ptree::value_type( "size", nodeReport ));
+
+
+	nodeReport.put_value( getPermissions() );
+	nodeReport.put( "<xmlattr>.label", "Rights" );
+	bpt::ptree userPermNode;
+
+	userPermNode.put( read , to_string( ownerRead  ) );
+	userPermNode.put( write, to_string( ownerWrite ) );
+	userPermNode.put( exe  , to_string( ownerExe   ) );
+	userPermNode.put( "<xmlattr>.label", "Owner" );
+	nodeReport.push_back( bpt::ptree::value_type( owner, userPermNode ));
+
+	userPermNode.put( read , to_string( groupRead  ) );
+	userPermNode.put( write, to_string( groupWrite ) );
+	userPermNode.put( exe  , to_string( groupExe   ) );
+	userPermNode.put( "<xmlattr>.label", "Group" );
+	nodeReport.push_back( bpt::ptree::value_type( group, userPermNode ));
+
+	userPermNode.put( read , to_string( othersRead  ) );
+	userPermNode.put( write, to_string( othersWrite ) );
+	userPermNode.put( exe  , to_string( othersExe   ) );
+	userPermNode.put( "<xmlattr>.label", "Others" );
+	nodeReport.push_back( bpt::ptree::value_type( others, userPermNode ));
+	fileSystemInfoReport.push_back( bpt::ptree::value_type( perm, nodeReport ));
+
+	size_t nodeSize = nodeReport.size();
+	for( size_t i=0; i < nodeSize; i++ )
+	{
+		nodeReport.pop_back();
+	}
+
+	nodeReport.put_value( getFileStatus() );
+	nodeReport.put( "<xmlattr>.label", "Status" );
+	fileSystemInfoReport.push_back( bpt::ptree::value_type( "status", nodeReport ));
+
+	report->add( fileSystemInfoReport, si );
 }
 
 std::string FileSystemInfo::getFilename() const
