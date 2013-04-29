@@ -25,7 +25,7 @@ class XmlParser():
 			# get xml sections
 			for child in self.root.childNodes :
 				if child.tagName == fileSystemInfo :
-					section = FileSystemInfoSection( "File System Info" )
+					section = FileSystemInfoSection( child.getAttribute( labelAttr ) )
 				elif child.tagName == specification :
 					section = SpecificationSection( child.getAttribute( labelAttr ) )
 				else :
