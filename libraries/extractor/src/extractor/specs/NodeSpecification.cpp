@@ -288,6 +288,6 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 
 	// nodeReport.put( "<xmlattr>.id", id );
 	nodeReport.put( "<xmlattr>.label", label );
-	nodeReport.put( "<xmlattr>.status", isValidNode );
+	nodeReport.put( "<xmlattr>.status", ( isValidNode ? "valid" : "invalid" ) );
 	return isValidNode;
 }
