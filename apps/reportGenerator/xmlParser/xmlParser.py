@@ -26,10 +26,13 @@ class XmlParser():
 			for child in self.root.childNodes :
 				if child.tagName == fileSystemInfo :
 					section = FileSystemInfoSection( child.getAttribute( labelAttr ) )
+					section.status = child.getAttribute( statusAttr )
 				elif child.tagName == specification :
 					section = SpecificationSection( child.getAttribute( labelAttr ) )
+					section.status = child.getAttribute( statusAttr )
 				else :
 					section = Section( child.tagName )
+					section.status = child.getAttribute( statusAttr )
 				self.sections.append( section )
 				# get xml elements (tagName)
 				if child.childNodes is not None :
