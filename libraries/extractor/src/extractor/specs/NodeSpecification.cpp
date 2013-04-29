@@ -255,7 +255,10 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 			}
 			else
 			{
-				nodeReport.push_back( bpt::ptree::value_type( n.second.get< std::string >( "id" ), subNodeReport ) );
+				if( subNodeReport.size() > 0 )
+				{
+					nodeReport.push_back( bpt::ptree::value_type( n.second.get< std::string >( "id" ), subNodeReport ) );
+				}
 			}
 		}
 		COMMON_COUT( "--- Chunk (end) ---");
