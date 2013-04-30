@@ -120,7 +120,7 @@ int main( int argc, char** argv )
 		}
 		catch( ... )
 		{
-			COMMON_COUT( color._error  << "error" << color._std << std::endl );
+			COMMON_COUT( color._error  << "error" << color._std );
 #ifndef QC_PRODUCTION
 			COMMON_CERR( color._red << boost::current_exception_diagnostic_information() << color._std );
 #endif
