@@ -71,9 +71,10 @@ void FileSystemInfo::getReport( Report* report )
 	nodeReport.put( "<xmlattr>.label", "Size" );
 	fileSystemInfoReport.push_back( bpt::ptree::value_type( "size", nodeReport ));
 
-
-	nodeReport.put_value( getPermissions() );
+	
+	nodeReport.clear();
 	nodeReport.put( "<xmlattr>.label", "Rights" );
+	
 	bpt::ptree userPermNode;
 
 	userPermNode.put( read , to_string( ownerRead  ) );
@@ -95,14 +96,10 @@ void FileSystemInfo::getReport( Report* report )
 	nodeReport.push_back( bpt::ptree::value_type( others, userPermNode ));
 	fileSystemInfoReport.push_back( bpt::ptree::value_type( perm, nodeReport ));
 
-	size_t nodeSize = nodeReport.size();
-	for( size_t i=0; i < nodeSize; i++ )
-	{
-		nodeReport.pop_back();
-	}
-
+	nodeReport.clear();
 	nodeReport.put_value( getFileStatus() );
 	nodeReport.put( "<xmlattr>.label", "Status" );
+	fileSystemInfoReport.put( "<xmlattr>.label", "File System Info" );
 	fileSystemInfoReport.push_back( bpt::ptree::value_type( "status", nodeReport ));
 
 	report->add( fileSystemInfoReport, si );
