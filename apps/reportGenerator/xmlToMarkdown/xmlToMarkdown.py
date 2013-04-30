@@ -58,7 +58,7 @@ class XmlToMarkdown():
 			print section.title
 			section.setFieldsValues()
 			print section.data
-			print section.dataStatus
+			# print section.dataStatus
 
 			### TABLE ###
 			t = PandocMarkdownTable()
@@ -82,7 +82,8 @@ class XmlToMarkdown():
 				self.pmw.addHeader( section.groupTitle + " : _" + section.status + "_", 2 )
 				for s in range( 0, len( section.group ) ) :
 					section.group[s].setFieldsValues()
-					print section.group[s].dataStatus
+					print section.group[s].data
+					# print section.group[s].dataStatus
 
 					t2 = PandocMarkdownTable()
 					t2.setTitle( section.group[s].title + " : \\textit{" + section.group[s].status + "} " )

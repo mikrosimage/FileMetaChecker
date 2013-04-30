@@ -37,7 +37,8 @@ class Section():
 	def setFieldsValues( self ):
 		for field in self.fields:
 			data = self.getChildValue( field )
-			self.data.append( data )
+			if len( data ) != 0 :
+				self.data.append( data )
 
 
 
@@ -107,11 +108,11 @@ class SpecificationSection( Section ):
 			# DOCUMENT_TYPE_NODE          =  9, 
 			# NOTATION_NODE               = 10
 
-			data.append( rootChild.getAttribute( labelAttr ) )
-			self.dataStatus.append( rootChild.getAttribute( statusAttr ) ) 
 
 			if len( rootChild.childNodes ) == 1 and rootChild.childNodes[0].nodeType == 3 :
 				# print "CASE 1"
+				data.append( rootChild.getAttribute( labelAttr ) )
+				self.dataStatus.append( rootChild.getAttribute( statusAttr ) ) 
 				data.append( checkStringLength( rootChild.childNodes[0].nodeValue, 70 ) )
 			else :
 				# print "CASE 2"
@@ -121,16 +122,16 @@ class SpecificationSection( Section ):
 					section = Section( child.getAttribute( labelAttr ) )
 					section.status = child.getAttribute( statusAttr )
 					
-					if child.childNodes is not None :
+					if child.childNodes :
 						for subChild in child.childNodes:
-							if subChild.nodeType == 3 :
+							if subChild.nodeType == 3 and subChild.childNodes :
 								# print "    CASE 2.1 : " + str( subChild )
 								section.title += " (" + checkStringLength( subChild.nodeValue, 70 ) + ")"
-							else :
+							elif subChild.childNodes :
 								# print "    CASE 2.2 : " + str( subChild )
 								section.fields.append( subChild )
 					
 					self.group.append( section )
-				data.append( " --- " )
+				# data.append( " --- " )
 				
 		return data
