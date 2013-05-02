@@ -142,66 +142,14 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 
 		bool validData   = false;
 		
-
-		if( validUInt8 )
-		{
-			_headerElements[ id ] = uint8Val;
-			// COMMON_COUT( "add id : " << id << " = " << _headerElements[ id ] );
-			groupProperties.addSize( sizeof( uint8 ) );
-			nodeReport.put_value( uint8Val );
-			nodeReport.put( "<xmlattr>.type", "uint8" );
-		}
-		if( validInt8 )
-		{
-			_headerElements[ id ] = int8Val;
-			groupProperties.addSize( sizeof( int8 ) );
-			nodeReport.put_value( int8Val );
-			nodeReport.put( "<xmlattr>.type", "int8" );
-		}
-		if( validUInt16 )
-		{
-			_headerElements[ id ] = uint16Val;
-			groupProperties.addSize( sizeof( uint16 ) );
-			nodeReport.put_value( uint16Val );
-			nodeReport.put( "<xmlattr>.type", "uint16" );
-		}
-		if( validInt16 )
-		{
-			_headerElements[ id ] = int16Val;
-			groupProperties.addSize( sizeof( int16 ) );
-			nodeReport.put_value( int16Val );
-			nodeReport.put( "<xmlattr>.type", "int16" );
-		}
-		if( validUInt32 )
-		{
-			_headerElements[ id ] = uint32Val;
-			groupProperties.addSize( sizeof( uint32 ) );
-			nodeReport.put_value( uint32Val );
-			nodeReport.put( "<xmlattr>.type", "uint32" );
-		}
-		if( validInt32 )
-		{
-			_headerElements[ id ] = int32Val;
-			groupProperties.addSize( sizeof( int32 ) );
-			nodeReport.put_value( int32Val );
-			nodeReport.put( "<xmlattr>.type", "int32" );
-		}
-
-		if( validFloat )
-		{
-			_headerElements[ id ] = floatVal;
-			groupProperties.addSize( sizeof( float ) );
-			nodeReport.put_value( floatVal );
-			nodeReport.put( "<xmlattr>.type", "float" );
-		}
-		if( validDouble )
-		{
-			_headerElements[ id ] = doubleVal;
-			groupProperties.addSize( sizeof( double ) );
-			nodeReport.put_value( doubleVal );
-			nodeReport.put( "<xmlattr>.type", "double" );
-		}
-		
+		exportValidData( validUInt8,  id, uint8Val,  groupProperties, nodeReport );
+		exportValidData( validInt8,   id, int8Val,   groupProperties, nodeReport );
+		exportValidData( validUInt16, id, uint16Val, groupProperties, nodeReport );
+		exportValidData( validInt16,  id, int16Val,  groupProperties, nodeReport );
+		exportValidData( validUInt32, id, uint32Val, groupProperties, nodeReport );
+		exportValidData( validInt32,  id, int32Val,  groupProperties, nodeReport );
+		exportValidData( validFloat,  id, floatVal,  groupProperties, nodeReport );
+		exportValidData( validDouble, id, doubleVal, groupProperties, nodeReport );
 		
 		if( typeValue == "data" )
 		{
@@ -209,6 +157,8 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 			
 			ExpressionParser ep = ExpressionParser();
 			ep.setVariables( _headerElements );
+
+			nodeReport.clear();
 
 			if( count != "" )
 			{
@@ -293,4 +243,17 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 	nodeReport.put( "<xmlattr>.label", label );
 	nodeReport.put( "<xmlattr>.status", ( isValidNode ? "valid" : "invalid" ) );
 	return isValidNode;
+}
+
+
+template< typename DataType >
+void NodeSpecification::exportValidData( const bool isValid, const std::string& id, const DataType& data, GroupProperties& groupProperties, bpt::ptree& nodeReport )
+{
+	if( !isValid )
+		return;
+
+	_headerElements[ id ] = data;
+	groupProperties.addSize( sizeof( DataType ) );
+	nodeReport.put_value( data );
+	nodeReport.put( "<xmlattr>.type", getStringForType<DataType>() );
 }

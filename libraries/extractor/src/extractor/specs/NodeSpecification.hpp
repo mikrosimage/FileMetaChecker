@@ -18,9 +18,14 @@ public:
 
 	bool isValid(SubSpec& subSpec, GroupProperties& groupProperties, bpt::ptree& nodeReport );
 
+	template< typename DataType >
+	void exportValidData( const bool isValid, const std::string& id, const DataType& data, GroupProperties& groupProperties, bpt::ptree& nodeReport );
+
 private:
 	File*       _file;
 	ElementsMap _headerElements;
 };
+
+#include "NodeSpecification.tcc"
 
 #endif
