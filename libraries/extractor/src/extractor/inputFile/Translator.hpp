@@ -32,7 +32,9 @@ public:
 	}
 	
 	DataType translate( const char* data, const size_t size = 0, const bool bigEndian = true );
+	std::string translate( const DataType& data );
 };
+
 
 template< typename DataType >
 DataType Translator<DataType>::translate( const char* data, const size_t size, const bool bigEndian )
@@ -90,5 +92,29 @@ uint8 Translator<uint8>::translate( const char* data, const size_t, const bool )
 	return data[0];
 }
 
+
+template< typename DataType >
+std::string Translator<DataType>::translate( const DataType & data)
+{
+	std::stringstream str;
+	str << data;
+	return str.str();
+}
+
+template<>
+std::string Translator<int8>::translate( const int8 & data)
+{
+	std::stringstream str;
+	str << (short)data;
+	return str.str();
+}
+
+template<>
+std::string Translator<uint8>::translate( const uint8 & data)
+{
+	std::stringstream str;
+	str << (unsigned short)data;
+	return str.str();
+}
 
 #endif

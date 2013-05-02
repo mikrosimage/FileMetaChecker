@@ -327,4 +327,76 @@ BOOST_AUTO_TEST_CASE( translator_double_le )
 	}
 }
 
+BOOST_AUTO_TEST_CASE( translator_translate_to_string )
+{
+	{
+		Translator<int> trInt;
+		int intValue = 123;
+		BOOST_CHECK_EQUAL( trInt.translate( intValue ), "123" );
+	}
+	{
+		Translator<int8> trInt;
+		int8 intValue = 8;
+		BOOST_CHECK_EQUAL( trInt.translate( intValue ), "8" );
+	}
+	{
+		Translator<uint8> trInt;
+		uint8 intValue = 8;
+		BOOST_CHECK_EQUAL( trInt.translate( intValue ), "8" );
+	}
+	{
+		Translator<int16> trInt;
+		int16 intValue = 160;
+		BOOST_CHECK_EQUAL( trInt.translate( intValue ), "160" );
+	}
+	{
+		Translator<uint16> trInt;
+		uint16 intValue = 160;
+		BOOST_CHECK_EQUAL( trInt.translate( intValue ), "160" );
+	}
+	{
+		Translator<int32> trInt;
+		int32 intValue = 3200;
+		BOOST_CHECK_EQUAL( trInt.translate( intValue ), "3200" );
+	}
+	{
+		Translator<uint32> trInt;
+		uint32 intValue = 3200;
+		BOOST_CHECK_EQUAL( trInt.translate( intValue ), "3200" );
+	}
+	{
+		Translator<int64> trInt;
+		int64 intValue = 64000;
+		BOOST_CHECK_EQUAL( trInt.translate( intValue ), "64000" );
+	}
+	{
+		Translator<uint64> trInt;
+		uint64 intValue = 64000;
+		BOOST_CHECK_EQUAL( trInt.translate( intValue ), "64000" );
+	}
+
+	{
+		Translator<float> trFloat;
+		float floatValue = 0.123;
+		BOOST_CHECK_EQUAL( trFloat.translate( floatValue ), "0.123" );
+	}
+	{
+		Translator<float> trFloat;
+		float floatValue = 1.23e+35;
+		BOOST_CHECK_EQUAL( trFloat.translate( floatValue ), "1.23e+35" );
+	}
+
+	{
+		Translator<double> trDouble;
+		double doubleValue = 0.00123;
+		BOOST_CHECK_EQUAL( trDouble.translate( doubleValue ), "0.00123" );
+	}
+	{
+		Translator<double> trDouble;
+		double doubleValue = 1.23e+305;
+		BOOST_CHECK_EQUAL( trDouble.translate( doubleValue ), "1.23e+305" );
+	}
+}
+
+
 BOOST_AUTO_TEST_SUITE_END()
