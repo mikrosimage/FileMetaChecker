@@ -102,7 +102,7 @@ std::string Translator<DataType>::translate( const DataType & data)
 }
 
 template<>
-std::string Translator<int8>::translate( const int8 & data)
+std::string Translator<int8>::translate( const int8 & data )
 {
 	std::stringstream str;
 	str << (short)data;
@@ -110,7 +110,7 @@ std::string Translator<int8>::translate( const int8 & data)
 }
 
 template<>
-std::string Translator<uint8>::translate( const uint8 & data)
+std::string Translator<uint8>::translate( const uint8 & data )
 {
 	std::stringstream str;
 	str << (unsigned short)data;

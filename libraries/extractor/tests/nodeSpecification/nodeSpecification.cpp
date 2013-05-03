@@ -2,6 +2,7 @@
 #include <extractor/specs/GroupProperties.hpp>
 #include <extractor/specs/common.hpp>
 #include <extractor/inputFile/File.hpp>
+#include <extractor/inputFile/types.hpp>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/foreach.hpp>
@@ -13,6 +14,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <limits>
 
 #define BOOST_TEST_MODULE qc_extractor_nodeSpecification
 #include <boost/test/unit_test.hpp>
@@ -20,23 +22,22 @@
 using namespace boost::unit_test;
 namespace bpt = boost::property_tree;
 
-std::string testFile   = "jpegTest.jpg";
-std::string reportFile = "jpegTestReport.xml";
-std::string specFile   = "jpegTest.json";
+const std::string testFile   = ".tests/jpegTest.jpg";
+const std::string reportFile = ".tests/jpegTestReport.xml";
+const std::string specFile   = ".tests/jpegTest.json";
 
-
-void addHexaStream( std::string hexaWord, std::ofstream &output )
+std::ostream& operator<<( std::ostream& ofs, const Hexa hexaValue )
 {
-	for( size_t i=0; i < hexaWord.size(); i+=2 )
+	for( size_t index = 0; index < hexaValue.value.size(); index += 2 )
 	{
 		std::stringstream str;
 		int value;
-		str << hexaWord.substr( i, 2 );
+		str << hexaValue.value.substr( index, 2 );
 		str >> std::hex >> value;
-		output << (unsigned char)value ;
+		ofs << (unsigned char)value;
 	}
+	return ofs;
 }
-
 
 bpt::ptree generateReportTree( const bpt::ptree& node )
 {
@@ -66,27 +67,35 @@ bpt::ptree generateReportTree( const bpt::ptree& node )
 	return report;
 }
 
+#define CHECK_NODE( NODE_NAME, STATUS, RESULT ) BOOST_CHECK_EQUAL( report.get_child( NODE_NAME ).get< std::string >( STATUS ), RESULT )
+
+#define CHECK_NODE_VALID( NODE_NAME ) CHECK_NODE( NODE_NAME, "<xmlattr>.status", "valid" )
+#define CHECK_NODE_INVALID( NODE_NAME ) CHECK_NODE( NODE_NAME, "<xmlattr>.status", "invalid" )
+
+#define CHECK_VALUE_EQUAL( NODE_NAME, VALUE ) BOOST_CHECK_EQUAL( report.get_child( NODE_NAME ).get_value< std::string >(), VALUE );
 
 
 BOOST_AUTO_TEST_SUITE( nodeSpecification_tests_suite01 )
 
 BOOST_AUTO_TEST_CASE( nodeSpecification_genericFailedTest )
 {
+	Hexa hexa;
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "ffd8", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		hexa.value = "ffd8";
+		stream << hexa;
 		stream.close();
 		
 		bpt::ptree node;
 		node.put( "label", "No Id Test" );
-		node.put( "hexa", "ffd8" );
+		node.put( "hexa", hexa.value );
 		// COMMON_COUT( ">>> No id test (hexa value)" );
 
 		BOOST_CHECK_THROW( generateReportTree( node ), bpt::ptree_bad_path );
 	}
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "00", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		hexa.value = "00";
 		stream.close();
 
 		bpt::ptree node;
@@ -100,43 +109,49 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_genericFailedTest )
 
 BOOST_AUTO_TEST_CASE( nodeSpecification_hexaTestFile )
 {
+	Hexa hexa;
 	bpt::ptree node;
+	
+	hexa.value = "ffd8";
 	node.put( "id", "hexaTest" );
 	node.put( "label", "Hexa Test" );
-	node.put( "hexa", "ffd8" );
+	node.put( "hexa", hexa.value );
 
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "ffd8", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << hexa;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
 
-		BOOST_CHECK_EQUAL( report.get_child( "hexaTest" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "hexaTest" ).get_value< std::string >(), "ffd8" );
+		CHECK_NODE_VALID ( "hexaTest" );
+		CHECK_VALUE_EQUAL( "hexaTest", hexa.value );
 	}
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "FFD8", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		hexa.value = "FFD8";
+		stream << hexa;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
 
-		BOOST_CHECK_EQUAL( report.get_child( "hexaTest" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "hexaTest" ).get_value< std::string >(), "ffd8" );
+		CHECK_NODE_VALID ( "hexaTest" );
+		CHECK_VALUE_EQUAL( "hexaTest", "ffd8" );
 	}
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "abcd", stream );
-		stream.close();	
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		hexa.value = "abcd";
+		stream << hexa;
+		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
 
-		BOOST_CHECK_EQUAL( report.get_child( "hexaTest" ).get< std::string >( "<xmlattr>.status" ), "invalid" );
+		CHECK_NODE_INVALID( "hexaTest" );
 	}
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "ffd8", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		hexa.value = "ffd8";
+		stream << hexa;
 		stream.close();
 
 		node.clear();
@@ -146,51 +161,56 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_hexaTestFile )
 		BOOST_CHECK_THROW( generateReportTree( node ), std::runtime_error );
 	}
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "ffd8", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		hexa.value = "ffd8";
+		stream << hexa;
 		stream.close();
 
 		node.clear();
 		node.put( "id", "hexaMultipleTest" );
 		node.put( "label", "Hexa Multiple Test" );
-		node.put( "hexa.", "ffd8" );
+		node.put( "hexa.", hexa.value );
+		
 		node.add( "hexa.", "ffe0" );
 
 		bpt::ptree report = generateReportTree( node );
 
-		BOOST_CHECK_EQUAL( report.get_child( "hexaMultipleTest" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "hexaMultipleTest" ).get_value< std::string >(), "ffd8" );
+		CHECK_NODE_VALID ( "hexaMultipleTest" );
+		CHECK_VALUE_EQUAL( "hexaMultipleTest", hexa.value );
 	}
 }
 
 BOOST_AUTO_TEST_CASE( nodeSpecification_asciiTestFile )
 {
+	const std::string wave = "WAVE";
+	const std::string riff = "RIFF";
 	bpt::ptree node;
+	
 	node.put( "id", "asciiTest" );
 	node.put( "label", "Ascii Test" );
-	node.put( "ascii", "WAVE" );
+	node.put( "ascii", wave );
 
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "57415645", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << wave;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
 
-		BOOST_CHECK_EQUAL( report.get_child( "asciiTest" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "asciiTest" ).get_value< std::string >(), "WAVE" );
+		CHECK_NODE_VALID ( "asciiTest" );
+		CHECK_VALUE_EQUAL( "asciiTest", wave );
 	}
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "abcdef00", stream );
-		stream.close();	
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << "EVAW";
+		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "asciiTest" ).get< std::string >( "<xmlattr>.status" ), "invalid" );
+		CHECK_NODE_INVALID( "asciiTest" );
 	}
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "57415645", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << wave;
 		stream.close();
 
 		node.clear();
@@ -200,342 +220,358 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_asciiTestFile )
 		BOOST_CHECK_THROW( generateReportTree( node ), std::runtime_error );
 	}
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "57415645", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << wave;
 		stream.close();
 
 		node.clear();
 		node.put( "id", "asciiMultipleTest" );
 		node.put( "label", "Ascii Multiple Test" );
-		node.put( "ascii.", "WAVE" );
-		node.add( "ascii.", "RIFF" );
+		node.put( "ascii.", wave );
+		node.add( "ascii.", riff );
 
 		bpt::ptree report = generateReportTree( node );
 
-		BOOST_CHECK_EQUAL( report.get_child( "asciiMultipleTest" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "asciiMultipleTest" ).get_value< std::string >(), "WAVE" );
+		CHECK_NODE_VALID ( "asciiMultipleTest" );
+		CHECK_VALUE_EQUAL( "asciiMultipleTest", wave );
 	}
 }
 
 BOOST_AUTO_TEST_CASE( nodeSpecification_int8TestFile )
 {
+	const std::string nodename = "int8Test";
 	bpt::ptree node;
-	node.put( "id", "int8Test" );
+	node.put( "id", nodename );
 	node.put( "label", "Int8 Test" );
 	node.put( "type", "int8" );
 
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "00", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (int8) 0;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "int8Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "int8Test" ).get_value< std::string >(), "0" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "0" );
 	}
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "7F", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (int8) 127;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "int8Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "int8Test" ).get_value< std::string >(), "127" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "127" );
 	}
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "FF", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (int8) -1;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "int8Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "int8Test" ).get_value< std::string >(), "-1" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "-1" );
 	}
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "80", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (int8) -128;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "int8Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "int8Test" ).get_value< std::string >(), "-128" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "-128" );
 	}
 }
 
 BOOST_AUTO_TEST_CASE( nodeSpecification_uint8TestFile )
 {
+	const std::string nodename = "uint8Test";
 	bpt::ptree node;
-	node.put( "id", "uint8Test" );
+	node.put( "id", nodename );
 	node.put( "label", "Uint8 Test" );
 	node.put( "type", "uint8" );
 
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "00", stream );
+		/// check min
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "uint8Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "uint8Test" ).get_value< std::string >(), "0" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "0" );
 	}
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "FF", stream );
+		/// check max
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 255;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "uint8Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "uint8Test" ).get_value< std::string >(), "255" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "255" );
 	}
+	
+	/// check range
+	node.put( "range.min", "20" );
+	node.put( "range.max", "100" );
+	
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0;
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		CHECK_NODE_INVALID ( nodename );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 101;
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		CHECK_NODE_INVALID ( nodename );
+	}
+	/*{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 50;
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "50" );
+	}*/
 }
 
 BOOST_AUTO_TEST_CASE( nodeSpecification_int16TestFile )
 {
+	const std::string nodename = "int16Test";
 	bpt::ptree node;
-	node.put( "id", "int16Test" );
+	node.put( "id", nodename );
 	node.put( "label", "Int16 Test" );
 	node.put( "type", "int16" );
 
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "0000", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0x00 << (uint8) 0x00;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "int16Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "int16Test" ).get_value< std::string >(), "0" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "0" );
 	}
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "7FFF", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0x7f << (uint8) 0xff;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "int16Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "int16Test" ).get_value< std::string >(), "32767" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "32767" );
 	}
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "FFFF", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0xff << (uint8) 0xff;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "int16Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "int16Test" ).get_value< std::string >(), "-1" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "-1" );
 	}
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "8000", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0x80 << (uint8) 0x00;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "int16Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "int16Test" ).get_value< std::string >(), "-32768" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "-32768" );
 	}
 }
 
 BOOST_AUTO_TEST_CASE( nodeSpecification_uint16TestFile )
 {
+	const std::string nodename = "uint16Test";
+	
 	bpt::ptree node;
-	node.put( "id", "uint16Test" );
+	node.put( "id", nodename );
 	node.put( "label", "Uint16 Test" );
 	node.put( "type", "uint16" );
 
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "0000", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0x00 << (uint8) 0x00;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "uint16Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "uint16Test" ).get_value< std::string >(), "0" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "0" );
 	}
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "FFFF", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0xff << (uint8) 0xff;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "uint16Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "uint16Test" ).get_value< std::string >(), "65535" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "65535" );
 	}
 }
 
 BOOST_AUTO_TEST_CASE( nodeSpecification_int32TestFile )
 {
+	const std::string nodename = "int32Test";
+	
 	bpt::ptree node;
-	node.put( "id", "int32Test" );
+	node.put( "id", nodename );
 	node.put( "label", "Int32 Test" );
 	node.put( "type", "int32" );
 
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "00000000", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0x00 << (uint8) 0x00 << (uint8) 0x00 << (uint8) 0x00;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "int32Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "int32Test" ).get_value< std::string >(), "0" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "0" );
 	}
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "7FFFFFFF", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0x7f << (uint8) 0xff << (uint8) 0xff << (uint8) 0xff;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "int32Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "int32Test" ).get_value< std::string >(), "2147483647" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "2147483647" );
 	}
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "FFFFFFFF", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0xff << (uint8) 0xff << (uint8) 0xff << (uint8) 0xff;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "int32Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "int32Test" ).get_value< std::string >(), "-1" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "-1" );
 	}
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "80000000", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0x80 << (uint8) 0x00 << (uint8) 0x00 << (uint8) 0x00;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "int32Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "int32Test" ).get_value< std::string >(), "-2147483648" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "-2147483648" );
 	}
 }
 
 BOOST_AUTO_TEST_CASE( nodeSpecification_uint32TestFile )
 {
+	const std::string nodename = "uint32Test";
+	
 	bpt::ptree node;
-	node.put( "id", "uint32Test" );
+	node.put( "id", nodename );
 	node.put( "label", "Uint32 Test" );
 	node.put( "type", "uint32" );
 
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "00000000", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0x00 << (uint8) 0x00 << (uint8) 0x00 << (uint8) 0x00;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "uint32Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "uint32Test" ).get_value< std::string >(), "0" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "0" );
 	}
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "FFFFFFFF", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0xff << (uint8) 0xff << (uint8) 0xff << (uint8) 0xff;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "uint32Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "uint32Test" ).get_value< std::string >(), "4294967295" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "4294967295" );
 	}
 }
 
 BOOST_AUTO_TEST_CASE( nodeSpecification_int64TestFile )
 {
+	const std::string nodename = "int64Test";
+	
 	bpt::ptree node;
-	node.put( "id", "int64Test" );
+	node.put( "id", nodename );
 	node.put( "label", "Int64 Test" );
 	node.put( "type", "int64" );
 
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "0000000000000000", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0x00 << (uint8) 0x00 << (uint8) 0x00 << (uint8) 0x00 <<
+				  (uint8) 0x00 << (uint8) 0x00 << (uint8) 0x00 << (uint8) 0x00;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "int64Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "int64Test" ).get_value< std::string >(), "0" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "0" );
 	}
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "7FFFFFFFFFFFFFFF", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0x7f << (uint8) 0xff << (uint8) 0xff << (uint8) 0xff <<
+				  (uint8) 0xff << (uint8) 0xff << (uint8) 0xff << (uint8) 0xff;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "int64Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "int64Test" ).get_value< std::string >(), "9223372036854775807" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "9223372036854775807" );
 	}
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "FFFFFFFFFFFFFFFF", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0xff << (uint8) 0xff << (uint8) 0xff << (uint8) 0xff <<
+				  (uint8) 0xff << (uint8) 0xff << (uint8) 0xff << (uint8) 0xff;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "int64Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "int64Test" ).get_value< std::string >(), "-1" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "-1" );
 	}
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "8000000000000000", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0x80 << (uint8) 0x00 << (uint8) 0x00 << (uint8) 0x00 <<
+				  (uint8) 0x00 << (uint8) 0x00 << (uint8) 0x00 << (uint8) 0x00;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "int64Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "int64Test" ).get_value< std::string >(), "-9223372036854775808" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "-9223372036854775808" );
 	}
 }
 
 BOOST_AUTO_TEST_CASE( nodeSpecification_uint64TestFile )
 {
+	const std::string nodename = "uint64Test";
 	bpt::ptree node;
-	node.put( "id", "uint64Test" );
+	node.put( "id", nodename );
 	node.put( "label", "Uint64 Test" );
 	node.put( "type", "uint64" );
 
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "0000000000000000", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0x00 << (uint8) 0x00 << (uint8) 0x00 << (uint8) 0x00 <<
+				  (uint8) 0x00 << (uint8) 0x00 << (uint8) 0x00 << (uint8) 0x00;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "uint64Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "uint64Test" ).get_value< std::string >(), "0" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "0" );
 	}
 	{
-		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-		addHexaStream( "FFFFFFFFFFFFFFFF", stream );
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0xff << (uint8) 0xff << (uint8) 0xff << (uint8) 0xff <<
+				  (uint8) 0xff << (uint8) 0xff << (uint8) 0xff << (uint8) 0xff;
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "uint64Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "uint64Test" ).get_value< std::string >(), "18446744073709551615" );
-	}
-}
-
-BOOST_AUTO_TEST_CASE( nodeSpecification_rangeTestFile )
-{
-	std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
-	addHexaStream( "80", stream );
-	stream.close();
-
-	bpt::ptree node;
-	node.put( "id", "rangeTest" );
-	node.put( "label", "Range Test" );
-	node.put( "type", "uint8" );
-	bpt::ptree range;
-
-	{
-		range.put( "min", "0" );
-		range.put( "max", "255" );
-
-		node.put_child( "range.", range );
-
-		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "rangeTest" ).get< std::string >( "<xmlattr>.status" ), "valid" );
-		BOOST_CHECK_EQUAL( report.get_child( "rangeTest" ).get_value< std::string >(), "128" );
-	}
-	{
-		range.clear();
-		range.put( "min", "0" );
-		range.put( "max", "127" );
-
-		node.put_child( "range.", range );
-
-		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "rangeTest" ).get< std::string >( "<xmlattr>.status" ), "invalid" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "18446744073709551615" );
 	}
 }
 
