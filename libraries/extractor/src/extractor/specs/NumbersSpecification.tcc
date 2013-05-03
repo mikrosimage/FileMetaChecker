@@ -98,7 +98,7 @@ bool getRange( SubSpec& subSpec, const NumberType value )
 	}
 	if(!isInRange)
 	{
-		COMMON_COUT( common::details::kColorRed << "Value error : out of range" << common::details::kColorStd );
+		BOOST_LOG_TRIVIAL(error) << "Value error : out of range";
 	}
 	return isInRange;
 }

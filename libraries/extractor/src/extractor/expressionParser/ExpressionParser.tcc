@@ -32,8 +32,8 @@ Type ExpressionParser::parseExpression( const std::string& expression )
 	Type result = 0;
 	try
 	{
-		// COMMON_COUT( _contextString.c_str() );
-		// COMMON_COUT( expression );
+		LOG_TRACE( _contextString.c_str() );
+		LOG_TRACE( expression );
 		boost::python::exec( _contextString.c_str(), _main_namespace );
 		boost::python::object returnText = boost::python::eval( expression.c_str(), _main_namespace );
 		result = boost::python::extract<Type>( returnText );
@@ -59,7 +59,7 @@ Type ExpressionParser::parseExpression( const std::string& expression )
 		// Py_XDECREF(type);
 		// Py_XDECREF(value);
 		// Py_XDECREF(traceback);
-		// COMMON_CERR( message );
+		// LOG_ERROR( message );
 		// reference : https://svn.boost.org/trac/boost/ticket/2781
 	}
 	return result;

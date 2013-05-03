@@ -6,7 +6,9 @@ Import( 'project', 'libs' )
 qualityCheckFlags = {
 		'LIBPATH': [project.inOutputLib()],
 		'CCFLAGS': project.CC['warning3'],
-		'CPPDEFINES':[],
+		'CPPDEFINES':[
+			'BOOST_ALL_DYN_LINK',
+			],
 	}
 
 if project.env['mode'] == 'production' :

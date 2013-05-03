@@ -60,7 +60,7 @@ std::string getMap( SubSpec& subSpec, std::map< Type, std::string >& map, const 
 			}
 			catch(...)
 			{
-				COMMON_COUT( "Can not convert index of map: " << index );
+				LOG_WARNING( "Can not convert index of map: " << index );
 			}
 		}
 	}

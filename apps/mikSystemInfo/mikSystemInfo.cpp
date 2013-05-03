@@ -15,12 +15,16 @@ namespace bpo = boost::program_options;
 
 int main( int argc, char** argv )
 {
-	common::Color color;
+	boost::shared_ptr<common::formatters::Formatter> formatter( common::formatters::Formatter::get() );
+	boost::shared_ptr<common::Color>                 color( common::Color::get() );
+	
 	bpo::options_description cmdlineOptions;
 	bpo::positional_options_description pod;
 	bpo::variables_map vm;
 
 	std::vector<std::string> paths;
+	
+	formatter->init_logging();
 	
 	// Supported options
 	cmdlineOptions.add_options()
@@ -39,7 +43,7 @@ int main( int argc, char** argv )
 		bpo::store( bpo::command_line_parser( argc, argv ).options( cmdlineOptions ).positional( pod ).run(), vm);
 
 		// get environment options and parse them
-		if( const char* env_options = std::getenv("MIKSI_OPTIONS") )
+		if( const char* env_options = std::getenv( "MIKSI_OPTIONS" ) )
 		{
 			const std::vector<std::string> vecOptions = bpo::split_unix( env_options, " " );
 			bpo::store(bpo::command_line_parser( vecOptions ).options( cmdlineOptions ).positional( pod ).run(), vm);
@@ -48,23 +52,22 @@ int main( int argc, char** argv )
 	}
 	catch( const bpo::error& e)
 	{
-		COMMON_COUT( "command line error: " << e.what() );
+		LOG_ERROR( "command line: " << e.what() );
 		exit( -2 );
 	}
 	catch(...)
 	{
-		COMMON_COUT( "unknown error in command line." );
+		LOG_ERROR( "unknown error in command line." );
 		exit( -2 );
 	}
 
 	if( vm.count( "color" ) )
 	{
-		color.enable();
+		color->enable();
 	}
-
 	if( vm.count( "script" ) )
 	{
-		color.disable();
+		color->disable();
 	}
 
 	if( vm.count( "input" ) )
@@ -75,16 +78,21 @@ int main( int argc, char** argv )
 
 	if( vm.count( "help" ) || paths.size() == 0 )
 	{
-		COMMON_COUT( color._blue  << "File System Information" << color._std << std::endl );
-		COMMON_COUT( color._blue  << "NAME" << color._std );
-		COMMON_COUT( color._green << "\tmiksi - file system information" << color._std << std::endl);
-		COMMON_COUT( color._blue  << "SYNOPSIS" << color._std );
-		COMMON_COUT( color._green << "\tmiksi [options] file[s]" << color._std << std::endl );
-		COMMON_COUT( color._blue  << "DESCRIPTION" << color._std << std::endl );
-
-		COMMON_COUT( "Report File status" << std::endl );
-		COMMON_COUT( color._blue  << "OPTIONS" << color._std << std::endl );
-		COMMON_COUT( cmdlineOptions );
+		LOG_INFO( color->_blue  << "File System Information" << color->_std );
+		LOG_INFO( "" );
+		LOG_INFO( color->_blue  << "NAME" << color->_std );
+		LOG_INFO( color->_green << "\tmiksi - file system information" << color->_std );
+		LOG_INFO( "" );
+		LOG_INFO( color->_blue  << "SYNOPSIS" << color->_std );
+		LOG_INFO( color->_green << "\tmiksi [options] file[s]" << color->_std );
+		LOG_INFO( "" );
+		LOG_INFO( color->_blue  << "DESCRIPTION" << color->_std );
+		LOG_INFO( "" );
+		LOG_INFO( "Report File status" );
+		LOG_INFO( "" );
+		LOG_INFO( color->_blue  << "OPTIONS" << color->_std );
+		LOG_INFO( "" );
+		LOG_INFO( cmdlineOptions );
 		return 0;
 	}
 
@@ -93,7 +101,7 @@ int main( int argc, char** argv )
 		Report report;
 		
 		FileSystemInfo fileSystemInfo( path );
-		COMMON_COUT( fileSystemInfo );
+		LOG_INFO( fileSystemInfo );
 		
 		fileSystemInfo.getReport( &report );
 		

@@ -36,17 +36,17 @@ MemoryInfo getMemoryInfo()
 	//infos._bufferRam = sys_info.bufferram * sys_info.mem_unit;
 	infos._totalSwap = sys_info.totalswap * sys_info.mem_unit;
 	infos._freeSwap  = sys_info.freeswap * sys_info.mem_unit;
-//	COMMON_COUT_VAR( sys_info.sharedram * sys_info.mem_unit );
-//	COMMON_COUT_VAR( sys_info.bufferram * sys_info.mem_unit );
+//	LOG_VAR( sys_info.sharedram * sys_info.mem_unit );
+//	LOG_VAR( sys_info.bufferram * sys_info.mem_unit );
 	#else
 	infos._totalRam             =
 	    infos._freeRam          =
 	        infos._totalSwap    =
 	            infos._freeSwap = std::numeric_limits<std::size_t>::max();
 	#endif
-	COMMON_COUT_X_DEBUG( 40, "-=" );
-	COMMON_COUT_DEBUG( "Memory infos" );
-	COMMON_COUT_DEBUG( infos );
+	LOG_X_DEBUG( 40, '-' );
+	LOG_DEBUG( "Memory infos" );
+	LOG_DEBUG( infos );
 
 	return infos;
 }

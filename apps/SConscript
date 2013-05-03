@@ -7,6 +7,8 @@ mikSystemInfo = project.Program(
 	libraries = [
 		libs.boost_filesystem,
 		libs.boost_program_options,
+		libs.boost_thread,
+		libs.boost_log,
 		libs.common,
 		libs.report,
 		libs.systemInfo,
@@ -21,6 +23,8 @@ qc = project.Program(
 	libraries = [
 		libs.boost_filesystem,
 		libs.boost_program_options,
+		libs.boost_thread,
+		libs.boost_log,
 		libs.common,
 		libs.report,
 		libs.analyser,

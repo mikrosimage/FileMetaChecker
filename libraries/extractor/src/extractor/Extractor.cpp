@@ -1,6 +1,7 @@
 #include "Extractor.hpp"
 
 #include <common/global.hpp>
+
 #include <report/Report.hpp>
 
 #include "specs/Specifications.hpp"
@@ -54,7 +55,7 @@ void Extractor::analyse( )
 		std::vector< std::string > exts = spec.getsupportedExtensions();
 		bool extIsSupported = false;
 
-		COMMON_COUT( common::details::kColorBlue << "Analyse file as a : " << spec.getLabel() << common::details::kColorStd );
+		//LOG_INFO( common::formaters::color->_blue << "Analyse file as a : " << spec.getLabel() << common::formaters::color->_std );
 
 		BOOST_FOREACH( std::string ext, exts )
 		{
@@ -66,7 +67,7 @@ void Extractor::analyse( )
 
 		if( extIsSupported )
 		{
-			COMMON_COUT( "-> Parse Header" );
+			LOG_INFO( "-> Parse Header" );
 			SpecIt header = spec.getHeader( );
 
 			_report.put( "<xmlattr>.id", spec.getId() );
@@ -83,7 +84,7 @@ void Extractor::analyse( )
 				bpt::ptree nodeReport;
 				if( ! ns.isValid( v, groupProperties, nodeReport ) )
 				{
-					COMMON_COUT( v.second.get< std::string >( "id" ) );
+					LOG_INFO( v.second.get< std::string >( "id" ) );
 					isValidFile = false;
 				}
 				else
@@ -95,20 +96,20 @@ void Extractor::analyse( )
 			if( isValidFile )
 			{
 				_report.put( "<xmlattr>.status", "valid" );
-				COMMON_COUT( common::details::kColorGreen );
-				COMMON_COUT_X( 80, "*" );
-				COMMON_COUT( "VALID " << spec.getLabel() );
-				COMMON_COUT_X( 80, "*" );
-				COMMON_COUT( common::details::kColorStd );
+				LOG_INFO( common::details::kColorGreen );
+				LOG_X( 80, '*' );
+				LOG_INFO  ( "VALID " << spec.getLabel() );
+				LOG_X( 80, '*' );
+				LOG_INFO( common::details::kColorStd );
 			}
 			else
 			{
 				_report.put( "<xmlattr>.status", "not valid" );
-				COMMON_COUT( common::details::kColorRed );
-				COMMON_COUT_X( 80, "*" );
-				COMMON_COUT( "NOT VALID " << spec.getLabel() );
-				COMMON_COUT_X( 80, "*" );
-				COMMON_COUT( common::details::kColorStd );
+				LOG_INFO( common::details::kColorRed );
+				LOG_X( 80, '*' );
+				LOG_INFO( "NOT VALID " << spec.getLabel() );
+				LOG_X( 80, '*' );
+				LOG_INFO( common::details::kColorStd );
 			}
 		}
 	}

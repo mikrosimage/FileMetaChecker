@@ -30,7 +30,7 @@ void Specifications::updateList()
 	specList.clear();
 	BOOST_FOREACH( std::string filepath, paths )
 	{
-		COMMON_COUT_DEBUG( "Search specs in path : " << filepath );
+		LOG_INFO( "Search specs in path : " << filepath );
 		bfs::path path( filepath );
 		try
 		{
@@ -47,24 +47,24 @@ void Specifications::updateList()
 							bpt::read_json( itr->path().string(), pt );
 							Specification spec;
 							spec.setSpecTree( pt );
-							COMMON_COUT_DEBUG( "Add spec : " << spec.getLabel() );
+							LOG_INFO( "Add spec : " << spec.getLabel() );
 							specList.push_back( spec );
 						}
 					}
 				}
 				else
 				{
-					COMMON_CERR( "Specification load: " << path.string() << " exists, but is neither a regular file nor a directory" );
+					LOG_WARNING( "Specification load: " << path.string() << " exists, but is neither a regular file nor a directory" );
 				}
 			}
 			else
 			{
-				COMMON_CERR( "Specification load: " << path.string() << " does not exist" );
+				LOG_WARNING( "Specification load: " << path.string() << " does not exist" );
 			}
 		}
 		catch( const bfs::filesystem_error& ex )
 		{
-			COMMON_CERR( "Specification load: " <<  ex.what() );
+			LOG_ERROR( "Specification load: " <<  ex.what() );
 		}
 	}
 }

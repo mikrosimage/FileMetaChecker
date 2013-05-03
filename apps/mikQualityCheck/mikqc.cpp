@@ -16,13 +16,17 @@ namespace bpo = boost::program_options;
 
 int main( int argc, char** argv )
 {
-	common::Color color;
+	boost::shared_ptr<common::formatters::Formatter> formatter( common::formatters::Formatter::get() );
+	boost::shared_ptr<common::Color>                 color( common::Color::get() );
+
 	bpo::options_description cmdlineOptions;
 	bpo::positional_options_description pod;
 	bpo::variables_map vm;
 
 	std::vector<std::string> paths;
 
+	formatter->init_logging();
+	
 	// Supported options
 	cmdlineOptions.add_options()
 		( "help,h", "produce help message" )
@@ -49,25 +53,24 @@ int main( int argc, char** argv )
 	}
 	catch( const bpo::error& e)
 	{
-		COMMON_COUT( "command line error: " << e.what() );
+		LOG_ERROR( "command line error: " << e.what() );
 		exit( -2 );
 	}
 	catch(...)
 	{
-		COMMON_COUT( "unknown error in command line." );
+		LOG_ERROR( "unknown error in command line." );
 		exit( -2 );
 	}
 
 	if( vm.count( "color" ) )
 	{
-		color.enable();
+		color->enable();
 	}
-
 	if( vm.count( "script" ) )
 	{
-		color.disable();
+		color->disable();
 	}
-
+	
 	if( vm.count( "input" ) )
 	{
 		paths = vm[ "input" ].as< std::vector<std::string> >();
@@ -76,20 +79,26 @@ int main( int argc, char** argv )
 
 	if( vm.count( "help" ) || paths.size() == 0 )
 	{
-		COMMON_COUT( color._blue  << "Quality Check project" << color._std << std::endl );
-		COMMON_COUT( color._blue  << "NAME" << color._std );
-		COMMON_COUT( color._green << "\tmikqc - quality check report on file(s)" << color._std << std::endl);
-		COMMON_COUT( color._blue  << "SYNOPSIS" << color._std );
-		COMMON_COUT( color._green << "\tmikqc [options] -i [files]" << color._std << std::endl );
-		COMMON_COUT( color._blue  << "DESCRIPTION" << color._std << std::endl );
+		LOG_INFO( color->_blue  << "Quality Check project" << color->_std );
+		LOG_INFO( "" );
+		LOG_INFO( color->_blue  << "NAME" << color->_std );
+		LOG_INFO( color->_green << "\tmikqc - quality check report on file(s)" << color->_std );
+		LOG_INFO( "" );
+		LOG_INFO( color->_blue  << "SYNOPSIS" << color->_std );
+		LOG_INFO( color->_green << "\tmikqc [options] -i [files]" << color->_std );
+		LOG_INFO( "" );
+		LOG_INFO( color->_blue  << "DESCRIPTION" << color->_std );
+		LOG_INFO( "" );
 
-		COMMON_COUT( "Analyse file(s) based on:" );
-		COMMON_COUT( "    - system informations" );
-		COMMON_COUT( "    - file header" );
-		COMMON_COUT( "    - file metadatas" );
-		COMMON_COUT( "    - file datas" << std::endl );
-		COMMON_COUT( color._blue  << "OPTIONS" << color._std << std::endl );
-		COMMON_COUT( cmdlineOptions );
+		LOG_INFO( "Analyse file(s) based on:" );
+		LOG_INFO( "    - system informations" );
+		LOG_INFO( "    - file header" );
+		LOG_INFO( "    - file metadatas" );
+		LOG_INFO( "    - file datas" );
+		LOG_INFO( "" );
+		LOG_INFO( color->_blue  << "OPTIONS" << color->_std );
+		LOG_INFO( "" );
+		LOG_INFO( cmdlineOptions );
 		return 0;
 	}
 
@@ -100,7 +109,7 @@ int main( int argc, char** argv )
 			Report report;
 
 			FileSystemInfo fileSystemInfo( path );
-			COMMON_COUT( fileSystemInfo );
+			LOG_INFO( fileSystemInfo );
 			fileSystemInfo.getReport( &report );
 
 			Extractor extractor;
@@ -114,15 +123,13 @@ int main( int argc, char** argv )
 
 			extractor.getReport( &report );
 
-
-			
 			report.exportReport( path + ".xml" );
 		}
 		catch( ... )
 		{
-			COMMON_COUT( color._error  << "error" << color._std );
+			LOG_FATAL( color->_error  << "error" << color->_std );
 #ifndef QC_PRODUCTION
-			COMMON_CERR( color._red << boost::current_exception_diagnostic_information() << color._std );
+			LOG_FATAL( color->_red << boost::current_exception_diagnostic_information() << color->_std );
 #endif
 			exit( -2 );
 		}

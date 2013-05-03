@@ -1,6 +1,9 @@
 #ifndef _COMMON_COLOR_HPP_
 #define _COMMON_COLOR_HPP_
 
+#include <boost/utility.hpp>
+#include <boost/shared_ptr.hpp>
+
 #include <string>
 
 namespace common {
@@ -40,9 +43,17 @@ static const std::string kColorError    ( "" );
 
 }
 
-
-struct Color
+class Color : boost::noncopyable
 {
+private:
+	Color( ) { }
+	
+public:
+	
+	static boost::shared_ptr<Color> get();
+	
+	~Color(){ color = NULL; }
+	
 	std::string _blue;
 	std::string _green;
 	std::string _yellow;
@@ -56,7 +67,16 @@ struct Color
 
 	void disable()
 	{
-		*this = Color();
+		_blue.clear();
+		_green.clear();
+		_red.clear();
+		_yellow.clear();
+
+		_folder.clear();
+		_file.clear();
+
+		_std.clear();
+		_error.clear();
 	}
 	void enable()
 	{
@@ -73,6 +93,8 @@ struct Color
 		_error  = kColorError;
 	}
 
+public:
+	static Color* color;
 };
 
 }

@@ -10,9 +10,12 @@
 #include <boost/foreach.hpp>
 
 #include <common/global.hpp>
+
 #include <iomanip>
 #include <cstdlib>
 #include <cmath>
+
+//extern common::formaters::Color color;
 
 NodeSpecification::NodeSpecification( File* file )
 	: _file     ( file )
@@ -36,7 +39,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 	bool optional    = ( subSpec.second.get<std::string>( kOptional, kOptionalFalse ) == kOptionalTrue );
 	bool group       = subSpec.second.get_child_optional( kGroup );
 	bool isValidNode = false;
-	// COMMON_COUT( "label " << label );
+	// TLOG( "label " << label );
 	
 	if( asciiValues.size() != 0 )
 	{
@@ -52,7 +55,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 				_file->goBack( size );
 			}
 
-			//COMMON_COUT( "read data " << size );
+			//TLOG( "read data " << size );
 			char buffer[ size ];
 			if( ! _file->readData( buffer, size ) )
 				return optional;
@@ -69,7 +72,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 				nodeReport.put_value( asciiValues[i] );
 				nodeReport.put( "<xmlattr>.type", "ascii" );
 			}
-			// COMMON_COUT_VAR2( asciiValues[i], value.value );
+			// TLOG_VAR2( asciiValues[i], value.value );
 		}
 		
 		if( optional && !isValidNode )
@@ -94,7 +97,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 				_file->goBack( size );
 			}
 
-			//COMMON_COUT( "read data " << size );
+			//TLOG( "read data " << size );
 			char buffer[ size ];
 			if( ! _file->readData( buffer, size ) )
 				return optional;
@@ -111,7 +114,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 				nodeReport.put_value( hexaValues[i] );
 				nodeReport.put( "<xmlattr>.type", "hexa" );
 			}
-			// COMMON_COUT_VAR2( hexaValues[i], value.value );
+			// TLOG_VAR2( hexaValues[i], value.value );
 		}
 		groupProperties.addSize( size );
 	}
@@ -167,9 +170,9 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 			
 			message += " ( size = " + getPrintable( size ) + " )";
 			
-			// COMMON_COUT( "*** Before error ***" );
+			// TLOG( "*** Before error ***" );
 			// char buffer[ size ];
-			// COMMON_COUT( "*** After error ***" );
+			// TLOG( "*** After error ***" );
 
 			// if( ! _file->readData( buffer, size ) )
 			// {
@@ -194,13 +197,13 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 
 		GroupProperties groupProp;
 
-		COMMON_COUT( "--- Chunk (begin) ---");
+		LOG_INFO( "--- Chunk (begin) ---");
 		BOOST_FOREACH( SubSpec& n, subSpec.second.get_child( kGroup ) )
 		{
 			bpt::ptree subNodeReport;
 			if( ! isValid( n, groupProp, subNodeReport ) )
 			{
-				COMMON_COUT( n.second.get< std::string >( "id" ) );
+				LOG_INFO( n.second.get< std::string >( "id" ) );
 				groupIsValid = false;
 			}
 			else
@@ -211,7 +214,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 				}
 			}
 		}
-		COMMON_COUT( "--- Chunk (end) ---");
+		LOG_INFO( "--- Chunk (end) ---");
 
 		_file->goBack( groupProp.getSize() );
 
@@ -227,18 +230,30 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 
 			if( groupProp.getSize() < gSize )
 			{
-				COMMON_COUT( common::details::kColorYellow << "\tWarning : " << common::details::kColorStd << gSize - groupProp.getSize() << " unused bytes" );
+				LOG_WARNING( gSize - groupProp.getSize() << " unused bytes" );
 			}
 			if( groupProp.getSize() > gSize )
 			{
 				isValidNode = false;
-				COMMON_COUT( common::details::kColorRed << "\tError : " << groupProp.getSize() - gSize << " bytes difference" << common::details::kColorStd );
+				LOG_ERROR( groupProp.getSize() - gSize << " bytes difference" );
 			}
 		}
 	}
-	
-	COMMON_COUT( ( isValidNode ? common::details::kColorGreen : common::details::kColorRed ) << "\t" << std::left << std::setw(40) << ( label + " - " + id ) << "\t" << common::details::kColorStd << message );
+	/*
+	LOG_INFO( ( isValidNode ? common::formaters::color._green : common::formaters::color._red ) << "\t"
+			  << std::left << std::setw(40)
+			  << ( label + " - " + id ) << "\t"
+			  << common::formaters::color._std << message );*/
 
+	if( isValidNode )
+	{
+		LOG_WARNING( ( label + " - " + id ) << "\t" << message );
+	}
+	else
+	{
+		LOG_ERROR( ( label + " - " + id ) << "\t" << message );
+	}
+	
 	// nodeReport.put( "<xmlattr>.id", id );
 	nodeReport.put( "<xmlattr>.label", label );
 	nodeReport.put( "<xmlattr>.status", ( isValidNode ? "valid" : "invalid" ) );
