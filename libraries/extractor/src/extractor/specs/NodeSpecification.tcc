@@ -238,6 +238,11 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 				}
 			}
 		}
+
+		if( typeValue == "" && asciiValues.empty() && hexaValues.empty() && !group )
+		{
+			throw std::runtime_error("Invalid tree : no value, group nor type node (" + id + ")");
+		}
 		
 		COMMON_COUT( ( isValidNode ? common::details::kColorGreen : common::details::kColorRed ) << "\t" << std::left << std::setw(40) << ( label + " - " + id ) << "\t" << common::details::kColorStd << message );
 
@@ -260,6 +265,11 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 	catch( const bpt::ptree_error& pe )
 	{
 		COMMON_CERR( "PTREE ERROR : " << pe.what() );
+		return false;
+	}
+	catch( std::exception& e )
+	{
+		COMMON_CERR( e.what() );
 		return false;
 	}
 	catch(...)
