@@ -78,11 +78,11 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_genericFailedTest )
 		stream.close();
 		
 		bpt::ptree node;
-		node.put( "label", "Hexa Test" );
+		node.put( "label", "No Id Test" );
 		node.put( "hexa", "ffd8" );
 		bpt::ptree report = generateReportTree( node );
 
-		BOOST_CHECK_THROW( report.get_child( "hexaTest" ).get_value< std::string >(), bpt::ptree_bad_path );
+		BOOST_CHECK_THROW( report.get_child( "noIdTest" ).get_value< std::string >(), bpt::ptree_bad_path );
 	}
 	{
 		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
@@ -90,11 +90,11 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_genericFailedTest )
 		stream.close();
 
 		bpt::ptree node;
-		node.put( "id", "int8Test" );
-		node.put( "label", "int8 Test" );
+		node.put( "id", "noTypeTest" );
+		node.put( "label", "No Type Test" );
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "int8Test" ).get_value< std::string >(), "" );
+		BOOST_CHECK_EQUAL( report.get_child( "noTypeTest" ).get_value< std::string >(), "" );
 	}
 }
 
@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_int8TestFile )
 {
 	bpt::ptree node;
 	node.put( "id", "int8Test" );
-	node.put( "label", "int8 Test" );
+	node.put( "label", "Int8 Test" );
 	node.put( "type", "int8" );
 
 	{
@@ -185,6 +185,32 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_int8TestFile )
 		BOOST_CHECK_EQUAL( report.get_child( "int8Test" ).get_value< std::string >(), "-128" );
 	}
 }
+
+BOOST_AUTO_TEST_CASE( nodeSpecification_uint8TestFile )
+{
+	bpt::ptree node;
+	node.put( "id", "uint8Test" );
+	node.put( "label", "Uint8 Test" );
+	node.put( "type", "uint8" );
+
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "00", stream );
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "uint8Test" ).get_value< std::string >(), "0" );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "FF", stream );
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "uint8Test" ).get_value< std::string >(), "255" );
+	}
+}
+
 
 
 BOOST_AUTO_TEST_SUITE_END()
