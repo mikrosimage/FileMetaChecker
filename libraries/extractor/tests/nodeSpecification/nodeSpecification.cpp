@@ -211,7 +211,71 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_uint8TestFile )
 	}
 }
 
+BOOST_AUTO_TEST_CASE( nodeSpecification_int16TestFile )
+{
+	bpt::ptree node;
+	node.put( "id", "int16Test" );
+	node.put( "label", "Int16 Test" );
+	node.put( "type", "int16" );
 
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "0000", stream );
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int16Test" ).get_value< std::string >(), "0" );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "7FFF", stream );
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int16Test" ).get_value< std::string >(), "32767" );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "FFFF", stream );
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int16Test" ).get_value< std::string >(), "-1" );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "8000", stream );
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int16Test" ).get_value< std::string >(), "-32768" );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( nodeSpecification_uint16TestFile )
+{
+	bpt::ptree node;
+	node.put( "id", "uint16Test" );
+	node.put( "label", "Uint16 Test" );
+	node.put( "type", "uint16" );
+
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "0000", stream );
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "uint16Test" ).get_value< std::string >(), "0" );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "FFFF", stream );
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "uint16Test" ).get_value< std::string >(), "65535" );
+	}
+}
 
 BOOST_AUTO_TEST_SUITE_END()
 
