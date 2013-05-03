@@ -59,7 +59,7 @@ bpt::ptree generateReportTree( const bpt::ptree& node )
 			report.push_back( bpt::ptree::value_type( v.second.get< std::string >( "id" ), nodeReport ) );
 		}
 	}
-	bpt::write_xml( reportFile, report );
+	// bpt::write_xml( reportFile, report );
 
 	file.close();
 	
@@ -80,9 +80,9 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_genericFailedTest )
 		bpt::ptree node;
 		node.put( "label", "No Id Test" );
 		node.put( "hexa", "ffd8" );
-		bpt::ptree report = generateReportTree( node );
+		// COMMON_COUT( ">>> No id test (hexa value)" );
 
-		BOOST_CHECK_THROW( report.get_child( "noIdTest" ).get_value< std::string >(), bpt::ptree_bad_path );
+		BOOST_CHECK_THROW( generateReportTree( node ), bpt::ptree_bad_path );
 	}
 	{
 		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
@@ -93,8 +93,8 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_genericFailedTest )
 		node.put( "id", "noTypeTest" );
 		node.put( "label", "No Type Test" );
 
-		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "noTypeTest" ).get_value< std::string >(), "" );
+		// COMMON_COUT( ">>> No type test" );
+		BOOST_CHECK_THROW( generateReportTree( node ), std::runtime_error );
 	}
 }
 
@@ -112,6 +112,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_hexaTestFile )
 
 		bpt::ptree report = generateReportTree( node );
 
+		BOOST_CHECK_EQUAL( report.get_child( "hexaTest" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "hexaTest" ).get_value< std::string >(), "ffd8" );
 	}
 	{
@@ -121,6 +122,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_hexaTestFile )
 
 		bpt::ptree report = generateReportTree( node );
 
+		BOOST_CHECK_EQUAL( report.get_child( "hexaTest" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "hexaTest" ).get_value< std::string >(), "ffd8" );
 	}
 	{
@@ -129,7 +131,8 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_hexaTestFile )
 		stream.close();	
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "hexaTest" ).get_value< std::string >(), "" );
+
+		BOOST_CHECK_EQUAL( report.get_child( "hexaTest" ).get< std::string >( "<xmlattr>.status" ), "invalid" );
 	}
 	{
 		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
@@ -139,9 +142,24 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_hexaTestFile )
 		node.clear();
 		node.put( "id", "hexaTest" );
 		node.put( "label", "Hexa Test" );
+
+		BOOST_CHECK_THROW( generateReportTree( node ), std::runtime_error );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "ffd8", stream );
+		stream.close();
+
+		node.clear();
+		node.put( "id", "hexaMultipleTest" );
+		node.put( "label", "Hexa Multiple Test" );
+		node.put( "hexa.", "ffd8" );
+		node.add( "hexa.", "ffe0" );
+
 		bpt::ptree report = generateReportTree( node );
 
-		BOOST_CHECK_EQUAL( report.get_child( "hexaTest" ).get_value< std::string >(), "" );
+		BOOST_CHECK_EQUAL( report.get_child( "hexaMultipleTest" ).get< std::string >( "<xmlattr>.status" ), "valid" );
+		BOOST_CHECK_EQUAL( report.get_child( "hexaMultipleTest" ).get_value< std::string >(), "ffd8" );
 	}
 }
 
@@ -159,6 +177,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_asciiTestFile )
 
 		bpt::ptree report = generateReportTree( node );
 
+		BOOST_CHECK_EQUAL( report.get_child( "asciiTest" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "asciiTest" ).get_value< std::string >(), "WAVE" );
 	}
 	{
@@ -167,7 +186,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_asciiTestFile )
 		stream.close();	
 
 		bpt::ptree report = generateReportTree( node );
-		BOOST_CHECK_EQUAL( report.get_child( "asciiTest" ).get_value< std::string >(), "" );
+		BOOST_CHECK_EQUAL( report.get_child( "asciiTest" ).get< std::string >( "<xmlattr>.status" ), "invalid" );
 	}
 	{
 		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
@@ -177,9 +196,24 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_asciiTestFile )
 		node.clear();
 		node.put( "id", "asciiTest" );
 		node.put( "label", "Ascii Test" );
+
+		BOOST_CHECK_THROW( generateReportTree( node ), std::runtime_error );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "57415645", stream );
+		stream.close();
+
+		node.clear();
+		node.put( "id", "asciiMultipleTest" );
+		node.put( "label", "Ascii Multiple Test" );
+		node.put( "ascii.", "WAVE" );
+		node.add( "ascii.", "RIFF" );
+
 		bpt::ptree report = generateReportTree( node );
 
-		BOOST_CHECK_EQUAL( report.get_child( "asciiTest" ).get_value< std::string >(), "" );
+		BOOST_CHECK_EQUAL( report.get_child( "asciiMultipleTest" ).get< std::string >( "<xmlattr>.status" ), "valid" );
+		BOOST_CHECK_EQUAL( report.get_child( "asciiMultipleTest" ).get_value< std::string >(), "WAVE" );
 	}
 }
 
@@ -196,6 +230,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_int8TestFile )
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int8Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "int8Test" ).get_value< std::string >(), "0" );
 	}
 	{
@@ -204,6 +239,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_int8TestFile )
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int8Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "int8Test" ).get_value< std::string >(), "127" );
 	}
 	{
@@ -212,6 +248,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_int8TestFile )
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int8Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "int8Test" ).get_value< std::string >(), "-1" );
 	}
 	{
@@ -220,6 +257,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_int8TestFile )
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int8Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "int8Test" ).get_value< std::string >(), "-128" );
 	}
 }
@@ -237,6 +275,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_uint8TestFile )
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "uint8Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "uint8Test" ).get_value< std::string >(), "0" );
 	}
 	{
@@ -245,6 +284,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_uint8TestFile )
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "uint8Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "uint8Test" ).get_value< std::string >(), "255" );
 	}
 }
@@ -262,6 +302,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_int16TestFile )
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int16Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "int16Test" ).get_value< std::string >(), "0" );
 	}
 	{
@@ -270,6 +311,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_int16TestFile )
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int16Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "int16Test" ).get_value< std::string >(), "32767" );
 	}
 	{
@@ -278,6 +320,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_int16TestFile )
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int16Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "int16Test" ).get_value< std::string >(), "-1" );
 	}
 	{
@@ -286,6 +329,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_int16TestFile )
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int16Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "int16Test" ).get_value< std::string >(), "-32768" );
 	}
 }
@@ -303,6 +347,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_uint16TestFile )
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "uint16Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "uint16Test" ).get_value< std::string >(), "0" );
 	}
 	{
@@ -311,6 +356,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_uint16TestFile )
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "uint16Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "uint16Test" ).get_value< std::string >(), "65535" );
 	}
 }
@@ -328,6 +374,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_int32TestFile )
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int32Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "int32Test" ).get_value< std::string >(), "0" );
 	}
 	{
@@ -336,6 +383,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_int32TestFile )
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int32Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "int32Test" ).get_value< std::string >(), "2147483647" );
 	}
 	{
@@ -344,6 +392,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_int32TestFile )
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int32Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "int32Test" ).get_value< std::string >(), "-1" );
 	}
 	{
@@ -352,6 +401,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_int32TestFile )
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int32Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "int32Test" ).get_value< std::string >(), "-2147483648" );
 	}
 }
@@ -369,6 +419,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_uint32TestFile )
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "uint32Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "uint32Test" ).get_value< std::string >(), "0" );
 	}
 	{
@@ -377,6 +428,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_uint32TestFile )
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "uint32Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "uint32Test" ).get_value< std::string >(), "4294967295" );
 	}
 }
@@ -394,6 +446,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_int64TestFile )
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int64Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "int64Test" ).get_value< std::string >(), "0" );
 	}
 	{
@@ -402,6 +455,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_int64TestFile )
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int64Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "int64Test" ).get_value< std::string >(), "9223372036854775807" );
 	}
 	{
@@ -410,6 +464,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_int64TestFile )
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int64Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "int64Test" ).get_value< std::string >(), "-1" );
 	}
 	{
@@ -418,6 +473,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_int64TestFile )
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int64Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "int64Test" ).get_value< std::string >(), "-9223372036854775808" );
 	}
 }
@@ -435,6 +491,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_uint64TestFile )
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "uint64Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "uint64Test" ).get_value< std::string >(), "0" );
 	}
 	{
@@ -443,10 +500,43 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_uint64TestFile )
 		stream.close();
 
 		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "uint64Test" ).get< std::string >( "<xmlattr>.status" ), "valid" );
 		BOOST_CHECK_EQUAL( report.get_child( "uint64Test" ).get_value< std::string >(), "18446744073709551615" );
 	}
 }
 
+BOOST_AUTO_TEST_CASE( nodeSpecification_rangeTestFile )
+{
+	std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+	addHexaStream( "80", stream );
+	stream.close();
+
+	bpt::ptree node;
+	node.put( "id", "rangeTest" );
+	node.put( "label", "Range Test" );
+	node.put( "type", "uint8" );
+	bpt::ptree range;
+
+	{
+		range.put( "min", "0" );
+		range.put( "max", "255" );
+
+		node.put_child( "range.", range );
+
+		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "rangeTest" ).get< std::string >( "<xmlattr>.status" ), "valid" );
+		BOOST_CHECK_EQUAL( report.get_child( "rangeTest" ).get_value< std::string >(), "128" );
+	}
+	{
+		range.clear();
+		range.put( "min", "0" );
+		range.put( "max", "127" );
+
+		node.put_child( "range.", range );
+
+		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "rangeTest" ).get< std::string >( "<xmlattr>.status" ), "invalid" );
+	}
+}
+
 BOOST_AUTO_TEST_SUITE_END()
-
-

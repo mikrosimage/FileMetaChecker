@@ -25,7 +25,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 	try
 	{
 		std::string message( "" );
-		std::string id      = subSpec.second.get< std::string >( kId );
+		std::string id          = subSpec.second.get< std::string >( kId );
 		std::string label       = subSpec.second.get< std::string >( kLabel, "" );
 		std::string typeValue   = subSpec.second.get< std::string >( kType, "" );
 		std::string count       = subSpec.second.get< std::string >( kCount, "" );
@@ -247,7 +247,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 
 		if( typeValue == "" && asciiValues.empty() && hexaValues.empty() && !group )
 		{
-			throw std::runtime_error("Invalid tree : no value, group nor type node (" + id + ")");
+			throw std::runtime_error( "Invalid tree : no value, group nor type node (" + id + ")" );
 		}
 		
 		COMMON_COUT( ( isValidNode ? common::details::kColorGreen : common::details::kColorRed ) << "\t" << std::left << std::setw(40) << ( label + " - " + id ) << "\t" << common::details::kColorStd << message );
@@ -261,27 +261,38 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 	catch( const bpt::ptree_bad_path& pbp )
 	{
 		COMMON_CERR( "PTREE_BAD_PATH ERROR : " << pbp.what() );
-		return false;
+		throw;
+		// return false;
 	}
 	catch( const bpt::ptree_bad_data& pbd )
 	{
 		COMMON_CERR( "PTREE_BAD_DATA ERROR : " << pbd.what() );
-		return false;
+		throw;
+		// return false;
 	}
 	catch( const bpt::ptree_error& pe )
 	{
 		COMMON_CERR( "PTREE ERROR : " << pe.what() );
-		return false;
+		throw;
+		// return false;
+	}
+	catch( std::runtime_error& e )
+	{
+		COMMON_CERR( e.what() );
+		throw;
+		// return false;
 	}
 	catch( std::exception& e )
 	{
 		COMMON_CERR( e.what() );
-		return false;
+		throw;
+		// return false;
 	}
 	catch(...)
 	{
 		COMMON_CERR( "ERROR !" );
-		return false;
+		throw;
+		// return false;
 	}
 }
 
