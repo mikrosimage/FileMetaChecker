@@ -277,6 +277,73 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_uint16TestFile )
 	}
 }
 
+BOOST_AUTO_TEST_CASE( nodeSpecification_int32TestFile )
+{
+	bpt::ptree node;
+	node.put( "id", "int32Test" );
+	node.put( "label", "Int32 Test" );
+	node.put( "type", "int32" );
+
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "00000000", stream );
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int32Test" ).get_value< std::string >(), "0" );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "7FFFFFFF", stream );
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int32Test" ).get_value< std::string >(), "2147483647" );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "FFFFFFFF", stream );
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int32Test" ).get_value< std::string >(), "-1" );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "80000000", stream );
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int32Test" ).get_value< std::string >(), "-2147483648" );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( nodeSpecification_uint32TestFile )
+{
+	bpt::ptree node;
+	node.put( "id", "uint32Test" );
+	node.put( "label", "Uint32 Test" );
+	node.put( "type", "uint32" );
+
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "00000000", stream );
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "uint32Test" ).get_value< std::string >(), "0" );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "FFFFFFFF", stream );
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "uint32Test" ).get_value< std::string >(), "4294967295" );
+	}
+}
+
+
 BOOST_AUTO_TEST_SUITE_END()
 
 
