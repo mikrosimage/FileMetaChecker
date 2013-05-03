@@ -8,7 +8,7 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-#include "testStreamTools.hpp"
+// #include "testStreamTools.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -343,6 +343,71 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_uint32TestFile )
 	}
 }
 
+BOOST_AUTO_TEST_CASE( nodeSpecification_int64TestFile )
+{
+	bpt::ptree node;
+	node.put( "id", "int64Test" );
+	node.put( "label", "Int64 Test" );
+	node.put( "type", "int64" );
+
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "0000000000000000", stream );
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int64Test" ).get_value< std::string >(), "0" );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "7FFFFFFFFFFFFFFF", stream );
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int64Test" ).get_value< std::string >(), "9223372036854775807" );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "FFFFFFFFFFFFFFFF", stream );
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int64Test" ).get_value< std::string >(), "-1" );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "8000000000000000", stream );
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "int64Test" ).get_value< std::string >(), "-9223372036854775808" );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( nodeSpecification_uint64TestFile )
+{
+	bpt::ptree node;
+	node.put( "id", "uint64Test" );
+	node.put( "label", "Uint64 Test" );
+	node.put( "type", "uint64" );
+
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "0000000000000000", stream );
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "uint64Test" ).get_value< std::string >(), "0" );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "FFFFFFFFFFFFFFFF", stream );
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "uint64Test" ).get_value< std::string >(), "18446744073709551615" );
+	}
+}
 
 BOOST_AUTO_TEST_SUITE_END()
 

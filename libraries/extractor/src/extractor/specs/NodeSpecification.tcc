@@ -128,6 +128,8 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 			int16  int16Val  = 0;
 			uint32 uint32Val = 0;
 			int32  int32Val  = 0;
+			uint64 uint64Val = 0;
+			int64  int64Val  = 0;
 
 			float  floatVal  = 0;
 			double doubleVal = 0;
@@ -138,6 +140,8 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 			bool validInt16  = isValidNumber<int16> ( _file, message, typeValue, endianValue, subSpec, int16Val );
 			bool validUInt32 = isValidNumber<uint32>( _file, message, typeValue, endianValue, subSpec, uint32Val );
 			bool validInt32  = isValidNumber<int32> ( _file, message, typeValue, endianValue, subSpec, int32Val );
+			bool validUInt64 = isValidNumber<uint64>( _file, message, typeValue, endianValue, subSpec, uint64Val );
+			bool validInt64  = isValidNumber<int64> ( _file, message, typeValue, endianValue, subSpec, int64Val );
 
 			bool validFloat  = isValidNumber<float> ( _file, message, typeValue, endianValue, subSpec, floatVal );
 			bool validDouble = isValidNumber<double>( _file, message, typeValue, endianValue, subSpec, doubleVal );
@@ -150,6 +154,8 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 			exportValidData( validInt16,  id, int16Val,  groupProperties, nodeReport );
 			exportValidData( validUInt32, id, uint32Val, groupProperties, nodeReport );
 			exportValidData( validInt32,  id, int32Val,  groupProperties, nodeReport );
+			exportValidData( validUInt64, id, uint64Val, groupProperties, nodeReport );
+			exportValidData( validInt64,  id, int64Val,  groupProperties, nodeReport );
 			exportValidData( validFloat,  id, floatVal,  groupProperties, nodeReport );
 			exportValidData( validDouble, id, doubleVal, groupProperties, nodeReport );
 			
@@ -187,7 +193,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 				nodeReport.put( "<xmlattr>.type", "data" );
 			}
 			
-			isValidNode = validUInt8 | validInt8 | validUInt16 | validInt16 | validUInt32 | validInt32 | validFloat | validDouble | validData;
+			isValidNode = validUInt8 | validInt8 | validUInt16 | validInt16 | validUInt32 | validInt32 | validUInt64 | validInt64 | validFloat | validDouble | validData;
 		}
 
 		if( group )

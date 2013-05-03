@@ -49,6 +49,18 @@ std::string getStringForType<int32>()
 }
 
 template< >
+std::string getStringForType<uint64>()
+{
+	return "uint64";
+}
+
+template< >
+std::string getStringForType<int64>()
+{
+	return "int64";
+}
+
+template< >
 std::string getStringForType<float>()
 {
 	return "float";
