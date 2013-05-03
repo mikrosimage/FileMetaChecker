@@ -145,6 +145,44 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_hexaTestFile )
 	}
 }
 
+BOOST_AUTO_TEST_CASE( nodeSpecification_asciiTestFile )
+{
+	bpt::ptree node;
+	node.put( "id", "asciiTest" );
+	node.put( "label", "Ascii Test" );
+	node.put( "ascii", "WAVE" );
+
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "57415645", stream );
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+
+		BOOST_CHECK_EQUAL( report.get_child( "asciiTest" ).get_value< std::string >(), "WAVE" );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "abcdef00", stream );
+		stream.close();	
+
+		bpt::ptree report = generateReportTree( node );
+		BOOST_CHECK_EQUAL( report.get_child( "asciiTest" ).get_value< std::string >(), "" );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out | std::ofstream::binary);
+		addHexaStream( "57415645", stream );
+		stream.close();
+
+		node.clear();
+		node.put( "id", "asciiTest" );
+		node.put( "label", "Ascii Test" );
+		bpt::ptree report = generateReportTree( node );
+
+		BOOST_CHECK_EQUAL( report.get_child( "asciiTest" ).get_value< std::string >(), "" );
+	}
+}
+
 BOOST_AUTO_TEST_CASE( nodeSpecification_int8TestFile )
 {
 	bpt::ptree node;
