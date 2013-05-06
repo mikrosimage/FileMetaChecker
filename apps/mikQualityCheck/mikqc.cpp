@@ -32,7 +32,9 @@ int main( int argc, char** argv )
 		( "help,h", "produce help message" )
 		( "input,i", bpo::value< std::vector<std::string> >(), "input file" )
 		( "color", "display the output with colors" )
+		( "verbose,v", bpo::value<int>()->default_value( 2 ), "verbose level (trace, debug, warning, error, fatal)" )
 		( "script", "format the output such as it could be dump in a file" )
+		( "display-level", bpo::value<bool>()->default_value( false ), "display verbose level befora each message." )
 	;
 
 	// Default option
@@ -61,7 +63,7 @@ int main( int argc, char** argv )
 		LOG_ERROR( "unknown error in command line." );
 		exit( -2 );
 	}
-
+	
 	if( vm.count( "color" ) )
 	{
 		color->enable();
@@ -71,11 +73,23 @@ int main( int argc, char** argv )
 		color->disable();
 	}
 	
+	formatter->displayLogLevel( vm[ "display-level" ].as< bool >() );
+	
+	switch( vm[ "verbose" ].as< int >() )
+	{
+		case 0 :  formatter->setLogLevel( boost::log::trivial::trace   ); break;
+		case 1 :  formatter->setLogLevel( boost::log::trivial::debug   ); break;
+		case 2 :  formatter->setLogLevel( boost::log::trivial::info    ); break;
+		case 3 :  formatter->setLogLevel( boost::log::trivial::warning ); break;
+		case 4 :  formatter->setLogLevel( boost::log::trivial::error   ); break;
+		case 5 :  formatter->setLogLevel( boost::log::trivial::fatal   ); break;
+		default : formatter->setLogLevel( boost::log::trivial::warning ); break;
+	}
+	
 	if( vm.count( "input" ) )
 	{
 		paths = vm[ "input" ].as< std::vector<std::string> >();
 	}
-
 
 	if( vm.count( "help" ) || paths.size() == 0 )
 	{

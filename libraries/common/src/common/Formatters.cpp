@@ -5,14 +5,10 @@ namespace formatters {
 
 boost::shared_ptr<Formatter> Formatter::get()
 {
-	if( !formatter )
-	{
-		formatter = new Formatter();
-	}
-	return boost::shared_ptr<Formatter>( formatter );
+	return formatter;
 }
 
-Formatter* Formatter::formatter = NULL;
+boost::shared_ptr<Formatter> Formatter::formatter(new Formatter);
 
 }
 }

@@ -1,9 +1,10 @@
-#ifndef _COMMON_FORMATTERS_HPP_
+	#ifndef _COMMON_FORMATTERS_HPP_
 #define _COMMON_FORMATTERS_HPP_
 
 #include "color.hpp"
 
 #include <fstream>
+#include <iomanip>
 
 #include <boost/utility.hpp>
 #include <boost/shared_ptr.hpp>
@@ -35,13 +36,15 @@ namespace formatters {
 
 class Formatter : boost::noncopyable
 {
+	typedef sinks::synchronous_sink< sinks::text_ostream_backend > sink_t;
+	
 private:
 	Formatter( ) { }
 	
 public:
 	
 	static boost::shared_ptr<Formatter> get();
-	~Formatter(){ formatter = NULL; }
+	~Formatter(){ }
 	
 	void init_logging()
 	{
@@ -50,36 +53,42 @@ public:
 		//backend->add_stream( boost::shared_ptr< std::ostream >( new std::ofstream("sample.log") ) );
 	
 		backend->auto_flush(true);
+
+		//sink(  new sink_t( backend ) );
 		
-		boost::shared_ptr< logging::core > core = logging::core::get();
-		typedef sinks::synchronous_sink< sinks::text_ostream_backend > sink_t;	
-		boost::shared_ptr< sink_t > sink( new sink_t( backend ) );
+		sink = boost::make_shared< sink_t >( backend );
 		
-		sink->set_formatter (
-			expr::stream
-			//<< Color::get()->_yellow << "["<< logging::trivial::severity << "]" << Color::get()->_std << " "
-			<< "["<< logging::trivial::severity << "]" << " "
-			<< expr::smessage
-		);
+		displayLogLevel( false );
 		
-		core->add_sink(sink);
-		/*
-		logging::core::get()->set_filter
-		(
-			logging::trivial::severity >= logging::trivial::info
-		);*/
+		logging::core::get()->add_sink( sink );
 	}
 	
-	void setColor( bool colorEnable )
+	void setLogLevel( const logging::trivial::severity_level level )
 	{
-		boost::shared_ptr< logging::core > core = logging::core::get();
-		
-		core->remove_all_sinks();
-		init_logging();
+		logging::core::get()->set_filter( logging::trivial::severity >= level );
 	}
 	
+	void displayLogLevel( bool display )
+	{
+		sink->reset_formatter();
+		if( display )
+		{
+			sink->set_formatter (
+				expr::stream
+				//<< Color::get()->_yellow  << "[" + logging::trivial::severity + "]" << Color::get()->_std << " "
+				<< "["<< logging::trivial::severity << "]" << " "
+				<< expr::smessage
+			);
+		}
+		else
+		{
+			sink->set_formatter ( expr::stream << expr::smessage );
+		}
+	}
+
 public:
-	static Formatter* formatter;
+	static boost::shared_ptr< Formatter > formatter;
+	boost::shared_ptr< sink_t > sink;
 };
 
 }

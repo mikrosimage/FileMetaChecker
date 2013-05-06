@@ -247,7 +247,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 
 	if( isValidNode )
 	{
-		LOG_WARNING( ( label + " - " + id ) << "\t" << message );
+		LOG_INFO( common::Color::get()->_green << ( label + " - " + id ) << "\t" << message << common::Color::get()->_std );
 	}
 	else
 	{

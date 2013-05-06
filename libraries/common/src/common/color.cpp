@@ -4,13 +4,9 @@ namespace common {
 
 boost::shared_ptr<Color> Color::get()
 {
-	if( !color )
-	{
-		color = new Color();
-	}
-	return boost::shared_ptr<Color>( color );
+	return color;
 }
 
-Color* Color::color = NULL;
+boost::shared_ptr<Color> Color::color(new Color);
 
 }

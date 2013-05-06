@@ -55,7 +55,7 @@ void Extractor::analyse( )
 		std::vector< std::string > exts = spec.getsupportedExtensions();
 		bool extIsSupported = false;
 
-		//LOG_INFO( common::formaters::color->_blue << "Analyse file as a : " << spec.getLabel() << common::formaters::color->_std );
+		LOG_INFO( common::Color::get()->_blue << "Analyse file as a : " << spec.getLabel() << common::Color::get()->_std );
 
 		BOOST_FOREACH( std::string ext, exts )
 		{
@@ -96,20 +96,16 @@ void Extractor::analyse( )
 			if( isValidFile )
 			{
 				_report.put( "<xmlattr>.status", "valid" );
-				LOG_INFO( common::details::kColorGreen );
-				LOG_X( 80, '*' );
-				LOG_INFO  ( "VALID " << spec.getLabel() );
-				LOG_X( 80, '*' );
-				LOG_INFO( common::details::kColorStd );
+				LOG_INFO( common::Color::get()->_green << "**********" << common::Color::get()->_std );
+				LOG_INFO( common::Color::get()->_green << "VALID " << spec.getLabel() << common::Color::get()->_std );
+				LOG_INFO( common::Color::get()->_green << "**********" << common::Color::get()->_std );
 			}
 			else
 			{
 				_report.put( "<xmlattr>.status", "not valid" );
-				LOG_INFO( common::details::kColorRed );
-				LOG_X( 80, '*' );
-				LOG_INFO( "NOT VALID " << spec.getLabel() );
-				LOG_X( 80, '*' );
-				LOG_INFO( common::details::kColorStd );
+				LOG_ERROR( "**********" );
+				LOG_ERROR( "NOT VALID " << spec.getLabel() );
+				LOG_ERROR( "**********" );
 			}
 		}
 	}

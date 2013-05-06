@@ -5,6 +5,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include <string>
+#include <iostream>
 
 namespace common {
 
@@ -52,7 +53,7 @@ public:
 	
 	static boost::shared_ptr<Color> get();
 	
-	~Color(){ color = NULL; }
+	~Color(){}
 	
 	std::string _blue;
 	std::string _green;
@@ -94,7 +95,7 @@ public:
 	}
 
 public:
-	static Color* color;
+	static boost::shared_ptr<Color> color;
 };
 
 }

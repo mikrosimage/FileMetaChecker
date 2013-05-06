@@ -30,7 +30,7 @@ void Specifications::updateList()
 	specList.clear();
 	BOOST_FOREACH( std::string filepath, paths )
 	{
-		LOG_INFO( "Search specs in path : " << filepath );
+		LOG_TRACE( "Search specs in path : " << filepath );
 		bfs::path path( filepath );
 		try
 		{
@@ -47,7 +47,7 @@ void Specifications::updateList()
 							bpt::read_json( itr->path().string(), pt );
 							Specification spec;
 							spec.setSpecTree( pt );
-							LOG_INFO( "Add spec : " << spec.getLabel() );
+							LOG_TRACE( "Add spec : " << spec.getLabel() );
 							specList.push_back( spec );
 						}
 					}

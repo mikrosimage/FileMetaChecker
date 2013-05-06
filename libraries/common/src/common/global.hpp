@@ -49,21 +49,17 @@
 #define GET_VAR4( a, b, c, d ) GET_VAR ( a ) << ", " << GET_VAR ( b ) << ", " << GET_VAR ( c ) << ", " << GET_VAR ( d )
 
 #define LOG_TRACE( ... )   BOOST_LOG_TRIVIAL(trace) << __VA_ARGS__
-#define LOG_INFO( ... )    BOOST_LOG_TRIVIAL(info) << __VA_ARGS__
-#define LOG_WARNING( ... ) BOOST_LOG_TRIVIAL(warning) << common::Color::get()->_yellow << __VA_ARGS__ << common::Color::get()->_std
-#define LOG_ERROR( ... )   BOOST_LOG_TRIVIAL(error)   << common::Color::get()->_error  << __VA_ARGS__ << common::Color::get()->_std
-#define LOG_FATAL( ... )   BOOST_LOG_TRIVIAL(fatal)   << common::Color::get()->_error  << __VA_ARGS__ << common::Color::get()->_std
+#define LOG_INFO( ... )    BOOST_LOG_TRIVIAL(info)  << __VA_ARGS__
+#define LOG_WARNING( ... ) BOOST_LOG_TRIVIAL(warning) << common::Color::get()->_yellow << "warning: " << __VA_ARGS__ << common::Color::get()->_std
+#define LOG_ERROR( ... )   BOOST_LOG_TRIVIAL(error)   << common::Color::get()->_error  << "error: "   << __VA_ARGS__ << common::Color::get()->_std
+#define LOG_FATAL( ... )   BOOST_LOG_TRIVIAL(fatal)   << common::Color::get()->_error  << "fatal: "   << __VA_ARGS__ << common::Color::get()->_std
 
 #define LOG( MODE, ... ) BOOST_LOG_TRIVIAL( MODE )   << __VA_ARGS__
 
-#define LOG_VAR( MODE, a )          LOG( MODE, GET_VAR ( a ) )
+#define LOG_VAR( MODE, a )           LOG( MODE, GET_VAR ( a ) )
 #define LOG_VAR2( MODE, a, b )       LOG( MODE, GET_VAR2( a, b ) )
 #define LOG_VAR3( MODE, a, b, c )    LOG( MODE, GET_VAR3( a, b, c ) )
 #define LOG_VAR4( MODE, a, b, c, d ) LOG( MODE, GET_VAR4( a, b, c, d ) )
-
-#define LOG_X( N, ... ) \
-	for( std::size_t i = 0; i < N; ++i ) { ::std::cout << __VA_ARGS__; } \
-	::std::cout << ::std::endl
 
 /**
  * @brief terminal information display
