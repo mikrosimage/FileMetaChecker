@@ -8,10 +8,16 @@
 using namespace boost::unit_test;
 using namespace std;
 
+boost::shared_ptr<common::formatters::Formatter> formatter( common::formatters::Formatter::get() );
+boost::shared_ptr<common::Color>                 color( common::Color::get() );
+
 BOOST_AUTO_TEST_SUITE( expressionParser_tests_suite01 )
 
 BOOST_AUTO_TEST_CASE( expressionParser_setVariables )
 {
+	formatter->init_logging();
+	color->enable();
+	
 	{
 		ExpressionParser expParser = ExpressionParser();
 		ElementsMap map;
