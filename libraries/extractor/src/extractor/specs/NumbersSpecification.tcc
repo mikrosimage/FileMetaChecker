@@ -73,7 +73,7 @@ std::string getStringForType<double>()
 }
 
 template< typename NumberType >
-bool getRange( SubSpec& subSpec, const NumberType value )
+bool getRange( SubSpec& subSpec, const NumberType value, const size_t size )
 {
 	bool isInRange = true;
 	if( boost::optional< const Spec& > rangeNode = subSpec.second.get_child_optional( kRange ) )
@@ -115,6 +115,49 @@ bool getRange( SubSpec& subSpec, const NumberType value )
 	return isInRange;
 }
 
+template< >
+bool getRange( SubSpec& subSpec, const int8 value, const size_t size )
+{
+	bool isInRange = true;
+	if( boost::optional< const Spec& > rangeNode = subSpec.second.get_child_optional( kRange ) )
+	{
+		isInRange = false;
+		BOOST_FOREACH( SubSpec& m, rangeNode.get() )
+		{
+			if( m.second.get_child_optional( kMin ) && m.second.get_child_optional( kMax ) )
+			{
+				short max = m.second.get< short >( kMax );
+				short min = m.second.get< short >( kMin );
+				if( value >= min && value <= max )
+				{
+					isInRange = true;
+				}
+			}
+			if( !m.second.get_child_optional( kMin ) && m.second.get_child_optional( kMax ) )
+			{			
+				short max = m.second.get< short >( kMax );
+				if( value <= max )
+				{
+					isInRange = true;
+				}
+			}
+			if( m.second.get_child_optional( kMin ) && !m.second.get_child_optional( kMax ) )
+			{			
+				short min = m.second.get< short >( kMin );
+				if( value >= min )
+				{
+					isInRange = true;
+				}
+			}
+		}
+	}
+	if(!isInRange)
+	{
+		COMMON_COUT( common::details::kColorRed << "Value error : out of range" << common::details::kColorStd );
+	}
+	return isInRange;
+}
+
 template< typename NumberType >
 bool isValidNumber( File* _file, std::string& message, const std::string& type, const bool isBigEndian, SubSpec& subSpec, NumberType& value )
 {
@@ -139,7 +182,7 @@ bool isValidNumber( File* _file, std::string& message, const std::string& type, 
 		{
 			message += stringValue + " (" + getPrintable( value ) + ")";
 		}
-		return getRange( subSpec, value );
+		return getRange( subSpec, value, size  );
 	}
 	return false;
 }
