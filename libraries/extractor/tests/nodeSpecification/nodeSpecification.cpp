@@ -73,6 +73,7 @@ bpt::ptree generateReportTree( const bpt::ptree& node )
 #define CHECK_NODE_INVALID( NODE_NAME ) CHECK_NODE( NODE_NAME, "<xmlattr>.status", "invalid" )
 
 #define CHECK_VALUE_EQUAL( NODE_NAME, VALUE ) BOOST_CHECK_EQUAL( report.get_child( NODE_NAME ).get_value< std::string >(), VALUE );
+// #define CHECK_VALUE_CLOSE( NODE_NAME, VALUE, TOLERANCE ) BOOST_CHECK_CLOSE( report.get_child( NODE_NAME ).get_value< std::string >(), VALUE, TOLERANCE );
 
 
 BOOST_AUTO_TEST_SUITE( nodeSpecification_tests_suite01 )
@@ -804,6 +805,169 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_uint64TestFile )
 		bpt::ptree report = generateReportTree( node );
 		CHECK_NODE_VALID ( nodename );
 		CHECK_VALUE_EQUAL( nodename, "10000" );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( nodeSpecification_floatTestFile )
+{
+	const std::string nodename = "floatTest";
+	bpt::ptree node;
+	node.put( "id", nodename );
+	node.put( "label", "Float Test" );
+	node.put( "type", "float" );
+
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0x3f << (uint8) 0x80 << (uint8) 0x00 << (uint8) 0x00;
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "1" );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0x00 << (uint8) 0x7f << (uint8) 0xff << (uint8) 0xff;
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "1.17549e-38" );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0x7f << (uint8) 0x7f << (uint8) 0xff << (uint8) 0xff;
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "3.40282e+38" );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0xff << (uint8) 0x7f << (uint8) 0xff << (uint8) 0xff;
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "-3.40282e+38" );
+	}
+
+	/// check range
+	bpt::ptree range;
+	range.put( "min", "-10.5" );
+	range.put( "max", "9.3" );
+	node.add_child( "range.", range );
+	
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0xc1 << (uint8) 0x28 << (uint8) 0xcc << (uint8) 0xcd;		// = -10.55
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		CHECK_NODE_INVALID ( nodename );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0x41 << (uint8) 0x15 << (uint8) 0x99 << (uint8) 0x9a;		// = 9.35
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		CHECK_NODE_INVALID ( nodename );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0x40 << (uint8) 0xa7 << (uint8) 0x8d << (uint8) 0x50; 
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "5.236" );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( nodeSpecification_doubleTestFile )
+{
+	const std::string nodename = "doubleTest";
+	bpt::ptree node;
+	node.put( "id", nodename );
+	node.put( "label", "Double Test" );
+	node.put( "type", "double" );
+
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0x3f << (uint8) 0xf0 << (uint8) 0x00 << (uint8) 0x00 <<
+				  (uint8) 0x00 << (uint8) 0x00 << (uint8) 0x00 << (uint8) 0x00;
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "1" );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0x00 << (uint8) 0x10 << (uint8) 0x00 << (uint8) 0x00 <<
+				  (uint8) 0x00 << (uint8) 0x00 << (uint8) 0x00 << (uint8) 0x00;
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "2.22507e-308" );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0x7f << (uint8) 0xef << (uint8) 0xff << (uint8) 0xff <<
+				  (uint8) 0xff << (uint8) 0xff << (uint8) 0xff << (uint8) 0xff;
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "1.79769e+308" );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0xff << (uint8) 0xef << (uint8) 0xff << (uint8) 0xff <<
+				  (uint8) 0xff << (uint8) 0xff << (uint8) 0xff << (uint8) 0xff;
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "-1.79769e+308" );
+	}
+
+	/// check range
+	bpt::ptree range;
+	range.put( "min", "-99.999" );
+	range.put( "max", "99.999" );
+	node.add_child( "range.", range );
+	
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0xc0 << (uint8) 0x58 << (uint8) 0xff << (uint8) 0xfe <<
+				  (uint8) 0x5c << (uint8) 0x91 << (uint8) 0xd1 << (uint8) 0x4e;		// = -99.9999
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		CHECK_NODE_INVALID ( nodename );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0x40 << (uint8) 0x58 << (uint8) 0xff << (uint8) 0xfe <<
+				  (uint8) 0x5c << (uint8) 0x91 << (uint8) 0xd1 << (uint8) 0x4e;		// = 99.9999
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		CHECK_NODE_INVALID ( nodename );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << (uint8) 0xc0 << (uint8) 0x1a << (uint8) 0xaa << (uint8) 0xb3 <<
+				  (uint8) 0x67 << (uint8) 0xa0 << (uint8) 0xf9 << (uint8) 0x09;
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "-6.6667" );
 	}
 }
 

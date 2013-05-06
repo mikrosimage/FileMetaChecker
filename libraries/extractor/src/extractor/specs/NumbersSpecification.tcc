@@ -73,7 +73,7 @@ std::string getStringForType<double>()
 }
 
 template< typename NumberType >
-bool getRange( SubSpec& subSpec, const NumberType value, const size_t size )
+bool getRange( SubSpec& subSpec, const NumberType value )
 {
 	bool isInRange = true;
 	if( boost::optional< const Spec& > rangeNode = subSpec.second.get_child_optional( kRange ) )
@@ -116,7 +116,7 @@ bool getRange( SubSpec& subSpec, const NumberType value, const size_t size )
 }
 
 template< >
-bool getRange( SubSpec& subSpec, const int8 value, const size_t size )
+bool getRange( SubSpec& subSpec, const int8 value )
 {
 	bool isInRange = true;
 	if( boost::optional< const Spec& > rangeNode = subSpec.second.get_child_optional( kRange ) )
