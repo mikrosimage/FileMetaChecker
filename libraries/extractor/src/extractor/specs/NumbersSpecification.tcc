@@ -49,6 +49,18 @@ std::string getStringForType<int32>()
 }
 
 template< >
+std::string getStringForType<uint64>()
+{
+	return "uint64";
+}
+
+template< >
+std::string getStringForType<int64>()
+{
+	return "int64";
+}
+
+template< >
 std::string getStringForType<float>()
 {
 	return "float";
@@ -98,7 +110,50 @@ bool getRange( SubSpec& subSpec, const NumberType value )
 	}
 	if(!isInRange)
 	{
-		BOOST_LOG_TRIVIAL(error) << "Value error : out of range";
+		LOG_ERROR( "Value error : out of range" );
+	}
+	return isInRange;
+}
+
+template< >
+bool getRange( SubSpec& subSpec, const int8 value )
+{
+	bool isInRange = true;
+	if( boost::optional< const Spec& > rangeNode = subSpec.second.get_child_optional( kRange ) )
+	{
+		isInRange = false;
+		BOOST_FOREACH( SubSpec& m, rangeNode.get() )
+		{
+			if( m.second.get_child_optional( kMin ) && m.second.get_child_optional( kMax ) )
+			{
+				short max = m.second.get< short >( kMax );
+				short min = m.second.get< short >( kMin );
+				if( value >= min && value <= max )
+				{
+					isInRange = true;
+				}
+			}
+			if( !m.second.get_child_optional( kMin ) && m.second.get_child_optional( kMax ) )
+			{			
+				short max = m.second.get< short >( kMax );
+				if( value <= max )
+				{
+					isInRange = true;
+				}
+			}
+			if( m.second.get_child_optional( kMin ) && !m.second.get_child_optional( kMax ) )
+			{			
+				short min = m.second.get< short >( kMin );
+				if( value >= min )
+				{
+					isInRange = true;
+				}
+			}
+		}
+	}
+	if(!isInRange)
+	{
+		LOG_ERROR( "Value error : out of range" );
 	}
 	return isInRange;
 }

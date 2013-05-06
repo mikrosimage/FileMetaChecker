@@ -39,17 +39,17 @@ public:
 template< typename DataType >
 DataType Translator<DataType>::translate( const char* data, const size_t size, const bool bigEndian )
 {
-	utils::EndiannessConverter<DataType> int32Value;
+	utils::EndiannessConverter<DataType> endianConv;
 	
 	if( bigEndian )
 	{
-		std::reverse_copy( data, data + sizeof( DataType ), int32Value.data );
+		std::reverse_copy( data, data + sizeof( DataType ), endianConv.data );
 	}
 	else
 	{
-		std::memcpy( int32Value.data, data, sizeof( DataType ) );
+		std::memcpy( endianConv.data, data, sizeof( DataType ) );
 	}
-	return int32Value.value;
+	return endianConv.value;
 }
 
 template<>
@@ -102,7 +102,7 @@ std::string Translator<DataType>::translate( const DataType & data)
 }
 
 template<>
-std::string Translator<int8>::translate( const int8 & data)
+std::string Translator<int8>::translate( const int8 & data )
 {
 	std::stringstream str;
 	str << (short)data;
@@ -110,7 +110,7 @@ std::string Translator<int8>::translate( const int8 & data)
 }
 
 template<>
-std::string Translator<uint8>::translate( const uint8 & data)
+std::string Translator<uint8>::translate( const uint8 & data )
 {
 	std::stringstream str;
 	str << (unsigned short)data;
