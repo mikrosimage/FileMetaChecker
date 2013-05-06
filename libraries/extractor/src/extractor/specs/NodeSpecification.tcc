@@ -268,17 +268,17 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 	}
 	catch( const bpt::ptree_bad_path& pbp )
 	{
-		LOG_ERROR( "PTREE_BAD_PATH ERROR : " << pbp.what() );
+		LOG_ERROR( "Invalid node in specification file : " << pbp.what() );
 		throw;
 	}
 	catch( const bpt::ptree_bad_data& pbd )
 	{
-		LOG_ERROR( "PTREE_BAD_DATA ERROR : " << pbd.what() );
+		LOG_ERROR( "Invalid data in specification node: " << pbd.what() );
 		throw;
 	}
 	catch( const bpt::ptree_error& pe )
 	{
-		LOG_ERROR( "PTREE ERROR : " << pe.what() );
+		LOG_ERROR( "Specification file error : " << pe.what() );
 		throw;
 	}
 	catch( std::runtime_error& e )
@@ -293,7 +293,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 	}
 	catch(...)
 	{
-		LOG_ERROR( "ERROR !" );
+		LOG_ERROR( "Unknown error" );
 		throw;
 	}
 }
