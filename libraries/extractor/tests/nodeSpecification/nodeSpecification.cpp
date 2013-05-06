@@ -73,7 +73,6 @@ bpt::ptree generateReportTree( const bpt::ptree& node )
 #define CHECK_NODE_INVALID( NODE_NAME ) CHECK_NODE( NODE_NAME, "<xmlattr>.status", "invalid" )
 
 #define CHECK_VALUE_EQUAL( NODE_NAME, VALUE ) BOOST_CHECK_EQUAL( report.get_child( NODE_NAME ).get_value< std::string >(), VALUE );
-// #define CHECK_VALUE_CLOSE( NODE_NAME, VALUE, TOLERANCE ) BOOST_CHECK_CLOSE( report.get_child( NODE_NAME ).get_value< std::string >(), VALUE, TOLERANCE );
 
 
 BOOST_AUTO_TEST_SUITE( nodeSpecification_tests_suite01 )
@@ -968,6 +967,34 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_doubleTestFile )
 		bpt::ptree report = generateReportTree( node );
 		CHECK_NODE_VALID ( nodename );
 		CHECK_VALUE_EQUAL( nodename, "-6.6667" );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( nodeSpecification_endiannessTestFile )
+{
+	const std::string nodename = "endianTest";
+	bpt::ptree node;
+	node.put( "id", nodename );
+	node.put( "label", "Endian Test" );
+	node.put( "type", "uint16" );
+
+	std::ofstream stream( testFile.c_str(), std::ofstream::out );
+	stream << (uint8) 0x00 << (uint8) 0x01;
+	stream.close();
+
+	{
+		node.put( "endian", "big" );
+
+		bpt::ptree report = generateReportTree( node );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "1" );
+	}
+	{
+		node.put( "endian", "little" );
+
+		bpt::ptree report = generateReportTree( node );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "256" );
 	}
 }
 

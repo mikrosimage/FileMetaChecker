@@ -182,7 +182,7 @@ bool isValidNumber( File* _file, std::string& message, const std::string& type, 
 		{
 			message += stringValue + " (" + getPrintable( value ) + ")";
 		}
-		return getRange( subSpec, value, size  );
+		return getRange( subSpec, value );
 	}
 	return false;
 }
