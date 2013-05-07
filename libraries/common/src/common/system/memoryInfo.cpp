@@ -44,7 +44,6 @@ MemoryInfo getMemoryInfo()
 	        infos._totalSwap    =
 	            infos._freeSwap = std::numeric_limits<std::size_t>::max();
 	#endif
-	LOG_X_DEBUG( 40, '-' );
 	LOG_DEBUG( "Memory infos" );
 	LOG_DEBUG( infos );
 
