@@ -39,6 +39,12 @@ public:
 		return ( _file.gcount() == (int)size );
 	}
 
+	void goToBegin()
+	{
+		_file.seekg( std::ios_base::beg );
+		//COMMON_COUT( "pos: " << _file.tellg() );
+	}
+
 	void goBack( const std::size_t size )
 	{
 		_file.seekg( - size, std::ios::cur );

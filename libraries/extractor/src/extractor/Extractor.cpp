@@ -52,6 +52,7 @@ void Extractor::analyse( )
 	_specs->getSpecList( specs );
 	BOOST_FOREACH( Specification spec, specs )
 	{
+		_file->goToBegin();
 		std::vector< std::string > exts = spec.getsupportedExtensions();
 		bool extIsSupported = false;
 
