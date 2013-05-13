@@ -21,6 +21,37 @@ NodeSpecification::NodeSpecification( File* file )
 
 }
 
+	// Mettre dans une fonction "isValidSubGroup"
+	// pour permettre le retour en arrière dans la spécification
+	// pour afficher un erreur quand aucun subGroup n'est trouvé (ascii)
+bool NodeSpecification::isValidSubGroup( SubSpec& subSpec, GroupProperties& groupProp, bpt::ptree& nodeReport )
+{
+	bool groupIsValid = true;
+
+	LOG_INFO( common::Color::get()->_yellow << "Start Chunk : " << subSpec.second.get< std::string >( "id" ) << common::Color::get()->_std );
+	BOOST_FOREACH( SubSpec& n, subSpec.second.get_child( kGroup ) )
+	{
+		bpt::ptree subNodeReport;
+
+		if( isValid( n, groupProp, subNodeReport ) )
+		{
+			if( subNodeReport.size() > 0 )
+			{
+				nodeReport.push_back( bpt::ptree::value_type( n.second.get< std::string >( "id" ), subNodeReport ) );
+			}
+		}
+		else
+		{
+			LOG_ERROR( n.second.get< std::string >( "id" ) );
+			groupIsValid = false;
+		}
+	}
+	LOG_INFO( common::Color::get()->_yellow << "End Chunk : " << subSpec.second.get< std::string >( "id" ) << common::Color::get()->_std );
+	
+	return groupIsValid;
+}
+
+
 bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupProperties, bpt::ptree& nodeReport )
 {
 	try
@@ -119,7 +150,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 			groupProperties.addSize( size );
 		}
 
-		if( typeValue != "" )
+		if( !typeValue.empty() )
 		{
 			message += kType + " => " + typeValue;
 
@@ -197,39 +228,26 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 			isValidNode = validUInt8 | validInt8 | validUInt16 | validInt16 | validUInt32 | validInt32 | validUInt64 | validInt64 | validFloat | validDouble | validData;
 		}
 
-		if( group )
+		if( group && ( isValidNode || ( ! isValidNode && asciiValues.empty() && hexaValues.empty() && typeValue.empty() ) ) )
 		{
-			bool groupIsValid = true;
-
 			GroupProperties groupProp;
-
-			LOG_INFO( "--- Chunk (begin) ---");
-			BOOST_FOREACH( SubSpec& n, subSpec.second.get_child( kGroup ) )
+			bool groupIsValid = isValidSubGroup( subSpec, groupProp, nodeReport );
+			// LOG_INFO( ">>> " <<  subSpec.second.get< std::string >( "id" ) << ": groupIsValid : " <<  groupIsValid );
+			if( !groupIsValid )
 			{
-				bpt::ptree subNodeReport;
-				if( ! isValid( n, groupProp, subNodeReport ) )
-				{
-				LOG_INFO( n.second.get< std::string >( "id" ) );
-					groupIsValid = false;
-				}
-				else
-				{
-					if( subNodeReport.size() > 0 )
-					{
-						nodeReport.push_back( bpt::ptree::value_type( n.second.get< std::string >( "id" ), subNodeReport ) );
-					}
-				}
+				isValidNode = false;
 			}
-			LOG_INFO( "--- Chunk (end) ---");
-
+			if( groupIsValid && asciiValues.empty() && hexaValues.empty() && typeValue.empty() )
+			{
+				isValidNode = true;
+			}
+			// LOG_INFO( ">>> " <<  subSpec.second.get< std::string >( "id" ) << ": isValidNode : " <<  isValidNode );
 			_file->goBack( groupProp.getSize() );
-
-			isValidNode = groupIsValid;
 
 			ExpressionParser groupLength = ExpressionParser();
 			groupLength.setVariables( _headerElements );
 			
-			if( groupSize != "" )
+			if( !groupSize.empty() )
 			{
 				size_t gSize = groupLength.parseExpression<size_t>( groupSize );
 				_file->goForward( gSize );
@@ -246,7 +264,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 			}
 		}
 		
-		if( typeValue == "" && asciiValues.empty() && hexaValues.empty() && !group )
+		if( typeValue.empty() && asciiValues.empty() && hexaValues.empty() && !group )
 		{
 			throw std::runtime_error( "Invalid tree : no value, group nor type node (" + id + ")" );
 		}

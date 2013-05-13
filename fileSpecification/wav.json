@@ -37,7 +37,7 @@
                     "label": "Format sub-chunk",
                     "ascii": "fmt ",
                     "endian": "big",
-                    "optional": true,
+                    "optional": false,
                     "groupSize": "fmtSize + 4",
                     "group": [
                         {
