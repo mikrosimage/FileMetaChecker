@@ -12,6 +12,8 @@ class Report;
 class File;
 class Specifications;
 
+static const std::string kSpec = "specification";
+
 class Extractor
 {
 public:

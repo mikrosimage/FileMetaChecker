@@ -117,6 +117,6 @@ void Extractor::analyse( )
 
 void Extractor::getReport( Report* report )
 {
-	report->add(_report, "specification" );
+	report->add( _report, kSpec );
 }
 
