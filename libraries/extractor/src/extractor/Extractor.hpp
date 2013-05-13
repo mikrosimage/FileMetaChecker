@@ -31,10 +31,10 @@ public:
 	void getReport( Report* report );
 	
 private:
-	File*                _file;
-	Specifications*       _specs;
+	File*                      _file;
+	Specifications*            _specs;
 	std::vector< bpt::ptree >  _report;
-	std::string           _ext;
+	std::string                _ext;
 };
 
 #endif

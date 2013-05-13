@@ -24,9 +24,9 @@ void Report::add( const bpt::ptree& tree, const std::string& rootpath )
 
 void Report::add( const std::vector< bpt::ptree >& tree, const std::string& rootpath )
 {
-	for( size_t i=0; i<tree.size(); i++ )
+	BOOST_FOREACH( bpt::ptree specTree, tree )
 	{
-		reportTree.get_child( kRoot ).push_back( bpt::ptree::value_type( rootpath, tree[i] ) );		
+		reportTree.get_child( kRoot ).push_back( bpt::ptree::value_type( rootpath, specTree ) );
 	}
 }
 
