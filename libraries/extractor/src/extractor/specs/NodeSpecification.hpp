@@ -16,13 +16,14 @@ class NodeSpecification
 public:
 	NodeSpecification( File* file );
 
-	bool isValidSubGroup( SubSpec& subSpec, GroupProperties& groupProp, bpt::ptree& nodeReport );
 	bool isValid(SubSpec& subSpec, GroupProperties& groupProperties, bpt::ptree& nodeReport );
 
 	template< typename DataType >
 	void exportValidData( const bool isValid, const std::string& id, const DataType& data, GroupProperties& groupProperties, bpt::ptree& nodeReport );
 
 private:
+	bool isValidSubGroup( SubSpec& subSpec, GroupProperties& groupProp, bpt::ptree& nodeReport );
+	
 	File*       _file;
 	ElementsMap _headerElements;
 };
