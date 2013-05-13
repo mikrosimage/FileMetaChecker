@@ -22,6 +22,14 @@ void Report::add( const bpt::ptree& tree, const std::string& rootpath )
 	reportTree.get_child( kRoot ).push_back( bpt::ptree::value_type( rootpath, tree ) );
 }
 
+void Report::add( const std::vector< bpt::ptree >& tree, const std::string& rootpath )
+{
+	for( size_t i=0; i<tree.size(); i++ )
+	{
+		reportTree.get_child( kRoot ).push_back( bpt::ptree::value_type( rootpath, tree[i] ) );		
+	}
+}
+
 void Report::exportReport( const std::string& filename )
 {
 	Export e;

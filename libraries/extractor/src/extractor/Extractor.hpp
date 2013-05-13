@@ -4,6 +4,7 @@
 #include <boost/property_tree/ptree.hpp>
 
 #include <string>
+#include <vector>
 
 namespace bpt = boost::property_tree;
 
@@ -28,10 +29,10 @@ public:
 	void getReport( Report* report );
 	
 private:
-	File*           _file;
-	Specifications* _specs;
-	bpt::ptree      _report;
-	std::string     _ext;
+	File*                _file;
+	Specifications*       _specs;
+	std::vector< bpt::ptree >  _report;
+	std::string           _ext;
 };
 
 #endif

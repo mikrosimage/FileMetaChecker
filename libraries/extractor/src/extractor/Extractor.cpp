@@ -70,10 +70,11 @@ void Extractor::analyse( )
 		{
 			LOG_INFO( "-> Parse Header" );
 			SpecIt header = spec.getHeader( );
+			bpt::ptree specReport;
 
-			_report.put( "<xmlattr>.id", spec.getId() );
-			_report.put( "<xmlattr>.label", spec.getLabel() );
-			_report.put( "<xmlattr>.type", spec.getType() );
+			specReport.put( "<xmlattr>.id", spec.getId() );
+			specReport.put( "<xmlattr>.label", spec.getLabel() );
+			specReport.put( "<xmlattr>.type", spec.getType() );
 			
 			NodeSpecification ns( _file );
 			bool isValidFile = true;
@@ -87,33 +88,35 @@ void Extractor::analyse( )
 				{
 					LOG_INFO( v.second.get< std::string >( "id" ) );
 					isValidFile = false;
+					specReport.push_back( bpt::ptree::value_type( v.second.get< std::string >( "id" ), nodeReport ) );
 				}
 				else
 				{
-					_report.push_back( bpt::ptree::value_type( v.second.get< std::string >( "id" ), nodeReport ) );
+					specReport.push_back( bpt::ptree::value_type( v.second.get< std::string >( "id" ), nodeReport ) );
 				}
 			}
 			
 			if( isValidFile )
 			{
-				_report.put( "<xmlattr>.status", "valid" );
+				specReport.put( "<xmlattr>.status", "valid" );
 				LOG_INFO( common::Color::get()->_green << "**********" << common::Color::get()->_std );
 				LOG_INFO( common::Color::get()->_green << "VALID " << spec.getLabel() << common::Color::get()->_std );
 				LOG_INFO( common::Color::get()->_green << "**********" << common::Color::get()->_std );
 			}
 			else
 			{
-				_report.put( "<xmlattr>.status", "not valid" );
+				specReport.put( "<xmlattr>.status", "not valid" );
 				LOG_ERROR( "**********" );
 				LOG_ERROR( "NOT VALID " << spec.getLabel() );
 				LOG_ERROR( "**********" );
 			}
+			_report.push_back( specReport );
 		}
 	}
 }
 
 void Extractor::getReport( Report* report )
 {
-	report->add( _report, "specification" );
+	report->add(_report, "specification" );
 }
 
