@@ -39,5 +39,8 @@ const std::string kOptional      = "optional";
 const std::string kOptionalTrue  = "true";
 const std::string kOptionalFalse = "false";
 
+const std::string kOrdered       = "ordered";
+const std::string kOrderedTrue   = "true";
+const std::string kOrderedFalse  = "false";
 
 #endif

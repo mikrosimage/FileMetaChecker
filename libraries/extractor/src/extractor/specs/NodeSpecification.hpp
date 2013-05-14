@@ -22,7 +22,7 @@ public:
 	void exportValidData( const bool isValid, const std::string& id, const DataType& data, GroupProperties& groupProperties, bpt::ptree& nodeReport );
 
 private:
-	bool isValidSubGroup( SubSpec& subSpec, GroupProperties& groupProp, bpt::ptree& nodeReport );
+	bool isValidSubGroup( SubSpec& subSpec, GroupProperties& groupProp, bpt::ptree& nodeReport, bool& ordered );
 	
 	File*       _file;
 	ElementsMap _headerElements;

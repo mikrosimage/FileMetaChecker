@@ -24,11 +24,12 @@ NodeSpecification::NodeSpecification( File* file )
 	// Mettre dans une fonction "isValidSubGroup"
 	// pour permettre le retour en arrière dans la spécification
 	// pour afficher un erreur quand aucun subGroup n'est trouvé (ascii)
-bool NodeSpecification::isValidSubGroup( SubSpec& subSpec, GroupProperties& groupProp, bpt::ptree& nodeReport )
+bool NodeSpecification::isValidSubGroup( SubSpec& subSpec, GroupProperties& groupProp, bpt::ptree& nodeReport, bool& ordered )
 {
 	bool groupIsValid = true;
 
 	LOG_INFO( common::Color::get()->_yellow << "Start Chunk : " << subSpec.second.get< std::string >( "id" ) << common::Color::get()->_std );
+	// LOG_INFO( "==> Ordered : " << ordered );
 	BOOST_FOREACH( SubSpec& n, subSpec.second.get_child( kGroup ) )
 	{
 		bpt::ptree subNodeReport;
@@ -66,8 +67,10 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 		std::vector< std::string > asciiValues = getMultipleValues< std::string >( subSpec, kAscii );
 		std::vector< std::string > hexaValues  = getMultipleValues< std::string >( subSpec, kHexa  );
 
-		bool endianValue = ( subSpec.second.get<std::string>( kEndian, kEndianBig ) == kEndianBig );
+		bool endianValue = ( subSpec.second.get<std::string>( kEndian,   kEndianBig     ) == kEndianBig    );
 		bool optional    = ( subSpec.second.get<std::string>( kOptional, kOptionalFalse ) == kOptionalTrue );
+		bool ordered     = ( subSpec.second.get<std::string>( kOrdered,  kOrderedTrue   ) == kOrderedTrue  );
+
 		bool group       = subSpec.second.get_child_optional( kGroup );
 		bool isValidNode = false;
 		// TLOG( "label " << label );
@@ -93,8 +96,9 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 				
 				Translator<Ascii> tr;
 				value = tr.translate( buffer, size );
+				// LOG_INFO( "==> value : " << value.lowCaseValue << ", " << value.upCaseValue << " | ==> asciiValues[" << i << "] : " << asciiValues[i] );
 
-				if( asciiValues[i] ==  value.value )
+				if( asciiValues[i] ==  value.lowCaseValue || asciiValues[i] == value.upCaseValue )
 				{
 					isValidNode = true;
 					message += asciiValues[i];
@@ -231,7 +235,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 		if( group && ( isValidNode || ( ! isValidNode && asciiValues.empty() && hexaValues.empty() && typeValue.empty() ) ) )
 		{
 			GroupProperties groupProp;
-			bool groupIsValid = isValidSubGroup( subSpec, groupProp, nodeReport );
+			bool groupIsValid = isValidSubGroup( subSpec, groupProp, nodeReport, ordered );
 			// LOG_INFO( ">>> " <<  subSpec.second.get< std::string >( "id" ) << ": groupIsValid : " <<  groupIsValid );
 			if( !groupIsValid )
 			{

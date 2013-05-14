@@ -4,6 +4,8 @@
 #include "types.hpp"
 #include "common/global.hpp"
 
+#include <boost/algorithm/string.hpp>
+
 #include <cstring>
 #include <sstream>
 #include <iomanip>
@@ -70,7 +72,12 @@ Ascii Translator<Ascii>::translate( const char* data, const size_t size, const b
 	std::ostringstream os;
 	for( size_t index = 0; index < size; ++index )
 		os << (unsigned char)data[ index ];
-	ret.value = os.str();
+	std::string str = os.str();
+	boost::algorithm::to_lower( str );
+	ret.lowCaseValue = str;
+	boost::algorithm::to_upper( str );
+	ret.upCaseValue = str;
+
 	return ret;
 }
 

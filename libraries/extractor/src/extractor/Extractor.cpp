@@ -72,9 +72,9 @@ void Extractor::analyse( )
 			SpecIt header = spec.getHeader( );
 			bpt::ptree specReport;
 
-			specReport.put( "<xmlattr>.id", spec.getId() );
+			specReport.put( "<xmlattr>.id",    spec.getId()    );
 			specReport.put( "<xmlattr>.label", spec.getLabel() );
-			specReport.put( "<xmlattr>.type", spec.getType() );
+			specReport.put( "<xmlattr>.type",  spec.getType()  );
 			
 			NodeSpecification ns( _file );
 			bool isValidFile = true;
