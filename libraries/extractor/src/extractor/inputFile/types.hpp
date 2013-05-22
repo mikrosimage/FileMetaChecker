@@ -20,6 +20,7 @@ struct Hexa{
 typedef struct Hexa Hexa;
 
 struct Ascii{
+	std::string originalCaseValue;
 	std::string lowCaseValue;
 	std::string upCaseValue;
 };

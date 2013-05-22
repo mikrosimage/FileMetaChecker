@@ -56,6 +56,11 @@ public:
 		_file.seekg( size, std::ios::cur );
 		//COMMON_COUT( "pos: " << _file.tellg() );
 	}
+
+	bool endOfFile( )
+	{
+		return _file.eof();
+	}
 	
 private:
 	std::ifstream _file;

@@ -9,9 +9,10 @@ public:
 	GroupProperties()
 	{
 		_size = 0;
+		_ordered = true;
 	}
 
-	void addSize( int value)
+	void addSize( int value )
 	{
 		_size += value;
 	}
@@ -21,8 +22,19 @@ public:
 		return _size;
 	}
 
+	void setOrder( bool order )
+	{
+		_ordered = order;
+	}
+
+	bool getOrder()
+	{
+		return _ordered;
+	}
+
 private:
 	size_t _size;
+	bool   _ordered;
 };
 
 #endif

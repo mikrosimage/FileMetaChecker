@@ -73,6 +73,7 @@ Ascii Translator<Ascii>::translate( const char* data, const size_t size, const b
 	for( size_t index = 0; index < size; ++index )
 		os << (unsigned char)data[ index ];
 	std::string str = os.str();
+	ret.originalCaseValue = str;
 	boost::algorithm::to_lower( str );
 	ret.lowCaseValue = str;
 	boost::algorithm::to_upper( str );

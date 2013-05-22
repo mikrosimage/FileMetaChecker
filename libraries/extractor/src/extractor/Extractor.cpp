@@ -88,12 +88,8 @@ void Extractor::analyse( )
 				{
 					LOG_INFO( v.second.get< std::string >( "id" ) );
 					isValidFile = false;
-					specReport.push_back( bpt::ptree::value_type( v.second.get< std::string >( "id" ), nodeReport ) );
 				}
-				else
-				{
-					specReport.push_back( bpt::ptree::value_type( v.second.get< std::string >( "id" ), nodeReport ) );
-				}
+				specReport.push_back( bpt::ptree::value_type( v.second.get< std::string >( "id" ), nodeReport ) );
 			}
 			
 			if( isValidFile )
