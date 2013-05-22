@@ -21,6 +21,32 @@ NodeSpecification::NodeSpecification( File* file )
 
 }
 
+bool NodeSpecification::isValidUnorderedGroup( SubSpec& subSpec, GroupProperties& groupProperties, bpt::ptree& nodeReport )
+{
+	bool oneNodeIsValid = false;
+	BOOST_FOREACH( SubSpec& n, subSpec.second.get_child( kGroup ) )
+	{
+		bpt::ptree subNodeReport;
+		if( isValid( n, groupProperties, subNodeReport ) )
+		{
+			oneNodeIsValid = true;
+			if( subNodeReport.size() > 0 )
+			{
+				nodeReport.push_back( bpt::ptree::value_type( n.second.get< std::string >( "id" ), subNodeReport ) );
+				groupProperties.iterateIterationMapElement( n.second.get< std::string >( "id" ) );
+				return oneNodeIsValid;
+			}
+		}
+		if( _file->endOfFile() )
+		{
+			LOG_INFO( common::Color::get()->_yellow << "     /!\\ EOF : " << _file->endOfFile() << common::Color::get()->_std );
+			return oneNodeIsValid;
+		}
+	}
+	return oneNodeIsValid;
+}
+
+
 bool NodeSpecification::isValidSubGroup( SubSpec& subSpec, GroupProperties& groupProperties, bpt::ptree& nodeReport )
 {
 	bool groupIsValid = true;
@@ -28,8 +54,9 @@ bool NodeSpecification::isValidSubGroup( SubSpec& subSpec, GroupProperties& grou
 	BOOST_FOREACH( SubSpec& n, subSpec.second.get_child( kGroup ) )
 	{
 		// LOG_INFO( "     Set RepetitionMap Element : " << n.second.get< std::string >( "id" ) );
+		bool optional = ( n.second.get<std::string>( kOptional, kOptionalFalse ) == kOptionalTrue );
 		std::vector< size_t > nodeRepetition = getRepetition( n );
-		groupProperties.addRepetitionMapElement( n.second.get< std::string >( "id" ), nodeRepetition );
+		groupProperties.addRepetitionMapElement( n.second.get< std::string >( "id" ), nodeRepetition, optional );
 	}
 
 	LOG_INFO( common::Color::get()->_yellow << "Start Chunk : " << subSpec.second.get< std::string >( "id" ) << common::Color::get()->_std );
@@ -73,28 +100,12 @@ bool NodeSpecification::isValidSubGroup( SubSpec& subSpec, GroupProperties& grou
 	{
 		LOG_INFO( " ==> Ordered : " << groupProperties.getOrder() );
 		size_t i = 0;
-		bool oneNodeIsValid;		
+		bool oneNodeIsValid = false;		
 		do
 		{
-			oneNodeIsValid = false;
 			LOG_INFO( ">>> Check an unordered group..." );
 			i++;
-			BOOST_FOREACH( SubSpec& n, subSpec.second.get_child( kGroup ) )
-			{
-				bpt::ptree subNodeReport;
-				if( isValid( n, groupProperties, subNodeReport ) )
-				{
-					oneNodeIsValid = true;
-					if( subNodeReport.size() > 0 )
-					{
-						nodeReport.push_back( bpt::ptree::value_type( n.second.get< std::string >( "id" ), subNodeReport ) );
-					}
-				}
-				if( _file->endOfFile() )
-				{
-					LOG_INFO( common::Color::get()->_yellow << "     /!\\ EOF : " << _file->endOfFile() << common::Color::get()->_std );
-				}
-			}
+			oneNodeIsValid = isValidUnorderedGroup( subSpec, groupProperties, nodeReport );
 			LOG_INFO( ">>> ... End of the specification" );
 		}
 		while( oneNodeIsValid && !_file->endOfFile() );
@@ -107,6 +118,14 @@ bool NodeSpecification::isValidSubGroup( SubSpec& subSpec, GroupProperties& grou
 		else
 		{
 			groupIsValid = true;
+		}
+
+		BOOST_FOREACH( SubSpec& n, subSpec.second.get_child( kGroup ) )
+		{
+			if( !groupProperties.isIterationValid( n.second.get< std::string >( "id" ) ) )
+			{
+				groupIsValid = false;
+			}
 		}
 	}
 	LOG_INFO( common::Color::get()->_yellow << "End Chunk : " << subSpec.second.get< std::string >( "id" ) << common::Color::get()->_std );
@@ -221,6 +240,19 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 				}
 				// TLOG_VAR2( hexaValues[i], value.value );
 			}
+
+			if( optional && !isValidNode )
+			{
+				_file->goBack( size );
+				return true;
+			}
+
+			if( !parentProperties.getOrder() && !isValidNode )
+			{
+				_file->goBack( size );
+				return false;
+			}
+
 			parentProperties.addSize( size );
 		}
 
