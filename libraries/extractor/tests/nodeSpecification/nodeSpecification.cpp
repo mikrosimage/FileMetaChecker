@@ -10,6 +10,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 
 // #include "testStreamTools.hpp"
+#include <common/global.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -46,7 +47,7 @@ bpt::ptree generateReportTree( const bpt::ptree& node )
 {
 	bpt::ptree testTree;
 	bpt::ptree report, nodeReport;
-	GroupProperties groupProperties;
+	GroupProperties rootProperties;
 
 	File file;
 	file.open( testFile );
@@ -57,9 +58,10 @@ bpt::ptree generateReportTree( const bpt::ptree& node )
 
 	BOOST_FOREACH( SubSpec v, testTree.get_child( "header" ) )
 	{
-		ns.isValid( v, groupProperties, nodeReport );
+		ns.isValid( v, nodeReport, rootProperties );
 		if( v.second.get_child_optional( "id" ) )
 		{
+			// LOG_INFO( v.second.get< std::string >( "id" ) );
 			report.push_back( bpt::ptree::value_type( v.second.get< std::string >( "id" ), nodeReport ) );
 		}
 	}
@@ -118,6 +120,6 @@ BOOST_AUTO_TEST_SUITE_END()
 #include "nodeSpecificationNumber.hpp"
 #include "nodeSpecificationHexa.hpp"
 #include "nodeSpecificationAscii.hpp"
-#include "nodeSpecificationGroup.hpp"
-// #include "nodeSpecificationExpression.hpp"
+// #include "nodeSpecificationGroup.hpp"
 // #include "nodeSpecificationOptional.hpp"
+// #include "nodeSpecificationExpression.hpp"
