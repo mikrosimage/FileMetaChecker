@@ -17,7 +17,8 @@ public:
 	
 	bool open( const std::string& filename )
 	{
-		_file.open ( filename.c_str(), std::ios::in | std::ios::binary );
+		_filename = filename;
+		_file.open ( _filename.c_str(), std::ios::in | std::ios::binary );
 		_file.seekg (0, std::ios::beg);
 		return _file.is_open();
 	}
@@ -29,12 +30,12 @@ public:
 
 	bool readData( char* data, const size_t size )
 	{
-		//COMMON_COUT( "read pos: " << _file.tellg() );
+		//LOG_INFO( "read pos: " << _file.tellg() );
 		_file.read( data, size );
 /*		for (size_t i=0; i<size; ++i)
 			std::cout << "read : " << i << "  " << (unsigned char)data[i] << std::endl; */
 		
-		//COMMON_COUT_VAR2(_file.gcount(), (int)size);
+		//GET_VAR2(_file.gcount(), (int)size);
 		
 		return ( _file.gcount() == (int)size );
 	}
@@ -42,19 +43,19 @@ public:
 	void goToBegin()
 	{
 		_file.seekg( std::ios_base::beg );
-		//COMMON_COUT( "pos: " << _file.tellg() );
+		//LOG_INFO( "pos: " << _file.tellg() );
 	}
 
 	void goBack( const std::size_t size )
 	{
 		_file.seekg( - size, std::ios::cur );
-		//COMMON_COUT( "pos: " << _file.tellg() );
+		//LOG_INFO( "pos: " << _file.tellg() );
 	}
 
 	void goForward( const std::size_t size )
 	{
 		_file.seekg( size, std::ios::cur );
-		//COMMON_COUT( "pos: " << _file.tellg() );
+		//LOG_INFO( "pos: " << _file.tellg() );
 	}
 
 	bool endOfFile( )
@@ -71,9 +72,17 @@ public:
 		return position;
 		// LOG_INFO( "pos: " << _file.tellg() );
 	}
-	
+
+	void resetFile()
+	{
+		_file.close();
+		_file.open ( _filename.c_str(), std::ios::in | std::ios::binary );
+		_file.seekg ( std::ios::beg);
+	}
+
 private:
 	std::ifstream _file;
+	std::string   _filename;
 };
 
 #endif

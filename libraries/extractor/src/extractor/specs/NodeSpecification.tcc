@@ -21,12 +21,58 @@ NodeSpecification::NodeSpecification( File* file )
 
 }
 
-bool NodeSpecification::isValidUnorderedGroup( SubSpec& subSpec, GroupProperties& groupProperties, bpt::ptree& nodeReport )
+bool NodeSpecification::isValidOrderedGroup( SubSpec& subSpec, GroupProperties& groupProperties, bpt::ptree& nodeReport )
+{
+	bool groupIsValid = true;
+	// LOG_INFO( " ==> Ordered : " << groupProperties.getOrder() );
+	BOOST_FOREACH( SubSpec& n, subSpec.second.get_child( kGroup ) )
+	{
+		size_t min = groupProperties.getRepetitionMapElement( n.second.get< std::string >( "id" ) ).at(0);
+		size_t max = groupProperties.getRepetitionMapElement( n.second.get< std::string >( "id" ) ).at(1);
+
+		if( min != max )
+		{
+			std::stringstream sstr;
+			sstr << "Invalid repetition value : " << min << " != " << max
+				 << " : cannot be a range for ordered elements (" << subSpec.second.get< std::string >( "id" ) 
+				 << "." << n.second.get< std::string >( "id" ) << ")";
+			throw std::runtime_error( sstr.str() );
+		}
+		else
+		{
+			bpt::ptree subNodeReport;
+			for( size_t i = 0 ; i < min ; i++ )
+			{
+				// LOG_INFO( "Position in file : " << _file->getPosition() );
+				if( isValid( n, groupProperties, subNodeReport ) )
+				{
+					if( subNodeReport.size() > 0 )
+						nodeReport.push_back( bpt::ptree::value_type( n.second.get< std::string >( "id" ), subNodeReport ) );
+				}
+				else
+				{
+					LOG_ERROR( n.second.get< std::string >( "id" ) );
+					groupIsValid = false;
+				}
+
+				if( _file->endOfFile() )
+				{
+					// LOG_INFO( common::Color::get()->_yellow << "==>  /!\\ EOF : " << _file->endOfFile() << common::Color::get()->_std );
+					return groupIsValid;
+				}
+			}
+		}
+	}
+	return groupIsValid;
+}
+
+bool NodeSpecification::oneNodeValidUnorderedGroup( SubSpec& subSpec, GroupProperties& groupProperties, bpt::ptree& nodeReport )
 {
 	bool oneNodeIsValid = false;
 	BOOST_FOREACH( SubSpec& n, subSpec.second.get_child( kGroup ) )
 	{
 		bpt::ptree subNodeReport;
+		// LOG_INFO( "Position in file : " << _file->getPosition() );
 		if( isValid( n, groupProperties, subNodeReport ) )
 		{
 			oneNodeIsValid = true;
@@ -39,11 +85,46 @@ bool NodeSpecification::isValidUnorderedGroup( SubSpec& subSpec, GroupProperties
 		}
 		if( _file->endOfFile() )
 		{
-			LOG_INFO( common::Color::get()->_yellow << "     /!\\ EOF : " << _file->endOfFile() << common::Color::get()->_std );
+			// LOG_INFO( common::Color::get()->_yellow << "==>  /!\\ EOF : " << _file->endOfFile() << common::Color::get()->_std );
 			return oneNodeIsValid;
 		}
 	}
 	return oneNodeIsValid;
+}
+
+bool NodeSpecification::isValidUnorderedGroup( SubSpec& subSpec, GroupProperties& groupProperties, bpt::ptree& nodeReport )
+{
+	bool groupIsValid = true;
+	// LOG_INFO( " ==> Ordered : " << groupProperties.getOrder() );
+	size_t i = 0;
+	bool oneNodeIsValid = false;		
+	do
+	{
+		// LOG_INFO( ">>> Check an unordered group..." );
+		i++;
+		oneNodeIsValid = oneNodeValidUnorderedGroup( subSpec, groupProperties, nodeReport );
+		// LOG_INFO( ">>> ... End of the specification" );
+	}
+	while( oneNodeIsValid && !_file->endOfFile() );
+
+	if( i == 1)
+	{
+		groupIsValid = false;
+		LOG_ERROR( "None is valid" );
+	}
+	else
+	{
+		groupIsValid = true;
+	}
+
+	BOOST_FOREACH( SubSpec& n, subSpec.second.get_child( kGroup ) )
+	{
+		if( !groupProperties.isIterationValid( n.second.get< std::string >( "id" ) ) )
+		{
+			groupIsValid = false;
+		}
+	}
+	return groupIsValid;
 }
 
 
@@ -63,71 +144,11 @@ bool NodeSpecification::isValidSubGroup( SubSpec& subSpec, GroupProperties& grou
 
 	if( groupProperties.getOrder() )	// ordered
 	{
-		LOG_INFO( " ==> Ordered : " << groupProperties.getOrder() );
-		BOOST_FOREACH( SubSpec& n, subSpec.second.get_child( kGroup ) )
-		{
-			size_t min = groupProperties.getRepetitionMapElement( n.second.get< std::string >( "id" ) ).at(0);
-			size_t max = groupProperties.getRepetitionMapElement( n.second.get< std::string >( "id" ) ).at(1);
-
-			if( min != max )
-			{
-				std::stringstream sstr;
-				sstr << "Invalid repetition value : " << min << " != " << max
-					 << " : cannot be a range for ordered elements (" << subSpec.second.get< std::string >( "id" ) 
-					 << "." << n.second.get< std::string >( "id" ) << ")";
-				throw std::runtime_error( sstr.str() );
-			}
-			else
-			{
-				bpt::ptree subNodeReport;
-				for( size_t i = 0 ; i < min ; i++ )
-				{
-					LOG_INFO( "POSITION = " << _file->getPosition() );
-					if( isValid( n, groupProperties, subNodeReport ) )
-					{
-						if( subNodeReport.size() > 0 )
-							nodeReport.push_back( bpt::ptree::value_type( n.second.get< std::string >( "id" ), subNodeReport ) );
-					}
-					else
-					{
-						LOG_ERROR( n.second.get< std::string >( "id" ) );
-						groupIsValid = false;
-					}
-				}
-			}
-		}
+		groupIsValid = isValidOrderedGroup( subSpec, groupProperties, nodeReport );
 	}
 	else								// not ordered
 	{
-		LOG_INFO( " ==> Ordered : " << groupProperties.getOrder() );
-		size_t i = 0;
-		bool oneNodeIsValid = false;		
-		do
-		{
-			LOG_INFO( ">>> Check an unordered group..." );
-			i++;
-			oneNodeIsValid = isValidUnorderedGroup( subSpec, groupProperties, nodeReport );
-			LOG_INFO( ">>> ... End of the specification" );
-		}
-		while( oneNodeIsValid && !_file->endOfFile() );
-
-		if( i == 1)
-		{
-			groupIsValid = false;
-			LOG_ERROR( "None is valid" );
-		}
-		else
-		{
-			groupIsValid = true;
-		}
-
-		BOOST_FOREACH( SubSpec& n, subSpec.second.get_child( kGroup ) )
-		{
-			if( !groupProperties.isIterationValid( n.second.get< std::string >( "id" ) ) )
-			{
-				groupIsValid = false;
-			}
-		}
+		groupIsValid = isValidUnorderedGroup( subSpec, groupProperties, nodeReport );
 	}
 	LOG_INFO( common::Color::get()->_yellow << "End Chunk : " << subSpec.second.get< std::string >( "id" ) << common::Color::get()->_std );
 	
@@ -145,7 +166,6 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 		std::string typeValue     = subSpec.second.get< std::string >( kType, "" );
 		std::string count         = subSpec.second.get< std::string >( kCount, "" );
 		std::string groupSizeExpr = subSpec.second.get< std::string >( kGroupSize, "" );
-		LOG_INFO( "---> id :    " << id );
 		
 		std::vector< std::string > asciiValues = getMultipleValues< std::string >( subSpec, kAscii );
 		std::vector< std::string > hexaValues  = getMultipleValues< std::string >( subSpec, kHexa  );
@@ -179,7 +199,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 				
 				Translator<Ascii> tr;
 				value = tr.translate( buffer, size );
-				LOG_INFO( "     value : " << value.originalCaseValue << ", " << value.lowCaseValue << ", " << value.upCaseValue << " | ==> asciiValues[" << i << "] : " << asciiValues[i] );
+				// LOG_INFO( "     value : " << value.originalCaseValue << ", " << value.lowCaseValue << ", " << value.upCaseValue << " | ==> asciiValues[" << i << "] : " << asciiValues[i] );
 
 				if( asciiValues[i] ==  value.originalCaseValue || asciiValues[i] ==  value.lowCaseValue || asciiValues[i] == value.upCaseValue )
 				{
@@ -195,14 +215,12 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 			
 			if( optional && !isValidNode )
 			{
-				LOG_INFO( "GOBACK (optional)");
 				_file->goBack( size );
 				return true;
 			}
 
 			if( !parentProperties.getOrder() && !isValidNode )
 			{
-				LOG_INFO( "GOBACK (unordered)");
 				_file->goBack( size );
 				return false;
 			}
@@ -341,9 +359,8 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 		{
 			GroupProperties groupProperties;
 			groupProperties.setOrder( ordered );
-			LOG_INFO( "groupProperties.getOrder() : " << groupProperties.getOrder() );
+			// LOG_INFO( "groupProperties.getOrder() : " << groupProperties.getOrder() );
 			bool groupIsValid = isValidSubGroup( subSpec, groupProperties, nodeReport );
-			// LOG_INFO( ">>> " <<  subSpec.second.get< std::string >( "id" ) << ": groupIsValid : " <<  groupIsValid );
 			if( !groupIsValid )
 			{
 				isValidNode = false;
