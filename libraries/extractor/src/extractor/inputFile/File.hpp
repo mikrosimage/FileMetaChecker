@@ -61,6 +61,16 @@ public:
 	{
 		return _file.eof();
 	}
+
+	int getPosition()
+	{
+		int position;
+		std::stringstream sstr;
+		sstr << _file.tellg();
+		sstr >> position;
+		return position;
+		// LOG_INFO( "pos: " << _file.tellg() );
+	}
 	
 private:
 	std::ifstream _file;

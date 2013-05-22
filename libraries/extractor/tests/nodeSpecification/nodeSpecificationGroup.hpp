@@ -902,317 +902,314 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_errorsRepetitionUnorderedGroupTestFile )
 	}
 }
 
-// BOOST_AUTO_TEST_CASE( nodeSpecification_recursiveRepetitionOrderedGroupTestFile )
-// {
-// 	{
-// 		const std::string nodename = "recursiveRepetitionOrderedGroupTest";
-// 		bpt::ptree node;
-// 		node.put( "id",  nodename );
-// 		node.put( "label", "Recursive Repetition Ordered Group Test" );
-// 		node.put( "ordered", true );
+BOOST_AUTO_TEST_CASE( nodeSpecification_recursiveRepetitionOrderedGroupTestFile )
+{
+	{
+		const std::string nodename = "recursiveRepetitionOrderedGroupTest";
+		bpt::ptree node;
+		node.put( "id",  nodename );
+		node.put( "label", "Recursive Repetition Ordered Group Test" );
+		node.put( "ordered", true );
 
-// 		const std::string nodename1 = "recursiveSubGroupNode1";
-// 		bpt::ptree node1;
-// 		node1.put( "id",  nodename1 );
-// 		node1.put( "label", "Ordered SubGroupNode 1" );
-// 		node1.put( "ascii", "sub1" );
-// 		node1.put( "repeated", "2" );
+		const std::string nodename1 = "recursiveSubGroupNode1";
+		bpt::ptree node1;
+		node1.put( "id",  nodename1 );
+		node1.put( "label", "Ordered SubGroupNode 1" );
+		node1.put( "ascii", "sub1" );
+		node1.put( "repeated", "2" );
 
-// 		const std::string subnodename1 = "subNode1";
-// 		bpt::ptree subnode1;
-// 		subnode1.put( "id",  subnodename1 );
-// 		subnode1.put( "label", "subNode 1" );
-// 		subnode1.put( "ascii", "subNode1" );
+		const std::string subnodename1 = "subNode1";
+		bpt::ptree subnode1;
+		subnode1.put( "id",  subnodename1 );
+		subnode1.put( "label", "subNode 1" );
+		subnode1.put( "ascii", "subNode1" );
 
-// 		const std::string subnodename2 = "subNode2";
-// 		bpt::ptree subnode2;
-// 		subnode2.put( "id",  subnodename2 );
-// 		subnode2.put( "label", "subNode 2" );
-// 		subnode2.put( "ascii", "subNode2" );
-// 		subnode2.put( "repeated", "2" );
+		const std::string subnodename2 = "subNode2";
+		bpt::ptree subnode2;
+		subnode2.put( "id",  subnodename2 );
+		subnode2.put( "label", "subNode 2" );
+		subnode2.put( "ascii", "subNode2" );
+		subnode2.put( "repeated", "2" );
 
-// 		node1.add_child( "group.", subnode1 );
-// 		node1.add_child( "group.", subnode2 );
+		node1.add_child( "group.", subnode1 );
+		node1.add_child( "group.", subnode2 );
 
-// 		node.add_child( "group.", node1 );
+		node.add_child( "group.", node1 );
 		
-// 		std::ofstream stream( testFile.c_str(), std::ofstream::out );
-// 		stream << "sub1" << "subNode1" << "subNode2" << "subNode2";
-// 		stream << "sub1" << "subNode1" << "subNode2" << "subNode2";
-// 		stream.close();
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << "sub1" << "subNode1" << "subNode2" << "subNode2";
+		stream << "sub1" << "subNode1" << "subNode2" << "subNode2";
+		stream.close();
 		
-// 		bpt::ptree report = generateReportTree( node );
+		bpt::ptree report = generateReportTree( node );
 
-// 		CHECK_NODE_VALID   ( nodename + "." + nodename1 );
-// 		CHECK_VALUE_EQUAL  ( nodename + "." + nodename1, "sub1" );
-// 		CHECK_NODE_VALID   ( nodename + "." + nodename1 + "." + subnodename1 );
-// 		CHECK_VALUE_EQUAL  ( nodename + "." + nodename1 + "." + subnodename1, "subNode1" );
-// 		CHECK_NODE_VALID   ( nodename + "." + nodename1 + "." + subnodename2 );
-// 		CHECK_VALUE_EQUAL  ( nodename + "." + nodename1 + "." + subnodename2, "subNode2" );
-// 		CHECK_NODE_VALID   ( nodename );
-// 	}
-// }
+		CHECK_NODE_VALID   ( nodename + "." + nodename1 );
+		CHECK_VALUE_EQUAL  ( nodename + "." + nodename1, "sub1" );
+		CHECK_NODE_VALID   ( nodename + "." + nodename1 + "." + subnodename1 );
+		CHECK_VALUE_EQUAL  ( nodename + "." + nodename1 + "." + subnodename1, "subNode1" );
+		CHECK_NODE_VALID   ( nodename + "." + nodename1 + "." + subnodename2 );
+		CHECK_VALUE_EQUAL  ( nodename + "." + nodename1 + "." + subnodename2, "subNode2" );
+		CHECK_NODE_VALID   ( nodename );
+	}
+}
 
-// BOOST_AUTO_TEST_CASE( nodeSpecification_recursiveRepetitionUnorderedGroupTestFile1 )
-// {
-// 	{
-// 		const std::string nodename = "recursiveRepetitionUnorderedGroupTest";
-// 		bpt::ptree node;
-// 		node.put( "id",  nodename );
-// 		node.put( "label", "Recursive Repetition Unordered Group Test" );
-// 		node.put( "ordered", false );
+BOOST_AUTO_TEST_CASE( nodeSpecification_recursiveRepetitionUnorderedGroupTestFile1 )
+{
+	{
+		const std::string nodename = "recursiveRepetitionUnorderedGroupTest";
+		bpt::ptree node;
+		node.put( "id",  nodename );
+		node.put( "label", "Recursive Repetition Unordered Group Test" );
+		node.put( "ordered", false );
 
-// 		const std::string nodename1 = "recursiveSubGroupNode1";
-// 		bpt::ptree node1;
-// 		node1.put( "id",  nodename1 );
-// 		node1.put( "label", "Unordered SubGroupNode 1" );
-// 		node1.put( "ascii", "sub1" );
-// 		node1.put( "repeated", "2" );
+		const std::string nodename1 = "recursiveSubGroupNode1";
+		bpt::ptree node1;
+		node1.put( "id",  nodename1 );
+		node1.put( "label", "Unordered SubGroupNode 1" );
+		node1.put( "ascii", "sub1" );
+		node1.put( "repeated", "2" );
 
-// 		const std::string subnodename1 = "subNode1";
-// 		bpt::ptree subnode1;
-// 		subnode1.put( "id",  subnodename1 );
-// 		subnode1.put( "label", "subNode 1" );
-// 		subnode1.put( "ascii", "subNode1" );
+		const std::string subnodename1 = "subNode1";
+		bpt::ptree subnode1;
+		subnode1.put( "id",  subnodename1 );
+		subnode1.put( "label", "subNode 1" );
+		subnode1.put( "ascii", "subNode1" );
 
-// 		const std::string subnodename2 = "subNode2";
-// 		bpt::ptree subnode2;
-// 		subnode2.put( "id",  subnodename2 );
-// 		subnode2.put( "label", "subNode 2" );
-// 		subnode2.put( "ascii", "subNode2" );
-// 		subnode2.put( "repeated", "2" );
+		const std::string subnodename2 = "subNode2";
+		bpt::ptree subnode2;
+		subnode2.put( "id",  subnodename2 );
+		subnode2.put( "label", "subNode 2" );
+		subnode2.put( "ascii", "subNode2" );
+		subnode2.put( "repeated", "2" );
 
-// 		node1.add_child( "group.", subnode1 );
-// 		node1.add_child( "group.", subnode2 );
+		node1.add_child( "group.", subnode1 );
+		node1.add_child( "group.", subnode2 );
 
-// 		const std::string nodename2 = "recursiveSubGroupNode2";
-// 		bpt::ptree node2;
-// 		node2.put( "id",  nodename2 );
-// 		node2.put( "label", "Unordered SubGroupNode 2" );
-// 		node2.put( "ascii", "sub2" );
-// 		node2.put( "repeated", "2" );
-// 		node2.put( "ordered", false );
+		const std::string nodename2 = "recursiveSubGroupNode2";
+		bpt::ptree node2;
+		node2.put( "id",  nodename2 );
+		node2.put( "label", "Unordered SubGroupNode 2" );
+		node2.put( "ascii", "sub2" );
+		node2.put( "repeated", "2" );
+		node2.put( "ordered", false );
 
-// 		const std::string subnodename3 = "subNode3";
-// 		bpt::ptree subnode3;
-// 		subnode3.put( "id",  subnodename3 );
-// 		subnode3.put( "label", "subNode 3" );
-// 		subnode3.put( "ascii", "subNode3" );
-// 		// subnode3.put( "hexa", "0a0f" );
+		const std::string subnodename3 = "subNode3";
+		bpt::ptree subnode3;
+		subnode3.put( "id",  subnodename3 );
+		subnode3.put( "label", "subNode 3" );
+		subnode3.put( "ascii", "subNode3" );
 
-// 		const std::string subnodename4 = "subNode4";
-// 		bpt::ptree subnode4;
-// 		subnode4.put( "id",  subnodename4 );
-// 		subnode4.put( "label", "subNode 4" );
-// 		subnode4.put( "ascii", "subNode4" );
-// 		subnode4.put( "repeated", "2" );
+		const std::string subnodename4 = "subNode4";
+		bpt::ptree subnode4;
+		subnode4.put( "id",  subnodename4 );
+		subnode4.put( "label", "subNode 4" );
+		subnode4.put( "ascii", "subNode4" );
+		subnode4.put( "repeated", "2" );
 
-// 		node2.add_child( "group.", subnode3 );
-// 		node2.add_child( "group.", subnode4 );
+		node2.add_child( "group.", subnode3 );
+		node2.add_child( "group.", subnode4 );
 
-// 		node.add_child( "group.", node1 );
-// 		node.add_child( "group.", node2 );
+		node.add_child( "group.", node1 );
+		node.add_child( "group.", node2 );
 		
-// 		std::ofstream stream( testFile.c_str(), std::ofstream::out );
-// 		stream << "sub1" << "subNode1" << "subNode2" << "subNode2";	// 28
-// 		stream << "sub2" << "subNode4" << "subNode3" << "subNode4";	// 56
-// 		stream << "sub2" << "subNode4" << "subNode4" << "subNode3";	// 84
-// 		// stream << "sub2" << "subNode4" <<  0x0a << 0x0f << "subNode4";	// 52
-// 		// stream << "sub2" << "subNode4" << "subNode4" <<  0x0a << 0x0f;	// 76
-// 		stream << "sub1" << "subNode1" << "subNode2" << "subNode2";	// 104
-// 		stream.close();
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << "sub1" << "subNode1" << "subNode2" << "subNode2";	// 28
+		stream << "sub2" << "subNode4" << "subNode3" << "subNode4";	// 56
+		stream << "sub2" << "subNode4" << "subNode4" << "subNode3";	// 84
+		stream << "sub1" << "subNode1" << "subNode2" << "subNode2";	// 104
+		stream.close();
 		
-// 		bpt::ptree report = generateReportTree( node );
+		bpt::ptree report = generateReportTree( node );
 
-// 		CHECK_NODE_VALID   ( nodename + "." + nodename1 );
-// 		CHECK_VALUE_EQUAL  ( nodename + "." + nodename1, "sub1" );
-// 		CHECK_NODE_VALID   ( nodename + "." + nodename1 + "." + subnodename1 );
-// 		CHECK_VALUE_EQUAL  ( nodename + "." + nodename1 + "." + subnodename1, "subNode1" );
-// 		CHECK_NODE_VALID   ( nodename + "." + nodename1 + "." + subnodename2 );
-// 		CHECK_VALUE_EQUAL  ( nodename + "." + nodename1 + "." + subnodename2, "subNode2" );
-// 		CHECK_NODE_VALID   ( nodename + "." + nodename2 );
-// 		CHECK_VALUE_EQUAL  ( nodename + "." + nodename2, "sub2" );
-// 		CHECK_NODE_VALID   ( nodename + "." + nodename2 + "." + subnodename3 );
-// 		CHECK_VALUE_EQUAL  ( nodename + "." + nodename2 + "." + subnodename3, "subNode3" );
-// 		CHECK_NODE_VALID   ( nodename + "." + nodename2 + "." + subnodename4 );
-// 		CHECK_VALUE_EQUAL  ( nodename + "." + nodename2 + "." + subnodename4, "subNode4" );
-// 		CHECK_NODE_VALID   ( nodename );
-// 	}
-// }
+		CHECK_NODE_VALID   ( nodename + "." + nodename1 );
+		CHECK_VALUE_EQUAL  ( nodename + "." + nodename1, "sub1" );
+		CHECK_NODE_VALID   ( nodename + "." + nodename1 + "." + subnodename1 );
+		CHECK_VALUE_EQUAL  ( nodename + "." + nodename1 + "." + subnodename1, "subNode1" );
+		CHECK_NODE_VALID   ( nodename + "." + nodename1 + "." + subnodename2 );
+		CHECK_VALUE_EQUAL  ( nodename + "." + nodename1 + "." + subnodename2, "subNode2" );
+		CHECK_NODE_VALID   ( nodename + "." + nodename2 );
+		CHECK_VALUE_EQUAL  ( nodename + "." + nodename2, "sub2" );
+		CHECK_NODE_VALID   ( nodename + "." + nodename2 + "." + subnodename3 );
+		CHECK_VALUE_EQUAL  ( nodename + "." + nodename2 + "." + subnodename3, "subNode3" );
+		CHECK_NODE_VALID   ( nodename + "." + nodename2 + "." + subnodename4 );
+		CHECK_VALUE_EQUAL  ( nodename + "." + nodename2 + "." + subnodename4, "subNode4" );
+		CHECK_NODE_VALID   ( nodename );
+	}
+}
 
-// BOOST_AUTO_TEST_CASE( nodeSpecification_recursiveRepetitionUnorderedGroupTestFile2 )
-// {
-// 	Hexa hexa1, hexa2, hexa3, hexa4, hexa5;
+BOOST_AUTO_TEST_CASE( nodeSpecification_recursiveRepetitionUnorderedGroupTestFile2 )
+{
+	Hexa hexa1, hexa2, hexa3, hexa4, hexa5;
 	
-// 	hexa1.value = "ffd8";
-// 	hexa2.value = "abcd";
-// 	hexa3.value = "1234";
-// 	hexa4.value = "ef01";
-// 	hexa5.value = "1010";
+	hexa1.value = "ffd8";
+	hexa2.value = "abcd";
+	hexa3.value = "1234";
+	hexa4.value = "ef01";
+	hexa5.value = "1010";
 
-// 	const std::string nodename = "hexaTest";
-// 	bpt::ptree node;
-// 	node.put( "id", nodename );
-// 	node.put( "label", "Hexa Test" );
-// 	node.put( "hexa", "ffd8" );
-// 	node.put( "ordered", false );
+	const std::string nodename = "hexaTest";
+	bpt::ptree node;
+	node.put( "id", nodename );
+	node.put( "label", "Hexa Test" );
+	node.put( "hexa", "ffd8" );
+	node.put( "ordered", false );
 
-// 	const std::string nodename1 = "hexaNode1";
-// 	bpt::ptree node1;
-// 	node1.put( "id", nodename1 );
-// 	node1.put( "label", "Hexa Node 1" );
-// 	node1.put( "hexa", "abcd" );
-// 	node1.put( "ordered", false );
+	const std::string nodename1 = "hexaNode1";
+	bpt::ptree node1;
+	node1.put( "id", nodename1 );
+	node1.put( "label", "Hexa Node 1" );
+	node1.put( "hexa", "abcd" );
+	node1.put( "ordered", false );
 
-// 	const std::string subname1 = "hexaSub1";
-// 	bpt::ptree subnode1;
-// 	subnode1.put( "id", subname1 );
-// 	subnode1.put( "hexa", "ef01" );
-// 	subnode1.put( "repeated", "3" );
+	const std::string subname1 = "hexaSub1";
+	bpt::ptree subnode1;
+	subnode1.put( "id", subname1 );
+	subnode1.put( "hexa", "ef01" );
+	subnode1.put( "repeated", "3" );
 
-// 	const std::string subname2 = "hexaSub2";
-// 	bpt::ptree subnode2;
-// 	subnode2.put( "id", subname2 );
-// 	subnode2.put( "hexa", "1234" );
-// 	subnode2.put( "repeated", "4" );
+	const std::string subname2 = "hexaSub2";
+	bpt::ptree subnode2;
+	subnode2.put( "id", subname2 );
+	subnode2.put( "hexa", "1234" );
+	subnode2.put( "repeated", "4" );
 
-// 	const std::string nodename2 = "hexaNode2";
-// 	bpt::ptree node2;
-// 	node2.put( "id", nodename2 );
-// 	node2.put( "label", "Hexa Node 2" );
-// 	node2.put( "hexa", "1010" );
-// 	node2.put( "repeated", "2" );
+	const std::string nodename2 = "hexaNode2";
+	bpt::ptree node2;
+	node2.put( "id", nodename2 );
+	node2.put( "label", "Hexa Node 2" );
+	node2.put( "hexa", "1010" );
+	node2.put( "repeated", "2" );
 
-// 	node1.add_child( "group.", subnode1 );
-// 	node1.add_child( "group.", subnode2 );
-// 	node.add_child ( "group.", node1 );
-// 	node.add_child ( "group.", node2 );
+	node1.add_child( "group.", subnode1 );
+	node1.add_child( "group.", subnode2 );
+	node.add_child ( "group.", node1 );
+	node.add_child ( "group.", node2 );
 
-// 	{
-// 		std::ofstream stream( testFile.c_str(), std::ofstream::out );
-// 		stream << hexa1 << hexa5 << hexa2 << hexa3 << hexa4 << hexa3;
-// 		stream << hexa3 << hexa4 << hexa3 << hexa4 << hexa5;
-// 		stream.close();
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << hexa1 << hexa5 << hexa2 << hexa3 << hexa4 << hexa3;
+		stream << hexa3 << hexa4 << hexa3 << hexa4 << hexa5;
+		stream.close();
 
-// 		bpt::ptree report = generateReportTree( node );
+		bpt::ptree report = generateReportTree( node );
 
-// 		CHECK_NODE_VALID ( nodename + "." + nodename1 );
-// 		CHECK_VALUE_EQUAL( nodename + "." + nodename1, "abcd" );
-// 		CHECK_NODE_VALID ( nodename + "." + nodename1 + "." + subname1);
-// 		CHECK_VALUE_EQUAL( nodename + "." + nodename1 + "." + subname1, "ef01" );
-// 		CHECK_NODE_VALID ( nodename + "." + nodename1 + "." + subname2);
-// 		CHECK_VALUE_EQUAL( nodename + "." + nodename1 + "." + subname2, "1234" );
-// 		CHECK_NODE_VALID ( nodename + "." + nodename2 );
-// 		CHECK_VALUE_EQUAL( nodename + "." + nodename2, "1010" );
-// 		CHECK_NODE_VALID ( nodename );
-// 		CHECK_VALUE_EQUAL( nodename, "ffd8" );
-// 	}
-// 	{
-// 		std::ofstream stream( testFile.c_str(), std::ofstream::out );
-// 		stream << hexa1 << hexa5 << hexa2 << hexa3 << hexa4 << hexa3;
-// 		stream << hexa3 << hexa4 << hexa4 << hexa5;
-// 		stream.close();
+		CHECK_NODE_VALID ( nodename + "." + nodename1 );
+		CHECK_VALUE_EQUAL( nodename + "." + nodename1, "abcd" );
+		CHECK_NODE_VALID ( nodename + "." + nodename1 + "." + subname1);
+		CHECK_VALUE_EQUAL( nodename + "." + nodename1 + "." + subname1, "ef01" );
+		CHECK_NODE_VALID ( nodename + "." + nodename1 + "." + subname2);
+		CHECK_VALUE_EQUAL( nodename + "." + nodename1 + "." + subname2, "1234" );
+		CHECK_NODE_VALID ( nodename + "." + nodename2 );
+		CHECK_VALUE_EQUAL( nodename + "." + nodename2, "1010" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "ffd8" );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << hexa1 << hexa5 << hexa2 << hexa3 << hexa4 << hexa3;
+		stream << hexa3 << hexa4 << hexa4 << hexa5;
+		stream.close();
 
-// 		bpt::ptree report = generateReportTree( node );
+		bpt::ptree report = generateReportTree( node );
 
-// 		CHECK_NODE_INVALID ( nodename );
-// 	}
-// 	{
-// 		std::ofstream stream( testFile.c_str(), std::ofstream::out );
-// 		stream << hexa1 << hexa5 << hexa2 << hexa3 << hexa4 << hexa3;
-// 		stream << hexa3 << hexa4 << hexa5 << hexa4 << hexa3;
-// 		stream.close();
+		CHECK_NODE_INVALID ( nodename );
+	}
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << hexa1 << hexa5 << hexa2 << hexa3 << hexa4 << hexa3;
+		stream << hexa3 << hexa4 << hexa5 << hexa4 << hexa3;
+		stream.close();
 
-// 		bpt::ptree report = generateReportTree( node );
+		bpt::ptree report = generateReportTree( node );
 
-// 		CHECK_NODE_INVALID ( nodename );
-// 	}
-// }
+		CHECK_NODE_INVALID ( nodename );
+	}
+}
 
-// BOOST_AUTO_TEST_CASE( nodeSpecification_recursiveRepetitionUnorderedGroupTestFile3 )
-// {
-// 	Hexa hexa1, hexa2;
+BOOST_AUTO_TEST_CASE( nodeSpecification_recursiveRepetitionUnorderedGroupTestFile3 )
+{
+	Hexa hexa1, hexa2;
 	
-// 	hexa1.value = "1234";
-// 	hexa2.value = "abcd";
+	hexa1.value = "1234";
+	hexa2.value = "abcd";
 	
 
-// 	const std::string nodename = "hexaTest";
-// 	bpt::ptree node;
-// 	node.put( "id", nodename );
-// 	node.put( "label", "Hexa Test" );
-// 	node.put( "ascii", "node1" );
-// 	node.put( "ordered", false );
+	const std::string nodename = "hexaTest";
+	bpt::ptree node;
+	node.put( "id", nodename );
+	node.put( "label", "Hexa Test" );
+	node.put( "ascii", "node1" );
+	node.put( "ordered", false );
 
-// 	const std::string nodename1 = "hexaNode1";
-// 	bpt::ptree node1;
-// 	node1.put( "id", nodename1 );
-// 	node1.put( "label", "Hexa Node 1" );
-// 	node1.put( "hexa", "1234" );
-// 	node1.put( "ordered", false );
+	const std::string nodename1 = "hexaNode1";
+	bpt::ptree node1;
+	node1.put( "id", nodename1 );
+	node1.put( "label", "Hexa Node 1" );
+	node1.put( "hexa", "1234" );
+	node1.put( "ordered", false );
 
-// 	const std::string subname1 = "hexaSub1";
-// 	bpt::ptree subnode1;
-// 	subnode1.put( "id", subname1 );
-// 	subnode1.put( "ascii", "sub1" );
+	const std::string subname1 = "hexaSub1";
+	bpt::ptree subnode1;
+	subnode1.put( "id", subname1 );
+	subnode1.put( "ascii", "sub1" );
 
-// 	const std::string subname2 = "hexaSub2";
-// 	bpt::ptree subnode2;
-// 	subnode2.put( "id", subname2 );
-// 	subnode2.put( "ascii", "sub2" );
-// 	subnode2.put( "repeated", "3" );
+	const std::string subname2 = "hexaSub2";
+	bpt::ptree subnode2;
+	subnode2.put( "id", subname2 );
+	subnode2.put( "ascii", "sub2" );
+	subnode2.put( "repeated", "3" );
 
-// 	const std::string nodename2 = "hexaNode2";
-// 	bpt::ptree node2;
-// 	node2.put( "id", nodename2 );
-// 	node2.put( "label", "Hexa Node 2" );
-// 	node2.put( "hexa", "abcd" );
-// 	node2.put( "ordered", false );
-// 	node2.put( "repeated", "2" );
+	const std::string nodename2 = "hexaNode2";
+	bpt::ptree node2;
+	node2.put( "id", nodename2 );
+	node2.put( "label", "Hexa Node 2" );
+	node2.put( "hexa", "abcd" );
+	node2.put( "ordered", false );
+	node2.put( "repeated", "2" );
 
-// 	const std::string subname3 = "hexaSub3";
-// 	bpt::ptree subnode3;
-// 	subnode3.put( "id", subname3 );
-// 	subnode3.put( "ascii", "sub3" );
-// 	subnode3.put( "repeated", "3" );
+	const std::string subname3 = "hexaSub3";
+	bpt::ptree subnode3;
+	subnode3.put( "id", subname3 );
+	subnode3.put( "ascii", "sub3" );
+	subnode3.put( "repeated", "3" );
 
-// 	const std::string subname4 = "hexaSub4";
-// 	bpt::ptree subnode4;
-// 	subnode4.put( "id", subname4 );
-// 	subnode4.put( "ascii", "sub4" );
+	const std::string subname4 = "hexaSub4";
+	bpt::ptree subnode4;
+	subnode4.put( "id", subname4 );
+	subnode4.put( "ascii", "sub4" );
 
-// 	node1.add_child( "group.", subnode1 );
-// 	node1.add_child( "group.", subnode2 );
-// 	node2.add_child( "group.", subnode3 );
-// 	node2.add_child( "group.", subnode4 );
-// 	node.add_child ( "group.", node1 );
-// 	node.add_child ( "group.", node2 );
+	node1.add_child( "group.", subnode1 );
+	node1.add_child( "group.", subnode2 );
+	node2.add_child( "group.", subnode3 );
+	node2.add_child( "group.", subnode4 );
+	node.add_child ( "group.", node1 );
+	node.add_child ( "group.", node2 );
 
-// 	{
-// 		std::ofstream stream( testFile.c_str(), std::ofstream::out );
-// 		stream << "node1";
-// 		stream << hexa2 << "sub3" << "sub3" << "sub4" << "sub3";
-// 		stream << hexa1 << "sub2" << "sub1" << "sub2" << "sub2";
-// 		stream << hexa2 << "sub3" << "sub3" << "sub4" << "sub3";
-// 		stream.close();
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << "node1";
+		stream << hexa2 << "sub3" << "sub3" << "sub4" << "sub3";
+		stream << hexa1 << "sub2" << "sub1" << "sub2" << "sub2";
+		stream << hexa2 << "sub3" << "sub3" << "sub4" << "sub3";
+		stream.close();
 
-// 		bpt::ptree report = generateReportTree( node );
+		bpt::ptree report = generateReportTree( node );
 
-// 		CHECK_NODE_VALID ( nodename + "." + nodename1 );
-// 		CHECK_VALUE_EQUAL( nodename + "." + nodename1, "1234" );
-// 		CHECK_NODE_VALID ( nodename + "." + nodename1 + "." + subname1 );
-// 		CHECK_VALUE_EQUAL( nodename + "." + nodename1 + "." + subname1, "sub1" );
-// 		CHECK_NODE_VALID ( nodename + "." + nodename1 + "." + subname2 );
-// 		CHECK_VALUE_EQUAL( nodename + "." + nodename1 + "." + subname2, "sub2" );
-// 		CHECK_NODE_VALID ( nodename + "." + nodename2 );
-// 		CHECK_VALUE_EQUAL( nodename + "." + nodename2, "abcd" );
-// 		CHECK_NODE_VALID ( nodename + "." + nodename2 + "." + subname3 );
-// 		CHECK_VALUE_EQUAL( nodename + "." + nodename2 + "." + subname3, "sub3" );
-// 		CHECK_NODE_VALID ( nodename + "." + nodename2 + "." + subname4 );
-// 		CHECK_VALUE_EQUAL( nodename + "." + nodename2 + "." + subname4, "sub4" );
-// 		CHECK_NODE_VALID ( nodename );
-// 		CHECK_VALUE_EQUAL( nodename, "node1" );
-// 	}
-// }
+		CHECK_NODE_VALID ( nodename + "." + nodename1 );
+		CHECK_VALUE_EQUAL( nodename + "." + nodename1, "1234" );
+		CHECK_NODE_VALID ( nodename + "." + nodename1 + "." + subname1 );
+		CHECK_VALUE_EQUAL( nodename + "." + nodename1 + "." + subname1, "sub1" );
+		CHECK_NODE_VALID ( nodename + "." + nodename1 + "." + subname2 );
+		CHECK_VALUE_EQUAL( nodename + "." + nodename1 + "." + subname2, "sub2" );
+		CHECK_NODE_VALID ( nodename + "." + nodename2 );
+		CHECK_VALUE_EQUAL( nodename + "." + nodename2, "abcd" );
+		CHECK_NODE_VALID ( nodename + "." + nodename2 + "." + subname3 );
+		CHECK_VALUE_EQUAL( nodename + "." + nodename2 + "." + subname3, "sub3" );
+		CHECK_NODE_VALID ( nodename + "." + nodename2 + "." + subname4 );
+		CHECK_VALUE_EQUAL( nodename + "." + nodename2 + "." + subname4, "sub4" );
+		CHECK_NODE_VALID ( nodename );
+		CHECK_VALUE_EQUAL( nodename, "node1" );
+	}
+}
 
 BOOST_AUTO_TEST_SUITE_END()

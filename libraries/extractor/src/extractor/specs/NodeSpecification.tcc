@@ -82,6 +82,7 @@ bool NodeSpecification::isValidSubGroup( SubSpec& subSpec, GroupProperties& grou
 				bpt::ptree subNodeReport;
 				for( size_t i = 0 ; i < min ; i++ )
 				{
+					LOG_INFO( "POSITION = " << _file->getPosition() );
 					if( isValid( n, groupProperties, subNodeReport ) )
 					{
 						if( subNodeReport.size() > 0 )
@@ -194,12 +195,14 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 			
 			if( optional && !isValidNode )
 			{
+				LOG_INFO( "GOBACK (optional)");
 				_file->goBack( size );
 				return true;
 			}
 
 			if( !parentProperties.getOrder() && !isValidNode )
 			{
+				LOG_INFO( "GOBACK (unordered)");
 				_file->goBack( size );
 				return false;
 			}
@@ -350,13 +353,13 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 				isValidNode = true;
 			}
 			// LOG_INFO( ">>> " <<  subSpec.second.get< std::string >( "id" ) << ": isValidNode : " <<  isValidNode );
-			_file->goBack( groupProperties.getSize() );
 
 			ExpressionParser groupLength = ExpressionParser();
 			groupLength.setVariables( _headerElements );
 			
 			if( !groupSizeExpr.empty() )
 			{
+				_file->goBack( groupProperties.getSize() );
 				size_t gSize = groupLength.parseExpression<size_t>( groupSizeExpr );
 				_file->goForward( gSize );
 

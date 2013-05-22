@@ -121,5 +121,5 @@ BOOST_AUTO_TEST_SUITE_END()
 #include "nodeSpecificationHexa.hpp"
 #include "nodeSpecificationAscii.hpp"
 #include "nodeSpecificationGroup.hpp"
-// #include "nodeSpecificationOptional.hpp"
-// #include "nodeSpecificationExpression.hpp"
+#include "nodeSpecificationOptional.hpp"
+#include "nodeSpecificationExpression.hpp"
