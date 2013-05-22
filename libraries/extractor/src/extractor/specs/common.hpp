@@ -31,6 +31,8 @@ const std::string kMax    = "max";
 const std::string kGroup  = "group";
 const std::string kGroupSize    = "groupSize";
 
+const std::string kRepetition    = "repeated";
+
 const std::string kEndian        = "endian";
 const std::string kEndianBig     = "big";
 const std::string kEndianLittle  = "little";

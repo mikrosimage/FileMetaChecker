@@ -90,4 +90,77 @@ std::vector< Type > getMultipleValues( SubSpec& subSpec, const std::string& node
 	return vector;
 }
 
+std::vector< size_t > getRepetition( SubSpec& subSpec )
+{
+	std::vector< size_t > nodeRepetition;
+	if( boost::optional< const Spec& > repetitionNode = subSpec.second.get_child_optional( kRepetition ) )
+	{	
+		boost::optional< size_t > repeated = subSpec.second.get_optional< size_t >( kRepetition );
+		if( repeated != NULL )
+		{
+			// LOG_INFO( " --- CASE 1 --- " );
+			if( subSpec.second.get< long >( kRepetition ) < 1 )
+				throw std::runtime_error( "Value Error : 'repeated' value must be strictly positive ( " + subSpec.second.get< std::string > ("id") + " )." );
+
+			size_t repeatedValue = subSpec.second.get< size_t >( kRepetition );
+			nodeRepetition.push_back( repeatedValue );
+			nodeRepetition.push_back( repeatedValue );
+		}
+		else
+		{
+			// LOG_INFO( " --- CASE MULTIPLE --- " );
+			BOOST_FOREACH( SubSpec& m, repetitionNode.get() )
+			{
+				nodeRepetition.clear();
+				if( !m.second.get_child_optional( kMin ) && !m.second.get_child_optional( kMax ) )
+					throw std::runtime_error( "in 'repeated': range must contain at least 1 value : 'min' or/and 'max' ( " + subSpec.second.get< std::string > ("id") + " )." );
+
+				size_t min;
+				size_t max;
+				if( m.second.get_child_optional( kMin ) )
+				{
+					if( m.second.get< long >( kMin ) < 1 )
+						throw std::runtime_error( "Value Error in 'repeated': the 'min' value must be strictly positive ( " + subSpec.second.get< std::string > ("id") + " )." );
+					min = m.second.get< size_t >( kMin );
+				}
+				else
+				{
+					min = 1;
+				}
+
+				if( m.second.get_child_optional( kMax ) )
+				{
+					if( m.second.get< long >( kMax ) < 1 )
+						throw std::runtime_error( "Value Error in 'repeated': the 'max' value must be strictly positive ( " + subSpec.second.get< std::string > ("id") + " )." );
+					max = m.second.get< size_t >( kMax );
+				}
+				else
+				{
+					max = std::numeric_limits<size_t>::max();
+				}
+
+				if( min > max )
+					throw std::runtime_error( "Value Error in 'repeated': the 'max' value must be superior to the 'min' one ( " + subSpec.second.get< std::string > ("id") + " )." );
+
+				nodeRepetition.push_back( min );
+				nodeRepetition.push_back( max );
+			}
+		}
+	}
+	else
+	{
+		// LOG_INFO( " --- DEFAULT CASE --- " );
+		nodeRepetition.push_back( 1 );
+		nodeRepetition.push_back( 1 );
+	}	
+	// BOOST_FOREACH( size_t value, nodeRepetition )
+	// {
+	// 	LOG_INFO( "value : " << value );
+	// }
+	if( nodeRepetition.size() != 2 )
+		throw std::runtime_error( "'repeated' must contain 1 integer value or a 2 integer values range ('min' or/and 'max') ( " + subSpec.second.get< std::string > ("id") + " )." );
+
+	return nodeRepetition;
+}
+
 #endif

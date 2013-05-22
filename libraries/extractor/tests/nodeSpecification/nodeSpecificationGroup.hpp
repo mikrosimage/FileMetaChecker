@@ -137,146 +137,146 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_orderedGroupTestFile )
 	}
 }
 
-// BOOST_AUTO_TEST_CASE( nodeSpecification_repetitionOrderedGroupTestFile )
-// {
-// 	{
-// 		const std::string nodename = "validRepetitionOrderedGroupTest";
-// 		bpt::ptree node;
-// 		node.put( "id",  nodename );
-// 		node.put( "label", "Repetition Ordered Group Test" );
-// 		node.put( "ordered", true );
+BOOST_AUTO_TEST_CASE( nodeSpecification_repetitionOrderedGroupTestFile )
+{
+	{
+		const std::string nodename = "validRepetitionOrderedGroupTest";
+		bpt::ptree node;
+		node.put( "id",  nodename );
+		node.put( "label", "Repetition Ordered Group Test" );
+		node.put( "ordered", true );
 
-// 		const std::string nodename1 = "repeatedSubGroupNode1";
-// 		bpt::ptree subnode1;
-// 		subnode1.put( "id",  nodename1 );
-// 		subnode1.put( "label", "Repeated SubGroupNode 1" );
-// 		subnode1.put( "ascii", "sub1" );
-// 		subnode1.put( "repeated", "2" );
-// 		node.add_child( "group.", subnode1 );
+		const std::string nodename1 = "repeatedSubGroupNode1";
+		bpt::ptree subnode1;
+		subnode1.put( "id",  nodename1 );
+		subnode1.put( "label", "Repeated SubGroupNode 1" );
+		subnode1.put( "ascii", "sub1" );
+		subnode1.put( "repeated", "2" );
+		node.add_child( "group.", subnode1 );
 
-// 		std::ofstream stream( testFile.c_str(), std::ofstream::out );
-// 		stream << "sub1" << "sub1";
-// 		stream.close();
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << "sub1" << "sub1";
+		stream.close();
 		
-// 		bpt::ptree report = generateReportTree( node );
-// 		CHECK_NODE_VALID ( nodename + "." + nodename1 );
-// 		CHECK_VALUE_EQUAL( nodename + "." + nodename1, "sub1" );
-// 		CHECK_NODE_VALID ( nodename );
-// 	}
-// 	{
-// 		const std::string nodename = "invalidRepetitionOrderedGroupTest";
-// 		bpt::ptree node;
-// 		node.put( "id",  nodename );
-// 		node.put( "label", "Repetition Ordered Group Test" );
-// 		node.put( "ordered", true );
+		bpt::ptree report = generateReportTree( node );
+		CHECK_NODE_VALID ( nodename + "." + nodename1 );
+		CHECK_VALUE_EQUAL( nodename + "." + nodename1, "sub1" );
+		CHECK_NODE_VALID ( nodename );
+	}
+	{
+		const std::string nodename = "invalidRepetitionOrderedGroupTest";
+		bpt::ptree node;
+		node.put( "id",  nodename );
+		node.put( "label", "Repetition Ordered Group Test" );
+		node.put( "ordered", true );
 
-// 		const std::string nodename1 = "repeatedSubGroupNode2";
-// 		bpt::ptree subnode1;
-// 		subnode1.put( "id",  nodename1 );
-// 		subnode1.put( "label", "Repeated SubGroupNode 2" );
-// 		subnode1.put( "ascii", "sub1" );
-// 		subnode1.put( "repeated", "2" );
-// 		node.add_child( "group.", subnode1 );
+		const std::string nodename1 = "repeatedSubGroupNode2";
+		bpt::ptree subnode1;
+		subnode1.put( "id",  nodename1 );
+		subnode1.put( "label", "Repeated SubGroupNode 2" );
+		subnode1.put( "ascii", "sub1" );
+		subnode1.put( "repeated", "2" );
+		node.add_child( "group.", subnode1 );
 		
-// 		std::ofstream stream( testFile.c_str(), std::ofstream::out );
-// 		stream << "sub1" << "sub2";
-// 		stream.close();
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << "sub1" << "sub2";
+		stream.close();
 		
-// 		bpt::ptree report = generateReportTree( node );
-// 		CHECK_NODE_INVALID ( nodename );
-// 	}
-// 	{
-// 		const std::string nodename = "error1_RepetitionOrderedGroupTest";
-// 		bpt::ptree node;
-// 		node.put( "id",  nodename );
-// 		node.put( "label", "Error1 Repetition Ordered Group Test" );
-// 		node.put( "ordered", true );
+		bpt::ptree report = generateReportTree( node );
+		CHECK_NODE_INVALID ( nodename );
+	}
+	{
+		const std::string nodename = "error1_RepetitionOrderedGroupTest";
+		bpt::ptree node;
+		node.put( "id",  nodename );
+		node.put( "label", "Error1 Repetition Ordered Group Test" );
+		node.put( "ordered", true );
 
-// 		const std::string nodename1 = "error1_repeatedSubGroupNode3";
-// 		bpt::ptree subnode1;
-// 		subnode1.put( "id",  nodename1 );
-// 		subnode1.put( "label", "Error1 Repeated SubGroupNode 3" );
-// 		subnode1.put( "ascii", "sub1" );
+		const std::string nodename1 = "error1_repeatedSubGroupNode3";
+		bpt::ptree subnode1;
+		subnode1.put( "id",  nodename1 );
+		subnode1.put( "label", "Error1 Repeated SubGroupNode 3" );
+		subnode1.put( "ascii", "sub1" );
 
-// 		bpt::ptree range;
-// 		range.put( "min",  "2" );
+		bpt::ptree range;
+		range.put( "min",  "2" );
 
-// 		subnode1.add_child( "repeated.", range );
-// 		node.add_child( "group.", subnode1 );
+		subnode1.add_child( "repeated.", range );
+		node.add_child( "group.", subnode1 );
 		
-// 		std::ofstream stream( testFile.c_str(), std::ofstream::out );
-// 		stream << "sub1" << "sub1";
-// 		stream.close();
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << "sub1" << "sub1";
+		stream.close();
 		
-// 		BOOST_CHECK_THROW( generateReportTree( node ), std::runtime_error );
-// 	}
-// 	{
-// 		const std::string nodename = "error2_RepetitionOrderedGroupTest";
-// 		bpt::ptree node;
-// 		node.put( "id",  nodename );
-// 		node.put( "label", "Error2 Repetition Ordered Group Test" );
-// 		node.put( "ordered", true );
+		BOOST_CHECK_THROW( generateReportTree( node ), std::runtime_error );
+	}
+	{
+		const std::string nodename = "error2_RepetitionOrderedGroupTest";
+		bpt::ptree node;
+		node.put( "id",  nodename );
+		node.put( "label", "Error2 Repetition Ordered Group Test" );
+		node.put( "ordered", true );
 
-// 		const std::string nodename1 = "error2_repeatedSubGroupNode4";
-// 		bpt::ptree subnode1;
-// 		subnode1.put( "id",  nodename1 );
-// 		subnode1.put( "label", "Error2 Repeated SubGroupNode 4" );
-// 		subnode1.put( "ascii", "sub1" );
-// 		subnode1.put( "repeated", "0" );
+		const std::string nodename1 = "error2_repeatedSubGroupNode4";
+		bpt::ptree subnode1;
+		subnode1.put( "id",  nodename1 );
+		subnode1.put( "label", "Error2 Repeated SubGroupNode 4" );
+		subnode1.put( "ascii", "sub1" );
+		subnode1.put( "repeated", "0" );
 
-// 		node.add_child( "group.", subnode1 );
+		node.add_child( "group.", subnode1 );
 		
-// 		std::ofstream stream( testFile.c_str(), std::ofstream::out );
-// 		stream << "sub1" << "sub1";
-// 		stream.close();
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << "sub1" << "sub1";
+		stream.close();
 		
-// 		BOOST_CHECK_THROW( generateReportTree( node ), std::runtime_error );
-// 	}
-// 	{
-// 		const std::string nodename = "error3_RepetitionOrderedGroupTest";
-// 		bpt::ptree node;
-// 		node.put( "id",  nodename );
-// 		node.put( "label", "Error3 Repetition Ordered Group Test" );
-// 		node.put( "ordered", true );
+		BOOST_CHECK_THROW( generateReportTree( node ), std::runtime_error );
+	}
+	{
+		const std::string nodename = "error3_RepetitionOrderedGroupTest";
+		bpt::ptree node;
+		node.put( "id",  nodename );
+		node.put( "label", "Error3 Repetition Ordered Group Test" );
+		node.put( "ordered", true );
 
-// 		const std::string nodename1 = "error3_repeatedSubGroupNode5";
-// 		bpt::ptree subnode1;
-// 		subnode1.put( "id",  nodename1 );
-// 		subnode1.put( "label", "Error3 Repeated SubGroupNode 5" );
-// 		subnode1.put( "ascii", "sub1" );
-// 		subnode1.put( "repeated", -2 );
+		const std::string nodename1 = "error3_repeatedSubGroupNode5";
+		bpt::ptree subnode1;
+		subnode1.put( "id",  nodename1 );
+		subnode1.put( "label", "Error3 Repeated SubGroupNode 5" );
+		subnode1.put( "ascii", "sub1" );
+		subnode1.put( "repeated", -2 );
 
-// 		node.add_child( "group.", subnode1 );
+		node.add_child( "group.", subnode1 );
 		
-// 		std::ofstream stream( testFile.c_str(), std::ofstream::out );
-// 		stream << "sub1" << "sub1";
-// 		stream.close();
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << "sub1" << "sub1";
+		stream.close();
 		
-// 		BOOST_CHECK_THROW( generateReportTree( node ), std::runtime_error );
-// 	}
-// 	{
-// 		const std::string nodename = "error3_RepetitionOrderedGroupTest";
-// 		bpt::ptree node;
-// 		node.put( "id",  nodename );
-// 		node.put( "label", "Error3 Repetition Ordered Group Test" );
-// 		node.put( "ordered", true );
+		BOOST_CHECK_THROW( generateReportTree( node ), std::runtime_error );
+	}
+	{
+		const std::string nodename = "error3_RepetitionOrderedGroupTest";
+		bpt::ptree node;
+		node.put( "id",  nodename );
+		node.put( "label", "Error3 Repetition Ordered Group Test" );
+		node.put( "ordered", true );
 
-// 		const std::string nodename1 = "error3_repeatedSubGroupNode5";
-// 		bpt::ptree subnode1;
-// 		subnode1.put( "id",  nodename1 );
-// 		subnode1.put( "label", "Error3 Repeated SubGroupNode 5" );
-// 		subnode1.put( "ascii", "sub1" );
-// 		subnode1.put( "repeated", 1.5 );
+		const std::string nodename1 = "error3_repeatedSubGroupNode5";
+		bpt::ptree subnode1;
+		subnode1.put( "id",  nodename1 );
+		subnode1.put( "label", "Error3 Repeated SubGroupNode 5" );
+		subnode1.put( "ascii", "sub1" );
+		subnode1.put( "repeated", 1.5 );
 
-// 		node.add_child( "group.", subnode1 );
+		node.add_child( "group.", subnode1 );
 		
-// 		std::ofstream stream( testFile.c_str(), std::ofstream::out );
-// 		stream << "sub1" << "sub1";
-// 		stream.close();
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << "sub1" << "sub1";
+		stream.close();
 		
-// 		BOOST_CHECK_THROW( generateReportTree( node ), std::runtime_error );
-// 	}
-// }
+		BOOST_CHECK_THROW( generateReportTree( node ), std::runtime_error );
+	}
+}
 
 // BOOST_AUTO_TEST_CASE( nodeSpecification_repetition0rderedGroupTestFile2 )
 // {

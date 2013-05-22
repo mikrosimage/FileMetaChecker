@@ -25,30 +25,51 @@ bool NodeSpecification::isValidSubGroup( SubSpec& subSpec, GroupProperties& grou
 {
 	bool groupIsValid = true;
 
+	BOOST_FOREACH( SubSpec& n, subSpec.second.get_child( kGroup ) )
+	{
+		// LOG_INFO( "     Set RepetitionMap Element : " << n.second.get< std::string >( "id" ) );
+		std::vector< size_t > nodeRepetition = getRepetition( n );
+		groupProperties.addRepetitionMapElement( n.second.get< std::string >( "id" ), nodeRepetition );
+	}
+
 	LOG_INFO( common::Color::get()->_yellow << "Start Chunk : " << subSpec.second.get< std::string >( "id" ) << common::Color::get()->_std );
 
-	if( groupProperties.getOrder() )
+	if( groupProperties.getOrder() )	// ordered
 	{
 		LOG_INFO( " ==> Ordered : " << groupProperties.getOrder() );
 		BOOST_FOREACH( SubSpec& n, subSpec.second.get_child( kGroup ) )
 		{
-			bpt::ptree subNodeReport;
+			size_t min = groupProperties.getRepetitionMapElement( n.second.get< std::string >( "id" ) ).at(0);
+			size_t max = groupProperties.getRepetitionMapElement( n.second.get< std::string >( "id" ) ).at(1);
 
-			if( isValid( n, groupProperties, subNodeReport ) )
+			if( min != max )
 			{
-				if( subNodeReport.size() > 0 )
-				{
-					nodeReport.push_back( bpt::ptree::value_type( n.second.get< std::string >( "id" ), subNodeReport ) );
-				}
+				std::stringstream sstr;
+				sstr << "Invalid repetition value : " << min << " != " << max
+					 << " : cannot be a range for ordered elements (" << subSpec.second.get< std::string >( "id" ) 
+					 << "." << n.second.get< std::string >( "id" ) << ")";
+				throw std::runtime_error( sstr.str() );
 			}
 			else
 			{
-				LOG_ERROR( n.second.get< std::string >( "id" ) );
-				groupIsValid = false;
+				bpt::ptree subNodeReport;
+				for( size_t i = 0 ; i < min ; i++ )
+				{
+					if( isValid( n, groupProperties, subNodeReport ) )
+					{
+						if( subNodeReport.size() > 0 )
+							nodeReport.push_back( bpt::ptree::value_type( n.second.get< std::string >( "id" ), subNodeReport ) );
+					}
+					else
+					{
+						LOG_ERROR( n.second.get< std::string >( "id" ) );
+						groupIsValid = false;
+					}
+				}
 			}
 		}
 	}
-	else
+	else								// not ordered
 	{
 		LOG_INFO( " ==> Ordered : " << groupProperties.getOrder() );
 		size_t i = 0;
