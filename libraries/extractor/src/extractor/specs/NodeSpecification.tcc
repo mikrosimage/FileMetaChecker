@@ -21,30 +21,71 @@ NodeSpecification::NodeSpecification( File* file )
 
 }
 
-	// Mettre dans une fonction "isValidSubGroup"
-	// pour permettre le retour en arrière dans la spécification
-	// pour afficher un erreur quand aucun subGroup n'est trouvé (ascii)
-bool NodeSpecification::isValidSubGroup( SubSpec& subSpec, GroupProperties& groupProp, bpt::ptree& nodeReport, bool& ordered )
+bool NodeSpecification::isValidSubGroup( SubSpec& subSpec, GroupProperties& groupProperties, bpt::ptree& nodeReport )
 {
 	bool groupIsValid = true;
 
 	LOG_INFO( common::Color::get()->_yellow << "Start Chunk : " << subSpec.second.get< std::string >( "id" ) << common::Color::get()->_std );
-	// LOG_INFO( "==> Ordered : " << ordered );
-	BOOST_FOREACH( SubSpec& n, subSpec.second.get_child( kGroup ) )
-	{
-		bpt::ptree subNodeReport;
 
-		if( isValid( n, groupProp, subNodeReport ) )
+	if( groupProperties.getOrder() )
+	{
+		LOG_INFO( " ==> Ordered : " << groupProperties.getOrder() );
+		BOOST_FOREACH( SubSpec& n, subSpec.second.get_child( kGroup ) )
 		{
-			if( subNodeReport.size() > 0 )
+			bpt::ptree subNodeReport;
+
+			if( isValid( n, groupProperties, subNodeReport ) )
 			{
-				nodeReport.push_back( bpt::ptree::value_type( n.second.get< std::string >( "id" ), subNodeReport ) );
+				if( subNodeReport.size() > 0 )
+				{
+					nodeReport.push_back( bpt::ptree::value_type( n.second.get< std::string >( "id" ), subNodeReport ) );
+				}
 			}
+			else
+			{
+				LOG_ERROR( n.second.get< std::string >( "id" ) );
+				groupIsValid = false;
+			}
+		}
+	}
+	else
+	{
+		LOG_INFO( " ==> Ordered : " << groupProperties.getOrder() );
+		size_t i = 0;
+		bool oneNodeIsValid;		
+		do
+		{
+			oneNodeIsValid = false;
+			LOG_INFO( ">>> Check an unordered group..." );
+			i++;
+			BOOST_FOREACH( SubSpec& n, subSpec.second.get_child( kGroup ) )
+			{
+				bpt::ptree subNodeReport;
+				if( isValid( n, groupProperties, subNodeReport ) )
+				{
+					oneNodeIsValid = true;
+					if( subNodeReport.size() > 0 )
+					{
+						nodeReport.push_back( bpt::ptree::value_type( n.second.get< std::string >( "id" ), subNodeReport ) );
+					}
+				}
+				if( _file->endOfFile() )
+				{
+					LOG_INFO( common::Color::get()->_yellow << "     /!\\ EOF : " << _file->endOfFile() << common::Color::get()->_std );
+				}
+			}
+			LOG_INFO( ">>> ... End of the specification" );
+		}
+		while( oneNodeIsValid && !_file->endOfFile() );
+
+		if( i == 1)
+		{
+			groupIsValid = false;
+			LOG_ERROR( "None is valid" );
 		}
 		else
 		{
-			LOG_ERROR( n.second.get< std::string >( "id" ) );
-			groupIsValid = false;
+			groupIsValid = true;
 		}
 	}
 	LOG_INFO( common::Color::get()->_yellow << "End Chunk : " << subSpec.second.get< std::string >( "id" ) << common::Color::get()->_std );
@@ -53,16 +94,17 @@ bool NodeSpecification::isValidSubGroup( SubSpec& subSpec, GroupProperties& grou
 }
 
 
-bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupProperties, bpt::ptree& nodeReport )
+bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProperties, bpt::ptree& nodeReport )
 {
 	try
 	{
 		std::string message( "" );
-		std::string id          = subSpec.second.get< std::string >( kId );
-		std::string label       = subSpec.second.get< std::string >( kLabel, "" );
-		std::string typeValue   = subSpec.second.get< std::string >( kType, "" );
-		std::string count       = subSpec.second.get< std::string >( kCount, "" );
-		std::string groupSize   = subSpec.second.get< std::string >( kGroupSize, "" );
+		std::string id            = subSpec.second.get< std::string >( kId );
+		std::string label         = subSpec.second.get< std::string >( kLabel, "" );
+		std::string typeValue     = subSpec.second.get< std::string >( kType, "" );
+		std::string count         = subSpec.second.get< std::string >( kCount, "" );
+		std::string groupSizeExpr = subSpec.second.get< std::string >( kGroupSize, "" );
+		LOG_INFO( "---> id :    " << id );
 		
 		std::vector< std::string > asciiValues = getMultipleValues< std::string >( subSpec, kAscii );
 		std::vector< std::string > hexaValues  = getMultipleValues< std::string >( subSpec, kHexa  );
@@ -96,9 +138,9 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 				
 				Translator<Ascii> tr;
 				value = tr.translate( buffer, size );
-				// LOG_INFO( "==> value : " << value.lowCaseValue << ", " << value.upCaseValue << " | ==> asciiValues[" << i << "] : " << asciiValues[i] );
+				LOG_INFO( "     value : " << value.originalCaseValue << ", " << value.lowCaseValue << ", " << value.upCaseValue << " | ==> asciiValues[" << i << "] : " << asciiValues[i] );
 
-				if( asciiValues[i] ==  value.lowCaseValue || asciiValues[i] == value.upCaseValue )
+				if( asciiValues[i] ==  value.originalCaseValue || asciiValues[i] ==  value.lowCaseValue || asciiValues[i] == value.upCaseValue )
 				{
 					isValidNode = true;
 					message += asciiValues[i];
@@ -115,7 +157,14 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 				_file->goBack( size );
 				return true;
 			}
-			groupProperties.addSize( size );
+
+			if( !parentProperties.getOrder() && !isValidNode )
+			{
+				_file->goBack( size );
+				return false;
+			}
+
+			parentProperties.addSize( size );
 		}
 
 		if( hexaValues.size() != 0 )
@@ -151,7 +200,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 				}
 				// TLOG_VAR2( hexaValues[i], value.value );
 			}
-			groupProperties.addSize( size );
+			parentProperties.addSize( size );
 		}
 
 		if( !typeValue.empty() )
@@ -184,16 +233,16 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 
 			bool validData   = false;
 			
-			exportValidData( validUInt8,  id, uint8Val,  groupProperties, nodeReport );
-			exportValidData( validInt8,   id, int8Val,   groupProperties, nodeReport );
-			exportValidData( validUInt16, id, uint16Val, groupProperties, nodeReport );
-			exportValidData( validInt16,  id, int16Val,  groupProperties, nodeReport );
-			exportValidData( validUInt32, id, uint32Val, groupProperties, nodeReport );
-			exportValidData( validInt32,  id, int32Val,  groupProperties, nodeReport );
-			exportValidData( validUInt64, id, uint64Val, groupProperties, nodeReport );
-			exportValidData( validInt64,  id, int64Val,  groupProperties, nodeReport );
-			exportValidData( validFloat,  id, floatVal,  groupProperties, nodeReport );
-			exportValidData( validDouble, id, doubleVal, groupProperties, nodeReport );
+			exportValidData( validUInt8,  id, uint8Val,  parentProperties, nodeReport );
+			exportValidData( validInt8,   id, int8Val,   parentProperties, nodeReport );
+			exportValidData( validUInt16, id, uint16Val, parentProperties, nodeReport );
+			exportValidData( validInt16,  id, int16Val,  parentProperties, nodeReport );
+			exportValidData( validUInt32, id, uint32Val, parentProperties, nodeReport );
+			exportValidData( validInt32,  id, int32Val,  parentProperties, nodeReport );
+			exportValidData( validUInt64, id, uint64Val, parentProperties, nodeReport );
+			exportValidData( validInt64,  id, int64Val,  parentProperties, nodeReport );
+			exportValidData( validFloat,  id, floatVal,  parentProperties, nodeReport );
+			exportValidData( validDouble, id, doubleVal, parentProperties, nodeReport );
 			
 			if( typeValue == "data" )
 			{
@@ -223,7 +272,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 				_file->goForward( size );
 				
 				validData = true;
-				groupProperties.addSize( size );
+				parentProperties.addSize( size );
 				nodeReport.put( "<xmlattr>.optional", optional );
 				nodeReport.put( "<xmlattr>.size", getPrintable( size ) );
 				nodeReport.put( "<xmlattr>.type", "data" );
@@ -234,8 +283,10 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 
 		if( group && ( isValidNode || ( ! isValidNode && asciiValues.empty() && hexaValues.empty() && typeValue.empty() ) ) )
 		{
-			GroupProperties groupProp;
-			bool groupIsValid = isValidSubGroup( subSpec, groupProp, nodeReport, ordered );
+			GroupProperties groupProperties;
+			groupProperties.setOrder( ordered );
+			LOG_INFO( "groupProperties.getOrder() : " << groupProperties.getOrder() );
+			bool groupIsValid = isValidSubGroup( subSpec, groupProperties, nodeReport );
 			// LOG_INFO( ">>> " <<  subSpec.second.get< std::string >( "id" ) << ": groupIsValid : " <<  groupIsValid );
 			if( !groupIsValid )
 			{
@@ -246,24 +297,24 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& groupPropert
 				isValidNode = true;
 			}
 			// LOG_INFO( ">>> " <<  subSpec.second.get< std::string >( "id" ) << ": isValidNode : " <<  isValidNode );
-			_file->goBack( groupProp.getSize() );
+			_file->goBack( groupProperties.getSize() );
 
 			ExpressionParser groupLength = ExpressionParser();
 			groupLength.setVariables( _headerElements );
 			
-			if( !groupSize.empty() )
+			if( !groupSizeExpr.empty() )
 			{
-				size_t gSize = groupLength.parseExpression<size_t>( groupSize );
+				size_t gSize = groupLength.parseExpression<size_t>( groupSizeExpr );
 				_file->goForward( gSize );
 
-				if( groupProp.getSize() < gSize )
+				if( groupProperties.getSize() < gSize )
 				{
-					LOG_WARNING( gSize - groupProp.getSize() << " unused bytes" );
+					LOG_WARNING( gSize - groupProperties.getSize() << " unused bytes" );
 				}
-				if( groupProp.getSize() > gSize )
+				if( groupProperties.getSize() > gSize )
 				{
 					isValidNode = false;
-					LOG_ERROR( groupProp.getSize() - gSize << " bytes difference" );
+					LOG_ERROR( groupProperties.getSize() - gSize << " bytes difference" );
 				}
 			}
 		}

@@ -58,7 +58,7 @@ bpt::ptree generateReportTree( const bpt::ptree& node )
 
 	BOOST_FOREACH( SubSpec v, testTree.get_child( "header" ) )
 	{
-		ns.isValid( v, nodeReport, rootProperties );
+		ns.isValid( v, rootProperties, nodeReport );
 		if( v.second.get_child_optional( "id" ) )
 		{
 			// LOG_INFO( v.second.get< std::string >( "id" ) );
@@ -120,6 +120,6 @@ BOOST_AUTO_TEST_SUITE_END()
 #include "nodeSpecificationNumber.hpp"
 #include "nodeSpecificationHexa.hpp"
 #include "nodeSpecificationAscii.hpp"
-// #include "nodeSpecificationGroup.hpp"
+#include "nodeSpecificationGroup.hpp"
 // #include "nodeSpecificationOptional.hpp"
 // #include "nodeSpecificationExpression.hpp"
