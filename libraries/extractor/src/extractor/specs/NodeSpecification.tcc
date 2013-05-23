@@ -166,6 +166,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 		std::string typeValue     = subSpec.second.get< std::string >( kType, "" );
 		std::string count         = subSpec.second.get< std::string >( kCount, "" );
 		std::string groupSizeExpr = subSpec.second.get< std::string >( kGroupSize, "" );
+		std::string requiredExpr  = subSpec.second.get< std::string >( kRequired, "" );
 		
 		std::vector< std::string > asciiValues = getMultipleValues< std::string >( subSpec, kAscii );
 		std::vector< std::string > hexaValues  = getMultipleValues< std::string >( subSpec, kHexa  );
@@ -213,6 +214,19 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 				// TLOG_VAR2( asciiValues[i], value.value );
 			}
 			
+			if( !requiredExpr.empty() )
+			{					
+				LOG_INFO( ">>> " << id << " >>> requiredExpr : " << requiredExpr );
+				ExpressionParser required = ExpressionParser();
+				required.setVariables( _headerElements );
+				bool condition = required.parseExpression< bool >( requiredExpr );
+				if( !condition )
+				{
+					_file->goBack( size );
+					return true;
+				}
+			}
+
 			if( optional && !isValidNode )
 			{
 				_file->goBack( size );
@@ -262,6 +276,19 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 				// TLOG_VAR2( hexaValues[i], value.value );
 			}
 
+			if( !requiredExpr.empty() )
+			{					
+				LOG_INFO( ">>> " << id << " >>> requiredExpr : " << requiredExpr );
+				ExpressionParser required = ExpressionParser();
+				required.setVariables( _headerElements );
+				bool condition = required.parseExpression< bool >( requiredExpr );
+				if( !condition )
+				{
+					_file->goBack( size );
+					return true;
+				}
+			}
+			
 			if( optional && !isValidNode )
 			{
 				_file->goBack( size );
@@ -304,9 +331,43 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 
 			bool validFloat  = isValidNumber<float> ( _file, message, typeValue, endianValue, subSpec, floatVal );
 			bool validDouble = isValidNumber<double>( _file, message, typeValue, endianValue, subSpec, doubleVal );
-
-			bool validData   = false;
 			
+			if( !requiredExpr.empty() && typeValue != "data" )
+			{
+				size_t size = 0;
+				
+				if( validUInt8 )
+					size = sizeof( uint8 );
+				if( validInt8 )
+					size = sizeof( int8 );
+				if( validUInt16 )
+					size = sizeof( uint16 );
+				if( validInt16 )
+					size = sizeof( int16 );
+				if( validUInt32 )
+					size = sizeof( uint32 );
+				if( validInt32 )
+					size = sizeof( int32 );
+				if( validUInt64 )
+					size = sizeof( uint64 );
+				if( validInt64 )
+					size = sizeof( int64 );
+				if( validFloat )
+					size = sizeof( float );
+				if( validDouble )
+					size = sizeof( double );
+					
+				LOG_INFO( ">>> " << id << " >>> requiredExpr : " << requiredExpr );
+				ExpressionParser required = ExpressionParser();
+				required.setVariables( _headerElements );
+				bool condition = required.parseExpression< bool >( requiredExpr );
+				if( !condition )
+				{
+					_file->goBack( size );
+					return true;
+				}
+			}
+
 			exportValidData( validUInt8,  id, uint8Val,  parentProperties, nodeReport );
 			exportValidData( validInt8,   id, int8Val,   parentProperties, nodeReport );
 			exportValidData( validUInt16, id, uint16Val, parentProperties, nodeReport );
@@ -318,6 +379,9 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 			exportValidData( validFloat,  id, floatVal,  parentProperties, nodeReport );
 			exportValidData( validDouble, id, doubleVal, parentProperties, nodeReport );
 			
+			
+			bool validData   = false;
+
 			if( typeValue == "data" )
 			{
 				size_t size = 0;
@@ -345,6 +409,19 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 
 				_file->goForward( size );
 				
+				if( !requiredExpr.empty() )
+				{
+					LOG_INFO( ">>> " << id << " >>> requiredExpr : " << requiredExpr );
+					ExpressionParser required = ExpressionParser();
+					required.setVariables( _headerElements );
+					bool condition = required.parseExpression< bool >( requiredExpr );
+					if( !condition )
+					{
+						_file->goBack( size );
+						return true;
+					}
+				}
+
 				validData = true;
 				parentProperties.addSize( size );
 				nodeReport.put( "<xmlattr>.optional", optional );
@@ -371,11 +448,11 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 			}
 			// LOG_INFO( ">>> " <<  subSpec.second.get< std::string >( "id" ) << ": isValidNode : " <<  isValidNode );
 
-			ExpressionParser groupLength = ExpressionParser();
-			groupLength.setVariables( _headerElements );
-			
 			if( !groupSizeExpr.empty() )
 			{
+				ExpressionParser groupLength = ExpressionParser();
+				groupLength.setVariables( _headerElements );
+
 				_file->goBack( groupProperties.getSize() );
 				size_t gSize = groupLength.parseExpression<size_t>( groupSizeExpr );
 				_file->goForward( gSize );
@@ -391,7 +468,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 				}
 			}
 		}
-		
+
 		if( typeValue.empty() && asciiValues.empty() && hexaValues.empty() && !group )
 		{
 			throw std::runtime_error( "Invalid tree : no value, group nor type node (" + id + ")" );

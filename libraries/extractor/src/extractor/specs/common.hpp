@@ -28,10 +28,11 @@ const std::string kRange  = "range";
 const std::string kMin    = "min";
 const std::string kMax    = "max";
 
-const std::string kGroup  = "group";
-const std::string kGroupSize    = "groupSize";
+const std::string kGroup         = "group";
+const std::string kGroupSize     = "groupSize";
 
 const std::string kRepetition    = "repeated";
+const std::string kRequired      = "required";
 
 const std::string kEndian        = "endian";
 const std::string kEndianBig     = "big";
