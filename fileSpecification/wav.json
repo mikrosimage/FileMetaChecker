@@ -81,15 +81,15 @@
                             "id": "byteRate",
                             "label": "Bytes per second",
                             "type": "uint32",
-                            "endian": "little",
-                            "expr": "sampleRate * blockAlign"
+                            "endian": "little"
+                            // "expr": "sampleRate * blockAlign"
                         },
                         {
                             "id": "blockAlign",
                             "label": "Byte per block",
                             "type": "uint16",
-                            "endian": "little",
-                            "expr": "bitsPerSample / 8 * numChannels"
+                            "endian": "little"
+                            // "expr": "bitsPerSample / 8 * numChannels"
                         },
                         {
                             "id": "bitsPerSample",
@@ -215,7 +215,8 @@
                             "id": "cuePointsList",
                             "label": "Cue points list",
                             "type": "data",
-                            "count": "cueSize - 4"
+                            "count": "cueSize - 4",
+                            "displayType": "ascii"
                         }
                     ]
                 },
@@ -259,23 +260,498 @@
                             "type": "uint32",
                             "endian": "little"
                         },
-                        {
-                            "id": "typeId",
-                            "label": "Associated data list type id",
-                            "ascii": "adtl"
-                        },
+                        // {
+                        //     "id": "list",
+                        //     "label": "Associated data list",
+                        //     "ordered": false,
+                        //     "group": [
+                        //         {
+                        //             "id": "associatedDataId",
+                        //             "label": "Associated data list type id",
+                        //             "ascii": "adtl",
+                        //             "optional": true,
+                        //             "ordered": false,
+                        //             "group": [
+                        //                 {
+                        //                     "id": "lablSubChunks",
+                        //                     "label": "Label sub-chunk",
+                        //                     "ascii": [ "labl", "note" ],
+                        //                     "groupSize": "lablSize + 4",
+                        //                     "optional": true,
+                        //                     "group": [
+                        //                         {
+                        //                             "id": "lablSize",
+                        //                             "label": "Label bloc size",
+                        //                             "type": "uint32",
+                        //                             "endian": "little"
+                        //                         },
+                        //                         {
+                        //                             "id": "cuePointId",
+                        //                             "label": "Cue point id",
+                        //                             "endian": "little",
+                        //                             "type": "data",
+                        //                             "count": "4",
+                        //                             "displayType": "hexa"
+                        //                         },
+                        //                         {
+                        //                             "id": "lablText",
+                        //                             "label": "Label text",
+                        //                             "type": "data",
+                        //                             "count": "lablSize - 4",
+                        //                             "displayType": "ascii"
+                        //                         }
+                        //                     ]
+                        //                 },
+                        //                 {
+                        //                     "id": "ltxtSubChunks",
+                        //                     "label": "Labeled text sub-chunk",
+                        //                     "ascii": "ltxt",
+                        //                     "groupSize": "ltxtSize + 4",
+                        //                     "optional": true,
+                        //                     "group": [
+                        //                         {
+                        //                             "id": "ltxtSize",
+                        //                             "label": "Labeled text bloc size",
+                        //                             "type": "uint32",
+                        //                             "endian": "little"
+                        //                         },
+                        //                         {
+                        //                             "id": "cuePointId",
+                        //                             "label": "Cue point id",
+                        //                             "endian": "little",
+                        //                             "type": "data",
+                        //                             "count": "4",
+                        //                             "displayType": "hexa"
+                        //                         },
+                        //                         {
+                        //                             "id": "sampleLength",
+                        //                             "label": "Sample length",
+                        //                             "type": "uint32",
+                        //                             "endian": "little"
+                        //                         },
+                        //                         {
+                        //                             "id": "PurposeId",
+                        //                             "label": "Purpose id",
+                        //                             "type": "data",
+                        //                             "count": "4",
+                        //                             "displayType": "hexa"
+                        //                         },
+                        //                         {
+                        //                             "id": "countryId",
+                        //                             "label": "Country id",
+                        //                             "type": "data",
+                        //                             "count": "2",
+                        //                             "displayType": "hexa"
+                        //                         },
+                        //                         {
+                        //                             "id": "languageId",
+                        //                             "label": "Language id",
+                        //                             "type": "data",
+                        //                             "count": "2",
+                        //                             "displayType": "hexa"
+                        //                         },
+                        //                         {
+                        //                             "id": "dialectId",
+                        //                             "label": "Dialect id",
+                        //                             "type": "data",
+                        //                             "count": "2",
+                        //                             "displayType": "hexa"
+                        //                         },
+                        //                         {
+                        //                             "id": "pageCode",
+                        //                             "label": "Page code",
+                        //                             "type": "data",
+                        //                             "count": "2",
+                        //                             "displayType": "hexa"
+                        //                         },
+                        //                         {
+                        //                             "shortId": "labledText",
+                        //                             "id": "Labeled text",
+                        //                             "type": "data",
+                        //                             "count": "ltxtSize - 20",
+                        //                             "displayType": "ascii"
+                        //                         }
+                        //                     ]
+                        //                 }
+                        //             ]
+                        //         },
+                        //         {
+                        //             "id": "textInfoId",
+                        //             "label": "Text Information list type id",
+                        //             "ascii": "info",
+                        //             "optional": true,
+                        //             "ordered": false,
+                        //             "group": [
+                        //                 {
+                        //                     "id": "artistInfo",
+                        //                     "label": "Artist Info",
+                        //                     "ascii": "iart",
+                        //                     "groupSize": "iartSize + 4",
+                        //                     "optional": true,
+                        //                     "group": [
+                        //                         {
+                        //                             "id": "iartSize",
+                        //                             "label": "Artist Info size",
+                        //                             "type": "uint8",
+                        //                             "endian": "little"
+                        //                         },
+                        //                         {
+                        //                             "id": "iartText",
+                        //                             "label": "Artist Info text",
+                        //                             "type": "data",
+                        //                             "count": "iartSize - 4",
+                        //                             "displayType": "ascii"
+                        //                         }
+                        //                     ]
+                        //                 },
+                        //                 {
+                        //                     "id": "commissionerInfo",
+                        //                     "label": "Commissioner Info",
+                        //                     "ascii": "icms",
+                        //                     "groupSize": "icmsSize + 4",
+                        //                     "optional": true,
+                        //                     "group": [
+                        //                         {
+                        //                             "id": "icmsSize",
+                        //                             "label": "Commissioner Info size",
+                        //                             "type": "uint8",
+                        //                             "endian": "little"
+                        //                         },
+                        //                         {
+                        //                             "id": "icmsText",
+                        //                             "label": "Commissioner Info text",
+                        //                             "type": "data",
+                        //                             "count": "icmsSize - 4",
+                        //                             "displayType": "ascii"
+                        //                         }
+                        //                     ]
+                        //                 },
+                        //                 {
+                        //                     "id": "commentsInfo",
+                        //                     "label": "Comments Info",
+                        //                     "ascii": "icmt",
+                        //                     "groupSize": "icmtSize + 4",
+                        //                     "optional": true,
+                        //                     "group": [
+                        //                         {
+                        //                             "id": "icmtSize",
+                        //                             "label": "Comments Info size",
+                        //                             "type": "uint8",
+                        //                             "endian": "little"
+                        //                         },
+                        //                         {
+                        //                             "id": "icmtText",
+                        //                             "label": "Comments Info text",
+                        //                             "type": "data",
+                        //                             "count": "icmtSize - 4",
+                        //                             "displayType": "ascii"
+                        //                         }
+                        //                     ]
+                        //                 },
+                        //                 {
+                        //                     "id": "copyrightInfo",
+                        //                     "label": "Copyright Info",
+                        //                     "ascii": "icop",
+                        //                     "groupSize": "icopSize + 4",
+                        //                     "optional": true,
+                        //                     "group": [
+                        //                         {
+                        //                             "id": "icopSize",
+                        //                             "label": "Copyright Info size",
+                        //                             "type": "uint8",
+                        //                             "endian": "little"
+                        //                         },
+                        //                         {
+                        //                             "id": "icopText",
+                        //                             "label": "Copyright Info text",
+                        //                             "type": "data",
+                        //                             "count": "icopSize - 4",
+                        //                             "displayType": "ascii"
+                        //                         }
+                        //                     ]
+                        //                 },
+                        //                 {
+                        //                     "id": "creationDateInfo",
+                        //                     "label": "Creation Date Info",
+                        //                     "ascii": "icrd",
+                        //                     "groupSize": "icrdSize + 4",
+                        //                     "optional": true,
+                        //                     "group": [
+                        //                         {
+                        //                             "id": "icrdSize",
+                        //                             "label": "Creation Date Info size",
+                        //                             "type": "uint8",
+                        //                             "endian": "little"
+                        //                         },
+                        //                         {
+                        //                             "id": "icrdText",
+                        //                             "label": "Creation Date Info text",
+                        //                             "type": "data",
+                        //                             "count": "icrdSize - 4",
+                        //                             "displayType": "ascii"
+                        //                         }
+                        //                     ]
+                        //                 },
+                        //                 {
+                        //                     "id": "engineerInfo",
+                        //                     "label": "Engineer Info",
+                        //                     "ascii": "ieng",
+                        //                     "groupSize": "iengSize + 4",
+                        //                     "optional": true,
+                        //                     "group": [
+                        //                         {
+                        //                             "id": "iengSize",
+                        //                             "label": "Engineer Info size",
+                        //                             "type": "uint8",
+                        //                             "endian": "little"
+                        //                         },
+                        //                         {
+                        //                             "id": "iengText",
+                        //                             "label": "Engineer Info text",
+                        //                             "type": "data",
+                        //                             "count": "iengSize - 4",
+                        //                             "displayType": "ascii"
+                        //                         }
+                        //                     ]
+                        //                 },
+                        //                 {
+                        //                     "id": "genreInfo",
+                        //                     "label": "Genre Info",
+                        //                     "ascii": "ignr",
+                        //                     "groupSize": "ignrSize + 4",
+                        //                     "optional": true,
+                        //                     "group": [
+                        //                         {
+                        //                             "id": "ignrSize",
+                        //                             "label": "Genre Info size",
+                        //                             "type": "uint8",
+                        //                             "endian": "little"
+                        //                         },
+                        //                         {
+                        //                             "id": "ignrText",
+                        //                             "label": "Genre Info text",
+                        //                             "type": "data",
+                        //                             "count": "ignrSize - 4",
+                        //                             "displayType": "ascii"
+                        //                         }
+                        //                     ]
+                        //                 },
+                        //                 {
+                        //                     "id": "keywordsInfo",
+                        //                     "label": "Keywords Info",
+                        //                     "ascii": "ikey",
+                        //                     "groupSize": "ikeySize + 4",
+                        //                     "optional": true,
+                        //                     "group": [
+                        //                         {
+                        //                             "id": "ikeySize",
+                        //                             "label": "Keywords Info size",
+                        //                             "type": "uint8",
+                        //                             "endian": "little"
+                        //                         },
+                        //                         {
+                        //                             "id": "ikeyText",
+                        //                             "label": "Keywords Info text",
+                        //                             "type": "data",
+                        //                             "count": "ikeySize - 4",
+                        //                             "displayType": "ascii"
+                        //                         }
+                        //                     ]
+                        //                 },
+                        //                 {
+                        //                     "id": "mediumInfo",
+                        //                     "label": "Medium Info",
+                        //                     "ascii": "imed",
+                        //                     "groupSize": "imedSize + 4",
+                        //                     "optional": true,
+                        //                     "group": [
+                        //                         {
+                        //                             "id": "imedSize",
+                        //                             "label": "Medium Info size",
+                        //                             "type": "uint8",
+                        //                             "endian": "little"
+                        //                         },
+                        //                         {
+                        //                             "id": "imedText",
+                        //                             "label": "Medium Info text",
+                        //                             "type": "data",
+                        //                             "count": "imedSize - 4",
+                        //                             "displayType": "ascii"
+                        //                         }
+                        //                     ]
+                        //                 },
+                        //                 {
+                        //                     "id": "titleInfo",
+                        //                     "label": "Title Info",
+                        //                     "ascii": "inam",
+                        //                     "groupSize": "inamSize + 4",
+                        //                     "optional": true,
+                        //                     "group": [
+                        //                         {
+                        //                             "id": "inamSize",
+                        //                             "label": "Title Info size",
+                        //                             "type": "uint8",
+                        //                             "endian": "little"
+                        //                         },
+                        //                         {
+                        //                             "id": "inamText",
+                        //                             "label": "Title Info text",
+                        //                             "type": "data",
+                        //                             "count": "inamSize - 4",
+                        //                             "displayType": "ascii"
+                        //                         }
+                        //                     ]
+                        //                 },
+                        //                 {
+                        //                     "id": "origTitleInfo",
+                        //                     "label": "Original Title Info",
+                        //                     "ascii": "iprd",
+                        //                     "groupSize": "iprdSize + 4",
+                        //                     "optional": true,
+                        //                     "group": [
+                        //                         {
+                        //                             "id": "iprdSize",
+                        //                             "label": "Original Title Info size",
+                        //                             "type": "uint8",
+                        //                             "endian": "little"
+                        //                         },
+                        //                         {
+                        //                             "id": "iprdText",
+                        //                             "label": "Original Title Info text",
+                        //                             "type": "data",
+                        //                             "count": "iprdSize - 4",
+                        //                             "displayType": "ascii"
+                        //                         }
+                        //                     ]
+                        //                 },
+                        //                 {
+                        //                     "id": "subjectInfo",
+                        //                     "label": "Subject Info",
+                        //                     "ascii": "isbj",
+                        //                     "groupSize": "isbjSize + 4",
+                        //                     "optional": true,
+                        //                     "group": [
+                        //                         {
+                        //                             "id": "isbjSize",
+                        //                             "label": "Subject Info size",
+                        //                             "type": "uint8",
+                        //                             "endian": "little"
+                        //                         },
+                        //                         {
+                        //                             "id": "isbjText",
+                        //                             "label": "Subject Info text",
+                        //                             "type": "data",
+                        //                             "count": "isbjSize - 4",
+                        //                             "displayType": "ascii"
+                        //                         }
+                        //                     ]
+                        //                 },
+                        //                 {
+                        //                     "id": "softwareInfo",
+                        //                     "label": "Software Info",
+                        //                     "ascii": "isft",
+                        //                     "groupSize": "isftSize + 4",
+                        //                     "optional": true,
+                        //                     "group": [
+                        //                         {
+                        //                             "id": "isftSize",
+                        //                             "label": "Software Info size",
+                        //                             "type": "uint8",
+                        //                             "endian": "little"
+                        //                         },
+                        //                         {
+                        //                             "id": "isftText",
+                        //                             "label": "Software Info text",
+                        //                             "type": "data",
+                        //                             "count": "isftSize - 4",
+                        //                             "displayType": "ascii"
+                        //                         }
+                        //                     ]
+                        //                 },
+                        //                 {
+                        //                     "id": "sourceInfo",
+                        //                     "label": "Source Info",
+                        //                     "ascii": "isrc",
+                        //                     "groupSize": "isrcSize + 4",
+                        //                     "optional": true,
+                        //                     "group": [
+                        //                         {
+                        //                             "id": "isrcSize",
+                        //                             "label": "Source Info size",
+                        //                             "type": "uint8",
+                        //                             "endian": "little"
+                        //                         },
+                        //                         {
+                        //                             "id": "isrcText",
+                        //                             "label": "Source Info text",
+                        //                             "type": "data",
+                        //                             "count": "isrcSize - 4",
+                        //                             "displayType": "ascii"
+                        //                         }
+                        //                     ]
+                        //                 },
+                        //                 {
+                        //                     "id": "sourceFormInfo",
+                        //                     "label": "Source Form Info",
+                        //                     "ascii": "isrf",
+                        //                     "groupSize": "isrfSize + 4",
+                        //                     "optional": true,
+                        //                     "group": [
+                        //                         {
+                        //                             "id": "isrfSize",
+                        //                             "label": "Source Form Info size",
+                        //                             "type": "uint8",
+                        //                             "endian": "little"
+                        //                         },
+                        //                         {
+                        //                             "id": "isrfText",
+                        //                             "label": "Source Form Info text",
+                        //                             "type": "data",
+                        //                             "count": "isrfSize - 4",
+                        //                             "displayType": "ascii"
+                        //                         }
+                        //                     ]
+                        //                 },
+                        //                 {
+                        //                     "id": "technicianInfo",
+                        //                     "label": "Technician Info",
+                        //                     "ascii": "itch",
+                        //                     "groupSize": "itchSize + 4",
+                        //                     "optional": true,
+                        //                     "group": [
+                        //                         {
+                        //                             "id": "itchSize",
+                        //                             "label": "Technician Info size",
+                        //                             "type": "uint8",
+                        //                             "endian": "little"
+                        //                         },
+                        //                         {
+                        //                             "id": "itchText",
+                        //                             "label": "Technician Info text",
+                        //                             "type": "data",
+                        //                             "count": "itchSize - 4",
+                        //                             "displayType": "ascii"
+                        //                         }
+                        //                     ]
+                        //                 }
+                        //             ]
+                        //         }
+                        //     ]
+                        // }
+                            
                         {
                             "id": "labelsAndNamesList",
                             "label": "Text labels and names list",
                             "type": "data",
-                            "count": "listSize - 4"
+                            "count": "listSize - 4"// ,
+                            // "displayType": "ascii"
                         }
                     ]
                 },
                 {
                     "id": "lablSubChunks",
                     "label": "Label sub-chunk",
-                    "ascii": "labl",
+                    "ascii": [ "labl", "note" ],
                     "groupSize": "lablSize + 4",
                     "optional": true,
                     "group": [
@@ -289,8 +765,9 @@
                             "id": "cuePointId",
                             "label": "Cue point id",
                             "endian": "little",
-                            "type": "data",     // hexa !
-                            "count": "4"
+                            "type": "data",
+                            "count": "4",
+                            "displayType": "hexa"
                         },
                         {
                             "id": "lablText",
@@ -317,8 +794,9 @@
                             "id": "cuePointId",
                             "label": "Cue point id",
                             "endian": "little",
-                            "type": "data",     // hexa !
-                            "count": "4"
+                            "type": "data",
+                            "count": "4",
+                            "displayType": "hexa"
                         },
                         {
                             "id": "sampleLength",
@@ -329,32 +807,37 @@
                         {
                             "id": "PurposeId",
                             "label": "Purpose id",
-                            "type": "data",     // hexa !
-                            "count": "4"
+                            "type": "data",
+                            "count": "4",
+                            "displayType": "hexa"
                         },
                         {
                             "id": "countryId",
                             "label": "Country id",
-                            "type": "data",     // hexa !
-                            "count": "2"
+                            "type": "data",
+                            "count": "2",
+                            "displayType": "hexa"
                         },
                         {
                             "id": "languageId",
                             "label": "Language id",
-                            "type": "data",     // hexa !
-                            "count": "2"
+                            "type": "data",
+                            "count": "2",
+                            "displayType": "hexa"
                         },
                         {
                             "id": "dialectId",
                             "label": "Dialect id",
-                            "type": "data",     // hexa !
-                            "count": "2"
+                            "type": "data",
+                            "count": "2",
+                            "displayType": "hexa"
                         },
                         {
                             "id": "pageCode",
                             "label": "Page code",
-                            "type": "data",     // hexa !
-                            "count": "2"
+                            "type": "data",
+                            "count": "2",
+                            "displayType": "hexa"
                         },
                         {
                             "shortId": "labledText",
@@ -380,8 +863,9 @@
                         {
                             "id": "manufacturerId",
                             "label": "Manufacturer id",
-                            "type": "data",     // hexa !
-                            "count": "4"
+                            "type": "data",
+                            "count": "4",
+                            "displayType": "hexa"
                         },
                         {
                             "id": "productId",
@@ -408,8 +892,9 @@
                         {
                             "id": "midiPitchFraction",
                             "label": "MIDI pitch fraction",
-                            "type": "data",     // hexa !
-                            "count": "4"
+                            "type": "data",
+                            "count": "4",
+                            "displayType": "hexa"
                         },
                         {
                             "id": "smpteFormat",
@@ -427,8 +912,9 @@
                         {
                             "id": "smpteOffset",
                             "label": "SMPTE offset",
-                            "type": "data",     // hexa !
-                            "count": "4"
+                            "type": "data",
+                            "count": "4",
+                            "displayType": "hexa"
                         },
                         {
                             "id": "numSampleLoops",

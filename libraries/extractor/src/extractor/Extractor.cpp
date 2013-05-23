@@ -92,7 +92,7 @@ void Extractor::analyse( )
 				specReport.push_back( bpt::ptree::value_type( v.second.get< std::string >( "id" ), nodeReport ) );
 			}
 			
-			if( isValidFile )
+			if( isValidFile && _file->endOfFile() )
 			{
 				specReport.put( "<xmlattr>.status", "valid" );
 				LOG_INFO( common::Color::get()->_green << "**********" << common::Color::get()->_std );
@@ -101,6 +101,8 @@ void Extractor::analyse( )
 			}
 			else
 			{
+				if( !_file->endOfFile() )
+					LOG_ERROR( "File structure : the analyser did not reach the end of the file." );
 				specReport.put( "<xmlattr>.status", "not valid" );
 				LOG_ERROR( "**********" );
 				LOG_ERROR( "NOT VALID " << spec.getLabel() );

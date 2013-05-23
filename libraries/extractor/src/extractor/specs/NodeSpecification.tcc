@@ -75,9 +75,10 @@ bool NodeSpecification::oneNodeValidUnorderedGroup( SubSpec& subSpec, GroupPrope
 		// LOG_INFO( "Position in file : " << _file->getPosition() );
 		if( isValid( n, groupProperties, subNodeReport ) )
 		{
-			oneNodeIsValid = true;
+			// LOG_INFO( " - Valid : " << n.second.get< std::string >( "id" ) );
 			if( subNodeReport.size() > 0 )
 			{
+				oneNodeIsValid = true;
 				nodeReport.push_back( bpt::ptree::value_type( n.second.get< std::string >( "id" ), subNodeReport ) );
 				groupProperties.iterateIterationMapElement( n.second.get< std::string >( "id" ) );
 				return oneNodeIsValid;
@@ -85,7 +86,7 @@ bool NodeSpecification::oneNodeValidUnorderedGroup( SubSpec& subSpec, GroupPrope
 		}
 		if( _file->endOfFile() )
 		{
-			// LOG_INFO( common::Color::get()->_yellow << "==>  /!\\ EOF : " << _file->endOfFile() << common::Color::get()->_std );
+			LOG_TRACE( common::Color::get()->_yellow << "==>  /!\\ EOF : " << _file->endOfFile() << common::Color::get()->_std );
 			return oneNodeIsValid;
 		}
 	}
@@ -162,11 +163,12 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 	{
 		std::string message( "" );
 		std::string id            = subSpec.second.get< std::string >( kId );
-		std::string label         = subSpec.second.get< std::string >( kLabel, "" );
-		std::string typeValue     = subSpec.second.get< std::string >( kType, "" );
-		std::string count         = subSpec.second.get< std::string >( kCount, "" );
-		std::string groupSizeExpr = subSpec.second.get< std::string >( kGroupSize, "" );
-		std::string requiredExpr  = subSpec.second.get< std::string >( kRequired, "" );
+		std::string label         = subSpec.second.get< std::string >( kLabel,       "" );
+		std::string typeValue     = subSpec.second.get< std::string >( kType,        "" );
+		std::string count         = subSpec.second.get< std::string >( kCount,       "" );
+		std::string groupSizeExpr = subSpec.second.get< std::string >( kGroupSize,   "" );
+		std::string requiredExpr  = subSpec.second.get< std::string >( kRequired,    "" );
+		std::string displayType   = subSpec.second.get< std::string >( kDisplayType, "" );
 		
 		std::vector< std::string > asciiValues = getMultipleValues< std::string >( subSpec, kAscii );
 		std::vector< std::string > hexaValues  = getMultipleValues< std::string >( subSpec, kHexa  );
@@ -216,7 +218,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 			
 			if( !requiredExpr.empty() )
 			{					
-				LOG_INFO( ">>> " << id << " >>> requiredExpr : " << requiredExpr );
+				// LOG_INFO( ">>> " << id << " >>> requiredExpr : " << requiredExpr );
 				ExpressionParser required = ExpressionParser();
 				required.setVariables( _headerElements );
 				bool condition = required.parseExpression< bool >( requiredExpr );
@@ -278,7 +280,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 
 			if( !requiredExpr.empty() )
 			{					
-				LOG_INFO( ">>> " << id << " >>> requiredExpr : " << requiredExpr );
+				// LOG_INFO( ">>> " << id << " >>> requiredExpr : " << requiredExpr );
 				ExpressionParser required = ExpressionParser();
 				required.setVariables( _headerElements );
 				bool condition = required.parseExpression< bool >( requiredExpr );
@@ -357,7 +359,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 				if( validDouble )
 					size = sizeof( double );
 					
-				LOG_INFO( ">>> " << id << " >>> requiredExpr : " << requiredExpr );
+				// LOG_INFO( ">>> " << id << " >>> requiredExpr : " << requiredExpr );
 				ExpressionParser required = ExpressionParser();
 				required.setVariables( _headerElements );
 				bool condition = required.parseExpression< bool >( requiredExpr );
@@ -382,7 +384,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 			
 			bool validData   = false;
 
-			if( typeValue == "data" )
+			if( typeValue == kData )
 			{
 				size_t size = 0;
 				
@@ -391,7 +393,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 
 				nodeReport.clear();
 
-				if( count != "" )
+				if( !count.empty() )
 				{
 					size = ep.parseExpression<size_t>( count );
 				}
@@ -407,11 +409,41 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 				// 	return optional;
 				// }
 
+				if( !displayType.empty() )
+				{
+					if( displayType == "hexa" )
+					{
+						char buffer[ size ];
+						if( ! _file->readData( buffer, size ) )
+							return optional;
+
+						Translator<Hexa> tr;
+						Hexa data = tr.translate( buffer, size );
+						LOG_TRACE( "Data : " << data.value );
+						_file->goBack( size );
+					}
+					if( displayType == "ascii" )
+					{
+						char buffer[ size ];
+						if( ! _file->readData( buffer, size ) )
+							return optional;
+
+						Translator<Ascii> tr;
+						Ascii data = tr.translate( buffer, size );
+						LOG_TRACE( "Data : " << data.originalCaseValue );
+						_file->goBack( size );
+					}
+					else
+					{
+						LOG_WARNING( id << " : Unknown display type");
+					}
+				}
+
 				_file->goForward( size );
 				
 				if( !requiredExpr.empty() )
 				{
-					LOG_INFO( ">>> " << id << " >>> requiredExpr : " << requiredExpr );
+					// LOG_INFO( ">>> " << id << " >>> requiredExpr : " << requiredExpr );
 					ExpressionParser required = ExpressionParser();
 					required.setVariables( _headerElements );
 					bool condition = required.parseExpression< bool >( requiredExpr );

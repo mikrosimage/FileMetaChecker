@@ -1212,4 +1212,50 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_recursiveRepetitionUnorderedGroupTestFil
 	}
 }
 
+BOOST_AUTO_TEST_CASE( nodeSpecification_error_GroupTestFile )
+{
+	Hexa hexa1, hexa2;
+	
+	hexa1.value = "1234";
+	hexa2.value = "abcd";
+	
+
+	const std::string nodename = "hexaTest";
+	bpt::ptree node;
+	node.put( "id", nodename );
+	node.put( "label", "Hexa Test" );
+	node.put( "ascii", "node1" );
+	node.put( "ordered", false );
+
+	const std::string subname1 = "hexaSub1";
+	bpt::ptree subnode1;
+	subnode1.put( "id", subname1 );
+	subnode1.put( "ascii", "sub1" );
+
+	const std::string subname2 = "hexaSub2";
+	bpt::ptree subnode2;
+	subnode2.put( "id", subname2 );
+	subnode2.put( "ascii", "sub2" );
+	subnode2.put( "repeated", "3" );
+
+	node.add_child ( "group.", subnode1 );
+	node.add_child ( "group.", subnode2 );
+
+	{
+		std::ofstream stream( testFile.c_str(), std::ofstream::out );
+		stream << "node1" << "sub2" << "sub1" << " " << "sub2" << "sub2";
+		stream.close();
+
+		bpt::ptree report = generateReportTree( node );
+
+		CHECK_NODE_VALID ( nodename + "." + subname1 );
+		CHECK_VALUE_EQUAL( nodename + "." + subname1, "sub1" );
+		CHECK_NODE_VALID ( nodename + "." + subname2 );
+		CHECK_VALUE_EQUAL( nodename + "." + subname2, "sub2" );
+
+		CHECK_NODE_INVALID ( nodename );
+	}
+}
+
+
 BOOST_AUTO_TEST_SUITE_END()

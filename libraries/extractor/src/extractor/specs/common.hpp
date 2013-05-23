@@ -46,4 +46,8 @@ const std::string kOrdered       = "ordered";
 const std::string kOrderedTrue   = "true";
 const std::string kOrderedFalse  = "false";
 
+const std::string kData          = "data";
+const std::string kDisplayType   = "displayType";
+
+
 #endif
