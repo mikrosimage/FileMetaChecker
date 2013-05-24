@@ -43,7 +43,7 @@ bool NodeSpecification::isValidOrderedGroup( SubSpec& subSpec, GroupProperties& 
 			bpt::ptree subNodeReport;
 			for( size_t i = 0 ; i < min ; i++ )
 			{
-				// LOG_INFO( "Position in file : " << _file->getPosition() );
+				// LOG_INFO( " @ File : " << _file->getPosition() );
 				if( isValid( n, groupProperties, subNodeReport ) )
 				{
 					if( subNodeReport.size() > 0 )
@@ -72,10 +72,10 @@ bool NodeSpecification::oneNodeValidUnorderedGroup( SubSpec& subSpec, GroupPrope
 	BOOST_FOREACH( SubSpec& n, subSpec.second.get_child( kGroup ) )
 	{
 		bpt::ptree subNodeReport;
-		// LOG_INFO( "Position in file : " << _file->getPosition() );
+		// LOG_INFO( " @ File : " << _file->getPosition() );
 		if( isValid( n, groupProperties, subNodeReport ) )
 		{
-			// LOG_INFO( " - Valid : " << n.second.get< std::string >( "id" ) );
+			// LOG_INFO( " - Valid : " << n.second.get< std::string >( "id" ) << " at " << _file->getPosition());
 			if( subNodeReport.size() > 0 )
 			{
 				oneNodeIsValid = true;
@@ -202,7 +202,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 				
 				Translator<Ascii> tr;
 				value = tr.translate( buffer, size );
-				// LOG_INFO( "     value : " << value.originalCaseValue << ", " << value.lowCaseValue << ", " << value.upCaseValue << " | ==> asciiValues[" << i << "] : " << asciiValues[i] );
+				// LOG_INFO( " - value : " << value.originalCaseValue << ", " << value.lowCaseValue << ", " << value.upCaseValue << " | ==> asciiValues[" << i << "] : " << asciiValues[i] << " @ " << _file->getPosition() );
 
 				if( asciiValues[i] ==  value.originalCaseValue || asciiValues[i] ==  value.lowCaseValue || asciiValues[i] == value.upCaseValue )
 				{
@@ -265,8 +265,9 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 
 				Translator<Hexa> tr;
 				value = tr.translate( buffer, size );
+				// LOG_INFO( " - value : " << value.originalCaseValue << ", " << value.lowCaseValue << ", " << value.upCaseValue << " | ==> hexaValues[" << i << "] : " << hexaValues[i] << " @ " << _file->getPosition() );
 
-				if( hexaValues[i] ==  value.value )
+				if( hexaValues[i] ==  value.originalCaseValue || hexaValues[i] ==  value.lowCaseValue || hexaValues[i] == value.upCaseValue )
 				{
 					isValidNode = true;
 					message += hexaValues[i];
@@ -309,7 +310,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 		if( !typeValue.empty() )
 		{
 			message += kType + " => " + typeValue;
-
+			
 			uint8  uint8Val  = 0;
 			int8   int8Val   = 0;
 			uint16 uint16Val = 0;
@@ -419,7 +420,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 
 						Translator<Hexa> tr;
 						Hexa data = tr.translate( buffer, size );
-						LOG_TRACE( "Data : " << data.value );
+						LOG_INFO( "Data : " << data.originalCaseValue );
 						_file->goBack( size );
 					}
 					if( displayType == "ascii" )
@@ -430,7 +431,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 
 						Translator<Ascii> tr;
 						Ascii data = tr.translate( buffer, size );
-						LOG_TRACE( "Data : " << data.originalCaseValue );
+						LOG_INFO( "Data : " << data.originalCaseValue );
 						_file->goBack( size );
 					}
 					else
@@ -496,12 +497,12 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 
 				if( groupProperties.getSize() < gSize )
 				{
-					LOG_WARNING( gSize - groupProperties.getSize() << " unused bytes" );
+					LOG_WARNING( gSize << " - " << groupProperties.getSize() << " = " << gSize - groupProperties.getSize() << " unused bytes" );
 				}
 				if( groupProperties.getSize() > gSize )
 				{
 					isValidNode = false;
-					LOG_ERROR( groupProperties.getSize() - gSize << " bytes difference" );
+					LOG_ERROR( groupProperties.getSize() << " - " << gSize << " = " << groupProperties.getSize() - gSize << " bytes difference" );
 				}
 			}
 		}

@@ -15,7 +15,9 @@ typedef   signed long long  int64;
 typedef unsigned long long uint64;
 
 struct Hexa{
-	std::string value;
+	std::string originalCaseValue;
+	std::string lowCaseValue;
+	std::string upCaseValue;
 };
 typedef struct Hexa Hexa;
 

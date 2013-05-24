@@ -61,7 +61,12 @@ Hexa Translator<Hexa>::translate( const char* data, const size_t size, const boo
 	std::ostringstream os;
 	for( size_t i = 0; i < size; ++i )
 		os << std::hex << std::setfill('0') << std::setw(2) << (int)(unsigned char)data[i];
-	ret.value = os.str();
+	std::string str = os.str();
+	ret.originalCaseValue = str;
+	boost::algorithm::to_lower( str );
+	ret.lowCaseValue = str;
+	boost::algorithm::to_upper( str );
+	ret.upCaseValue = str;
 	return ret;
 }
 
