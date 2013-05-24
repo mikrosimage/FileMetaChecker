@@ -105,7 +105,7 @@ void Extractor::analyse( )
 					LOG_ERROR( "File structure : the analyser did not reach the end of the file." );
 				specReport.put( "<xmlattr>.status", "not valid" );
 				LOG_ERROR( "**********" );
-				LOG_ERROR( "NOT VALID " << spec.getLabel() );
+				LOG_ERROR( "NOT VALID " << spec.getLabel() << " : " << _file->getFilename() );
 				LOG_ERROR( "**********" );
 			}
 			_report.push_back( specReport );

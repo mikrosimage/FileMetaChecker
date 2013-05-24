@@ -440,7 +440,12 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 				}
 
 				_file->goForward( size );
-				
+
+				if( size%2 == 1 )
+				{
+					_file->goForward( 1 );
+				}
+
 				if( !requiredExpr.empty() )
 				{
 					// LOG_INFO( ">>> " << id << " >>> requiredExpr : " << requiredExpr );

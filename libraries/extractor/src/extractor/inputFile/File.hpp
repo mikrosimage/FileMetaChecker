@@ -80,6 +80,14 @@ public:
 		_file.seekg ( std::ios::beg);
 	}
 
+	std::string getFilename()
+	{
+		if ( _file.is_open() )
+			return _filename;
+		else
+			return "None"; 
+	}
+
 private:
 	std::ifstream _file;
 	std::string   _filename;
