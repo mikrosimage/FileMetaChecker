@@ -141,11 +141,9 @@ std::string FileSystemInfo::getLastModifDate() const
 
 	timer = bfs::last_write_time( _filePath );
 	timeptr = gmtime( &timer );
-	// size_t n = std::strftime( buffer, 32, "%a", timeptr );
 	if( std::strftime( buffer, 32, "%a, %d.%m.%Y %H:%M:%S", timeptr ) != 0 )
 	{
 		date.assign( buffer );
-		LOG_INFO( "date : " << date );
 	}
 	return date;
 }

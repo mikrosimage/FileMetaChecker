@@ -42,9 +42,9 @@ bool NodeSpecification::isValidOrderedGroup( SubSpec& subSpec, GroupProperties& 
 		}
 		else
 		{
-			bpt::ptree subNodeReport;
 			for( size_t i = 0 ; i < min ; i++ )
 			{
+				bpt::ptree subNodeReport;
 				// LOG_INFO( " @ File : " << std::hex << _file->getPosition() << std::dec );
 				if( isValid( n, groupProperties, subNodeReport ) )
 				{
