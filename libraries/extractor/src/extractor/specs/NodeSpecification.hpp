@@ -19,7 +19,7 @@ public:
 	bool isValid(SubSpec& subSpec, GroupProperties& parentProperties, bpt::ptree& nodeReport );
 
 	template< typename DataType >
-	void exportValidData( const bool isValid, const std::string& id, const DataType& data, GroupProperties& groupProperties, bpt::ptree& nodeReport );
+	void exportValidData( const bool isValid, const std::string& id, const DataType& data, GroupProperties& groupProperties, bpt::ptree& nodeReport, std::string& mapStr );
 
 private:
 	bool isValidOrderedGroup       ( SubSpec& subSpec, GroupProperties& groupProperties, bpt::ptree& nodeReport );

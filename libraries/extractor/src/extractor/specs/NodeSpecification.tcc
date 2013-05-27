@@ -314,29 +314,31 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 		{
 			message += kType + " => " + typeValue;
 			
-			uint8  uint8Val  = 0;
-			int8   int8Val   = 0;
+			uint8   uint8Val = 0;
+			int8     int8Val = 0;
 			uint16 uint16Val = 0;
-			int16  int16Val  = 0;
+			int16   int16Val = 0;
 			uint32 uint32Val = 0;
-			int32  int32Val  = 0;
+			int32   int32Val = 0;
 			uint64 uint64Val = 0;
-			int64  int64Val  = 0;
+			int64   int64Val = 0;
 
-			float  floatVal  = 0;
+			float   floatVal = 0;
 			double doubleVal = 0;
-			
-			bool validUInt8  = isValidNumber<uint8> ( _file, message, typeValue, endianValue, subSpec, uint8Val );
-			bool validInt8   = isValidNumber<int8>  ( _file, message, typeValue, endianValue, subSpec, int8Val );
-			bool validUInt16 = isValidNumber<uint16>( _file, message, typeValue, endianValue, subSpec, uint16Val );
-			bool validInt16  = isValidNumber<int16> ( _file, message, typeValue, endianValue, subSpec, int16Val );
-			bool validUInt32 = isValidNumber<uint32>( _file, message, typeValue, endianValue, subSpec, uint32Val );
-			bool validInt32  = isValidNumber<int32> ( _file, message, typeValue, endianValue, subSpec, int32Val );
-			bool validUInt64 = isValidNumber<uint64>( _file, message, typeValue, endianValue, subSpec, uint64Val );
-			bool validInt64  = isValidNumber<int64> ( _file, message, typeValue, endianValue, subSpec, int64Val );
 
-			bool validFloat  = isValidNumber<float> ( _file, message, typeValue, endianValue, subSpec, floatVal );
-			bool validDouble = isValidNumber<double>( _file, message, typeValue, endianValue, subSpec, doubleVal );
+			std::string uint8Map, int8Map, uint16Map, int16Map, uint32Map, int32Map, uint64Map, int64Map, floatMap, doubleMap;
+			
+			bool validUInt8  = isValidNumber<  uint8 >( _file, message, typeValue, endianValue, subSpec,  uint8Val,  uint8Map );
+			bool validInt8   = isValidNumber<   int8 >( _file, message, typeValue, endianValue, subSpec,   int8Val,   int8Map );
+			bool validUInt16 = isValidNumber< uint16 >( _file, message, typeValue, endianValue, subSpec, uint16Val, uint16Map );
+			bool validInt16  = isValidNumber<  int16 >( _file, message, typeValue, endianValue, subSpec,  int16Val,  int16Map );
+			bool validUInt32 = isValidNumber< uint32 >( _file, message, typeValue, endianValue, subSpec, uint32Val, uint32Map );
+			bool validInt32  = isValidNumber<  int32 >( _file, message, typeValue, endianValue, subSpec,  int32Val,  int32Map );
+			bool validUInt64 = isValidNumber< uint64 >( _file, message, typeValue, endianValue, subSpec, uint64Val, uint64Map );
+			bool validInt64  = isValidNumber<  int64 >( _file, message, typeValue, endianValue, subSpec,  int64Val,  int64Map );
+
+			bool validFloat  = isValidNumber< float > ( _file, message, typeValue, endianValue, subSpec,  floatVal,  floatMap );
+			bool validDouble = isValidNumber< double >( _file, message, typeValue, endianValue, subSpec, doubleVal, doubleMap );
 			
 			if( !requiredExpr.empty() && typeValue != "data" )
 			{
@@ -374,16 +376,16 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 				}
 			}
 
-			exportValidData( validUInt8,  id, uint8Val,  parentProperties, nodeReport );
-			exportValidData( validInt8,   id, int8Val,   parentProperties, nodeReport );
-			exportValidData( validUInt16, id, uint16Val, parentProperties, nodeReport );
-			exportValidData( validInt16,  id, int16Val,  parentProperties, nodeReport );
-			exportValidData( validUInt32, id, uint32Val, parentProperties, nodeReport );
-			exportValidData( validInt32,  id, int32Val,  parentProperties, nodeReport );
-			exportValidData( validUInt64, id, uint64Val, parentProperties, nodeReport );
-			exportValidData( validInt64,  id, int64Val,  parentProperties, nodeReport );
-			exportValidData( validFloat,  id, floatVal,  parentProperties, nodeReport );
-			exportValidData( validDouble, id, doubleVal, parentProperties, nodeReport );
+			exportValidData( validUInt8,  id,  uint8Val, parentProperties, nodeReport,  uint8Map );
+			exportValidData( validInt8,   id,   int8Val, parentProperties, nodeReport,   int8Map );
+			exportValidData( validUInt16, id, uint16Val, parentProperties, nodeReport, uint16Map );
+			exportValidData( validInt16,  id,  int16Val, parentProperties, nodeReport,  int16Map );
+			exportValidData( validUInt32, id, uint32Val, parentProperties, nodeReport, uint32Map );
+			exportValidData( validInt32,  id,  int32Val, parentProperties, nodeReport,  int32Map );
+			exportValidData( validUInt64, id, uint64Val, parentProperties, nodeReport, uint64Map );
+			exportValidData( validInt64,  id,  int64Val, parentProperties, nodeReport,  int64Map );
+			exportValidData( validFloat,  id,  floatVal, parentProperties, nodeReport,  floatMap );
+			exportValidData( validDouble, id, doubleVal, parentProperties, nodeReport, doubleMap );
 			
 			
 			bool validData   = false;
@@ -572,13 +574,16 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 
 
 template< typename DataType >
-void NodeSpecification::exportValidData( const bool isValid, const std::string& id, const DataType& data, GroupProperties& groupProperties, bpt::ptree& nodeReport )
+void NodeSpecification::exportValidData( const bool isValid, const std::string& id, const DataType& data, GroupProperties& groupProperties, bpt::ptree& nodeReport, std::string& mapStr )
 {
 	if( !isValid )
 		return;
 	Translator<DataType> tr;
 	_headerElements[ id ] = data;
 	groupProperties.addSize( sizeof( DataType ) );
-	nodeReport.put_value( tr.translate( data ) );
+	if( !mapStr.empty() )
+		nodeReport.put_value( mapStr + " (" + tr.translate( data ) + ")" );
+	else
+		nodeReport.put_value( tr.translate( data ) );
 	nodeReport.put( "<xmlattr>.type", getStringForType<DataType>() );
 }

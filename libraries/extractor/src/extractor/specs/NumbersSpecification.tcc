@@ -159,7 +159,7 @@ bool getRange( SubSpec& subSpec, const int8 value )
 }
 
 template< typename NumberType >
-bool isValidNumber( File* _file, std::string& message, const std::string& type, const bool isBigEndian, SubSpec& subSpec, NumberType& value )
+bool isValidNumber( File* _file, std::string& message, const std::string& type, const bool isBigEndian, SubSpec& subSpec, NumberType& value, std::string& mapStr )
 {
 	if( type == getStringForType<NumberType>() )
 	{
@@ -167,21 +167,17 @@ bool isValidNumber( File* _file, std::string& message, const std::string& type, 
 		char buffer[ size ];
 		Translator<NumberType> tr;
 		std::map< NumberType, std::string > map;
-		std::string stringValue;
 		
 		_file->readData( buffer, size );
 		value = tr.translate( buffer, size, isBigEndian );
-		stringValue = getMap( subSpec, map, size, isBigEndian, value );
-
+		mapStr = getMap( subSpec, map, size, isBigEndian, value );
 		message += " = ";
-		if( stringValue == "" )
-		{
+
+		if( mapStr.empty() )
 			message += getPrintable( value );
-		}
 		else
-		{
-			message += stringValue + " (" + getPrintable( value ) + ")";
-		}
+			message += mapStr + " (" + getPrintable( value ) + ")";
+
 		return getRange( subSpec, value );
 	}
 	return false;

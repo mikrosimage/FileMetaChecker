@@ -14,7 +14,7 @@ template< typename NumberType >
 bool getRange( SubSpec& subSpec, const NumberType value );
 
 template< typename NumberType >
-bool isValidNumber( File* _file, std::string& message, const std::string& type, const bool isBigEndian, SubSpec& subSpec, NumberType& value );
+bool isValidNumber( File* _file, std::string& message, const std::string& type, const bool isBigEndian, SubSpec& subSpec, NumberType& value, std::string& mapStr );
 
 #include "NumbersSpecification.tcc"
 
