@@ -8,6 +8,7 @@
 
 
 #include <boost/foreach.hpp>
+#include <boost/algorithm/string/replace.hpp>
 
 #include <common/global.hpp>
 
@@ -425,7 +426,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 						Translator<Hexa> tr;
 						Hexa data = tr.translate( buffer, size );
 						message += " : '" + data.originalCaseValue + "'";
-						if( data.originalCaseValue.find('\0') )
+						// if( data.originalCaseValue.find('\0') )
 							nodeReport.put_value( data.originalCaseValue );
 						// LOG_INFO( "Data : " << data.originalCaseValue );
 					}
@@ -438,8 +439,16 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 						Translator<Ascii> tr;
 						Ascii data = tr.translate( buffer, size );
 						message += " : '" + data.originalCaseValue + "'";
+
 						if( data.originalCaseValue.find('\0') )
+						{
+							for( size_t i=0; i < data.originalCaseValue.size(); i++ )
+							{
+								if( (char)data.originalCaseValue.at(i) == 0 )
+									data.originalCaseValue[i] = '\n';
+							}
 							nodeReport.put_value( data.originalCaseValue );
+						}
 						// LOG_INFO( "Data : " << data.originalCaseValue );
 					}
 					else
