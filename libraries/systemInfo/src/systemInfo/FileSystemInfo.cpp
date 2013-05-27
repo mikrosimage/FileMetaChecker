@@ -6,6 +6,7 @@
 #include <boost/property_tree/ptree.hpp>
 
 #include <sstream>
+#include <ctime>
 
 namespace bpt = boost::property_tree;
 
@@ -71,6 +72,10 @@ void FileSystemInfo::getReport( Report* report )
 	nodeReport.put( "<xmlattr>.label", "Size" );
 	fileSystemInfoReport.push_back( bpt::ptree::value_type( "size", nodeReport ));
 
+	nodeReport.put_value( getLastModifDate() );
+	nodeReport.put( "<xmlattr>.label", "Last Modification" );
+	fileSystemInfoReport.push_back( bpt::ptree::value_type( "lastModifDate", nodeReport ));
+
 	
 	nodeReport.clear();
 	nodeReport.put( "<xmlattr>.label", "Rights" );
@@ -125,6 +130,24 @@ size_t FileSystemInfo::getSize() const
 	if( is_regular( _status ) )
 		return bfs::file_size( _filePath );
 	return 0;
+}
+
+std::string FileSystemInfo::getLastModifDate() const
+{
+	time_t timer;
+	struct tm *timeptr;
+	char buffer[32];
+	std::string date = "";
+
+	timer = bfs::last_write_time( _filePath );
+	timeptr = gmtime( &timer );
+	// size_t n = std::strftime( buffer, 32, "%a", timeptr );
+	if( std::strftime( buffer, 32, "%a, %d.%m.%Y %H:%M:%S", timeptr ) != 0 )
+	{
+		date.assign( buffer );
+		LOG_INFO( "date : " << date );
+	}
+	return date;
 }
 
 std::string FileSystemInfo::getFileStatus() const
@@ -212,6 +235,7 @@ std::ostream& operator<<( std::ostream& out, const FileSystemInfo& fileReader )
 	out << "absolute filename  " << fileReader.getAbsoluteFilename() << std::endl;
 	out << "extension          " << fileReader.getExt() << std::endl;
 	out << "size               " << fileReader.getSize() << std::endl;
+	out << "last modification  " << fileReader.getLastModifDate() << std::endl;
 	out << "permissions        " << fileReader.getPermissions() << std::endl;
 	out << "status             " << fileReader.getFileStatus() << std::endl;
 

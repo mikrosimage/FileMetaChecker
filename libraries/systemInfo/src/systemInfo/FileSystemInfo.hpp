@@ -27,6 +27,7 @@ public:
 	
 	std::string getExt() const;
 	size_t      getSize() const;
+	std::string getLastModifDate() const;
 	std::string getFileStatus() const;
 	std::string getPermissions() const;
 	
