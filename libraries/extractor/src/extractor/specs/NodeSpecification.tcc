@@ -423,6 +423,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 						Translator<Hexa> tr;
 						Hexa data = tr.translate( buffer, size );
 						message += " : '" + data.originalCaseValue + "'";
+						nodeReport.put_value( data.originalCaseValue );
 						// LOG_INFO( "Data : " << data.originalCaseValue );
 					}
 					else if( displayType == "ascii" )
@@ -434,6 +435,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 						Translator<Ascii> tr;
 						Ascii data = tr.translate( buffer, size );
 						message += " : '" + data.originalCaseValue + "'";
+						nodeReport.put_value( data.originalCaseValue );
 						// LOG_INFO( "Data : " << data.originalCaseValue );
 					}
 					else
