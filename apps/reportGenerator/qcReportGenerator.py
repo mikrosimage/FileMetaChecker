@@ -67,7 +67,7 @@ if options.filename:
 			outputFile = options.outputFile
 		else:
 			outputFile = inputFile.replace( ".xml", ".md" )
-		# print ">>> Output PDF filename : '" + outputFile
+		print ">>> Output PDF filename : '" + outputFile
 
 		parser.parseXml( inputFile )
 		if options.fieldsToRemove :
