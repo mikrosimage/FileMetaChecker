@@ -2,6 +2,7 @@
 #define _EXTRACTOR_SPECS_VALUE_SPECIFICATION_HPP_
 
 #include <common/global.hpp>
+#include <extractor/expressionParser/ExpressionParser.hpp>
 
 #include <boost/foreach.hpp>
 
@@ -90,15 +91,32 @@ std::vector< Type > getMultipleValues( SubSpec& subSpec, const std::string& node
 	return vector;
 }
 
-std::vector< size_t > getRepetition( SubSpec& subSpec )
+std::vector< size_t > getRepetition( SubSpec& subSpec, ElementsMap& _headerElements )
 {
 	std::vector< size_t > nodeRepetition;
 	if( boost::optional< const Spec& > repetitionNode = subSpec.second.get_child_optional( kRepetition ) )
 	{	
+		boost::optional< std::string > repeatedeExpr = subSpec.second.get_optional< std::string >( kRepetition );
 		boost::optional< size_t > repeated = subSpec.second.get_optional< size_t >( kRepetition );
+		if( repeatedeExpr != NULL )
+		{
+			// LOG_INFO( " --- CASE EXPRESSION --- " );
+			std::string repeatedeExpr = subSpec.second.get< std::string >( kRepetition );
+			if( !repeatedeExpr.empty() )
+			{
+				// LOG_INFO( "repeatedStr : " << repeatedeExpr );
+				ExpressionParser repetition = ExpressionParser();
+				repetition.setVariables( _headerElements );
+				size_t repetitionValue = repetition.parseExpression<size_t>( repeatedeExpr );
+				nodeRepetition.push_back( repetitionValue );
+				nodeRepetition.push_back( repetitionValue );
+			}
+		}
+		
 		if( repeated != NULL )
 		{
-			// LOG_INFO( " --- CASE 1 --- " );
+			// LOG_INFO( " --- CASE VALUE --- " );
+			nodeRepetition.clear();
 			if( subSpec.second.get< long >( kRepetition ) < 1 )
 				throw std::runtime_error( "Value Error : 'repeated' value must be strictly positive ( " + subSpec.second.get< std::string > ("id") + " )." );
 

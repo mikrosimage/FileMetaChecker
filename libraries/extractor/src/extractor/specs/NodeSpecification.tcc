@@ -27,8 +27,10 @@ bool NodeSpecification::isValidOrderedGroup( SubSpec& subSpec, GroupProperties& 
 	// LOG_INFO( " ==> Ordered : " << groupProperties.getOrder() );
 	BOOST_FOREACH( SubSpec& n, subSpec.second.get_child( kGroup ) )
 	{
-		size_t min = groupProperties.getRepetitionMapElement( n.second.get< std::string >( "id" ) ).at(0);
-		size_t max = groupProperties.getRepetitionMapElement( n.second.get< std::string >( "id" ) ).at(1);
+		std::vector< size_t > nodeRepetition = getRepetition( n, _headerElements );
+
+		size_t min = nodeRepetition.at(0);
+		size_t max = nodeRepetition.at(1);
 
 		if( min != max )
 		{
@@ -43,7 +45,7 @@ bool NodeSpecification::isValidOrderedGroup( SubSpec& subSpec, GroupProperties& 
 			bpt::ptree subNodeReport;
 			for( size_t i = 0 ; i < min ; i++ )
 			{
-				// LOG_INFO( " @ File : " << _file->getPosition() );
+				// LOG_INFO( " @ File : " << std::hex << _file->getPosition() << std::dec );
 				if( isValid( n, groupProperties, subNodeReport ) )
 				{
 					if( subNodeReport.size() > 0 )
@@ -99,6 +101,15 @@ bool NodeSpecification::isValidUnorderedGroup( SubSpec& subSpec, GroupProperties
 	// LOG_INFO( " ==> Ordered : " << groupProperties.getOrder() );
 	size_t i = 0;
 	bool oneNodeIsValid = false;		
+	
+	BOOST_FOREACH( SubSpec& n, subSpec.second.get_child( kGroup ) )
+	{
+		// LOG_INFO( "     Set RepetitionMap Element : " << n.second.get< std::string >( "id" ) );
+		bool optional = ( n.second.get<std::string>( kOptional, kOptionalFalse ) == kOptionalTrue );
+		std::vector< size_t > nodeRepetition = getRepetition( n, _headerElements );
+		groupProperties.addRepetitionMapElement( n.second.get< std::string >( "id" ), nodeRepetition, optional );
+	}
+
 	do
 	{
 		// LOG_INFO( ">>> Check an unordered group..." );
@@ -132,14 +143,6 @@ bool NodeSpecification::isValidUnorderedGroup( SubSpec& subSpec, GroupProperties
 bool NodeSpecification::isValidSubGroup( SubSpec& subSpec, GroupProperties& groupProperties, bpt::ptree& nodeReport )
 {
 	bool groupIsValid = true;
-
-	BOOST_FOREACH( SubSpec& n, subSpec.second.get_child( kGroup ) )
-	{
-		// LOG_INFO( "     Set RepetitionMap Element : " << n.second.get< std::string >( "id" ) );
-		bool optional = ( n.second.get<std::string>( kOptional, kOptionalFalse ) == kOptionalTrue );
-		std::vector< size_t > nodeRepetition = getRepetition( n );
-		groupProperties.addRepetitionMapElement( n.second.get< std::string >( "id" ), nodeRepetition, optional );
-	}
 
 	LOG_INFO( common::Color::get()->_yellow << "Start Chunk : " << subSpec.second.get< std::string >( "id" ) << common::Color::get()->_std );
 
@@ -492,10 +495,12 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 				size_t gSize = groupLength.parseExpression<size_t>( groupSizeExpr );
 				_file->goForward( gSize );
 
+				size_t padding = 0;
 				if( gSize%2 == 1 )
 				{
-					LOG_INFO( "Padding : 1 byte (" << gSize << ")" );
-					_file->goForward( 1 );
+					LOG_WARNING( "Padding : 1 byte (" << gSize << ")" );
+					padding = 1;
+					_file->goForward( padding );
 				}
 
 				if( groupProperties.getSize() < gSize )
@@ -507,6 +512,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 					isValidNode = false;
 					LOG_ERROR( groupProperties.getSize() << " - " << gSize << " = " << groupProperties.getSize() - gSize << " bytes difference" );
 				}
+				parentProperties.addSize( groupProperties.getSize() + padding );
 			}
 		}
 
