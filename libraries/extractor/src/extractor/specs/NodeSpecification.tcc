@@ -399,7 +399,6 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 					size = ep.parseExpression<size_t>( count );
 				}
 				
-				message += " ( size = " + getPrintable( size ) + " )";
 				
 				// TLOG( "*** Before error ***" );
 				// char buffer[ size ];
@@ -420,10 +419,10 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 
 						Translator<Hexa> tr;
 						Hexa data = tr.translate( buffer, size );
-						LOG_INFO( "Data : " << data.originalCaseValue );
-						_file->goBack( size );
+						message += " : '" + data.originalCaseValue + "'";
+						// LOG_INFO( "Data : " << data.originalCaseValue );
 					}
-					if( displayType == "ascii" )
+					else if( displayType == "ascii" )
 					{
 						char buffer[ size ];
 						if( ! _file->readData( buffer, size ) )
@@ -431,21 +430,19 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 
 						Translator<Ascii> tr;
 						Ascii data = tr.translate( buffer, size );
-						LOG_INFO( "Data : " << data.originalCaseValue );
-						_file->goBack( size );
+						message += " : '" + data.originalCaseValue + "'";
+						// LOG_INFO( "Data : " << data.originalCaseValue );
 					}
 					else
 					{
 						LOG_WARNING( id << " : Unknown display type");
 					}
 				}
-
-				_file->goForward( size );
-
-				if( size%2 == 1 )
+				else
 				{
-					_file->goForward( 1 );
+					_file->goForward( size );
 				}
+				message += " ( size = " + getPrintable( size ) + " )";
 
 				if( !requiredExpr.empty() )
 				{
@@ -494,6 +491,12 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 				_file->goBack( groupProperties.getSize() );
 				size_t gSize = groupLength.parseExpression<size_t>( groupSizeExpr );
 				_file->goForward( gSize );
+
+				if( gSize%2 == 1 )
+				{
+					LOG_INFO( "Padding : 1 byte (" << gSize << ")" );
+					_file->goForward( 1 );
+				}
 
 				if( groupProperties.getSize() < gSize )
 				{
