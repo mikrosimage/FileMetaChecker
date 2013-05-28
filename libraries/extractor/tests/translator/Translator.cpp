@@ -50,6 +50,20 @@ const char dataDoubleMaxLittleEndian[]    = { max_char, max_char, max_char, max_
 const char dataDoubleNegMaxLittleEndian[] = { max_char, max_char, max_char, max_char, max_char, max_char, 0xef, max_char };		// min value supported by the double type : -1.7976931348623157e+308
 const char dataDoubleMinLittleEndian[]    = { min_char, min_char, min_char, min_char, min_char, min_char, 0x10, min_char };		// min positive value supported by the double type : 2.2250738585072014e−308
 
+
+const char dataIeeeExtendedZero[]            = { min_char, min_char, min_char, min_char, min_char, min_char, min_char, min_char, min_char, min_char };	// 0
+
+const char dataIeeeExtendedOneBigEndian[]    = {     0x3f, max_char,     0x80, min_char, min_char, min_char, min_char, min_char, min_char, min_char };	// 1
+const char dataIeeeExtendedMaxBigEndian[]    = {     0x7f,     0xfe, max_char, max_char, max_char, max_char, max_char, max_char, max_char, max_char };	// max value supported by the IEEE Extended type :   1.18973149535723176502e+4932
+const char dataIeeeExtendedNegMaxBigEndian[] = { max_char,     0xfe, max_char, max_char, max_char, max_char, max_char, max_char, max_char, max_char };	// min value supported by the IEEE Extended type :  -1.18973149535723176502e+4932
+const char dataIeeeExtendedMinBigEndian[]    = { min_char, min_char,     0x80, min_char, min_char, min_char, min_char, min_char, min_char, min_char };	// min positive value supported by the double type : 3.36210314311209350626e-4932
+
+const char dataIeeeExtendedOneLittleEndian[]    = { min_char, min_char, min_char, min_char, min_char, min_char, min_char,     0x80, max_char,     0x3f };	// 1
+const char dataIeeeExtendedMaxLittleEndian[]    = { max_char, max_char, max_char, max_char, max_char, max_char, max_char, max_char,     0xfe,     0x7f };	// max value supported by the IEEE Extended type :   1.18973149535723176502e+4932
+const char dataIeeeExtendedNegMaxLittleEndian[] = { max_char, max_char, max_char, max_char, max_char, max_char, max_char, max_char,     0xfe, max_char };	// min value supported by the IEEE Extended type :  -1.18973149535723176502e+4932
+const char dataIeeeExtendedMinLittleEndian[]    = { min_char, min_char, min_char, min_char, min_char, min_char, min_char,     0x80, min_char, min_char };	// min positive value supported by the double type : 3.36210314311209350626e-4932
+
+
 BOOST_AUTO_TEST_SUITE( translator_tests_suite01 )
 
 BOOST_AUTO_TEST_CASE( translator_hexa )
@@ -57,12 +71,12 @@ BOOST_AUTO_TEST_CASE( translator_hexa )
 	{
 		Translator<Hexa> trChar;
 		Hexa ret = trChar.translate( dataInt8Low, 1 );
-		BOOST_CHECK_EQUAL( ret.value, "00" );
+		BOOST_CHECK_EQUAL( ret.originalCaseValue, "00" );
 	}
 	{
 		Translator<Hexa> trChar;
 		Hexa ret = trChar.translate( dataInt8High, 1 );
-		BOOST_CHECK_EQUAL( ret.value, "ff" );
+		BOOST_CHECK_EQUAL( ret.originalCaseValue, "ff" );
 	}
 }
 
@@ -327,6 +341,54 @@ BOOST_AUTO_TEST_CASE( translator_double_le )
 	}
 }
 
+BOOST_AUTO_TEST_CASE( translator_ieeeExtended_be )
+{
+	{
+		Translator<ieeeExtended> trIeeeExtended;
+		BOOST_CHECK_EQUAL( trIeeeExtended.translate( dataIeeeExtendedZero, 10, true ), 0 );
+	}
+	{
+		Translator<ieeeExtended> trIeeeExtended;
+		BOOST_CHECK_EQUAL( trIeeeExtended.translate( dataIeeeExtendedOneBigEndian, 10, true ), 1 );
+	}
+	{
+		Translator<ieeeExtended> trIeeeExtended;
+		BOOST_CHECK_CLOSE( trIeeeExtended.translate( dataIeeeExtendedMaxBigEndian, 10, true ), std::numeric_limits<ieeeExtended>::max(), 0.001 );
+	}
+	{
+		Translator<ieeeExtended> trIeeeExtended;
+		BOOST_CHECK_CLOSE( trIeeeExtended.translate( dataIeeeExtendedNegMaxBigEndian, 10, true ), -std::numeric_limits<ieeeExtended>::max(), 0.001 );
+	}
+	{
+		Translator<ieeeExtended> trIeeeExtended;
+		BOOST_CHECK_CLOSE( trIeeeExtended.translate( dataIeeeExtendedMinBigEndian, 10, true ), std::numeric_limits<ieeeExtended>::min(), 0.001 );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( translator_ieeeExtended_le )
+{
+	{
+		Translator<ieeeExtended> trIeeeExtended;
+		BOOST_CHECK_EQUAL( trIeeeExtended.translate( dataIeeeExtendedZero, 10, false ), 0 );
+	}
+	{
+		Translator<ieeeExtended> trIeeeExtended;
+		BOOST_CHECK_EQUAL( trIeeeExtended.translate( dataIeeeExtendedOneLittleEndian, 10, false ), 1 );
+	}
+	{
+		Translator<ieeeExtended> trIeeeExtended;
+		BOOST_CHECK_CLOSE( trIeeeExtended.translate( dataIeeeExtendedMaxLittleEndian, 10, false ), std::numeric_limits<ieeeExtended>::max(), 0.001 );
+	}
+	{
+		Translator<ieeeExtended> trIeeeExtended;
+		BOOST_CHECK_CLOSE( trIeeeExtended.translate( dataIeeeExtendedNegMaxLittleEndian, 10, false ), -std::numeric_limits<ieeeExtended>::max(), 0.001 );
+	}
+	{
+		Translator<ieeeExtended> trIeeeExtended;
+		BOOST_CHECK_CLOSE( trIeeeExtended.translate( dataIeeeExtendedMinLittleEndian, 10, false ), std::numeric_limits<ieeeExtended>::min(), 0.001 );
+	}
+}
+
 BOOST_AUTO_TEST_CASE( translator_translate_to_string )
 {
 	{
@@ -396,7 +458,12 @@ BOOST_AUTO_TEST_CASE( translator_translate_to_string )
 		double doubleValue = 1.23e+305;
 		BOOST_CHECK_EQUAL( trDouble.translate( doubleValue ), "1.23e+305" );
 	}
-}
 
+	{
+		Translator<ieeeExtended> trIeeeExtended;
+		ieeeExtended ieeeExtendedValue = 1.23e+305;
+		BOOST_CHECK_EQUAL( trIeeeExtended.translate( ieeeExtendedValue ), "1.23e+305" );
+	}
+}
 
 BOOST_AUTO_TEST_SUITE_END()

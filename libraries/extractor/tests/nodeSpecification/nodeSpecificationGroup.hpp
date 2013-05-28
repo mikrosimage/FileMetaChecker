@@ -282,9 +282,9 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_repetition0rderedGroupTestFile2 )
 {
 	Hexa hexa1, hexa2, hexa3;
 	
-	hexa1.value = "ffd8";
-	hexa2.value = "abcd";
-	hexa3.value = "1234";
+	hexa1.originalCaseValue = "ffd8";
+	hexa2.originalCaseValue = "abcd";
+	hexa3.originalCaseValue = "1234";
 
 	const std::string nodename = "hexaTest";
 	bpt::ptree node;
@@ -594,9 +594,9 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_repetitionUnorderedGroupTestFile2 )
 {
 	Hexa hexa1, hexa2, hexa3;
 	
-	hexa1.value = "ffd8";
-	hexa2.value = "abcd";
-	hexa3.value = "1234";
+	hexa1.originalCaseValue = "ffd8";
+	hexa2.originalCaseValue = "abcd";
+	hexa3.originalCaseValue = "1234";
 
 	const std::string nodename = "hexaTest";
 	bpt::ptree node;
@@ -1041,11 +1041,11 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_recursiveRepetitionUnorderedGroupTestFil
 {
 	Hexa hexa1, hexa2, hexa3, hexa4, hexa5;
 	
-	hexa1.value = "ffd8";
-	hexa2.value = "abcd";
-	hexa3.value = "1234";
-	hexa4.value = "ef01";
-	hexa5.value = "1010";
+	hexa1.originalCaseValue = "ffd8";
+	hexa2.originalCaseValue = "abcd";
+	hexa3.originalCaseValue = "1234";
+	hexa4.originalCaseValue = "ef01";
+	hexa5.originalCaseValue = "1010";
 
 	const std::string nodename = "hexaTest";
 	bpt::ptree node;
@@ -1130,8 +1130,8 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_recursiveRepetitionUnorderedGroupTestFil
 {
 	Hexa hexa1, hexa2;
 	
-	hexa1.value = "1234";
-	hexa2.value = "abcd";
+	hexa1.originalCaseValue = "1234";
+	hexa2.originalCaseValue = "abcd";
 	
 
 	const std::string nodename = "hexaTest";
@@ -1216,8 +1216,8 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_error_GroupTestFile )
 {
 	Hexa hexa1, hexa2;
 	
-	hexa1.value = "1234";
-	hexa2.value = "abcd";
+	hexa1.originalCaseValue = "1234";
+	hexa2.originalCaseValue = "abcd";
 	
 
 	const std::string nodename = "hexaTest";

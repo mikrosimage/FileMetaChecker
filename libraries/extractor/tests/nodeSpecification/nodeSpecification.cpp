@@ -32,11 +32,11 @@ boost::shared_ptr<common::Color>                 color( common::Color::get() );
 
 std::ostream& operator<<( std::ostream& ofs, const Hexa hexaValue )
 {
-	for( size_t index = 0; index < hexaValue.value.size(); index += 2 )
+	for( size_t index = 0; index < hexaValue.originalCaseValue.size(); index += 2 )
 	{
 		std::stringstream str;
 		int value;
-		str << hexaValue.value.substr( index, 2 );
+		str << hexaValue.originalCaseValue.substr( index, 2 );
 		str >> std::hex >> value;
 		ofs << (unsigned char)value;
 	}
@@ -90,20 +90,20 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_genericFailedTest )
 	Hexa hexa;
 	{
 		std::ofstream stream( testFile.c_str(), std::ofstream::out );
-		hexa.value = "ffd8";
+		hexa.originalCaseValue = "ffd8";
 		stream << hexa;
 		stream.close();
 		
 		bpt::ptree node;
 		node.put( "label", "No Id Test" );
-		node.put( "hexa", hexa.value );
+		node.put( "hexa", hexa.originalCaseValue );
 		// COMMON_COUT( ">>> No id test (hexa value)" );
 
 		BOOST_CHECK_THROW( generateReportTree( node ), bpt::ptree_bad_path );
 	}
 	{
 		std::ofstream stream( testFile.c_str(), std::ofstream::out );
-		hexa.value = "00";
+		hexa.originalCaseValue = "00";
 		stream.close();
 
 		bpt::ptree node;

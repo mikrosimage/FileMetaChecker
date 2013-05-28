@@ -5,10 +5,10 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_hexaTestFile )
 	Hexa hexa;
 	bpt::ptree node;
 	
-	hexa.value = "ffd8";
+	hexa.originalCaseValue = "ffd8";
 	node.put( "id", "hexaTest" );
 	node.put( "label", "Hexa Test" );
-	node.put( "hexa", hexa.value );
+	node.put( "hexa", hexa.originalCaseValue );
 
 	{
 		std::ofstream stream( testFile.c_str(), std::ofstream::out );
@@ -18,11 +18,11 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_hexaTestFile )
 		bpt::ptree report = generateReportTree( node );
 
 		CHECK_NODE_VALID ( "hexaTest" );
-		CHECK_VALUE_EQUAL( "hexaTest", hexa.value );
+		CHECK_VALUE_EQUAL( "hexaTest", hexa.originalCaseValue );
 	}
 	{
 		std::ofstream stream( testFile.c_str(), std::ofstream::out );
-		hexa.value = "FFD8";
+		hexa.originalCaseValue = "FFD8";
 		stream << hexa;
 		stream.close();
 
@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_hexaTestFile )
 	}
 	{
 		std::ofstream stream( testFile.c_str(), std::ofstream::out );
-		hexa.value = "abcd";
+		hexa.originalCaseValue = "abcd";
 		stream << hexa;
 		stream.close();
 
@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_hexaTestFile )
 	}
 	{
 		std::ofstream stream( testFile.c_str(), std::ofstream::out );
-		hexa.value = "ffd8";
+		hexa.originalCaseValue = "ffd8";
 		stream << hexa;
 		stream.close();
 
@@ -55,21 +55,21 @@ BOOST_AUTO_TEST_CASE( nodeSpecification_hexaTestFile )
 	}
 	{
 		std::ofstream stream( testFile.c_str(), std::ofstream::out );
-		hexa.value = "ffd8";
+		hexa.originalCaseValue = "ffd8";
 		stream << hexa;
 		stream.close();
 
 		node.clear();
 		node.put( "id", "hexaMultipleTest" );
 		node.put( "label", "Hexa Multiple Test" );
-		node.put( "hexa.", hexa.value );
+		node.put( "hexa.", hexa.originalCaseValue );
 		
 		node.add( "hexa.", "ffe0" );
 
 		bpt::ptree report = generateReportTree( node );
 
 		CHECK_NODE_VALID ( "hexaMultipleTest" );
-		CHECK_VALUE_EQUAL( "hexaMultipleTest", hexa.value );
+		CHECK_VALUE_EQUAL( "hexaMultipleTest", hexa.originalCaseValue );
 	}
 }
 
