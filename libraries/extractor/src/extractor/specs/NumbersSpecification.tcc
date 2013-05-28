@@ -72,6 +72,12 @@ std::string getStringForType<double>()
 	return "double";
 }
 
+template< >
+std::string getStringForType< ieeeExtended >()
+{
+	return "ieeeExtended";
+}
+
 template< typename NumberType >
 bool getRange( SubSpec& subSpec, const NumberType value )
 {
@@ -183,4 +189,28 @@ bool isValidNumber( File* _file, std::string& message, const std::string& type, 
 	return false;
 }
 
+template< >
+bool isValidNumber( File* _file, std::string& message, const std::string& type, const bool isBigEndian, SubSpec& subSpec, ieeeExtended& value, std::string& mapStr )
+{
+	if( type == getStringForType<ieeeExtended>() )
+	{
+		size_t size = 10;
+		char buffer[ size ];
+		Translator<ieeeExtended> tr;
+		std::map< ieeeExtended, std::string > map;
+		
+		_file->readData( buffer, size );
+		value = tr.translate( buffer, size, isBigEndian );
+		mapStr = getMap( subSpec, map, size, isBigEndian, value );
+		message += " = ";
+
+		if( mapStr.empty() )
+			message += getPrintable( value );
+		else
+			message += mapStr + " (" + getPrintable( value ) + ")";
+
+		return getRange( subSpec, value );
+	}
+	return false;
+}
 

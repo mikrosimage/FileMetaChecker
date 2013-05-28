@@ -130,4 +130,19 @@ std::string Translator<uint8>::translate( const uint8 & data )
 	return str.str();
 }
 
+template< >
+ieeeExtended Translator<ieeeExtended>::translate( const char* data, const size_t size, const bool bigEndian )
+{
+	utils::EndiannessConverter<ieeeExtended> endianConv;
+	if( bigEndian )
+	{
+		std::reverse_copy( data, data + size, endianConv.data );
+	}
+	else
+	{
+		std::memcpy( endianConv.data, data, size );
+	}
+	return endianConv.value;
+}
+
 #endif

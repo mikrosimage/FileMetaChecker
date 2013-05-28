@@ -14,6 +14,8 @@ typedef          long long  int64;
 typedef   signed long long  int64;
 typedef unsigned long long uint64;
 
+typedef long double  ieeeExtended;     // 80 bit IEEE Standard 754 floating point
+
 struct Hexa{
 	std::string originalCaseValue;
 	std::string lowCaseValue;
