@@ -263,12 +263,14 @@
                         // {
                         //     "id": "list",
                         //     "label": "Associated data list",
+                        //     "groupSize": "listSize",
                         //     "ordered": false,
                         //     "group": [
                         //         {
                         //             "id": "associatedDataId",
                         //             "label": "Associated data list type id",
                         //             "ascii": "adtl",
+                        //             // "groupSize": "listSize - 4",
                         //             "optional": true,
                         //             "ordered": false,
                         //             "group": [
@@ -297,8 +299,8 @@
                         //                             "id": "lablText",
                         //                             "label": "Label text",
                         //                             "type": "data",
-                        //                             "count": "lablSize - 4",
-                        //                             "displayType": "ascii"
+                        //                             "count": "lablSize - 4"
+                        //                             // "displayType": "ascii"
                         //                         }
                         //                     ]
                         //                 },
@@ -376,9 +378,10 @@
                         //             ]
                         //         },
                         //         {
-                        //             "id": "textInfoId",
+                        //             "id": "infoId",
                         //             "label": "Text Information list type id",
                         //             "ascii": "info",
+                        //             // "groupSize": "listSize - 4",
                         //             "optional": true,
                         //             "ordered": false,
                         //             "group": [
@@ -392,14 +395,14 @@
                         //                         {
                         //                             "id": "iartSize",
                         //                             "label": "Artist Info size",
-                        //                             "type": "uint8",
+                        //                             "type": "uint32",
                         //                             "endian": "little"
                         //                         },
                         //                         {
                         //                             "id": "iartText",
                         //                             "label": "Artist Info text",
                         //                             "type": "data",
-                        //                             "count": "iartSize - 4",
+                        //                             "count": "iartSize",
                         //                             "displayType": "ascii"
                         //                         }
                         //                     ]
@@ -414,14 +417,14 @@
                         //                         {
                         //                             "id": "icmsSize",
                         //                             "label": "Commissioner Info size",
-                        //                             "type": "uint8",
+                        //                             "type": "uint32",
                         //                             "endian": "little"
                         //                         },
                         //                         {
                         //                             "id": "icmsText",
                         //                             "label": "Commissioner Info text",
                         //                             "type": "data",
-                        //                             "count": "icmsSize - 4",
+                        //                             "count": "icmsSize",
                         //                             "displayType": "ascii"
                         //                         }
                         //                     ]
@@ -436,14 +439,14 @@
                         //                         {
                         //                             "id": "icmtSize",
                         //                             "label": "Comments Info size",
-                        //                             "type": "uint8",
+                        //                             "type": "uint32",
                         //                             "endian": "little"
                         //                         },
                         //                         {
                         //                             "id": "icmtText",
                         //                             "label": "Comments Info text",
                         //                             "type": "data",
-                        //                             "count": "icmtSize - 4",
+                        //                             "count": "icmtSize",
                         //                             "displayType": "ascii"
                         //                         }
                         //                     ]
@@ -458,14 +461,14 @@
                         //                         {
                         //                             "id": "icopSize",
                         //                             "label": "Copyright Info size",
-                        //                             "type": "uint8",
+                        //                             "type": "uint32",
                         //                             "endian": "little"
                         //                         },
                         //                         {
                         //                             "id": "icopText",
                         //                             "label": "Copyright Info text",
                         //                             "type": "data",
-                        //                             "count": "icopSize - 4",
+                        //                             "count": "icopSize",
                         //                             "displayType": "ascii"
                         //                         }
                         //                     ]
@@ -480,14 +483,14 @@
                         //                         {
                         //                             "id": "icrdSize",
                         //                             "label": "Creation Date Info size",
-                        //                             "type": "uint8",
+                        //                             "type": "uint32",
                         //                             "endian": "little"
                         //                         },
                         //                         {
                         //                             "id": "icrdText",
                         //                             "label": "Creation Date Info text",
                         //                             "type": "data",
-                        //                             "count": "icrdSize - 4",
+                        //                             "count": "icrdSize",
                         //                             "displayType": "ascii"
                         //                         }
                         //                     ]
@@ -502,14 +505,14 @@
                         //                         {
                         //                             "id": "iengSize",
                         //                             "label": "Engineer Info size",
-                        //                             "type": "uint8",
+                        //                             "type": "uint32",
                         //                             "endian": "little"
                         //                         },
                         //                         {
                         //                             "id": "iengText",
                         //                             "label": "Engineer Info text",
                         //                             "type": "data",
-                        //                             "count": "iengSize - 4",
+                        //                             "count": "iengSize",
                         //                             "displayType": "ascii"
                         //                         }
                         //                     ]
@@ -524,14 +527,14 @@
                         //                         {
                         //                             "id": "ignrSize",
                         //                             "label": "Genre Info size",
-                        //                             "type": "uint8",
+                        //                             "type": "uint32",
                         //                             "endian": "little"
                         //                         },
                         //                         {
                         //                             "id": "ignrText",
                         //                             "label": "Genre Info text",
                         //                             "type": "data",
-                        //                             "count": "ignrSize - 4",
+                        //                             "count": "ignrSize",
                         //                             "displayType": "ascii"
                         //                         }
                         //                     ]
@@ -546,14 +549,14 @@
                         //                         {
                         //                             "id": "ikeySize",
                         //                             "label": "Keywords Info size",
-                        //                             "type": "uint8",
+                        //                             "type": "uint32",
                         //                             "endian": "little"
                         //                         },
                         //                         {
                         //                             "id": "ikeyText",
                         //                             "label": "Keywords Info text",
                         //                             "type": "data",
-                        //                             "count": "ikeySize - 4",
+                        //                             "count": "ikeySize",
                         //                             "displayType": "ascii"
                         //                         }
                         //                     ]
@@ -568,14 +571,14 @@
                         //                         {
                         //                             "id": "imedSize",
                         //                             "label": "Medium Info size",
-                        //                             "type": "uint8",
+                        //                             "type": "uint32",
                         //                             "endian": "little"
                         //                         },
                         //                         {
                         //                             "id": "imedText",
                         //                             "label": "Medium Info text",
                         //                             "type": "data",
-                        //                             "count": "imedSize - 4",
+                        //                             "count": "imedSize",
                         //                             "displayType": "ascii"
                         //                         }
                         //                     ]
@@ -590,14 +593,14 @@
                         //                         {
                         //                             "id": "inamSize",
                         //                             "label": "Title Info size",
-                        //                             "type": "uint8",
+                        //                             "type": "uint32",
                         //                             "endian": "little"
                         //                         },
                         //                         {
                         //                             "id": "inamText",
                         //                             "label": "Title Info text",
                         //                             "type": "data",
-                        //                             "count": "inamSize - 4",
+                        //                             "count": "inamSize",
                         //                             "displayType": "ascii"
                         //                         }
                         //                     ]
@@ -612,14 +615,14 @@
                         //                         {
                         //                             "id": "iprdSize",
                         //                             "label": "Original Title Info size",
-                        //                             "type": "uint8",
+                        //                             "type": "uint32",
                         //                             "endian": "little"
                         //                         },
                         //                         {
                         //                             "id": "iprdText",
                         //                             "label": "Original Title Info text",
                         //                             "type": "data",
-                        //                             "count": "iprdSize - 4",
+                        //                             "count": "iprdSize",
                         //                             "displayType": "ascii"
                         //                         }
                         //                     ]
@@ -634,14 +637,14 @@
                         //                         {
                         //                             "id": "isbjSize",
                         //                             "label": "Subject Info size",
-                        //                             "type": "uint8",
+                        //                             "type": "uint32",
                         //                             "endian": "little"
                         //                         },
                         //                         {
                         //                             "id": "isbjText",
                         //                             "label": "Subject Info text",
                         //                             "type": "data",
-                        //                             "count": "isbjSize - 4",
+                        //                             "count": "isbjSize",
                         //                             "displayType": "ascii"
                         //                         }
                         //                     ]
@@ -656,14 +659,14 @@
                         //                         {
                         //                             "id": "isftSize",
                         //                             "label": "Software Info size",
-                        //                             "type": "uint8",
+                        //                             "type": "uint32",
                         //                             "endian": "little"
                         //                         },
                         //                         {
                         //                             "id": "isftText",
                         //                             "label": "Software Info text",
                         //                             "type": "data",
-                        //                             "count": "isftSize - 4",
+                        //                             "count": "isftSize",
                         //                             "displayType": "ascii"
                         //                         }
                         //                     ]
@@ -678,14 +681,14 @@
                         //                         {
                         //                             "id": "isrcSize",
                         //                             "label": "Source Info size",
-                        //                             "type": "uint8",
+                        //                             "type": "uint32",
                         //                             "endian": "little"
                         //                         },
                         //                         {
                         //                             "id": "isrcText",
                         //                             "label": "Source Info text",
                         //                             "type": "data",
-                        //                             "count": "isrcSize - 4",
+                        //                             "count": "isrcSize",
                         //                             "displayType": "ascii"
                         //                         }
                         //                     ]
@@ -700,14 +703,14 @@
                         //                         {
                         //                             "id": "isrfSize",
                         //                             "label": "Source Form Info size",
-                        //                             "type": "uint8",
+                        //                             "type": "uint32",
                         //                             "endian": "little"
                         //                         },
                         //                         {
                         //                             "id": "isrfText",
                         //                             "label": "Source Form Info text",
                         //                             "type": "data",
-                        //                             "count": "isrfSize - 4",
+                        //                             "count": "isrfSize",
                         //                             "displayType": "ascii"
                         //                         }
                         //                     ]
@@ -722,14 +725,14 @@
                         //                         {
                         //                             "id": "itchSize",
                         //                             "label": "Technician Info size",
-                        //                             "type": "uint8",
+                        //                             "type": "uint32",
                         //                             "endian": "little"
                         //                         },
                         //                         {
                         //                             "id": "itchText",
                         //                             "label": "Technician Info text",
                         //                             "type": "data",
-                        //                             "count": "itchSize - 4",
+                        //                             "count": "itchSize",
                         //                             "displayType": "ascii"
                         //                         }
                         //                     ]
@@ -743,7 +746,7 @@
                             "id": "labelsAndNamesList",
                             "label": "Text labels and names list",
                             "type": "data",
-                            "count": "listSize - 4",
+                            "count": "listSize",
                             "displayType": "ascii"
                         }
                     ]
