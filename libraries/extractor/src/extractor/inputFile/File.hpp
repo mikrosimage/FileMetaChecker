@@ -60,6 +60,8 @@ public:
 
 	bool endOfFile( )
 	{
+		if( getPosition() == -1 )
+			return true;
 		return _file.eof();
 	}
 

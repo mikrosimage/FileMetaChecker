@@ -5,7 +5,7 @@
 
 #include <boost/foreach.hpp>
 
-static const std::string kRoot = "root";
+static const std::string kRoot = "fileValidator";
 
 Report::Report()
 {

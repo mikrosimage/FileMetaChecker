@@ -150,7 +150,7 @@ bool NodeSpecification::isValidUnorderedGroup( SubSpec& subSpec, GroupProperties
 	}
 	while( oneNodeIsValid && !_file->endOfFile() );
 
-	if( i == 1)
+	if( i == 1 && !_file->endOfFile() )
 	{
 		groupIsValid = false;
 		LOG_ERROR( "None is valid" );
@@ -486,6 +486,13 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 							}
 							nodeReport.put_value( data.originalCaseValue );
 						}
+
+						for( size_t i=0; i < data.originalCaseValue.size(); i++ )
+						{
+							if( (char)data.originalCaseValue.at(i) == 0 )
+								nodeReport.put_value( "[...]" );
+						}
+						
 						// LOG_INFO( "Data : " << data.originalCaseValue );
 					}
 					else
@@ -554,7 +561,7 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 					padding = 1;
 					_file->goForward( padding );
 				}
-
+				
 				if( groupProperties.getSize() < gSize )
 				{
 					LOG_WARNING( gSize << " - " << groupProperties.getSize() << " = " << gSize - groupProperties.getSize() << " unused bytes" );
@@ -565,6 +572,10 @@ bool NodeSpecification::isValid( SubSpec& subSpec, GroupProperties& parentProper
 					LOG_ERROR( groupProperties.getSize() << " - " << gSize << " = " << groupProperties.getSize() - gSize << " bytes difference" );
 				}
 				parentProperties.addSize( groupProperties.getSize() + padding );
+				// LOG_INFO( " @ File : " << std::hex << _file->getPosition() );
+				// LOG_INFO( " ~ " << id << " : gSize                      : " << gSize );
+				// LOG_INFO( " + " << id << " : groupProperties.getSize()  : " << groupProperties.getSize() );
+				// LOG_INFO( " ¤ " << id << " : parentProperties.getSize() : " << parentProperties.getSize() );
 			}
 		}
 

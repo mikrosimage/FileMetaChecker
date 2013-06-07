@@ -56,14 +56,15 @@ void FileSystemInfo::getReport( Report* report )
 	bpt::ptree fileSystemInfoReport;
 	bpt::ptree nodeReport;
 
-	nodeReport.put_value( getFilename() );
-	nodeReport.put( "<xmlattr>.label", "Filename" );
-	fileSystemInfoReport.push_back( bpt::ptree::value_type( "filename", nodeReport ));
 
 	nodeReport.put_value( getAbsoluteFilename() );
 	nodeReport.put( "<xmlattr>.label", "Path" );
 	fileSystemInfoReport.push_back( bpt::ptree::value_type( "absolutePath", nodeReport ));
 
+	nodeReport.put_value( getFilename() );
+	nodeReport.put( "<xmlattr>.label", "Filename" );
+	fileSystemInfoReport.push_back( bpt::ptree::value_type( "filename", nodeReport ));
+	
 	nodeReport.put_value( getExt() );
 	nodeReport.put( "<xmlattr>.label", "Extension" );
 	fileSystemInfoReport.push_back( bpt::ptree::value_type( "extension", nodeReport ));
@@ -76,6 +77,11 @@ void FileSystemInfo::getReport( Report* report )
 	nodeReport.put( "<xmlattr>.label", "Last Modification" );
 	fileSystemInfoReport.push_back( bpt::ptree::value_type( "lastModifDate", nodeReport ));
 
+	nodeReport.clear();
+	nodeReport.put_value( getFileStatus() );
+	nodeReport.put( "<xmlattr>.label", "Status" );
+	fileSystemInfoReport.put( "<xmlattr>.label", "File System Info" );
+	fileSystemInfoReport.push_back( bpt::ptree::value_type( "status", nodeReport ));
 	
 	nodeReport.clear();
 	nodeReport.put( "<xmlattr>.label", "Rights" );
@@ -101,23 +107,20 @@ void FileSystemInfo::getReport( Report* report )
 	nodeReport.push_back( bpt::ptree::value_type( others, userPermNode ));
 	fileSystemInfoReport.push_back( bpt::ptree::value_type( perm, nodeReport ));
 
-	nodeReport.clear();
-	nodeReport.put_value( getFileStatus() );
-	nodeReport.put( "<xmlattr>.label", "Status" );
-	fileSystemInfoReport.put( "<xmlattr>.label", "File System Info" );
-	fileSystemInfoReport.push_back( bpt::ptree::value_type( "status", nodeReport ));
 
 	report->add( fileSystemInfoReport, si );
 }
 
 std::string FileSystemInfo::getFilename() const
 {
-	return _filePath.stem().string();
+	std::string filenameStr = _filePath.stem().string();
+	filenameStr.append( _filePath.extension().string() );
+	return filenameStr;
 }
 
 std::string FileSystemInfo::getAbsoluteFilename() const
 {
-	return absolute( _filePath ).string();
+	return canonical( _filePath ).string();
 }
 
 std::string FileSystemInfo::getExt() const
