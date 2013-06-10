@@ -7,7 +7,7 @@ class XmlToLatex():
 		self.lw      = LatexWriter()
 
 	def setReportDocument( self, filename, QCversion, logoPath ):
-		self.lw.setDocumentClass( "report", "12pt, a4paper" )
+		self.lw.setDocumentClass( "report", "11pt, a4paper" )
 		self.lw.addSimpleLineBreak()
 
 		self.lw.addPackage( "xcolor",            "usenames,dvipsnames,table" )

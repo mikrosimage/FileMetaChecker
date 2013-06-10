@@ -14,7 +14,7 @@ levelAttr      = "level"
 
 colors = [ "blue", "red", "green", "orange", "black" ]
 
-stringMaxLength = 30
+stringMaxLength = 40
 
 SUFFIXES = {1000: ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
             1024: ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']}
@@ -76,6 +76,13 @@ def checkStringLineBreak( string, maxLength ):
 		for i in range( 0, len(lineList) ) :
 			if len( lineList[i] ) > 0 :
 				lineList[i] = checkStringLength( lineList[i], maxLength )
+			# print "'" + lineList[i] + "' " + str( len(lineList[i]) )
+		# print lineList
+		# print " |---> " + str( len(lineList) )
+
+		for j in range( len(lineList), 0, -1 ) :
+			if len(lineList[j-1]) == 0 :
+				lineList.pop( j-1 )
 		string = " \\\\ ".join( lineList );
 		# print " --- > Line Break : " + string
 	return string;
@@ -99,6 +106,9 @@ def checkStringLength( string, maxLength ):
 				else:
 					substrList.append( previousWords )
 					substrList.append( wordList[i] )
+			for j in range( len(substrList), 0, -1 ) :
+				if len(substrList[j-1]) == 0 :
+					substrList.pop( j-1 )
 			string = " \\\\ ".join( substrList );
 			# print " --- > Length & Space : " + string
 
