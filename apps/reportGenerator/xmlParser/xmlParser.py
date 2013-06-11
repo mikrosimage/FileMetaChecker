@@ -1,3 +1,5 @@
+import os
+
 from xml.dom.ext import StripXml
 from xml.dom.ext.reader import Sax2
 
@@ -8,11 +10,11 @@ class XmlParser():
 	def __init__( self ):
 		self.root = None
 		self.sections = []
-		self.filename = ""
+		self.xmlFilename = ""
 
 	def parseXml( self, xmlFile ):
-		self.filename = xmlFile
-		file = open( self.filename )
+		file = open( xmlFile )
+		self.xmlFilename = os.path.basename( xmlFile )
 		xmlStream = file.read()
 		file.close()
 
@@ -24,20 +26,34 @@ class XmlParser():
 		if self.root.childNodes is not None :
 			# get xml sections
 			for child in self.root.childNodes :
-				if child.tagName == fileSystemInfo :
-					section = FileSystemInfoSection( child.getAttribute( labelAttr ) )
-					section.status = child.getAttribute( statusAttr )
-				elif child.tagName == specification :
-					section = SpecificationSection( child.getAttribute( labelAttr ) )
-					section.status = child.getAttribute( statusAttr )
-				else :
-					section = Section( child.tagName )
-					section.status = child.getAttribute( statusAttr )
-				self.sections.append( section )
-				# get xml elements (tagName)
-				if child.childNodes is not None :
+				if child.tagName == "fileValidator" :
 					for subChild in child.childNodes:
-						section.fields.append( subChild )
+						if subChild.tagName == fileSystemInfo :
+							section = FileSystemInfoSection( subChild.getAttribute( labelAttr ) )
+							section.status = subChild.getAttribute( statusAttr )
+						elif subChild.tagName == specification :
+							section = SpecificationSection( subChild.getAttribute( labelAttr ) )
+							section.status = subChild.getAttribute( statusAttr )
+						else :
+							section = Section( subChild.tagName )
+							section.status = subChild.getAttribute( statusAttr )
+						self.sections.append( section )
+						# get xml elements (tagName)
+						section.getAvailableFields( subChild )
+						if subChild.childNodes is not None :
+							for element in subChild.childNodes:
+								section.fields.append( element )
+				
+				if child.tagName == "loudness" :
+					for subChild in child.childNodes:
+						section = LoudnessSection( subChild.getAttribute( "standard" ) )
+						section.status = subChild.getAttribute( statusAttr )
+						self.sections.append( section )
+						# get xml elements (tagName)
+						if subChild.childNodes is not None :
+							for element in subChild.childNodes:
+								section.fields.append( element )
+						
 
 	def displaySections( self ):
 		for section in self.sections:
@@ -45,6 +61,6 @@ class XmlParser():
 	
 	def removeField( self, fieldTagName ):
 		for section in self.sections:
-			for field in section.fields:
+			for field in section.availableFields:
 				if field.tagName == fieldTagName:
-					section.fields.remove(field)
+					section.forbiddenFields.append( field )

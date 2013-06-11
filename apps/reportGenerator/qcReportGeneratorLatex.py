@@ -6,33 +6,41 @@ from optparse import OptionParser
 
 ######  OPTIONS  ######
 optionParser = OptionParser()
-optionParser.add_option(	"-f", "--file",
-					type="string",
-					dest="filename",
-					action="append",
-					help="generate Latex from XML QC report file",
-					metavar="FILE"	)
+optionParser.add_option(
+	"-f", "--file",
+	type    = "string",
+	dest    = "filename",
+	action  = "append",
+	help    = "generate Latex from XML QC report file",
+	metavar = "FILE"
+	)
 
-optionParser.add_option(	"-l", "--list",
-					type="string",
-					dest="fieldsfile",
-					action="append",
-					help="display all available fields",
-					metavar="FILE"	)
+optionParser.add_option(
+	"-l", "--list",
+	type    = "string",
+	dest    = "fieldsfile",
+	action  = "append",
+	help    = "display all available fields",
+	metavar = "FILE"
+	)
 
-optionParser.add_option(	"-c", "--choice",
-					type="string",
-					dest="fieldsToRemove",
-					action="append",
-					help="list of fields to remove from the PDF output file",
-					metavar="FIELDS"	)
+optionParser.add_option(
+	"-c", "--choice",
+	type    = "string",
+	dest    = "fieldsToRemove",
+	action  = "append",
+	help    = "list of fields to remove from the PDF output file",
+	metavar = "FIELDS"
+	)
 
-optionParser.add_option(	"-o", "--output",
-					type="string",
-					dest="outputFile",
-					action="store",
-					help="output Latex filename",
-					metavar="OUTPUT"	)
+optionParser.add_option(
+	"-o", "--output",
+	type    = "string",
+	dest    = "outputFile",
+	action  = "store",
+	help    = "output Latex filename",
+	metavar = "OUTPUT"
+	)
 
 (options, args) = optionParser.parse_args()
 # print options
