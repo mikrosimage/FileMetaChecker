@@ -18,7 +18,7 @@ optionParser.add_option(
 optionParser.add_option(
 	"-l", "--list",
 	type    = "string",
-	dest    = "fieldsfile",
+	dest    = "fieldListFile",
 	action  = "append",
 	help    = "display all available fields",
 	metavar = "FILE"
@@ -48,21 +48,22 @@ optionParser.add_option(
 parser = XmlParser()
 
 ######  List of Fields  ######
-if options.fieldsfile :
+if options.fieldListFile :
 	for arg in args:
-		options.fieldsfile.append( arg )
-	for fieldsfile in options.fieldsfile :
-		parser.parseXml( fieldsfile )
+		options.fieldListFile.append( arg )
+
+	for fieldListFile in options.fieldListFile :
+		parser.parseXml( fieldListFile )
 		if options.fieldsToRemove :
 			for arg in args:
-				options.fieldsfile.append( arg )
+				options.fieldListFile.append( arg )
 			for field in options.fieldsToRemove :
 				parser.removeField( field )
 		parser.displaySections()
 
 
 ######  Display Help  ######
-if len( args ) == 0 and options.filename == None and options.fieldsfile == None:
+if len( args ) == 0 and options.filename == None and options.fieldListFile == None:
 	optionParser.print_help()
 	sys.exit()
 
@@ -74,8 +75,9 @@ if options.filename:
 		if options.outputFile :
 			outputFile = options.outputFile
 		else:
-			outputFile = inputFile.replace( "-merged.xml", ".tex" )
-		print ">>> Output PDF filename : '" + outputFile
+			outputFile = inputFile.replace( "-merged", "" )
+			outputFile = outputFile.replace( ".xml", ".tex" )
+		print ">>> Output PDF filename : " + outputFile
 
 		parser.parseXml( inputFile )
 		if options.fieldsToRemove :

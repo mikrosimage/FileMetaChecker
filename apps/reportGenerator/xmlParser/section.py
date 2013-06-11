@@ -11,36 +11,58 @@ class Section():
 		self.dataStatus      = []
 
 	def displayFields( self ):
-		print self.title + " :"
+		print self.title
 		for field in self.fields:
-			if self.forbiddenFields.count( field ) == 0 :
-				print "\t" + field.tagName
-				if field.childNodes != None and len( field.childNodes ) > 1 :
-					for child in field.childNodes :
-						if child.nodeType == 1 and self.forbiddenFields.count( child ) == 0 :
-							print "\t\t" + child.tagName
-							if child.childNodes != None and len( child.childNodes ) > 1 :
-								for subchild in child.childNodes :
-									if subchild.nodeType == 1 and self.forbiddenFields.count( subchild ) == 0 :
-										print "\t\t\t" + subchild.tagName
+			# if self.forbiddenFields.count( field ) == 0 :
+			if self.forbiddenFields.count( field ) != 0 or field.nodeType == 3:
+				continue;
+			print "\t" + field.tagName
+			if field.childNodes == None or len( field.childNodes ) <= 1 :
+				continue;
+
+			for child in field.childNodes :
+				if child.nodeType != 1 or self.forbiddenFields.count( child ) != 0 :
+					continue;
+				print "\t\t" + child.tagName
+				if child.childNodes == None or len( child.childNodes ) <= 1 :
+					continue;
+
+				for subchild in child.childNodes :
+					if subchild.nodeType != 1 or self.forbiddenFields.count( subchild ) != 0 :
+						continue;
+					print "\t\t\t" + subchild.tagName
+
 
 	def getAvailableFields( self, root ):
-		if root.childNodes != None and len( root.childNodes ) > 1 :
-			for child in root.childNodes :
-				if child.nodeType == 1 :
-					self.availableFields.append( child )
-					if child.childNodes != None and len( child.childNodes ) > 1 :
-						for subchild in root.childNodes :
-							if subchild.nodeType == 1 :
-								self.availableFields.append( subchild )
-								if subchild.childNodes != None and len( subchild.childNodes ) > 1 :
-									for subsubchild in subchild.childNodes :
-										if subsubchild.nodeType == 1 :
-											self.availableFields.append( subsubchild )
-											if subsubchild.childNodes != None and len( subsubchild.childNodes ) > 1 :
-												for subsubsubchild in subsubchild.childNodes :
-													if subsubsubchild.nodeType == 1 :
-														self.availableFields.append( subsubsubchild )
+		if root.childNodes == None and len( root.childNodes ) <= 1 :
+			return;
+
+		for child in root.childNodes :
+			if child.nodeType != 1 :
+				continue;
+			self.availableFields.append( child )
+			if child.childNodes == None and len( child.childNodes ) <= 1 :
+				continue;
+
+			for subchild in root.childNodes :
+				if subchild.nodeType != 1 :
+					continue;
+				self.availableFields.append( subchild )
+				if subchild.childNodes == None and len( subchild.childNodes ) <= 1 :
+					continue;
+
+				for subsubchild in subchild.childNodes :
+					if subsubchild.nodeType != 1 :
+						continue;
+					self.availableFields.append( subsubchild )
+					if subsubchild.childNodes == None and len( subsubchild.childNodes ) <= 1 :
+						continue;
+
+					for subsubsubchild in subsubchild.childNodes :
+						if subsubsubchild.nodeType != 1 :
+							continue;
+						self.availableFields.append( subsubsubchild )
+
 
 	def getChildValue( self, rootChild ):
 		data = []

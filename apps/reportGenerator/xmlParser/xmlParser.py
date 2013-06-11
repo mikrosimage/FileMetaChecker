@@ -44,7 +44,7 @@ class XmlParser():
 							for element in subChild.childNodes:
 								section.fields.append( element )
 				
-				if child.tagName == "loudness" :
+				elif child.tagName == "loudness" :
 					for subChild in child.childNodes:
 						section = LoudnessSection( subChild.getAttribute( "standard" ) )
 						section.status = subChild.getAttribute( statusAttr )
@@ -53,7 +53,16 @@ class XmlParser():
 						if subChild.childNodes is not None :
 							for element in subChild.childNodes:
 								section.fields.append( element )
+
+				else :
+					for subChild in child.childNodes:
+						section = Section( subChild.getAttribute( labelAttr ) )
+						section.status = subChild.getAttribute( statusAttr )
+						self.sections.append( section )
 						
+						if subChild.childNodes is not None :
+							for element in subChild.childNodes:
+								section.fields.append( element )
 
 	def displaySections( self ):
 		for section in self.sections:

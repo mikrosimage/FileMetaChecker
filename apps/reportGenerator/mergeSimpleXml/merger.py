@@ -43,7 +43,7 @@ def mergeXml( xmlFilesList, finalXmlFilename ):
 
 	if len(list(xmlCombinator)) != 0:
 		finalXml._setroot( xmlCombinator )
-		finalXml.write( finalXmlFilename )
+		finalXml.write( finalXmlFilename, "utf-8", True )
 
 
 if options.fileList :
