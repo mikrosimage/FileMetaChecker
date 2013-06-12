@@ -23,53 +23,58 @@ class XmlParser():
 		StripXml( docTree )
 		self.root = docTree.documentElement
 
-		if self.root.childNodes is not None :
-			# get xml sections
-			for child in self.root.childNodes :
-				if child.tagName == "fileValidator" :
-					for subChild in child.childNodes:
-						if subChild.tagName == fileSystemInfo :
-							section = FileSystemInfoSection( subChild.getAttribute( labelAttr ) )
-							section.status = subChild.getAttribute( statusAttr )
-						elif subChild.tagName == specification :
-							section = SpecificationSection( subChild.getAttribute( labelAttr ) )
-							section.status = subChild.getAttribute( statusAttr )
-						else :
-							section = Section( subChild.tagName )
-							section.status = subChild.getAttribute( statusAttr )
-						self.sections.append( section )
-						# get xml elements (tagName)
-						section.getAvailableFields( subChild )
-						if subChild.childNodes is not None :
-							for element in subChild.childNodes:
-								section.fields.append( element )
-				
-				elif child.tagName == "loudness" :
-					for subChild in child.childNodes:
-						section = LoudnessSection( subChild.getAttribute( "standard" ) )
-						section.status = subChild.getAttribute( statusAttr )
-						self.sections.append( section )
-						# get xml elements (tagName)
-						if subChild.childNodes is not None :
-							for element in subChild.childNodes:
-								section.fields.append( element )
+		if self.root.childNodes is None :
+			return;
 
-				else :
-					for subChild in child.childNodes:
-						section = Section( subChild.getAttribute( labelAttr ) )
+		# get xml sections
+		for child in self.root.childNodes :
+			if child.tagName == "fileValidator" :
+				for subChild in child.childNodes:
+
+					if subChild.tagName == fileSystemInfo :
+						section = FileSystemInfoSection( subChild.getAttribute( labelAttr ) )
 						section.status = subChild.getAttribute( statusAttr )
-						self.sections.append( section )
-						
-						if subChild.childNodes is not None :
-							for element in subChild.childNodes:
-								section.fields.append( element )
+					elif subChild.tagName == specification :
+						section = SpecificationSection( subChild.getAttribute( labelAttr ) )
+						section.status = subChild.getAttribute( statusAttr )
+					else :
+						section = Section( subChild.tagName )
+						section.status = subChild.getAttribute( statusAttr )
+	
+					self.sections.append( section )
+					section.setAvailableFields( subChild )
+					if subChild.childNodes is not None :
+						for element in subChild.childNodes:
+							section.fields.append( element )
+			
+			elif child.tagName == "loudness" :
+				for subChild in child.childNodes:
+					section = LoudnessSection( subChild.getAttribute( "standard" ) )
+					section.status = subChild.getAttribute( statusAttr )
+					
+					self.sections.append( section )
+					section.setAvailableFields( subChild )
+					if subChild.childNodes is not None :
+						for element in subChild.childNodes:
+							section.fields.append( element )
+
+			else :
+				for subChild in child.childNodes:
+					section = Section( subChild.getAttribute( labelAttr ) )
+					section.status = subChild.getAttribute( statusAttr )
+					
+					self.sections.append( section )
+					section.setAvailableFields( subChild )
+					if subChild.childNodes is not None :
+						for element in subChild.childNodes:
+							section.fields.append( element )
 
 	def displaySections( self ):
 		for section in self.sections:
-			section.displayFields()
+			section.displayFields( section.fields )
 	
 	def removeField( self, fieldTagName ):
 		for section in self.sections:
-			for field in section.availableFields:
-				if field.tagName == fieldTagName:
+			for field in section.availableFields :
+				if field.tagName == fieldTagName :
 					section.forbiddenFields.append( field )

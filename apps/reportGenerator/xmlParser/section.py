@@ -4,36 +4,30 @@ class Section():
 	def __init__( self, title="" ):
 		self.title           = title
 		self.fields          = []
-		self.forbiddenFields  = []
+		self.forbiddenFields = []
 		self.availableFields = []
 		self.data            = []
 		self.status          = ""
 		self.dataStatus      = []
 
-	def displayFields( self ):
-		print self.title
-		for field in self.fields:
-			# if self.forbiddenFields.count( field ) == 0 :
-			if self.forbiddenFields.count( field ) != 0 or field.nodeType == 3:
-				continue;
-			print "\t" + field.tagName
-			if field.childNodes == None or len( field.childNodes ) <= 1 :
-				continue;
-
-			for child in field.childNodes :
-				if child.nodeType != 1 or self.forbiddenFields.count( child ) != 0 :
+	def displayFields( self, rootField, level=0 ):
+		if level == 0 :
+			print self.title
+			for field in rootField:
+				if self.forbiddenFields.count( field ) != 0 or field.nodeType == 3:
 					continue;
-				print "\t\t" + child.tagName
-				if child.childNodes == None or len( child.childNodes ) <= 1 :
+				self.displayFields( field, level+1 )
+		else :		
+			print "\t"*level + rootField.tagName
+			if rootField.childNodes == None or len( rootField.childNodes ) <= 1 :
+				return;
+			for field in rootField.childNodes :
+				if field.nodeType != 1 or self.forbiddenFields.count( field ) != 0 :
 					continue;
-
-				for subchild in child.childNodes :
-					if subchild.nodeType != 1 or self.forbiddenFields.count( subchild ) != 0 :
-						continue;
-					print "\t\t\t" + subchild.tagName
+				self.displayFields( field, level+1 )	
 
 
-	def getAvailableFields( self, root ):
+	def setAvailableFields( self, root ):
 		if root.childNodes == None and len( root.childNodes ) <= 1 :
 			return;
 
@@ -43,46 +37,31 @@ class Section():
 			self.availableFields.append( child )
 			if child.childNodes == None and len( child.childNodes ) <= 1 :
 				continue;
-
-			for subchild in root.childNodes :
-				if subchild.nodeType != 1 :
-					continue;
-				self.availableFields.append( subchild )
-				if subchild.childNodes == None and len( subchild.childNodes ) <= 1 :
-					continue;
-
-				for subsubchild in subchild.childNodes :
-					if subsubchild.nodeType != 1 :
-						continue;
-					self.availableFields.append( subsubchild )
-					if subsubchild.childNodes == None and len( subsubchild.childNodes ) <= 1 :
-						continue;
-
-					for subsubsubchild in subsubchild.childNodes :
-						if subsubsubchild.nodeType != 1 :
-							continue;
-						self.availableFields.append( subsubsubchild )
+			self.setAvailableFields( child )
 
 
 	def getChildValue( self, rootChild ):
 		data = []
-		if rootChild.childNodes != None and self.forbiddenFields.count( rootChild ) == 0 :
-			data.append( checkString( rootChild.getAttribute( labelAttr ), stringMaxLength ) )
-			self.dataStatus.append( rootChild.getAttribute( statusAttr ) )
+		if rootChild.childNodes == None or self.forbiddenFields.count( rootChild ) != 0 :
+			return;
 
-			if len( rootChild.childNodes ) == 1 :
-				data.append( checkString( rootChild.childNodes[0].nodeValue, stringMaxLength ) )
-			else :
-				multipleLines = []
-				for child in rootChild.childNodes:
-					if child.childNodes != None and child.nodeValue != None and self.forbiddenFields.count( child ) == 0 :
-						multipleLines.append( child.nodeValue )
-					else:
-						for subChild in child.childNodes:
-							if subChild.childNodes != None and self.forbiddenFields.count( subChild ) == 0 :
-								for values in subChild.childNodes: 
-									multipleLines.append( str( subChild.tagName  ) + " : " + str( values.nodeValue ) )
-				data.append( multipleLines )
+		data.append( checkString( rootChild.getAttribute( labelAttr ), stringMaxLength ) )
+		self.dataStatus.append( rootChild.getAttribute( statusAttr ) )
+		if len( rootChild.childNodes ) == 1 :
+			data.append( checkString( rootChild.childNodes[0].nodeValue, stringMaxLength ) )
+		else :
+			multipleLines = []
+			for child in rootChild.childNodes:
+				if child.childNodes != None and child.nodeValue != None and self.forbiddenFields.count( child ) == 0 :
+					multipleLines.append( child.nodeValue )
+				else:
+					for subChild in child.childNodes:
+						if subChild.childNodes == None or self.forbiddenFields.count( subChild ) != 0 :
+							continue;
+						for values in subChild.childNodes: 
+							multipleLines.append( str( subChild.tagName  ) + " : " + str( values.nodeValue ) )
+			data.append( multipleLines )
+
 		return data
 
 	def setFieldsValues( self ):
@@ -92,58 +71,72 @@ class Section():
 				self.data.append( data ) 
 
 
-
-
 class FileSystemInfoSection( Section ):
 	def getChildValue( self, rootChild ):
 		data = []
-		if self.forbiddenFields.count( rootChild ) == 0 :
-			if rootChild.tagName == permissions :
-				data.append( rootChild.getAttribute( labelAttr ) )
-				self.dataStatus.append( rootChild.getAttribute( statusAttr ) ) 
+		if self.forbiddenFields.count( rootChild ) != 0 :
+			return;
 
-				perms = []
-				for child in rootChild.childNodes:
-					if self.forbiddenFields.count( child ) == 0 :
-						if len( child.childNodes ) > 0 :
-							rights = []
-							rights.append( child.getAttribute( labelAttr ) + " : " )
-							for subChild in child.childNodes:
-								right = ""
-								if self.forbiddenFields.count( subChild ) == 0 :
-									if subChild.childNodes[0].nodeValue == permFalse :
-										right += "\\color{Gray}" + subChild.tagName
-									else :
-										right += subChild.tagName
-								rights.append( right )
-							perms.append( rights )
+		if rootChild.tagName == permissions :
+			data.append( rootChild.getAttribute( labelAttr ) )
+			self.dataStatus.append( rootChild.getAttribute( statusAttr ) ) 
+			perms = []
+
+			for child in rootChild.childNodes:
+				if self.forbiddenFields.count( child ) != 0 :
+					continue;
+
+				if len( child.childNodes ) > 0 :
+					rights = []
+					rights.append( child.getAttribute( labelAttr ) + " : " )
+
+					for subChild in child.childNodes:
+						right = ""
+						if self.forbiddenFields.count( subChild ) != 0 :
+							continue;
+
+						if subChild.childNodes[0].nodeValue == permFalse :
+							right += "\\color{Gray}" + subChild.tagName
 						else :
-							perms.append( "( " + child.data + " )" )
-				data.append( perms )
+							right += subChild.tagName
+						rights.append( right )
+					perms.append( rights )
 
-			elif rootChild.tagName == "absolutePath" :
-				data.append( rootChild.getAttribute( labelAttr ) )
-				self.dataStatus.append( rootChild.getAttribute( statusAttr ) ) 
-				if len( rootChild.childNodes ) == 1 :
-					data.append( checkPathLength( rootChild.childNodes[0].nodeValue, 60 ) )
-
-			elif rootChild.childNodes != None :
-				data.append( rootChild.getAttribute( labelAttr ) )
-				self.dataStatus.append( rootChild.getAttribute( statusAttr ) ) 
-
-				if len( rootChild.childNodes ) == 1 :
-					data.append( checkString( rootChild.childNodes[0].nodeValue, stringMaxLength ) )
 				else :
-					multipleLines = []
-					for child in rootChild.childNodes:
-						if child.childNodes != None and child.nodeValue != None and self.forbiddenFields.count( child ) == 0 :
-							multipleLines.append( child.nodeValue )
-						else:
-							for subChild in child.childNodes:
-								if subChild.childNodes != None and self.forbiddenFields.count( subChild ) == 0 :
-									for values in subChild.childNodes: 
-										multipleLines.append( str( subChild.tagName  ) + " : " + str( values.nodeValue ) )
-					data.append( multipleLines )
+					perms.append( "( " + child.data + " )" )
+			data.append( perms )
+
+		elif rootChild.tagName == "absolutePath" :
+			data.append( rootChild.getAttribute( labelAttr ) )
+			self.dataStatus.append( rootChild.getAttribute( statusAttr ) ) 
+			if len( rootChild.childNodes ) == 1 :
+				data.append( checkPathLength( rootChild.childNodes[0].nodeValue, 60 ) )
+
+		elif rootChild.childNodes == None :
+			return;
+			
+		else :
+			data.append( rootChild.getAttribute( labelAttr ) )
+			self.dataStatus.append( rootChild.getAttribute( statusAttr ) ) 
+
+			if len( rootChild.childNodes ) == 1 :
+				data.append( checkString( rootChild.childNodes[0].nodeValue, stringMaxLength ) )
+			
+			else :
+				multipleLines = []
+			
+				for child in rootChild.childNodes:
+					if child.childNodes != None and child.nodeValue != None and self.forbiddenFields.count( child ) == 0 :
+						multipleLines.append( child.nodeValue )
+					else:
+						for subChild in child.childNodes:
+							if subChild.childNodes == None or self.forbiddenFields.count( subChild ) != 0 :
+								continue;
+							for values in subChild.childNodes: 
+								multipleLines.append( str( subChild.tagName  ) + " : " + str( values.nodeValue ) )
+			
+				data.append( multipleLines )
+
 		return data
 
 
@@ -174,33 +167,28 @@ class SpecificationSection( Section ):
 			# DOCUMENT_TYPE_NODE          =  9, 
 			# NOTATION_NODE               = 10
 			if len( rootChild.childNodes ) == 1 and rootChild.childNodes[0].nodeType == 3 :
-				# print "CASE 1 : " + rootChild.getAttribute( labelAttr )
 				data.append( checkString( rootChild.getAttribute( labelAttr ), stringMaxLength ) )
 				self.dataStatus.append( rootChild.getAttribute( statusAttr ) ) 
 				data.append( checkString( rootChild.childNodes[0].nodeValue, stringMaxLength ) )
 			else :
-				# print "CASE 2 : " + rootChild.getAttribute( labelAttr )
 				self.groupTitle = rootChild.getAttribute( labelAttr )
 				
 				for child in rootChild.childNodes:
-					if child.nodeType != 3 and self.forbiddenFields.count( child ) == 0 :
-						section = Section( child.getAttribute( labelAttr ) + " ( " + child.childNodes[0].nodeValue + " )" )
-						section.status = child.getAttribute( statusAttr )
-						
-						if child.childNodes :
-							for subChild in child.childNodes:
-								# print str(child.tagName) + " : " + str(subChild.nodeType)
-								if  self.forbiddenFields.count( subChild ) == 0 :
-									if subChild.nodeType == 3 and subChild.childNodes :
-										# print "    CASE 2.1 : " + str( subChild )
-										section.title += " (" + checkString( subChild.nodeValue, stringMaxLength ) + ")"
-									# elif subChild.childNodes :
-									elif subChild.nodeType == 1 :
-										# print "    CASE 2.2 : " + str( subChild )
-										section.fields.append( subChild )
-						
-						self.group.append( section )
-				# data.append( " --- " )
+					if child.nodeType == 3 or self.forbiddenFields.count( child ) != 0 :
+						continue;
+					section = Section( child.getAttribute( labelAttr ) + " ( " + child.childNodes[0].nodeValue + " )" )
+					section.status = child.getAttribute( statusAttr )
+					
+					if child.childNodes :
+						for subChild in child.childNodes:
+							if  self.forbiddenFields.count( subChild ) != 0 :
+								continue;
+							if subChild.nodeType == 3 and subChild.childNodes :
+								section.title += " (" + checkString( subChild.nodeValue, stringMaxLength ) + ")"
+							elif subChild.nodeType == 1 :
+								section.fields.append( subChild )
+					
+					self.group.append( section )
 				
 		return data
 
@@ -217,17 +205,18 @@ class LoudnessSection( Section ):
 
 	def getChildValue( self, rootChild ):
 		data = []
-		if rootChild.childNodes != None and self.forbiddenFields.count( rootChild ) == 0 :
-			if len( rootChild.childNodes ) == 1 :
-				if rootChild.tagName == "MaxShortTermValues" or rootChild.tagName == "TruePeakValues" :
-					plot = []
-					plot.append( rootChild.tagName )
-					plot.append( rootChild.childNodes[0].nodeValue.split( ", " ) )
-					self.plots.append( plot )
-				else :
-					self.dataStatus.append( rootChild.getAttribute( statusAttr ) ) 
-					data.append( rootChild.tagName )
-					data.append( checkString( rootChild.childNodes[0].nodeValue, stringMaxLength ) )
+		if rootChild.childNodes == None or self.forbiddenFields.count( rootChild ) != 0 or len( rootChild.childNodes ) != 1 :
+			return;
+
+		if rootChild.tagName == "MaxShortTermValues" or rootChild.tagName == "TruePeakValues" :
+			plot = []
+			plot.append( rootChild.tagName )
+			plot.append( rootChild.childNodes[0].nodeValue.split( ", " ) )
+			self.plots.append( plot )
+		else :
+			self.dataStatus.append( rootChild.getAttribute( statusAttr ) ) 
+			data.append( rootChild.tagName )
+			data.append( checkString( rootChild.childNodes[0].nodeValue, stringMaxLength ) )
 
 		return data
 	
