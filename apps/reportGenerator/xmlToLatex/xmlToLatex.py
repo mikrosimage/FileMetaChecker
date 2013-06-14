@@ -132,158 +132,192 @@ class XmlToLatex():
 
 		return array;
 
+
+
+	def addFileSystemInfoSection( self, section ):
+		section.setFieldsValues()
+		section.data = self.checkSpecialDataCharacters( section.data )
+		
+		fsiTable = LatexTable()
+		# fsiTable.setTitle( section.title )
+		fsiTable.setContent( section.data )
+		fsiTable.setBorders('none')
+		fsiTable.setRowAlignment( 0, 'left')
+		fsiTable.setRowAlignment( 1, 'right', True )
+		fsiTable.setTableAlignment('center')
+
+		self.lw.addTable( fsiTable, False, "0.9\\textwidth" )
+		self.lw.addSimpleCommand( "vspace", "2cm" )
+		self.lw.addSimpleLineBreak()
+
+		# print "\nFileSystemInfoSection : " + section.title
+		# print section.data
+		# print section.dataStatus
+
+
+	def addQualityCheckSummarySection( self, section ):
+		section.setFieldsValues()
+
+		sumLine = []
+		sumLine.append( section.title )
+		if section.status == "valid" :
+			sumLine.append( "\\color{OliveGreen}\\textbf{" + section.status + "}" )
+		else :
+			sumLine.append( "\\color{red}\\textbf{" + section.status + "}" )
+		return sumLine;
+
+		# print section.title
+		# print section.data
+		# print section.dataStatus
+
+
+	def addQualityCheckDetailSection( self, section ):
+		detailTable = LatexTable()
+		detailTableData = []
+		detailTableData.append( ["\\multicolumn{2}{|c|}{\\textbf{" + section.title + "}}"] )
+
+		for pair in section.data :
+			detailTableData.append( pair )
+		for s in range( 0, len( section.group ) ) :
+			section.group[s].setFieldsValues()
+			detailTableData.append( ["\\hline \\multicolumn{2}{|c|}{" + section.group[s].title + ": \\textit{" + section.group[s].status + "}}"] )
+			section.group[s].data = self.checkSpecialDataCharacters( section.group[s].data, True )
+			for pair in section.group[s].data :
+				detailTableData.append( pair )
+			# print section.group[s].data
+			# print section.group[s].dataStatus
+		color = "OliveGreen" if section.status == "valid" or section.status == "not illegal" else "red"
+		status = "\\color{" + color + "}" + section.status
+
+		detailTableData.append( ["\\hline \\multicolumn{2}{|c|}{\\textbf{Status : " + status + "}}"] )
+
+		detailTable.setContent( detailTableData )
+		detailTable.setBorders('closedHeader')
+		detailTable.setRowAlignment( 0, 'p{0.45\\textwidth}')
+		detailTable.setRowAlignment( 1, 'p{0.45\\textwidth}')
+		detailTable.setTableAlignment('center')
+		self.lw.addTable( detailTable, True )
+
+		# print "\nSpecificationSection : " + section.title
+		# print section.data
+		# print detailTableData
+
+	def addLoudnessSection( self, section ):
+		if len( section.data ) == 0 :
+			section.setFieldsValues()
+		
+		loudnessTable = LatexTable()
+		loudnessTableData = []
+		loudnessTableData.append( ["\\multicolumn{2}{c}{\\textbf{" + section.title + "}}"] )
+		for pair in self.dataStatusColor( section.data, section.dataStatus ) :
+			loudnessTableData.append( pair )
+
+		loudnessTable.setContent( loudnessTableData )
+		loudnessTable.setBorders('header')
+		loudnessTable.setRowAlignment( 0, 'left')
+		loudnessTable.setRowAlignment( 1, 'right', True)
+		loudnessTable.setTableAlignment('center')
+		self.lw.addTable( loudnessTable, False, "0.7\\textwidth" )
+
+		graph = LatexGraph( section.title )
+		for j in range( 0, len(section.plots) ) :
+			i = len(section.plots) - (j+1)
+			curve = LatexPlot( section.plots[i][0], section.plots[i][1] )
+			curve.setColor( colors[i] )
+			curve.setCoordinates()
+			curve.setFill( True )
+			curve.setOpacity( 0.5 )
+			graph.addCurve( curve )
+		self.lw.addGraph( graph, "\\textwidth-1.4cm", "time", "level", "s", "dB" )
+		
+		# print "\nLoudnessSection : " + section.title
+		# print section.data
+		# print section.dataStatus
+		# print section.plots
+
+
 	def convert( self, xmlParser ):
 		######     XML     ######
 		if not isinstance( xmlParser, XmlParser ):
 			raise ValueError("request a 'XmlParser' object")
 
-		self.setReportDocument( xmlParser.xmlFilename.replace( "-merged.xml", "" ), "1.0", "imageCheckOK256.png" )
+		if type( os.getenv( "QC_RESOURCES" ) ) is not str :
+			raise ValueError( "You must define the 'QC_RESOURCES' macro" )
+
+		logoPath = os.getenv( "QC_RESOURCES" ) + "imageCheckOK256.png"
+		
+		title = xmlParser.xmlFilename.replace( "-merged.xml", "" )
+		if title == xmlParser.xmlFilename :
+			title = xmlParser.xmlFilename.replace( "-audio.xml", "" )
+
+		self.setReportDocument( title, "1.0", logoPath )
 		
 		self.lw.beginDocument()
 		self.lw.addMacro( "maketitle" )
 		self.lw.addSimpleLineBreak()
 		
-		######   FileSystemInfoSection  ######
 		self.lw.addHeader( "System Information :", 3 )
 		for section in xmlParser.sections :
 			if isinstance( section, FileSystemInfoSection ):
-				print "\nFileSystemInfoSection : " + section.title
-				section.setFieldsValues()
-				print section.data
-				print section.dataStatus
-
-				### TABLE ###
-				fsiTable = LatexTable()
-				# fsiTable.setTitle( section.title )
-
-				# checks data special characters 
-				section.data = self.checkSpecialDataCharacters( section.data )
-				# section.data = self.dataStatusColor( section.data, section.dataStatus )
-				
-				fsiTable.setContent( section.data )
-				fsiTable.setBorders('none')
-				fsiTable.setRowAlignment( 0, 'left')
-				fsiTable.setRowAlignment( 1, 'right', True )
-				fsiTable.setTableAlignment('center')
-
-				self.lw.addTable( fsiTable, False, "0.9\\textwidth" )
-
-
-		self.lw.addSimpleCommand( "vspace", "2cm" )
-		self.lw.addSimpleLineBreak()
-
+				self.addFileSystemInfoSection( section )
 
 		######   SpecificationSection  ######
 		self.lw.addHeader( "Quality Check report :", 3 )
-
+		
 		# ========== Summary ==========
 		self.lw.addHeader( "Summary :", 4 )
-		recapTable = LatexTable()
-		recapData = []
-		recapData.append( ["\\multicolumn{1}{c}{\\textbf{Specification}}", "\\multicolumn{1}{c}{\\textbf{Status}}"] )
-		
-		for section in xmlParser.sections :
-			if isinstance( section, SpecificationSection ):
-				# print section.title
-				section.setFieldsValues()
-				# print section.data
-				# print section.dataStatus
 
-				### TABLE ###
-				recapLine = []
-				recapLine.append( section.title )
-				if section.status == "valid" :
-					recapLine.append( "\\color{OliveGreen}\\textbf{" + section.status + "}" )
-				else :
-					recapLine.append( "\\color{red}\\textbf{" + section.status + "}" )
-				recapData.append( recapLine )
+		for stream in xmlParser.streams :
+			for description in stream.descriptions :
+				if description.title == "fileValidator" :
+					sumSpecTable = LatexTable()
+					sumSpecpData = []
+					sumSpecpData.append( ["\\multicolumn{1}{c}{\\textbf{Specification}}", "\\multicolumn{1}{c}{\\textbf{Status}}"] )
+					for section in description.sections :
+						if isinstance( section, SpecificationSection ):
+							sumSpecpData.append( self.addQualityCheckSummarySection( section ) )
 
-		recapTable.setContent( recapData )
-		recapTable.setBorders('header')
-		recapTable.setRowAlignment( 0, 'left')
-		recapTable.setRowAlignment( 1, 'right', True )
-		recapTable.setTableAlignment('center')
-		self.lw.addTable( recapTable, False, "0.7\\textwidth" )
+					sumSpecTable.setTitle( stream.title )
+					sumSpecTable.setContent( sumSpecpData )
+					sumSpecTable.setBorders('header')
+					sumSpecTable.setRowAlignment( 0, 'left')
+					sumSpecTable.setRowAlignment( 1, 'right', True )
+					sumSpecTable.setTableAlignment('center')
+					self.lw.addTable( sumSpecTable, False, "0.7\\textwidth", True )
+
+				if description.title == "loudness" :
+					sumLoudTable = LatexTable()
+					sumLoudData = []
+					sumLoudData.append( ["\\multicolumn{1}{c}{\\textbf{Loudness}}", "\\multicolumn{1}{c}{\\textbf{Status}}"] )
+					for section in description.sections :
+						if isinstance( section, LoudnessSection ):
+							sumLoudData.append( self.addQualityCheckSummarySection( section ) )
+
+					sumLoudTable.setContent( sumLoudData )
+					sumLoudTable.setBorders('header')
+					sumLoudTable.setRowAlignment( 0, 'left')
+					sumLoudTable.setRowAlignment( 1, 'right', True )
+					sumLoudTable.setTableAlignment('center')
+					self.lw.addTable( sumLoudTable, False, "0.5\\textwidth" )
+			self.lw.addSimpleLineBreak()
 
 		self.lw.addMacro( "newpage" )
 
 		# ========== Detail ==========
-		self.lw.addHeader( "Detail :", 4 )
+		for stream in xmlParser.streams :
+			self.lw.addHeader( stream.title + " :", 4 )
+			for description in stream.descriptions :
+				if description.title == "fileValidator" :
+					self.lw.addHeader( "Detail :", 5 )
+				if description.title == "loudness" :
+					self.lw.addHeader( "Loudness :", 5 )
 
-		for section in xmlParser.sections :
-			if isinstance( section, SpecificationSection ):
-				detailTable = LatexTable()
-				detailTableData = []
-				detailTableData.append( ["\\multicolumn{2}{|c|}{\\textbf{" + section.title + "}}"] )
-				print "\nSpecificationSection : " + section.title
-				print section.data
-
-				for pair in section.data :
-					detailTableData.append( pair )
-
-				for s in range( 0, len( section.group ) ) :
-					section.group[s].setFieldsValues()
-					# print section.group[s].data
-					# print section.group[s].dataStatus
-
-					detailTableData.append( ["\\hline \\multicolumn{2}{|c|}{" + section.group[s].title + ": \\textit{" + section.group[s].status + "}}"] )
-					section.group[s].data = self.checkSpecialDataCharacters( section.group[s].data, True )
-					for pair in section.group[s].data :
-						detailTableData.append( pair )
-
-				if section.status == "valid" :
-					status = "\\color{OliveGreen}" + section.status
-				else :
-					status = "\\color{red}" + section.status
-				detailTableData.append( ["\\hline \\multicolumn{2}{|c|}{\\textbf{Status : " + status + "}}"] )
-
-				detailTable.setContent( detailTableData )
-				detailTable.setBorders('closedHeader')
-				detailTable.setRowAlignment( 0, 'p{0.45\\textwidth}')
-				detailTable.setRowAlignment( 1, 'p{0.45\\textwidth}')
-				detailTable.setTableAlignment('center')
-				print detailTableData
-				self.lw.addTable( detailTable, True )
-
-
-		self.lw.addMacro( "newpage" )
-		
-		# ========== Loudness ==========
-		self.lw.addHeader( "Loudness :", 4 )
-
-		for section in xmlParser.sections :
-			if isinstance( section, LoudnessSection ):
-				print "\nLoudnessSection : " + section.title
-				section.setFieldsValues()
-				print section.data
-				print section.dataStatus
-				# print section.plots
-				
-				loudnessTable = LatexTable()
-				loudnessTableData = []
-				loudnessTableData.append( ["\\multicolumn{2}{c}{\\textbf{" + section.title + "}}"] )
-				for pair in self.dataStatusColor( section.data, section.dataStatus ) :
-					loudnessTableData.append( pair )
-
-				loudnessTable.setContent( loudnessTableData )
-				loudnessTable.setBorders('header')
-				loudnessTable.setRowAlignment( 0, 'left')
-				loudnessTable.setRowAlignment( 1, 'right', True)
-				loudnessTable.setTableAlignment('center')
-				self.lw.addTable( loudnessTable, False, "0.7\\textwidth" )
-
-				graph = LatexGraph( section.title )
-				for j in range( 0, len(section.plots) ) :
-					i = len(section.plots) - (j+1)
-					curve = LatexPlot( section.plots[i][0], section.plots[i][1] )
-					curve.setColor( colors[i] )
-					curve.setCoordinates()
-					curve.setFill( True )
-					curve.setOpacity( 0.5 )
-					graph.addCurve( curve )
-				self.lw.addGraph( graph, "\\textwidth-1.4cm", "time", "level", "s", "dB" )
-				self.lw.addMacro( "newpage" )
-
+				for section in description.sections :
+					if isinstance( section, SpecificationSection ):
+						self.addQualityCheckDetailSection( section )
+					if isinstance( section, LoudnessSection ):
+						self.addLoudnessSection( section )
+						self.lw.addMacro( "newpage" )
 
 		self.lw.endDocument()
 

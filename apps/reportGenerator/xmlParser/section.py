@@ -11,8 +11,9 @@ class Section():
 		self.dataStatus      = []
 
 	def displayFields( self, rootField, level=0 ):
-		if level == 0 :
-			print self.title
+		# if level == 0 :
+		if type( rootField ) is list :
+			print "\t"*level + self.title
 			for field in rootField:
 				if self.forbiddenFields.count( field ) != 0 or field.nodeType == 3:
 					continue;
@@ -219,4 +220,3 @@ class LoudnessSection( Section ):
 			data.append( checkString( rootChild.childNodes[0].nodeValue, stringMaxLength ) )
 
 		return data
-	

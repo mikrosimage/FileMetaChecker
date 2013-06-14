@@ -29,7 +29,7 @@ optionParser.add_option(
 	type    = "string",
 	dest    = "fieldsToRemove",
 	action  = "append",
-	help    = "list of fields to remove from the PDF output file",
+	help    = "field (or stream index) to remove from the PDF output file",
 	metavar = "FIELDS"
 	)
 
