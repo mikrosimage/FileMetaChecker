@@ -143,15 +143,16 @@ class FileSystemInfoSection( Section ):
 
 class SpecificationSection( Section ):
 	def __init__( self, title="" ):
-		self.title       = title
-		self.fields      = []
+		self.title           = title
+		self.fields          = []
 		self.forbiddenFields = []
 		self.availableFields = []
-		self.data        = []
-		self.group       = []
-		self.groupTitle  = ""
-		self.status      = ""
-		self.dataStatus  = []
+		self.data            = []
+		self.group           = []
+		self.groupTitle      = ""
+		self.status          = ""
+		self.dataStatus      = []
+		self.validationDate  = ""
 
 	def getChildValue( self, rootChild ):
 		data = []
@@ -189,20 +190,20 @@ class SpecificationSection( Section ):
 							elif subChild.nodeType == 1 :
 								section.fields.append( subChild )
 					
-					self.group.append( section )
-				
-		return data
+					self.group.append( section )		
+		return data;
 
 class LoudnessSection( Section ):
 	def __init__( self, title="" ):
-		self.title      = title
-		self.fields     = []
+		self.title           = title
+		self.fields          = []
 		self.forbiddenFields = []
 		self.availableFields = []
-		self.data       = []
-		self.standard   = ""
-		self.dataStatus = []
-		self.plots		= []
+		self.data            = []
+		self.standard        = ""
+		self.dataStatus      = []
+		self.plots		     = []
+		self.measureDate     = ""
 
 	def getChildValue( self, rootChild ):
 		data = []

@@ -155,11 +155,12 @@ class XmlToLatex():
 		# print section.dataStatus
 
 
-	def addQualityCheckSummarySection( self, section ):
+	def addSummarySectionLine( self, section ):
 		section.setFieldsValues()
 
 		sumLine = []
 		sumLine.append( section.title )
+		sumLine.append( section.date  )
 		if section.status == "valid" :
 			sumLine.append( "\\color{OliveGreen}\\textbf{" + section.status + "}" )
 		else :
@@ -170,11 +171,28 @@ class XmlToLatex():
 		# print section.data
 		# print section.dataStatus
 
+	def getSummarySection( self, stream ):
+		summaryData = []
+		for description in stream.descriptions :
+			if description.title == "fileValidator" :
+				summaryData.append( ["\\multicolumn{1}{c}{\\textbf{Specification}}", "\\multicolumn{1}{c}{\\textbf{Date}}", "\\multicolumn{1}{c}{\\textbf{Status}}"] )
+				for section in description.sections :
+					if isinstance( section, SpecificationSection ):
+						summaryData.append( self.addSummarySectionLine( section ) )
+			
+			# summaryData.append( [""] )
+			if description.title == "loudness" :
+				summaryData.append( ["\\multicolumn{3}{c}{\\textbf{- Loudness -}}"] )
+				for section in description.sections :
+					if isinstance( section, LoudnessSection ):
+						summaryData.append( self.addSummarySectionLine( section ) )
+
+		return summaryData;
 
 	def addQualityCheckDetailSection( self, section ):
 		detailTable = LatexTable()
 		detailTableData = []
-		detailTableData.append( ["\\multicolumn{2}{|c|}{\\textbf{" + section.title + "}}"] )
+		detailTableData.append( ["\\multicolumn{2}{|c|}{ \\begin{tabular}{c} \\textbf{" + section.title + "} \\\\ \\footnotesize \\color{gray} " + section.date + "\\end{tabular} }"] )
 
 		for pair in section.data :
 			detailTableData.append( pair )
@@ -208,7 +226,7 @@ class XmlToLatex():
 		
 		loudnessTable = LatexTable()
 		loudnessTableData = []
-		loudnessTableData.append( ["\\multicolumn{2}{c}{\\textbf{" + section.title + "}}"] )
+		loudnessTableData.append( ["\\multicolumn{2}{c}{ \\begin{tabular}{c} \\textbf{" + section.title + "} \\\\ \\footnotesize \\color{gray} " + section.date + "\\end{tabular} }"] )
 		for pair in self.dataStatusColor( section.data, section.dataStatus ) :
 			loudnessTableData.append( pair )
 
@@ -268,37 +286,15 @@ class XmlToLatex():
 		self.lw.addHeader( "Summary :", 4 )
 
 		for stream in xmlParser.streams :
-			for description in stream.descriptions :
-				if description.title == "fileValidator" :
-					sumSpecTable = LatexTable()
-					sumSpecpData = []
-					sumSpecpData.append( ["\\multicolumn{1}{c}{\\textbf{Specification}}", "\\multicolumn{1}{c}{\\textbf{Status}}"] )
-					for section in description.sections :
-						if isinstance( section, SpecificationSection ):
-							sumSpecpData.append( self.addQualityCheckSummarySection( section ) )
-
-					sumSpecTable.setTitle( stream.title )
-					sumSpecTable.setContent( sumSpecpData )
-					sumSpecTable.setBorders('header')
-					sumSpecTable.setRowAlignment( 0, 'left')
-					sumSpecTable.setRowAlignment( 1, 'right', True )
-					sumSpecTable.setTableAlignment('center')
-					self.lw.addTable( sumSpecTable, False, "0.7\\textwidth", True )
-
-				if description.title == "loudness" :
-					sumLoudTable = LatexTable()
-					sumLoudData = []
-					sumLoudData.append( ["\\multicolumn{1}{c}{\\textbf{Loudness}}", "\\multicolumn{1}{c}{\\textbf{Status}}"] )
-					for section in description.sections :
-						if isinstance( section, LoudnessSection ):
-							sumLoudData.append( self.addQualityCheckSummarySection( section ) )
-
-					sumLoudTable.setContent( sumLoudData )
-					sumLoudTable.setBorders('header')
-					sumLoudTable.setRowAlignment( 0, 'left')
-					sumLoudTable.setRowAlignment( 1, 'right', True )
-					sumLoudTable.setTableAlignment('center')
-					self.lw.addTable( sumLoudTable, False, "0.5\\textwidth" )
+			summaryTable = LatexTable()
+			summaryTable.setContent( self.getSummarySection( stream ) )
+			summaryTable.setTitle( stream.title )
+			summaryTable.setBorders( 'header' )
+			summaryTable.setRowAlignment( 0, 'left', True )
+			summaryTable.setRowAlignment( 1, 'center' )
+			summaryTable.setRowAlignment( 2, 'right' )
+			summaryTable.setTableAlignment('center')
+			self.lw.addTable( summaryTable, False, "0.7\\textwidth" )
 			self.lw.addSimpleLineBreak()
 
 		self.lw.addMacro( "newpage" )

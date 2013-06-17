@@ -54,39 +54,42 @@ class XmlParser():
 					if child.tagName == "fileValidator" :
 						for subChild in child.childNodes:
 							if subChild.tagName == specification :
-								subSection = SpecificationSection( subChild.getAttribute( labelAttr ) )
-								subSection.status = subChild.getAttribute( statusAttr )
+								section = SpecificationSection( subChild.getAttribute( labelAttr ) )
+								section.status = subChild.getAttribute( statusAttr )
+								section.date   = subChild.getAttribute( "date" )
+
 							else :
-								subSection = Section( subChild.tagName )
-								subSection.status = subChild.getAttribute( statusAttr )
+								section = Section( subChild.tagName )
+								section.status = subChild.getAttribute( statusAttr )
 			
-							description.sections.append( subSection )
-							subSection.setAvailableFields( subChild )
+							description.sections.append( section )
+							section.setAvailableFields( subChild )
 							if subChild.childNodes is not None :
 								for element in subChild.childNodes:
-									subSection.fields.append( element )
+									section.fields.append( element )
 					
 					elif child.tagName == "loudness" :
 						for subChild in child.childNodes:
-							subSection = LoudnessSection( subChild.getAttribute( "standard" ) )
-							subSection.status = subChild.getAttribute( statusAttr )
+							section = LoudnessSection( subChild.getAttribute( "standard" ) )
+							section.status = subChild.getAttribute( statusAttr )
+							section.date   = subChild.getAttribute( "date" )
 							
-							description.sections.append( subSection )
-							subSection.setAvailableFields( subChild )
+							description.sections.append( section )
+							section.setAvailableFields( subChild )
 							if subChild.childNodes is not None :
 								for element in subChild.childNodes:
-									subSection.fields.append( element )
+									section.fields.append( element )
 
 					else :
 						for subChild in child.childNodes:
-							subSection = Section( subChild.getAttribute( labelAttr ) )
-							subSection.status = subChild.getAttribute( statusAttr )
+							section = Section( subChild.getAttribute( labelAttr ) )
+							section.status = subChild.getAttribute( statusAttr )
 							
-							description.sections.append( subSection )
-							subSection.setAvailableFields( subChild )
+							description.sections.append( section )
+							section.setAvailableFields( subChild )
 							if subChild.childNodes is not None :
 								for element in subChild.childNodes:
-									subSection.fields.append( element )
+									section.fields.append( element )
 
 	def displaySections( self ):
 		for section in self.sections:
