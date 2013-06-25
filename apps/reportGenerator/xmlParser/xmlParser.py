@@ -15,7 +15,7 @@ class XmlParser():
 		self.forbidden  = []
 		self.xmlFilename = ""
 
-	def parseXml( self, xmlFile ):
+	def parseXml( self, xmlFile, outputFormat ):
 		file = open( xmlFile )
 		self.xmlFilename = os.path.basename( xmlFile )
 		xmlStream = file.read()
@@ -26,8 +26,6 @@ class XmlParser():
 		StripXml( docTree )
 		self.root = docTree.documentElement
 
-		# print self.root
-
 		if self.root.childNodes is None :
 			return;
 
@@ -35,7 +33,7 @@ class XmlParser():
 		for node in self.root.childNodes :
 
 			if node.tagName == fileSystemInfo :
-				section = FileSystemInfoSection( node.getAttribute( labelAttr ) )
+				section = FileSystemInfoSection( outputFormat, node.getAttribute( labelAttr ) )
 				section.status = node.getAttribute( statusAttr )	
 				self.sections.append( section )
 				section.setAvailableFields( node )

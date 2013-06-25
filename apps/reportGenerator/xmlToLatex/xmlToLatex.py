@@ -45,9 +45,9 @@ class XmlToLatex():
 
 		self.lw.addRawLatex( "\\renewcommand*\\familydefault{\\sfdefault}" )
 
-		self.lw.addNewCommand( "filename", "\\textit{" + self.lw.transformSpecialCharacters( filename  ) + "}" )
-		self.lw.addNewCommand( "version",  self.lw.transformSpecialCharacters( QCversion ) )
-		self.lw.addNewCommand( "QcLogo",   self.lw.transformSpecialCharacters( logoPath  ) )
+		self.lw.addNewCommand( "filename", "\\textit{" + transformSpecialCharacters( filename  ) + "}" )
+		self.lw.addNewCommand( "version",  transformSpecialCharacters( QCversion ) )
+		self.lw.addNewCommand( "QcLogo",   transformSpecialCharacters( logoPath  ) )
 
 		self.lw.addNewCommand( "QcHeader",      "Quality Check : \\filename" )
 		self.lw.addNewCommand( "QcFile",      "File: \\filename" )
@@ -123,7 +123,7 @@ class XmlToLatex():
 		for i in range( 0, len( array ) ):
 			for j in range( 0, len( array[0] ) ):
 				if type( array[i][j] ) is unicode or type( array[i][j] ) is str :
-					array[i][j] = self.lw.transformSpecialCharacters( array[i][j] )
+					array[i][j] = transformSpecialCharacters( array[i][j] )
 					if checkStrings :
 						array[i][j] = checkString( array[i][j], 50 )
 				elif type( array[i][j] ) is list and len( array[i][j] ) > 0 :

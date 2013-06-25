@@ -73,6 +73,16 @@ class Section():
 
 
 class FileSystemInfoSection( Section ):
+	def __init__( self, outputFormat, title="" ):
+		self.title           = title
+		self.fields          = []
+		self.forbiddenFields = []
+		self.availableFields = []
+		self.data            = []
+		self.status          = ""
+		self.dataStatus      = []
+		self.outputFormat    = outputFormat
+
 	def getChildValue( self, rootChild ):
 		data = []
 		if self.forbiddenFields.count( rootChild ) != 0 :
@@ -97,7 +107,10 @@ class FileSystemInfoSection( Section ):
 							continue;
 
 						if subChild.childNodes[0].nodeValue == permFalse :
-							right += "\\color{Gray}" + subChild.tagName
+							if self.outputFormat == "tex" :
+								right += "\\color{Gray}" + subChild.tagName
+							elif self.outputFormat == "html" :
+								right += "<a style='color:#333'>" + subChild.tagName + "</a>"
 						else :
 							right += subChild.tagName
 						rights.append( right )

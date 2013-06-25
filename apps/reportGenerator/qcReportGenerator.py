@@ -1,17 +1,21 @@
 #!/usr/bin/python
+import sys
 from latexwriter import *
 from xmlToLatex import *
+
+from htmlwriter import *
+from xmlToHtml import *
 
 from optparse import OptionParser
 
 ######  OPTIONS  ######
 optionParser = OptionParser()
 optionParser.add_option(
-	"-f", "--file",
+	"-i", "--input",
 	type    = "string",
 	dest    = "filename",
 	action  = "append",
-	help    = "generate Latex from XML QC report file",
+	help    = "generate Latex or HTML from XML QC report file",
 	metavar = "FILE"
 	)
 
@@ -29,17 +33,17 @@ optionParser.add_option(
 	type    = "string",
 	dest    = "fieldsToRemove",
 	action  = "append",
-	help    = "field (or stream index) to remove from the PDF output file",
+	help    = "field (or stream index) not to display into the output file",
 	metavar = "FIELDS"
 	)
 
 optionParser.add_option(
-	"-o", "--output",
+	"-f", "--format",
 	type    = "string",
-	dest    = "outputFile",
-	action  = "store",
-	help    = "output Latex filename",
-	metavar = "OUTPUT"
+	dest    = "format",
+	action  = "append",
+	help    = "output format (tex or html)",
+	metavar = "FORMAT"
 	)
 
 (options, args) = optionParser.parse_args()
@@ -69,26 +73,39 @@ if len( args ) == 0 and options.filename == None and options.fieldListFile == No
 
 
 ######  Generate Report  ######
-if options.filename:
-	for inputFile in options.filename :
+if not options.filename:
+	raise RuntimeError( "Input file required ( -i FILE )" )
+for inputFile in options.filename :
 
-		if options.outputFile :
-			outputFile = options.outputFile
-		else:
-			outputFile = inputFile.replace( "-merged", "" )
-			outputFile = outputFile.replace( ".xml", ".tex" )
-		print ">>> Output PDF filename : " + outputFile
+	if not options.format :
+		raise RuntimeError( "Output format required ( -f FORMAT )" )
+	
+	outputExt = ""
+	for format in options.format :
+		if format != "tex" and format != "html" :
+			raise ValueError( "Unavailable output format. Choice : tex, html" )
 
-		parser.parseXml( inputFile )
+		outputExt = format
+		outputFile = inputFile.replace( "-merged", "" )
+		outputFile = outputFile.replace( ".xml", "." + outputExt )
+		print ">>> Output filename : " + outputFile
+
+		parser.parseXml( inputFile, outputExt )
 		if options.fieldsToRemove :
 			for arg in args:
 				options.fieldsfile.append( arg )
 			for field in options.fieldsToRemove :
 				parser.removeField( field )
-		xtl = XmlToLatex()
-		xtl.convert( parser )
+		
+		if outputExt == "tex" :
+			xtl = XmlToLatex()
+			xtl.convert( parser )
+			stream = xtl.getLatexStream()
+		else : 
+			xth = XmlToHtml()
+			xth.convertToFile( parser )
+			stream = xth.getHtmlStream()
 
-		# ### OUTPUT ###
 		file = open( outputFile, "w+" )
-		file.write( xtl.getLatexStream() )
+		file.write( stream )
 		file.close()
