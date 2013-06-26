@@ -77,6 +77,10 @@ class XmlToHtml():
 		
 		self.hw.addOpeningTag( "div", "class=\"section\" id=\"file-system\"" )
 		fsiTable = HtmlTable()
+
+		fsiTable.setColumnWidth( "350px" )
+		fsiTable.setColumnWidth( "350px" )
+
 		fsiTable.setContent( section.data )
 		self.hw.addTable( fsiTable, "file-system-table" )
 		self.hw.addClosingTag( "div" )
@@ -140,6 +144,8 @@ class XmlToHtml():
 
 		detailTableData.append( ["<strong>Status : " + status + "</strong>"] )
 
+		detailTable.setColumnWidth( "350px" )
+		detailTable.setColumnWidth( "350px" )
 		detailTable.setContent( detailTableData )
 		self.hw.addTable( detailTable, "detail-table" )
 		self.hw.addClosingTag( "div" )
@@ -186,6 +192,12 @@ class XmlToHtml():
 		loudnessTableData.append( [ "<strong>" + section.title + "</strong><br><font color=\"#777\">" + section.date + "</font>", "" ] )
 		for pair in self.dataStatusColor( section.data, section.dataStatus ) :
 			loudnessTableData.append( pair )
+
+		loudnessTable.setColumnWidth( "280px" )
+		loudnessTable.setColumnAlignment( "left" )
+		loudnessTable.setColumnWidth( "100px" )
+		loudnessTable.setColumnAlignment( "right" )
+
 
 		loudnessTable.setContent( loudnessTableData )
 		self.hw.addTable( loudnessTable, "loudness-table" )
@@ -252,7 +264,7 @@ class XmlToHtml():
 		self.hw.addOpeningTag( "div" )
 		self.hw.addOpeningTag( "input", "id=\"system-title\" type=\"checkbox\" checked", True )
 		self.hw.addOpeningTag( "label", "for=\"system-title\"")
-		self.hw.addText( "System Information" )
+		self.hw.addText( "File System Information" )
 		self.hw.addClosingTag( "label" )
 
 		self.hw.addOpeningTag( "article", "class=\"system-content\"")
@@ -274,8 +286,13 @@ class XmlToHtml():
 		for stream in xmlParser.streams :
 			self.hw.addOpeningTag( "div", "class=\"section\" id=\"summary\"" )
 			summaryTable = HtmlTable()
+
+			summaryTable.setColumnWidth( "350px" )
+			summaryTable.setColumnWidth( "200px" )
+			summaryTable.setColumnWidth( "150px" )
+
 			summaryTable.setContent( self.getSummarySection( stream ) )
-			summaryTable.setTitle( stream.title )
+			# summaryTable.setTitle( stream.title )
 			self.hw.addTable( summaryTable, "summary-table" )
 			self.hw.addClosingTag( "div" )
 
@@ -335,7 +352,7 @@ class XmlToHtml():
 		self.hw.addOpeningTag( "div" )
 		self.hw.addOpeningTag( "input", "id=\"system-title\" type=\"checkbox\" checked", True )
 		self.hw.addOpeningTag( "label", "for=\"system-title\"")
-		self.hw.addText( "System Information" )
+		self.hw.addText( "File System Information" )
 		self.hw.addClosingTag( "label" )
 
 		self.hw.addOpeningTag( "article", "class=\"system-content\"")
@@ -357,8 +374,13 @@ class XmlToHtml():
 		for stream in xmlParser.streams :
 			self.hw.addOpeningTag( "div", "class=\"section\" id=\"summary\"" )
 			summaryTable = HtmlTable()
+
+			summaryTable.setColumnWidth( "350px" )
+			summaryTable.setColumnWidth( "200px" )
+			summaryTable.setColumnWidth( "150px" )
+
 			summaryTable.setContent( self.getSummarySection( stream ) )
-			summaryTable.setTitle( stream.title )
+			# summaryTable.setTitle( stream.title )
 			self.hw.addTable( summaryTable, "summary-table" )
 			self.hw.addClosingTag( "div" )
 
