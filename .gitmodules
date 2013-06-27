@@ -1,3 +1,6 @@
 [submodule "tools/sconsProject"]
 	path = tools/sconsProject
 	url = https://github.com/tuttleofx/sconsProject.git
+[submodule "cherrypy-git"]
+	path = cherrypy-git
+	url = git://github.com/mikrosimage/cherrypy-git.git
