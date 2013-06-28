@@ -422,8 +422,6 @@ class XmlToHtml():
 		displayScript += "}"
 
 		self.hw.addScript( displayScript, "text/javascript" )
-		self.hw.addOpeningTag( "div", "id=\"fake\" onclick=displayCharts()" )
-		self.hw.addClosingTag( "div" )
 
 		self.hw.addClosingTag( "section" )
 
