@@ -65,10 +65,10 @@ body
 #title-text:before, #title-text:after
 {
 	padding-top:   50px;
-    padding-left: 230px;
-    content: attr(title);
-    color: rgba(255,255,255,.1);
-    position: absolute;
+	padding-left: 230px;
+	content: attr(title);
+	color: rgba(255,255,255,.1);
+	position: absolute;
 }
 
 #title-text:before { top: 1px; left: 1px }
@@ -526,7 +526,4 @@ h1, h2, h3, h4, h5 { padding-left: 40px; }
 	margin-right:  auto;
 	border: 3px solid #333333;
 }
-
-
-
 
