@@ -17,27 +17,19 @@ class FileReader
 public:
 	FileReader( std::streambuf* inStream );
 
+	size_t getLength();
+	size_t getPosition();
 
-/*
 	bool readData( char* data, const size_t size );
 
 	void goToBegin();
-
-	void goBack( const std::size_t size );
-
+	void goBack   ( const std::size_t size );
 	void goForward( const std::size_t size );
 
-	bool endOfFile( );
+	bool isEndOfFile( );
 
-	int  getPosition();
-
-	void resetFile();
-
-	std::string getFilename();
-*/
 private:
 	std::istream _fileBuffer;
-	std::string  _filename;
 };
 
 }
