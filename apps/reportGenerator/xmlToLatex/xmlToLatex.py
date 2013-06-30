@@ -4,28 +4,28 @@ from xmlParser import *
 
 class XmlToLatex():
 	def __init__( self ):
-		self.lw      = LatexWriter()
+		self.lw = LatexWriter()
 
 	def setReportDocument( self, filename, QCversion, logoPath ):
 		self.lw.setDocumentClass( "report", "11pt, a4paper" )
 		self.lw.addSimpleLineBreak()
 
-		self.lw.addPackage( "xcolor",            "usenames,dvipsnames,table" )
-		self.lw.addPackage( "inputenc",           "utf8" )
-		self.lw.addPackage( "fontenc",             "OT1" )
-		self.lw.addPackage( "babel", "francais, english" )
-		self.lw.addPackage(  "fancyhdr" )
-		self.lw.addPackage(  "graphicx" )
-		self.lw.addPackage(      "ulem" )
-		self.lw.addPackage(     "array" )
+		self.lw.addPackage( "xcolor",   "usenames,dvipsnames,table" )
+		self.lw.addPackage( "inputenc", "utf8" )
+		self.lw.addPackage( "fontenc",  "OT1" )
+		self.lw.addPackage( "babel",    "francais, english" )
+		self.lw.addPackage( "fancyhdr" )
+		self.lw.addPackage( "graphicx" )
+		self.lw.addPackage( "ulem" )
+		self.lw.addPackage( "array" )
 		self.lw.addPackage( "longtable" )
-		self.lw.addPackage(      "tikz" )
-		self.lw.addPackage(  "pgfplots" )
-		self.lw.addPackage(      "pbox" )
-		self.lw.addPackage(      "tabu" )
+		self.lw.addPackage( "tikz" )
+		self.lw.addPackage( "pgfplots" )
+		self.lw.addPackage( "pbox" )
+		self.lw.addPackage( "tabu" )
 		self.lw.addSimpleLineBreak()
 
-		self.lw.addSimpleCommand( "pagestyle", "fancy" )
+		self.lw.addSimpleCommand( "pagestyle",      "fancy" )
 		self.lw.addSimpleCommand( "usetikzlibrary", "pgfplots.units" )
 		self.lw.addSimpleLineBreak()
 

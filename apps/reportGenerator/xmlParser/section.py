@@ -25,7 +25,7 @@ class Section():
 			for field in rootField.childNodes :
 				if field.nodeType != 1 or self.forbiddenFields.count( field ) != 0 :
 					continue;
-				self.displayFields( field, level+1 )	
+				self.displayFields( field, level+1 )
 
 
 	def setAvailableFields( self, root ):
@@ -203,7 +203,7 @@ class SpecificationSection( Section ):
 							elif subChild.nodeType == 1 :
 								section.fields.append( subChild )
 					
-					self.group.append( section )		
+					self.group.append( section )
 		return data;
 
 class LoudnessSection( Section ):

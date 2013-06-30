@@ -1,33 +1,52 @@
 #!/usr/bin/python
 from xmlParser import *
+import xml.etree.ElementTree as ET
 from htmlwriter import *
 
 class XmlToHtml():
 	def __init__( self ):
-		self.hw      = HtmlWriter()
+		self.hw = HtmlWriter()
+		self.page = ET.Element('html')
+		self.page.set( "lang", "fr" )
+		self.head = ET.SubElement( self.page, "head" )
+		self.body = ET.SubElement( self.page, "body" )
 
-	def setReportDocumentBeginning( self ):
-		self.hw.addDocumentHeader()
-		self.hw.addOpeningTag( "html", "lang=\"fr\"" )
-		self.hw.addOpeningTag( "head" )
-		self.hw.addOpeningTag( "meta", "charset=\"utf-8\"", True )
-		self.hw.addTitle( "QUALITY CHECK")
-		self.hw.addLinkHeader( "stylesheet", "style.css" )
-		self.hw.addScriptHeader( "https://www.google.com/jsapi", "text/javascript" )
-		self.hw.addClosingTag( "head" )
-		self.hw.addOpeningTag( "body" )
-	
-	def setReportDocumentTitle( self, filename, version, logoPath ):
-		self.hw.addOpeningTag( "div", "id=\"header\"" )
-		self.hw.addImage( logoPath, "id=\"logo-qc\"" )
-		self.hw.addHeader( "Quality Check", 1 )
-		self.hw.addText( "Version " + str(version), "italic" )
-		self.hw.addHeader( filename, 2 )
-		self.hw.addClosingTag( "div" )
+	def getContent( self ):
+		doctype = "<!DOCTYPE html>"
+		content = ET.tostring( self.page, method="html" )
+		return doctype + content
 
-	def setReportDocumentEnding( self ):
-		self.hw.addClosingTag( "body" )
-		self.hw.addClosingTag( "html" )
+	def setHeader( self ):
+		meta = ET.SubElement( self.head, "meta" )
+		meta.set( "charset", "utf-8" )
+		title = ET.SubElement( self.head, "title" )
+		title.text = "QUALITY CHECK"
+		css = ET.SubElement( self.head, "link" )
+		css.set( "rel", "stylesheet" )
+		css.set( "href", "style.css" )
+		script = ET.SubElement( self.head, "script" )
+		script.set( "type", "text/javascript" )
+		script.set( "src", "https://www.google.com/jsapi" )
+
+	def setPageHeader( self ):
+		header = ET.SubElement( self.body, "div" )
+		header.set( "id", "header" )
+		logo = ET.SubElement( self.body, "img" )
+		logo.set( "id", "logo-qc" )
+		logo.set( "src", "logo_qc.png" )
+		title = ET.SubElement( self.body, "h1" )
+		title.text = "Quality Check"
+		logoMikros = ET.SubElement( self.body, "img" )
+		logoMikros.set( "id", "logo-mikros" )
+		logoMikros.set( "src", "logo_mikros.png" )
+
+	def addSection( self, id, label ):
+		section = ET.SubElement( self.body, "div" )
+		section.set( "id", id )
+		head = ET.SubElement( self.body, "label" )
+		headContent = ET.SubElement( head, "a" )
+		headContent.text = label
+
 
 	def dataStatusColor( self, dataArray, statusArray ):
 		if type( dataArray ) is not list :
