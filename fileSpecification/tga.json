@@ -1,185 +1,185 @@
 {
-    "standard": {
-        "label": "Truevision Targa",
-        "id": "tga",
-        "type":"image",
-        "extension": [
-            ".tga",
-            ".tpic"
-        ]
-    },
-    "header": [
-        {
-            "id": "idFieldSize",
-            "label": "Id field size",
-            "type": "int",
-            "length": 1
-        },
-        {
-            "id": "colourMapType",
-            "label": "Colour map type",
-            "type": "label",
-            "length": 1,
-            "labels": [
-                {
-                    "id":"No color palette",
-                    "type": "hexa",
-                    "value":"00"
-                },
-                {
-                    "id":"Color palette",
-                    "type": "hexa",
-                    "value":"01"
-                }
-            ]
-        },
-        {
-            "shortId": "imageType",
-            "id": "image type",
-            "type": "label",
-            "length": 1,
-            "labels": [
-                {
-                    "id":"No image data included in file",
-                    "type": "hexa",
-                    "value":"00"
-                },
-                {
-                    "id":"Colormapped image data (Uncompressed)",
-                    "type": "hexa",
-                    "value":"01"
-                },
-                {
-                    "id":"Truecolor image data (Uncompressed)",
-                    "type": "hexa",
-                    "value":"02"
-                },
-                {
-                    "id":"Monochrome image data (Uncompressed)",
-                    "type": "hexa",
-                    "value":"03"
-                },
-                {
-                    "id":"Colormapped image data (Run-length encoded)",
-                    "type": "hexa",
-                    "value":"09"
-                },
-                {
-                    "id":"Truecolor image data (Run-length encoded)",
-                    "type": "hexa",
-                    "value":"0a"
-                },
-                {
-                    "id":"Monochrome image data (Run-length encoded)",
-                    "type": "hexa",
-                    "value":"0b"
-                }
-            ]
-        },
-        {
-            "shortId": "colourMapStart",
-            "id": "colour map start",
-            "type": "int",
-            "length": 2
-        },
-        {
-            "shortId": "colourMapLength",
-            "id": "colour map length",
-            "type": "int",
-            "length": 2
-        },
-        {
-            "shortId": "colourMapBits",
-            "id": "colour map bits",
-            "type": "int",
-            "length": 1,
-            "choice": [
-                0,
-                15,
-                16,
-                24,
-                32
-            ]
-        },
-        {
-            "shortId": "xOrigin",
-            "id": "image x-origin",
-            "type": "int",
-            "length": 2
-        },
-        {
-            "shortId": "yOrigin",
-            "id": "image y-origin",
-            "type": "int",
-            "length": 2
-        },
-        {
-            "shortId": "w",
-            "id": "width",
-            "type": "int",
-            "length": 2
-        },
-        {
-            "shortId": "h",
-            "id": "height",
-            "type": "int",
-            "length": 2
-        },
-        {
-            "shortId": "pixelDepth",
-            "id": "pixel depth",
-            "type": "int",
-            "length": 1
-        },
-        {
-            "shortId": "imageDescriptor",
-            "id": "image descriptor",
-            "type": "bits",
-            "length": 1,
-            "bits": [
-                {
-                    "id": "unused",
-                    "nbit": 1,
-                    "value": 0
-                },
-                {
-                    "id": "unused",
-                    "nbit": 1,
-                    "value": 0
-                },                
-                {
-                    "id": "vertical flip",
-                    "nbit": 1
-                },
-                {
-                    "id": "horizontal flip",
-                    "nbit": 1
-                },
-                {
-                    "id": "alpha depth",
-                    "nbit": 4
-                }
-            ]
-        }
-    ],
-    "footer": [
-        {
-            "shortId": "extensionOffset",
-            "id": "extension area offset",
-            "type": "uint32",
-            "length": 1
-        },
-        {
-            "shortId": "developerOffset",
-            "id": "developper directory offset",
-            "type": "uint32",
-            "length": 1
-        },
-        {
-            "shortId": "signature",
-            "id": "tga signature",
-            "type": "uint8",
-            "length": 18
-        }
-    ]
+	"standard": {
+		"label": "Truevision Targa",
+		"id": "tga",
+		"type":"image",
+		"extension": [
+			".tga",
+			".tpic"
+		]
+	},
+	"header": [
+		{
+			"id": "idFieldSize",
+			"label": "Id field size",
+			"type": "int",
+			"length": 1
+		},
+		{
+			"id": "colourMapType",
+			"label": "Colour map type",
+			"type": "label",
+			"length": 1,
+			"labels": [
+				{
+					"id":"No color palette",
+					"type": "hexa",
+					"value":"00"
+				},
+				{
+					"id":"Color palette",
+					"type": "hexa",
+					"value":"01"
+				}
+			]
+		},
+		{
+			"shortId": "imageType",
+			"id": "image type",
+			"type": "label",
+			"length": 1,
+			"labels": [
+				{
+					"id":"No image data included in file",
+					"type": "hexa",
+					"value":"00"
+				},
+				{
+					"id":"Colormapped image data (Uncompressed)",
+					"type": "hexa",
+					"value":"01"
+				},
+				{
+					"id":"Truecolor image data (Uncompressed)",
+					"type": "hexa",
+					"value":"02"
+				},
+				{
+					"id":"Monochrome image data (Uncompressed)",
+					"type": "hexa",
+					"value":"03"
+				},
+				{
+					"id":"Colormapped image data (Run-length encoded)",
+					"type": "hexa",
+					"value":"09"
+				},
+				{
+					"id":"Truecolor image data (Run-length encoded)",
+					"type": "hexa",
+					"value":"0a"
+				},
+				{
+					"id":"Monochrome image data (Run-length encoded)",
+					"type": "hexa",
+					"value":"0b"
+				}
+			]
+		},
+		{
+			"shortId": "colourMapStart",
+			"id": "colour map start",
+			"type": "int",
+			"length": 2
+		},
+		{
+			"shortId": "colourMapLength",
+			"id": "colour map length",
+			"type": "int",
+			"length": 2
+		},
+		{
+			"shortId": "colourMapBits",
+			"id": "colour map bits",
+			"type": "int",
+			"length": 1,
+			"choice": [
+				0,
+				15,
+				16,
+				24,
+				32
+			]
+		},
+		{
+			"shortId": "xOrigin",
+			"id": "image x-origin",
+			"type": "int",
+			"length": 2
+		},
+		{
+			"shortId": "yOrigin",
+			"id": "image y-origin",
+			"type": "int",
+			"length": 2
+		},
+		{
+			"shortId": "w",
+			"id": "width",
+			"type": "int",
+			"length": 2
+		},
+		{
+			"shortId": "h",
+			"id": "height",
+			"type": "int",
+			"length": 2
+		},
+		{
+			"shortId": "pixelDepth",
+			"id": "pixel depth",
+			"type": "int",
+			"length": 1
+		},
+		{
+			"shortId": "imageDescriptor",
+			"id": "image descriptor",
+			"type": "bits",
+			"length": 1,
+			"bits": [
+				{
+					"id": "unused",
+					"nbit": 1,
+					"value": 0
+				},
+				{
+					"id": "unused",
+					"nbit": 1,
+					"value": 0
+				},
+				{
+					"id": "vertical flip",
+					"nbit": 1
+				},
+				{
+					"id": "horizontal flip",
+					"nbit": 1
+				},
+				{
+					"id": "alpha depth",
+					"nbit": 4
+				}
+			]
+		}
+	],
+	"footer": [
+		{
+			"shortId": "extensionOffset",
+			"id": "extension area offset",
+			"type": "uint32",
+			"length": 1
+		},
+		{
+			"shortId": "developerOffset",
+			"id": "developper directory offset",
+			"type": "uint32",
+			"length": 1
+		},
+		{
+			"shortId": "signature",
+			"id": "tga signature",
+			"type": "uint8",
+			"length": 18
+		}
+	]
 }

@@ -16,103 +16,103 @@
 	},
 	"header": [
 		{
-            "id": "magicNumber",
-            "label": "Magic number",
+			"id": "magicNumber",
+			"label": "Magic number",
 			"hexa": "ffd8"
 		},
 		{
 			"id": "segments",
-            "label": "JFIF segments",
-            "ordered": false,
-            "group": [
+			"label": "JFIF segments",
+			"ordered": false,
+			"group": [
 				{
-		            "id": "app0Marker",
-		            "label": "App0 Segment marker",
+					"id": "app0Marker",
+					"label": "App0 Segment marker",
 					"hexa": "ffe0",
 					"groupSize": "app0SegmentLength",
 					"group": [
 						{
-				            "id": "app0SegmentLength",
-				            "label": "App0 Segment length",
+							"id": "app0SegmentLength",
+							"label": "App0 Segment length",
 							"type": "uint16"
 						},
 						{
-				            "id": "id",
-				            "label": "Identifier",
+							"id": "id",
+							"label": "Identifier",
 							"hexa": "4a46494600"
 						},
-				        {
-				            "id": "majorVersion",
-				            "label": "Jfif major version",
-				            "type": "uint8"
-				        },
 						{
-				            "id": "minorVersion",
-				            "label": "Jfif minor version",
-				            "type": "uint8"
-						},
-						{
-				            "id": "densityUnit",
-				            "label": "Density unit",
-				            "type": "uint8",
-				            "map": [
-				                { "00": "pixel aspect ratio" },
-				                { "01": "dots per inch" },
-				                { "02": "dots per cm" }
-				            ]
-						},
-						{
-				            "id": "xDensity",
-				            "label": "Horizontal pixel density",
-							"type": "uint16"
-						},
-						{
-				            "id": "yDensity",
-				            "label": "Vertical pixel density",
-							"type": "uint16"
-						},
-						{
-				            "id": "tw",
-				            "label": "Thumbnail width",
+							"id": "majorVersion",
+							"label": "Jfif major version",
 							"type": "uint8"
 						},
 						{
-				            "id": "th",
-				            "label": "Thumbnail height",
+							"id": "minorVersion",
+							"label": "Jfif minor version",
 							"type": "uint8"
-				        },
-				        {
-				            "id": "thumbnailData",
-				            "label": "Thumbnail data",
-				            "type": "data",
-				            "count": "3 * tw * th"
-				        }
+						},
+						{
+							"id": "densityUnit",
+							"label": "Density unit",
+							"type": "uint8",
+							"map": [
+								{ "00": "pixel aspect ratio" },
+								{ "01": "dots per inch" },
+								{ "02": "dots per cm" }
+							]
+						},
+						{
+							"id": "xDensity",
+							"label": "Horizontal pixel density",
+							"type": "uint16"
+						},
+						{
+							"id": "yDensity",
+							"label": "Vertical pixel density",
+							"type": "uint16"
+						},
+						{
+							"id": "tw",
+							"label": "Thumbnail width",
+							"type": "uint8"
+						},
+						{
+							"id": "th",
+							"label": "Thumbnail height",
+							"type": "uint8"
+						},
+						{
+							"id": "thumbnailData",
+							"label": "Thumbnail data",
+							"type": "data",
+							"count": "3 * tw * th"
+						}
 					]
 				},
 				{
-		            "id": "app1Marker",
-		            "label": "App1 Segment marker",
+					"id": "app1Marker",
+					"label": "App1 Segment marker",
 					"hexa": "ffed",
 					"optional": true,
 					"groupSize": "app1SegmentLength",
 					"group": [
 						{
-				            "id": "app1SegmentLength",
-				            "label": "App1 Segment length",
+							"id": "app1SegmentLength",
+							"label": "App1 Segment length",
 							"type": "uint16"
 						},
-				        {
-				            "id": "app1SegmentData",
-				            "label": "App1 Segment Data",
-				            "type": "data",
-				            "count": "app1SegmentLength - 2",
-				            "displayType": "ascii"
-				        }
+						{
+							"id": "app1SegmentData",
+							"label": "App1 Segment Data",
+							"type": "data",
+							"count": "app1SegmentLength - 2",
+							"displayType": "ascii"
+						}
 					]
 				},
 				{
-		            "id": "appXMarkerP1",
-		            "label": "AppX Segment marker Part1",
+					"id": "appXMarkerP1",
+					"label": "AppX Segment marker Part1",
 					"hexa": "ff",
 					"optional": true,
 					"repeated": [
@@ -120,24 +120,24 @@
 					],
 					"group": [
 						{
-				            "id": "appXMarkerP2",
-				            "label": "AppX Segment marker Part2",
+							"id": "appXMarkerP2",
+							"label": "AppX Segment marker Part2",
 							"type": "data",
 							"count": 1,
-				            "displayType": "hexa"
+							"displayType": "hexa"
 						},
 						{
-				            "id": "appXSegmentLength",
-				            "label": "AppX Segment length",
+							"id": "appXSegmentLength",
+							"label": "AppX Segment length",
 							"type": "uint16"
 						},
-				        {
-				            "id": "appXSegmentData",
-				            "label": "AppX Segment Data",
-				            "type": "data",
-				            "count": "appXSegmentLength - 2",
-				            "displayType": "ascii"
-				        }
+						{
+							"id": "appXSegmentData",
+							"label": "AppX Segment Data",
+							"type": "data",
+							"count": "appXSegmentLength - 2",
+							"displayType": "ascii"
+						}
 					]
 				}
 			]

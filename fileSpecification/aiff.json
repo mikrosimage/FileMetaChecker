@@ -5,500 +5,500 @@
 		"type": "audio",
 		"extension": [
 			".aif",
-            ".aiff"
+			".aiff"
 		]
 	},
 	"header": [
 		{
-            "id": "chunkId",
-            "label": "File bloc id",
+			"id": "chunkId",
+			"label": "File bloc id",
 			"ascii": "FORM"
-        },
-        {
-            "id": "chunkSize",
-            "label": "File size",
-            "type": "uint32"
-        },
-        {
-            "id": "formType",
-            "label": "Form type id",
-            "endian": "big",
-            "ascii": "AIFF",
-            "ordered": false,
-            "group": [
-                {
-                    "id": "commSubChunks",
-                    "label": "Common sub-chunk",
-                    "ascii": "COMM",
-                    "groupSize": "commSize + 4",
-                    "optional": false,
-                    // "precedence" : "0",
-                    "group": [
-                        {
-                            "id": "commSize",
-                            "label": "SubChunk size",
-                            "type": "int32"
-                        },
-                        {
-                            "id": "numChannels",
-                            "label": "Channels number",
-                            "type": "int16"
-                        },
-                        {
-                            "id": "numSampleFrames",
-                            "label": "Sample frames number",
-                            "type": "uint32"
-                        },
-                        {
-                            "id": "sampleSize",
-                            "label": "Sample size",
-                            "type": "int16"
-                        },
-                        {
-                            "id": "sampleRate",
-                            "label": "Sample rate",
-                            "type": "ieeeExtended" // 80 bit IEEE Standard 754 floating point
-                        }
-                    ]
-                },
-                {
-                    "id": "ssndSubChunks",
-                    "label": "Sound Data sub-chunk",
-                    "ascii": "SSND",
-                    "endian": "big",
-                    "groupSize": "ssndSize + 4",
-                    "optional": false,
-                    // "precedence" : "1",
-                    "group": [
-                        {
-                            "id": "ssndSize",
-                            "label": "SubChunk size",
-                            "type": "int32"
-                        },
-                        {
-                            "id": "offset",
-                            "label": "Offset",
-                            "type": "uint32"
-                        },
-                        {
-                            "id": "blockSize",
-                            "label": "Block Size",
-                            "type": "uint32"
-                        },
-                        {
-                            "id": "soundData",
-                            "label": "Sound data",
-                            "type": "data",
-                            "count": "ssndSize - 8"
-                        }
-                    ]
-                },
-                {
-                    "id": "markSubChunks",
-                    "label": "Sound Data sub-chunk",
-                    "ascii": "MARK",
-                    "groupSize": "markSize + 4",
-                    "optional": true,
-                    // "precedence" : "2",
-                    "repeated": [
-                        { "max" : 1 }
-                    ],
-                    "group": [
-                        {
-                            "id": "markSize",
-                            "label": "SubChunk size",
-                            "type": "int32"
-                        },
-                        {
-                            "id": "numMarkers",
-                            "label": "Markers number",
-                            "type": "uint16"
-                        },
-                        {
-                            "id": "markers",
-                            "label": "Markers",
-                            "groupSize": "markSize - 2",
-                            "repeated": "numMarkers",
-                            "group":
-                                [
-                                    {
-                                        "id": "markerId",
-                                        "label": "Marker ID",
-                                        "type": "int16"
-                                    },
-                                    {
-                                        "id": "markerPosition",
-                                        "label": "Marker position",
-                                        "type": "uint32"
-                                    },
-                                    {
-                                        "id": "markerNameSize",
-                                        "label": "Marker name size",
-                                        "type": "uint8"
-                                    },
-                                    {
-                                        "id": "markerName",
-                                        "label": "Marker name",
-                                        "type": "data",
-                                        "count": "markerNameSize",
-                                        "displayType": "ascii"
-                                    }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "id": "instSubChunks",
-                    "label": "Instrument sub-chunk",
-                    "ascii": "INST",
-                    "groupSize": "instSize + 4",
-                    "optional": true,
-                    // "precedence" : "3",
-                    "repeated": [
-                        { "max" : 1 }
-                    ],
-                    "group": [
-                        {
-                            "id": "instSize",
-                            "label": "SubChunk size",
-                            "type": "int32"
-                            // "expr": "20"
-                        },
-                        {
-                            "id": "baseNote",
-                            "label": "Base Note",
-                            "type": "int8",
-                            "range": [
-                                { "min":   0 },
-                                { "max": 127 }
-                            ]
-                        },
-                        {
-                            "id": "detune",
-                            "label": "Detune",
-                            "type": "int8",
-                            "range": [
-                                { "min": -50 },
-                                { "max":  50 }
-                            ]
-                        },
-                        {
-                            "id": "lowNote",
-                            "label": "Low Note",
-                            "type": "int8"
-                        },
-                        {
-                            "id": "highNote",
-                            "label": "High Note",
-                            "type": "int8"
-                        },
-                        {
-                            "id": "lowVelocity",
-                            "label": "Low Velocity",
-                            "type": "int8",
-                            "range": [
-                                { "min":   0 },
-                                { "max": 127 }
-                            ]
-                        },
-                        {
-                            "id": "highVelocity",
-                            "label": "High Velocity",
-                            "type": "int8",
-                            "range": [
-                                { "min":   0 },
-                                { "max": 127 }
-                            ]
-                        },
-                        {
-                            "id": "gain",
-                            "label": "Gain",
-                            "type": "int16"
-                        },
-                        {
-                            "id": "sustainLoop",
-                            "label": "Sustain Loop",
-                            "groupSize": "6",
-                            "group":
-                                [
-                                    {
-                                        "id": "playMode",
-                                        "label": "Play Mode",
-                                        "type": "int16",
-                                        "map": [
-                                            { "0": "No looping" },
-                                            { "1": "Forward looping" },
-                                            { "2": "Forward-Backward looping" }
-                                        ]
-                                    },
-                                    {
-                                        "id": "beginLoopMarker",
-                                        "label": "Begin Loop (Marker ID)",
-                                        "type": "int16"
-                                    },
-                                    {
-                                        "id": "endLoopMarker",
-                                        "label": "End Loop (Marker ID)",
-                                        "type": "int16"
-                                    }
-                            ]
-                        },
-                        {
-                            "id": "releaseLoop",
-                            "label": "Release Loop",
-                            "groupSize": "6",
-                            "group":
-                                [
-                                    {
-                                        "id": "playMode",
-                                        "label": "Play Mode",
-                                        "type": "int16",
-                                        "map": [
-                                            { "0": "No looping" },
-                                            { "1": "Forward looping" },
-                                            { "2": "Forward-Backward looping" }
-                                        ]
-                                    },
-                                    {
-                                        "id": "beginLoopMarker",
-                                        "label": "Begin Loop (Marker ID)",
-                                        "type": "int16"
-                                    },
-                                    {
-                                        "id": "endLoopMarker",
-                                        "label": "End Loop (Marker ID)",
-                                        "type": "int16"
-                                    }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "id": "midiSubChunks",
-                    "label": "MIDI sub-chunk",
-                    "ascii": "MIDI",
-                    "groupSize": "midiSize + 4",
-                    "optional": true,
-                    // "precedence" : "10",
-                    "group": [
-                        {
-                            "id": "midiSize",
-                            "label": "SubChunk size",
-                            "type": "int32"
-                        },
-                        {
-                            "id": "midiData",
-                            "label": "MIDI Data",
-                            "type": "data",
-                            "count": "midiSize"
-                        }
-                    ]
-                },
-                {
-                    "id": "aesdSubChunks",
-                    "label": "Audio Recording sub-chunk",
-                    "ascii": "AESD",
-                    "groupSize": "aesdSize + 4",
-                    "optional": true,
-                    // "precedence" : "9",
-                    "repeated": [
-                        { "max" : 1 }
-                    ],
-                    "group": [
-                        {
-                            "id": "aesdSize",
-                            "label": "SubChunk size",
-                            "type": "int32"
-                            // "expr": "24"
-                        },
-                        {
-                            "id": "aesChannelStatusData",
-                            "label": "AES Channel Status Data",
-                            "type": "data",
-                            "count": "aesdSize"
-                        }
-                    ]
-                },
-                {
-                    "id": "applSubChunks",
-                    "label": "Application Specific sub-chunk",
-                    "ascii": "APPL",
-                    "groupSize": "applSize + 4",
-                    "optional": true,
-                    // "precedence" : "11",
-                    "group": [
-                        {
-                            "id": "applSize",
-                            "label": "SubChunk size",
-                            "type": "int32"
-                        },
-                        {
-                            "id": "applicationSignature",
-                            "label": "AES Channel Status Data",
-                            "type": "data",
-                            "count": "4",
-                            "displayType": "ascii"
-                        },
-                        {
-                            "id": "applicationData",
-                            "label": "Application Data",
-                            "type": "data",
-                            "count": "applSize - 4"
-                        }
-                    ]
-                },
-                {
-                    "id": "comtSubChunks",
-                    "label": "Comment sub-chunk",
-                    "ascii": "COMT",
-                    "groupSize": "comtSize + 4",
-                    "optional": true,
-                    // "precedence" : "4",
-                    "repeated": [
-                        { "max" : 1 }
-                    ],
-                    "group": [
-                        {
-                            "id": "comtSize",
-                            "label": "SubChunk size",
-                            "type": "int32"
-                        },
-                        {
-                            "id": "numComments",
-                            "label": "Comments Number",
-                            "type": "uint16"
-                        },
-                        {
-                            "id": "comments",
-                            "label": "Comments",
-                            "repeated": "numComments",
-                            "group": [
-                                {
-                                    "id": "timeStamp",
-                                    "label": "Time Stamp",
-                                    "type": "uint32"
-                                },
-                                {
-                                    "id": "marker",
-                                    "label": "marker ID",
-                                    "type": "int16"
-                                },
-                                {
-                                    "id": "commentTextSize",
-                                    "label": "Comment Text Size",
-                                    "type": "uint16"
-                                },
-                                {
-                                    "id": "commentText",
-                                    "label": "Comment Text",
-                                    "type": "data",
-                                    "count": "textSize"
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "id": "nameSubChunks",
-                    "label": "Name sub-chunk",
-                    "ascii": "NAME",
-                    "groupSize": "nameSize + 4",
-                    "optional": true,
-                    // "precedence" : "5",
-                    "repeated": [
-                        { "max" : 1 }
-                    ],
-                    "group": [
-                        {
-                            "id": "nameSize",
-                            "label": "SubChunk size",
-                            "type": "int32"
-                        },
-                        {
-                            "id": "nameText",
-                            "label": "Name Text",
-                            "type": "data",
-                            "count": "nameSize",
-                            "displayType": "ascii"
-                        }
-                    ]
-                },
-                {
-                    "id": "authSubChunks",
-                    "label": "Author sub-chunk",
-                    "ascii": "AUTH",
-                    "groupSize": "authSize + 4",
-                    "optional": true,
-                    // "precedence" : "6",
-                    "repeated": [
-                        { "max" : 1 }
-                    ],
-                    "group": [
-                        {
-                            "id": "authSize",
-                            "label": "SubChunk size",
-                            "type": "int32"
-                        },
-                        {
-                            "id": "authorText",
-                            "label": "Author Text",
-                            "type": "data",
-                            "count": "authSize",
-                            "displayType": "ascii"
-                        }
-                    ]
-                },
-                {
-                    "id": "copySubChunks",
-                    "label": "Copyright sub-chunk",
-                    "ascii": "(c) ",
-                    "groupSize": "copySize + 4",
-                    "optional": true,
-                    // "precedence" : "7",
-                    "repeated": [
-                        { "max" : 1 }
-                    ],
-                    "group": [
-                        {
-                            "id": "copySize",
-                            "label": "SubChunk size",
-                            "type": "int32"
-                        },
-                        {
-                            "id": "copyrightText",
-                            "label": "Copyright Text",
-                            "type": "data",
-                            "count": "copySize",
-                            "displayType": "ascii"
-                        }
-                    ]
-                },
-                {
-                    "id": "annoSubChunks",
-                    "label": "Annotation sub-chunk",
-                    "ascii": "ANNO",
-                    "groupSize": "annoSize + 4",
-                    "optional": true,
-                    // "precedence" : "8",
-                    "repeated": [
-                        { "max" : 1 }
-                    ],
-                    "group": [
-                        {
-                            "id": "annoSize",
-                            "label": "SubChunk size",
-                            "type": "int32"
-                        },
-                        {
-                            "id": "annotationText",
-                            "label": "Annotation Text",
-                            "type": "data",
-                            "count": "annoSize",
-                            "displayType": "ascii"
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
+		},
+		{
+			"id": "chunkSize",
+			"label": "File size",
+			"type": "uint32"
+		},
+		{
+			"id": "formType",
+			"label": "Form type id",
+			"endian": "big",
+			"ascii": "AIFF",
+			"ordered": false,
+			"group": [
+				{
+					"id": "commSubChunks",
+					"label": "Common sub-chunk",
+					"ascii": "COMM",
+					"groupSize": "commSize + 4",
+					"optional": false,
+					// "precedence" : "0",
+					"group": [
+						{
+							"id": "commSize",
+							"label": "SubChunk size",
+							"type": "int32"
+						},
+						{
+							"id": "numChannels",
+							"label": "Channels number",
+							"type": "int16"
+						},
+						{
+							"id": "numSampleFrames",
+							"label": "Sample frames number",
+							"type": "uint32"
+						},
+						{
+							"id": "sampleSize",
+							"label": "Sample size",
+							"type": "int16"
+						},
+						{
+							"id": "sampleRate",
+							"label": "Sample rate",
+							"type": "ieeeExtended" // 80 bit IEEE Standard 754 floating point
+						}
+					]
+				},
+				{
+					"id": "ssndSubChunks",
+					"label": "Sound Data sub-chunk",
+					"ascii": "SSND",
+					"endian": "big",
+					"groupSize": "ssndSize + 4",
+					"optional": false,
+					// "precedence" : "1",
+					"group": [
+						{
+							"id": "ssndSize",
+							"label": "SubChunk size",
+							"type": "int32"
+						},
+						{
+							"id": "offset",
+							"label": "Offset",
+							"type": "uint32"
+						},
+						{
+							"id": "blockSize",
+							"label": "Block Size",
+							"type": "uint32"
+						},
+						{
+							"id": "soundData",
+							"label": "Sound data",
+							"type": "data",
+							"count": "ssndSize - 8"
+						}
+					]
+				},
+				{
+					"id": "markSubChunks",
+					"label": "Sound Data sub-chunk",
+					"ascii": "MARK",
+					"groupSize": "markSize + 4",
+					"optional": true,
+					// "precedence" : "2",
+					"repeated": [
+						{ "max" : 1 }
+					],
+					"group": [
+						{
+							"id": "markSize",
+							"label": "SubChunk size",
+							"type": "int32"
+						},
+						{
+							"id": "numMarkers",
+							"label": "Markers number",
+							"type": "uint16"
+						},
+						{
+							"id": "markers",
+							"label": "Markers",
+							"groupSize": "markSize - 2",
+							"repeated": "numMarkers",
+							"group":
+								[
+								{
+									"id": "markerId",
+									"label": "Marker ID",
+									"type": "int16"
+								},
+								{
+									"id": "markerPosition",
+									"label": "Marker position",
+									"type": "uint32"
+								},
+								{
+									"id": "markerNameSize",
+									"label": "Marker name size",
+									"type": "uint8"
+								},
+								{
+									"id": "markerName",
+									"label": "Marker name",
+									"type": "data",
+									"count": "markerNameSize",
+									"displayType": "ascii"
+								}
+							]
+						}
+					]
+				},
+				{
+					"id": "instSubChunks",
+					"label": "Instrument sub-chunk",
+					"ascii": "INST",
+					"groupSize": "instSize + 4",
+					"optional": true,
+					// "precedence" : "3",
+					"repeated": [
+						{ "max" : 1 }
+					],
+					"group": [
+						{
+							"id": "instSize",
+							"label": "SubChunk size",
+							"type": "int32"
+							// "expr": "20"
+						},
+						{
+							"id": "baseNote",
+							"label": "Base Note",
+							"type": "int8",
+							"range": [
+								{ "min":   0 },
+								{ "max": 127 }
+							]
+						},
+						{
+							"id": "detune",
+							"label": "Detune",
+							"type": "int8",
+							"range": [
+								{ "min": -50 },
+								{ "max":  50 }
+							]
+						},
+						{
+							"id": "lowNote",
+							"label": "Low Note",
+							"type": "int8"
+						},
+						{
+							"id": "highNote",
+							"label": "High Note",
+							"type": "int8"
+						},
+						{
+							"id": "lowVelocity",
+							"label": "Low Velocity",
+							"type": "int8",
+							"range": [
+								{ "min":   0 },
+								{ "max": 127 }
+							]
+						},
+						{
+							"id": "highVelocity",
+							"label": "High Velocity",
+							"type": "int8",
+							"range": [
+								{ "min":   0 },
+								{ "max": 127 }
+							]
+						},
+						{
+							"id": "gain",
+							"label": "Gain",
+							"type": "int16"
+						},
+						{
+							"id": "sustainLoop",
+							"label": "Sustain Loop",
+							"groupSize": "6",
+							"group":
+								[
+								{
+									"id": "playMode",
+									"label": "Play Mode",
+									"type": "int16",
+									"map": [
+										{ "0": "No looping" },
+										{ "1": "Forward looping" },
+										{ "2": "Forward-Backward looping" }
+									]
+								},
+								{
+									"id": "beginLoopMarker",
+									"label": "Begin Loop (Marker ID)",
+									"type": "int16"
+								},
+								{
+									"id": "endLoopMarker",
+									"label": "End Loop (Marker ID)",
+									"type": "int16"
+								}
+							]
+						},
+						{
+							"id": "releaseLoop",
+							"label": "Release Loop",
+							"groupSize": "6",
+							"group":
+								[
+								{
+									"id": "playMode",
+									"label": "Play Mode",
+									"type": "int16",
+									"map": [
+										{ "0": "No looping" },
+										{ "1": "Forward looping" },
+										{ "2": "Forward-Backward looping" }
+									]
+								},
+								{
+									"id": "beginLoopMarker",
+									"label": "Begin Loop (Marker ID)",
+									"type": "int16"
+								},
+								{
+									"id": "endLoopMarker",
+									"label": "End Loop (Marker ID)",
+									"type": "int16"
+								}
+							]
+						}
+					]
+				},
+				{
+					"id": "midiSubChunks",
+					"label": "MIDI sub-chunk",
+					"ascii": "MIDI",
+					"groupSize": "midiSize + 4",
+					"optional": true,
+					// "precedence" : "10",
+					"group": [
+						{
+							"id": "midiSize",
+							"label": "SubChunk size",
+							"type": "int32"
+						},
+						{
+							"id": "midiData",
+							"label": "MIDI Data",
+							"type": "data",
+							"count": "midiSize"
+						}
+					]
+				},
+				{
+					"id": "aesdSubChunks",
+					"label": "Audio Recording sub-chunk",
+					"ascii": "AESD",
+					"groupSize": "aesdSize + 4",
+					"optional": true,
+					// "precedence" : "9",
+					"repeated": [
+						{ "max" : 1 }
+					],
+					"group": [
+						{
+							"id": "aesdSize",
+							"label": "SubChunk size",
+							"type": "int32"
+							// "expr": "24"
+						},
+						{
+							"id": "aesChannelStatusData",
+							"label": "AES Channel Status Data",
+							"type": "data",
+							"count": "aesdSize"
+						}
+					]
+				},
+				{
+					"id": "applSubChunks",
+					"label": "Application Specific sub-chunk",
+					"ascii": "APPL",
+					"groupSize": "applSize + 4",
+					"optional": true,
+					// "precedence" : "11",
+					"group": [
+						{
+							"id": "applSize",
+							"label": "SubChunk size",
+							"type": "int32"
+						},
+						{
+							"id": "applicationSignature",
+							"label": "AES Channel Status Data",
+							"type": "data",
+							"count": "4",
+							"displayType": "ascii"
+						},
+						{
+							"id": "applicationData",
+							"label": "Application Data",
+							"type": "data",
+							"count": "applSize - 4"
+						}
+					]
+				},
+				{
+					"id": "comtSubChunks",
+					"label": "Comment sub-chunk",
+					"ascii": "COMT",
+					"groupSize": "comtSize + 4",
+					"optional": true,
+					// "precedence" : "4",
+					"repeated": [
+						{ "max" : 1 }
+					],
+					"group": [
+						{
+							"id": "comtSize",
+							"label": "SubChunk size",
+							"type": "int32"
+						},
+						{
+							"id": "numComments",
+							"label": "Comments Number",
+							"type": "uint16"
+						},
+						{
+							"id": "comments",
+							"label": "Comments",
+							"repeated": "numComments",
+							"group": [
+								{
+									"id": "timeStamp",
+									"label": "Time Stamp",
+									"type": "uint32"
+								},
+								{
+									"id": "marker",
+									"label": "marker ID",
+									"type": "int16"
+								},
+								{
+									"id": "commentTextSize",
+									"label": "Comment Text Size",
+									"type": "uint16"
+								},
+								{
+									"id": "commentText",
+									"label": "Comment Text",
+									"type": "data",
+									"count": "textSize"
+								}
+							]
+						}
+					]
+				},
+				{
+					"id": "nameSubChunks",
+					"label": "Name sub-chunk",
+					"ascii": "NAME",
+					"groupSize": "nameSize + 4",
+					"optional": true,
+					// "precedence" : "5",
+					"repeated": [
+						{ "max" : 1 }
+					],
+					"group": [
+						{
+							"id": "nameSize",
+							"label": "SubChunk size",
+							"type": "int32"
+						},
+						{
+							"id": "nameText",
+							"label": "Name Text",
+							"type": "data",
+							"count": "nameSize",
+							"displayType": "ascii"
+						}
+					]
+				},
+				{
+					"id": "authSubChunks",
+					"label": "Author sub-chunk",
+					"ascii": "AUTH",
+					"groupSize": "authSize + 4",
+					"optional": true,
+					// "precedence" : "6",
+					"repeated": [
+						{ "max" : 1 }
+					],
+					"group": [
+						{
+							"id": "authSize",
+							"label": "SubChunk size",
+							"type": "int32"
+						},
+						{
+							"id": "authorText",
+							"label": "Author Text",
+							"type": "data",
+							"count": "authSize",
+							"displayType": "ascii"
+						}
+					]
+				},
+				{
+					"id": "copySubChunks",
+					"label": "Copyright sub-chunk",
+					"ascii": "(c) ",
+					"groupSize": "copySize + 4",
+					"optional": true,
+					// "precedence" : "7",
+					"repeated": [
+						{ "max" : 1 }
+					],
+					"group": [
+						{
+							"id": "copySize",
+							"label": "SubChunk size",
+							"type": "int32"
+						},
+						{
+							"id": "copyrightText",
+							"label": "Copyright Text",
+							"type": "data",
+							"count": "copySize",
+							"displayType": "ascii"
+						}
+					]
+				},
+				{
+					"id": "annoSubChunks",
+					"label": "Annotation sub-chunk",
+					"ascii": "ANNO",
+					"groupSize": "annoSize + 4",
+					"optional": true,
+					// "precedence" : "8",
+					"repeated": [
+						{ "max" : 1 }
+					],
+					"group": [
+						{
+							"id": "annoSize",
+							"label": "SubChunk size",
+							"type": "int32"
+						},
+						{
+							"id": "annotationText",
+							"label": "Annotation Text",
+							"type": "data",
+							"count": "annoSize",
+							"displayType": "ascii"
+						}
+					]
+				}
+			]
+		}
+	]
 }
