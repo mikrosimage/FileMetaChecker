@@ -1,122 +1,58 @@
-import os
-
-from xml.dom.ext import StripXml
-from xml.dom.ext.reader import Sax2
-
-from section import *
-from stream import *
-from utils import *
+import xml.etree.ElementTree as ET
 
 class XmlParser():
 	def __init__( self ):
-		self.root = None
-		self.sections = []
-		self.streams  = []
-		self.forbidden  = []
-		self.xmlFilename = ""
+		self.xmlStream = ""
+		self.hiddenFields = []
 
-	def parseXml( self, xmlFile, outputFormat ):
-		file = open( xmlFile )
-		self.xmlFilename = os.path.basename( xmlFile )
-		xmlStream = file.read()
-		file.close()
+	def setXmlFile( self, filename ) :
+		try :
+			file = open( filename )
+			buffer = file.read()
+			ET.fromstring( buffer )
+			self.xmlStream = buffer
+			file.close()
+		except TypeError as e :
+			print "File path expected : '" + str(e) + "'"
+			print "Trying to set input as stream..."
+			self.setXmlStream( filename )
+		except IOError as e :
+			print "Invalid file path : trying to set input as stream..."
+			self.setXmlStream( filename )
+		except ET.ParseError as e :
+			raise RuntimeError( "Invalid XML stream : '" + str(e) + "'" )
 
-		reader = Sax2.Reader()
-		docTree = reader.fromString( xmlStream )
-		StripXml( docTree )
-		self.root = docTree.documentElement
+	def setXmlStream( self, xmlStream ) :
+		if type( xmlStream ) is not str :
+			raise ValueError( "xmlStream must be a string object !" )
+		try :
+			ET.fromstring( xmlStream )
+			self.xmlStream = xmlStream
+		except ET.ParseError as e :
+			raise RuntimeError( "Invalid XML stream : '" + str(e) + "'" )
 
-		if self.root.childNodes is None :
-			return;
+	def getRoot( self ):
+		root = ET.fromstring( self.xmlStream )
+		return root;
 
-		# get xml sections
-		for node in self.root.childNodes :
+	def displayChildren( self, parent, level=1 ) :
+		if list( parent ):
+			for element in parent :
+				if not self.hiddenFields.count( element.tag ) :
+					print "\t"*level + str( element.tag )
+					self.displayChildren( element, level + 1 )
 
-			if node.tagName == fileSystemInfo :
-				section = FileSystemInfoSection( outputFormat, node.getAttribute( labelAttr ) )
-				section.status = node.getAttribute( statusAttr )	
-				self.sections.append( section )
-				section.setAvailableFields( node )
-				if node.childNodes is not None :
-					for element in node.childNodes:
-						section.fields.append( element )
+	def display( self ):
+		try : 
+			root = ET.fromstring( self.xmlStream )
+			print root.tag
+			self.displayChildren( root )
+		
+		except ET.ParseError as e:
+			print "Invalid XML stream : '" + str(e) + "'"
 
-			if node.tagName == "stream" :
-				stream = Stream( node.getAttribute( "type" ), node.getAttribute( "index" ), node.getAttribute( labelAttr ) )
-				self.streams.append( stream )
-				# print "stream : " + section.type + " " + section.index
-
-				for child in node.childNodes:
-					description = Description( child.tagName )
-					stream.descriptions.append( description )
-					if child.tagName == "fileValidator" :
-						for subChild in child.childNodes:
-							if subChild.tagName == specification :
-								section = SpecificationSection( subChild.getAttribute( labelAttr ) )
-								section.status = subChild.getAttribute( statusAttr )
-								section.date   = subChild.getAttribute( "date" )
-
-							else :
-								section = Section( subChild.tagName )
-								section.status = subChild.getAttribute( statusAttr )
-			
-							description.sections.append( section )
-							section.setAvailableFields( subChild )
-							if subChild.childNodes is not None :
-								for element in subChild.childNodes:
-									section.fields.append( element )
-					
-					elif child.tagName == "loudness" :
-						for subChild in child.childNodes:
-							section = LoudnessSection( subChild.getAttribute( "standard" ) )
-							section.status = subChild.getAttribute( statusAttr )
-							section.date   = subChild.getAttribute( "date" )
-							
-							description.sections.append( section )
-							section.setAvailableFields( subChild )
-							if subChild.childNodes is not None :
-								for element in subChild.childNodes:
-									section.fields.append( element )
-
-					else :
-						for subChild in child.childNodes:
-							section = Section( subChild.getAttribute( labelAttr ) )
-							section.status = subChild.getAttribute( statusAttr )
-							
-							description.sections.append( section )
-							section.setAvailableFields( subChild )
-							if subChild.childNodes is not None :
-								for element in subChild.childNodes:
-									section.fields.append( element )
-
-	def displaySections( self ):
-		for section in self.sections:
-			if self.forbidden.count( section ) != 0 :
-				continue;
-			section.displayFields( section.fields )
-		for stream in self.streams:
-			if self.forbidden.count( stream ) != 0 :
-				continue;
-			stream.displayFields( )
-	
-	def removeField( self, fieldTagName ):
-		for section in self.sections:
-			for field in section.availableFields :
-				if field.tagName == fieldTagName :
-					section.forbiddenFields.append( field )
-
-		for stream in self.streams:
-			if stream.index == fieldTagName :
-				self.forbidden.append( stream )
-
-			for description in stream.descriptions :
-				if description.title == fieldTagName :
-					stream.forbiddenDescriptions.append( description )
-
-				for section in description.sections :
-					if section.title == fieldTagName :
-						description.forbiddenSections.append( section )
-
-					for field in section.availableFields :
-						if field.tagName == fieldTagName :
-							section.forbiddenFields.append( field )
+	def hideField( self, tagName ):
+		if len( list( self.getRoot().iter( tagName ) ) ) == 0 :
+			print "Warning : '" + tagName + "' element cannot be found."
+		else :
+			self.hiddenFields.append( tagName )

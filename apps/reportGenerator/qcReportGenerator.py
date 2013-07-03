@@ -22,7 +22,7 @@ optionParser.add_option(
 optionParser.add_option(
 	"-l", "--list",
 	type    = "string",
-	dest    = "fieldListFile",
+	dest    = "filesToDisplay",
 	action  = "append",
 	help    = "display all available fields",
 	metavar = "FILE"
@@ -52,29 +52,27 @@ optionParser.add_option(
 parser = XmlParser()
 
 ######  List of Fields  ######
-if options.fieldListFile :
+if options.filesToDisplay :
 	for arg in args:
-		options.fieldListFile.append( arg )
+		options.filesToDisplay.append( arg )
 
-	for fieldListFile in options.fieldListFile :
-		parser.parseXml( fieldListFile )
+	for filename in options.filesToDisplay :
+		parser.setXmlFile( filename )
 		if options.fieldsToRemove :
 			for arg in args:
-				options.fieldListFile.append( arg )
+				options.filesToDisplay.append( arg )
 			for field in options.fieldsToRemove :
-				parser.removeField( field )
-		parser.displaySections()
+				parser.hideField( field )
+		parser.display()
 
 
 ######  Display Help  ######
-if len( args ) == 0 and options.filename == None and options.fieldListFile == None:
+if len( args ) == 0 and options.filename == None and options.filesToDisplay == None:
 	optionParser.print_help()
 	sys.exit()
 
 
 ######  Generate Report  ######
-if not options.filename:
-	raise RuntimeError( "Input file required ( -i FILE )" )
 for inputFile in options.filename :
 
 	if not options.format :
@@ -90,7 +88,7 @@ for inputFile in options.filename :
 		outputFile = outputFile.replace( ".xml", "." + outputExt )
 		print ">>> Output filename : " + outputFile
 
-		parser.parseXml( inputFile, outputExt )
+		parser.setXmlFile( inputFile )
 		if options.fieldsToRemove :
 			for arg in args:
 				options.fieldsfile.append( arg )
@@ -104,7 +102,7 @@ for inputFile in options.filename :
 		else : 
 			xth = XmlToHtml()
 			xth.convertToFile( parser )
-			stream = xth.getHtmlStream()
+			stream = xth.getHtml()
 
 		file = open( outputFile, "w+" )
 		file.write( stream )
