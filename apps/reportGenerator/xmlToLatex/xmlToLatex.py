@@ -1,10 +1,13 @@
 #!/usr/bin/python
+import os
 from latexwriter import *
 from xmlParser import *
 
 class XmlToLatex():
 	def __init__( self ):
 		self.lw = LatexWriter()
+		self.plots = []
+		self.colors = [ "blue", "red", "green", "orange", "black" ]
 
 	def setReportDocument( self, filename, QCversion, logoPath ):
 		self.lw.setDocumentClass( "report", "11pt, a4paper" )
@@ -57,6 +60,7 @@ class XmlToLatex():
 		self.lw.addSimpleCommand( "title", "Quality Check" )
 		self.lw.addSimpleLineBreak()
 
+
 		maketitle = ""
 		maketitle += "\\renewcommand{\\maketitle}{\n"
 		maketitle += "\\begin{titlepage}\n"
@@ -86,61 +90,80 @@ class XmlToLatex():
 		self.lw.addSimpleCommand( "cfoot", "\\thepage" )
 		self.lw.addSimpleLineBreak()
 
+	def getChildData( self, element ) :
+		data = []
+		for child in list( element ) :
+			if not child.get( "label" ) and not child.get( "status" ) :
+				if list( child ) :
+					data.extend( self.getChildData( child ) )
+				continue
 
+			pair = []
+			# print child
+			if child.get( "date" ) or child.get( "index" ) :
+				string  = "\\hline \\multicolumn{2}{|c|}{ \\textbf{" + child.get( "label" ) + "}"
+				string += ": \\textit{" + child.get( "status" ) + "}" if child.get( "status" ) else ""
+				string += "}"
+				pair.append( string )
+				data.append( pair )
+				
+			else :
+				if child.get( "label" ) :
+					# print ">>> LABEL"
+					pair.append( child.get( "label" ) )
+					if child.text :
+						# print "\t>>> TEXT" + child.text
+						if child.get( "status" ) == "not valid" or child.get( "status" ) == "illegal" : 
+							pair.append( "{"+"\\"+"color{red}\\textbf{"+ child.text +"}}")
+						else :
+							pair.append( child.text )
+							
+					elif child.get( "type" ) == "data" :
+						# print "\t>>> TYPE DATA"
+						pair.append( "\\textit{- DATA -}")
 
-	def dataStatusColor( self, dataArray, statusArray ):
-		if type( dataArray ) is not list :
-			raise ValueError( "list of lists expected" )
-		if type( dataArray[0] ) is not list :
-			raise ValueError( "list of lists expected" )
-		if type( statusArray ) is not list :
-			raise ValueError( "list expected" )
-		if len( dataArray ) != len( statusArray ) :
-			print len( dataArray )
-			print len( statusArray )
-			raise ValueError( "'dataArray' and 'statusArray' must have the same length" )
+					elif child.get( "status" ) and len( list( child ) ) == 0 :
+						# print "\t>>> STATUS"
+						if child.get( "status" ) == "valid" :
+							pair.append( "{"+"\\"+"color{OliveGreen}\\textbf{valid}}")
+						if child.get( "status" ) == "not valid" or child.get( "status" ) == "illegal" :
+							pair.append( "{"+"\\"+"color{red}\\textbf{"+ child.get( "status" ) +"}}")
 
-		for i in range( 0, len( dataArray ) ):
-			for j in range( 0, len( dataArray[0] ) ):
+					elif list( child ) :
+						# print child
+						if not list( child.itertext() ) :
+							table = []
+							for subchild in list( child ) :
+								line = self.getChildData( subchild )
+								line.insert( 0, str( subchild.get( "label" ) ) + " :" )
+								table.append( line )
+								# print "table " + subchild.tag + " : " + str(table)
+							pair.append( table )
+								# continue
+							data.append( pair )
+							continue
+						else :
+							pair = [ "\\hline \\multicolumn{2}{|c|}{" + child.get( "label" ) + "}" ]
+							data.append( pair )
+							data.extend( self.getChildData( child ) )
+							continue
+					
+					data.append( pair )
+						
+				else :
+					# print ">>> NO LABEL"
+					if child.get( "status" ) == "false" :
+						data.append( "\\"+"color{Gray}"+ child.tag )
+					else :
+						data.append( child.tag )
 
-				if type( dataArray[i][j] ) is unicode or type( dataArray[i][j] ) is str :
-					if statusArray[i] != "valid" and statusArray[i] != "" :
-						dataArray[i][j] = "{"+"\\"+"color{red}\\textbf{"+ str( dataArray[i][j] ) +"}}"
-				elif type( dataArray[i][j] ) is list :
-					for k in range( 0, len(dataArray[i][j]) ):
-						if statusArray[i] != "valid" and statusArray[i] != "" :
-							dataArray[i][j] = "{"+"\\"+"color{red}\\textbf{"+ str( dataArray[i][j] ) +"}}"
-		return dataArray;
+			if list( child ) :
+				data.extend( self.getChildData( child ) )
+		return data
 
-	def checkSpecialDataCharacters( self, array, checkStrings=False ):
-		if len( array ) == 0 :
-			raise ValueError( "Empty list : list of lists expected" )
-		if type(array) is not list :
-			raise ValueError( "list of lists expected" )
-		if len( array ) > 0 and type(array[0]) is not list :
-			raise ValueError( "list of lists expected" )
-
-		for i in range( 0, len( array ) ):
-			for j in range( 0, len( array[0] ) ):
-				if type( array[i][j] ) is unicode or type( array[i][j] ) is str :
-					array[i][j] = transformSpecialCharacters( array[i][j] )
-					if checkStrings :
-						array[i][j] = checkString( array[i][j], 50 )
-				elif type( array[i][j] ) is list and len( array[i][j] ) > 0 :
-					array[i][j] = self.checkSpecialDataCharacters( array[i][j] )
-
-
-		return array;
-
-
-
-	def addFileSystemInfoSection( self, section ):
-		section.setFieldsValues()
-		section.data = self.checkSpecialDataCharacters( section.data )
-		
+	def addFileSystemInfoSection( self, element ):
 		fsiTable = LatexTable()
-		# fsiTable.setTitle( section.title )
-		fsiTable.setContent( section.data )
+		fsiTable.setContent( self.getChildData( element ) )
 		fsiTable.setBorders('none')
 		fsiTable.setRowAlignment( 0, 'left')
 		fsiTable.setRowAlignment( 1, 'right', True )
@@ -150,64 +173,22 @@ class XmlToLatex():
 		self.lw.addSimpleCommand( "vspace", "2cm" )
 		self.lw.addSimpleLineBreak()
 
-		# print "\nFileSystemInfoSection : " + section.title
-		# print section.data
-		# print section.dataStatus
+	def addSummarySection( self, element ):
+		summaryTable = LatexTable()
+		summaryTable.setContent( self.getChildData( element ) )
+		# summaryTable.setBorders( 'header' )
+		summaryTable.setRowAlignment( 0, 'left', True )
+		summaryTable.setRowAlignment( 1, 'right' )
+		summaryTable.setTableAlignment('center')
+		self.lw.addTable( summaryTable, False, "0.7\\textwidth" )
+		self.lw.addSimpleLineBreak()
 
-
-	def addSummarySectionLine( self, section ):
-		section.setFieldsValues()
-
-		sumLine = []
-		sumLine.append( section.title )
-		sumLine.append( section.date  )
-		if section.status == "valid" :
-			sumLine.append( "\\color{OliveGreen}\\textbf{" + section.status + "}" )
-		else :
-			sumLine.append( "\\color{red}\\textbf{" + section.status + "}" )
-		return sumLine;
-
-		# print section.title
-		# print section.data
-		# print section.dataStatus
-
-	def getSummarySection( self, stream ):
-		summaryData = []
-		for description in stream.descriptions :
-			if description.title == "fileValidator" :
-				summaryData.append( ["\\multicolumn{1}{c}{\\textbf{Specification}}", "\\multicolumn{1}{c}{\\textbf{Date}}", "\\multicolumn{1}{c}{\\textbf{Status}}"] )
-				for section in description.sections :
-					if isinstance( section, SpecificationSection ):
-						summaryData.append( self.addSummarySectionLine( section ) )
-			
-			# summaryData.append( [""] )
-			if description.title == "loudness" :
-				summaryData.append( ["\\multicolumn{3}{c}{\\textbf{- Loudness -}}"] )
-				for section in description.sections :
-					if isinstance( section, LoudnessSection ):
-						summaryData.append( self.addSummarySectionLine( section ) )
-
-		return summaryData;
-
-	def addQualityCheckDetailSection( self, section ):
+	def addQualityCheckDetailSection( self, element ):
 		detailTable = LatexTable()
 		detailTableData = []
-		detailTableData.append( ["\\multicolumn{2}{|c|}{ \\begin{tabular}{c} \\textbf{" + section.title + "} \\\\ \\footnotesize \\color{gray} " + section.date + "\\end{tabular} }"] )
-
-		for pair in section.data :
-			detailTableData.append( pair )
-		for s in range( 0, len( section.group ) ) :
-			section.group[s].setFieldsValues()
-			detailTableData.append( ["\\hline \\multicolumn{2}{|c|}{" + section.group[s].title + ": \\textit{" + section.group[s].status + "}}"] )
-			section.group[s].data = self.checkSpecialDataCharacters( section.group[s].data, True )
-			for pair in section.group[s].data :
-				detailTableData.append( pair )
-			# print section.group[s].data
-			# print section.group[s].dataStatus
-		color = "OliveGreen" if section.status == "valid" or section.status == "not illegal" else "red"
-		status = "\\color{" + color + "}" + section.status
-
-		detailTableData.append( ["\\hline \\multicolumn{2}{|c|}{\\textbf{Status : " + status + "}}"] )
+		detailTableData.append( ["\\multicolumn{2}{|c|}{ \\begin{tabular}{c} \\textbf{" + element.get( "label" ) + "} \\\\ \\footnotesize \\color{gray} " + element.get( "date" ) + "\\end{tabular} }"] )
+		detailTableData.extend( self.getChildData( element ) )
+		detailTableData.append( ["\\hline \\multicolumn{2}{|c|}{\\textbf{Status : " + element.get( "status" ) + "}}"] )
 
 		detailTable.setContent( detailTableData )
 		detailTable.setBorders('closedHeader')
@@ -216,19 +197,48 @@ class XmlToLatex():
 		detailTable.setTableAlignment('center')
 		self.lw.addTable( detailTable, True )
 
-		# print "\nSpecificationSection : " + section.title
-		# print section.data
-		# print detailTableData
+	def getPlots( self, element ) :
+		plots = []
+		for child in list( element ) :
+			if len( list( child.attrib ) ) != 0 :
+				plots.extend( self.getPlots( child ) )
+				continue
+			
+			if child.text :
+				# print "  >> " + str(child)
+				plots.append( child )
+		return plots
 
-	def addLoudnessSection( self, section ):
-		if len( section.data ) == 0 :
-			section.setFieldsValues()
-		
+	def sortPlotsValues( self, plotsList ) :
+		data = []
+
+		size = len( plotsList[0] )
+		# print size
+		for i in range( 1, len(plotsList) ) :
+			if len(plotsList[i]) != size :
+				raise ValueError( "Plots must have the same data length." )
+
+		for j in range( 0, size ):
+			line = []
+			if j == 0 :
+				line.append( "Second" )
+				for plot in plotsList :
+					line.append( str( plot[0] ) )
+			else :
+				line.append( j-1 )
+				for plot in plotsList :
+					if plot[j] == "-inf" :
+						plot[j] = "-100"
+					line.append( float( plot[j] ) )
+			data.append( line )
+
+		return data;
+
+	def addLoudnessSection( self, element ):
 		loudnessTable = LatexTable()
 		loudnessTableData = []
-		loudnessTableData.append( ["\\multicolumn{2}{c}{ \\begin{tabular}{c} \\textbf{" + section.title + "} \\\\ \\footnotesize \\color{gray} " + section.date + "\\end{tabular} }"] )
-		for pair in self.dataStatusColor( section.data, section.dataStatus ) :
-			loudnessTableData.append( pair )
+		loudnessTableData.append( ["\\multicolumn{2}{c}{ \\begin{tabular}{c} \\textbf{" + element.get( "label" ) + "} \\\\ \\footnotesize \\color{gray} " + element.get( "date" ) + "\\end{tabular} }"] )
+		loudnessTableData.extend( self.getChildData( element ) )
 
 		loudnessTable.setContent( loudnessTableData )
 		loudnessTable.setBorders('header')
@@ -237,21 +247,25 @@ class XmlToLatex():
 		loudnessTable.setTableAlignment('center')
 		self.lw.addTable( loudnessTable, False, "0.7\\textwidth" )
 
-		graph = LatexGraph( section.title )
-		for j in range( 0, len(section.plots) ) :
-			i = len(section.plots) - (j+1)
-			curve = LatexPlot( section.plots[i][0], section.plots[i][1] )
-			curve.setColor( colors[i] )
+		childPlots = []
+		plots = self.getPlots( element )
+		# print plots
+		for plot in plots :
+			values = []
+			values.append( plot.tag )
+			values.append( plot.text.split( ", " ) )
+			childPlots.append( values )
+		# print childPlots
+		graph = LatexGraph( element.get( "label" ) )
+		for j in range( 0, len( childPlots ) ) :
+			i = len( childPlots ) - (j+1)
+			curve = LatexPlot( childPlots[i][0], childPlots[i][1] )
+			curve.setColor( self.colors[i] )
 			curve.setCoordinates()
 			curve.setFill( True )
 			curve.setOpacity( 0.5 )
 			graph.addCurve( curve )
 		self.lw.addGraph( graph, "\\textwidth-1.4cm", "time", "level", "s", "dB" )
-		
-		# print "\nLoudnessSection : " + section.title
-		# print section.data
-		# print section.dataStatus
-		# print section.plots
 
 
 	def convert( self, xmlParser ):
@@ -264,9 +278,9 @@ class XmlToLatex():
 
 		logoPath = os.getenv( "QC_RESOURCES" ) + "imageCheckOK256.png"
 		
-		title = xmlParser.xmlFilename.replace( "-merged.xml", "" )
-		if title == xmlParser.xmlFilename :
-			title = xmlParser.xmlFilename.replace( "-audio.xml", "" )
+		root = xmlParser.getRoot()
+		title = list( root.iter( "absolutePath" ) )[0].text
+		parent_map = dict( (c, p) for p in root.getiterator() for c in p )
 
 		self.setReportDocument( title, "1.0", logoPath )
 		
@@ -275,47 +289,54 @@ class XmlToLatex():
 		self.lw.addSimpleLineBreak()
 		
 		self.lw.addHeader( "System Information :", 3 )
-		for section in xmlParser.sections :
-			if isinstance( section, FileSystemInfoSection ):
-				self.addFileSystemInfoSection( section )
+		if root.find( "systemInfo" ) is not None :
+			self.addFileSystemInfoSection( root.find( "systemInfo" ) )
 
 		######   SpecificationSection  ######
 		self.lw.addHeader( "Quality Check report :", 3 )
 		
 		# ========== Summary ==========
 		self.lw.addHeader( "Summary :", 4 )
-
-		for stream in xmlParser.streams :
-			summaryTable = LatexTable()
-			summaryTable.setContent( self.getSummarySection( stream ) )
-			summaryTable.setTitle( stream.title )
-			summaryTable.setBorders( 'header' )
-			summaryTable.setRowAlignment( 0, 'left', True )
-			summaryTable.setRowAlignment( 1, 'center' )
-			summaryTable.setRowAlignment( 2, 'right' )
-			summaryTable.setTableAlignment('center')
-			self.lw.addTable( summaryTable, False, "0.7\\textwidth" )
-			self.lw.addSimpleLineBreak()
+		if root.find( "status" ) is not None :
+			self.addSummarySection( root.find( "status" ) )
 
 		self.lw.addMacro( "newpage" )
 
 		# ========== Detail ==========
-		for stream in xmlParser.streams :
-			self.lw.addHeader( stream.title + " :", 4 )
-			for description in stream.descriptions :
-				if description.title == "fileValidator" :
+		if root.findall( "stream" ) is not None :
+			for stream in root.findall( "stream" ) :
+				self.lw.addHeader( stream.get( "label" ) + " :", 4 )
+				if stream.iter( "specification" ) :
 					self.lw.addHeader( "Detail :", 5 )
-				if description.title == "loudness" :
-					self.lw.addHeader( "Loudness :", 5 )
+					for spec in list( stream.iter( "specification" ) ) :
+						self.addQualityCheckDetailSection( spec )
 
-				for section in description.sections :
-					if isinstance( section, SpecificationSection ):
-						self.addQualityCheckDetailSection( section )
-					if isinstance( section, LoudnessSection ):
-						self.addLoudnessSection( section )
+				if stream.find( "loudness" ) is not None :
+					self.lw.addHeader( "Loudness :", 5 )
+					for program in stream.find( "loudness" ) :
+						self.addLoudnessSection( program )
 						self.lw.addMacro( "newpage" )
 
 		self.lw.endDocument()
 
 	def getLatexStream( self ):
 			return self.lw.getStream()
+
+
+	# def checkSpecialDataCharacters( self, array, checkStrings=False ):
+	# 	if len( array ) == 0 :
+	# 		raise ValueError( "Empty list : list of lists expected" )
+	# 	if type(array) is not list :
+	# 		raise ValueError( "list of lists expected" )
+	# 	if len( array ) > 0 and type(array[0]) is not list :
+	# 		raise ValueError( "list of lists expected" )
+
+	# 	for i in range( 0, len( array ) ):
+	# 		for j in range( 0, len( array[0] ) ):
+	# 			if type( array[i][j] ) is unicode or type( array[i][j] ) is str :
+	# 				array[i][j] = transformSpecialCharacters( array[i][j] )
+	# 				if checkStrings :
+	# 					array[i][j] = checkString( array[i][j], 50 )
+	# 			elif type( array[i][j] ) is list and len( array[i][j] ) > 0 :
+	# 				array[i][j] = self.checkSpecialDataCharacters( array[i][j] )
+	# 	return array;
