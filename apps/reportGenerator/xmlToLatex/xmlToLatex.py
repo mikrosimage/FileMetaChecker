@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import os
+from utils import *
 from latexwriter import *
 from xmlParser import *
 
@@ -111,13 +112,15 @@ class XmlToLatex():
 				if child.get( "label" ) :
 					# print ">>> LABEL"
 					pair.append( child.get( "label" ) )
+
 					if child.text :
 						# print "\t>>> TEXT" + child.text
 						if child.get( "status" ) == "not valid" or child.get( "status" ) == "illegal" : 
 							pair.append( "{"+"\\"+"color{red}\\textbf{"+ child.text +"}}")
+										
 						else :
-							pair.append( child.text )
-							
+							pair.append( checkStringLength( transformSpecialCharacters( child.text ), 38 )  )
+
 					elif child.get( "type" ) == "data" :
 						# print "\t>>> TYPE DATA"
 						pair.append( "\\textit{- DATA -}")
@@ -165,11 +168,14 @@ class XmlToLatex():
 		fsiTable = LatexTable()
 		fsiTable.setContent( self.getChildData( element ) )
 		fsiTable.setBorders('none')
-		fsiTable.setRowAlignment( 0, 'left')
-		fsiTable.setRowAlignment( 1, 'right', True )
+		fsiTable.setRowAlignment( 0, 'p{0.35\\textwidth}')
+		fsiTable.setRowAlignment( 1, 'p{0.55\\textwidth}')
+		# fsiTable.setRowAlignment( 0, 'left')
+		# fsiTable.setRowAlignment( 1, 'right', True )
 		fsiTable.setTableAlignment('center')
 
-		self.lw.addTable( fsiTable, False, "0.9\\textwidth" )
+		self.lw.addTable( fsiTable, True )
+		# self.lw.addTable( fsiTable, False, "0.9\\textwidth" )
 		self.lw.addSimpleCommand( "vspace", "2cm" )
 		self.lw.addSimpleLineBreak()
 
@@ -188,7 +194,10 @@ class XmlToLatex():
 		detailTableData = []
 		detailTableData.append( ["\\multicolumn{2}{|c|}{ \\begin{tabular}{c} \\textbf{" + element.get( "label" ) + "} \\\\ \\footnotesize \\color{gray} " + element.get( "date" ) + "\\end{tabular} }"] )
 		detailTableData.extend( self.getChildData( element ) )
-		detailTableData.append( ["\\hline \\multicolumn{2}{|c|}{\\textbf{Status : " + element.get( "status" ) + "}}"] )
+		footer  = "\\hline \\multicolumn{2}{|c|}{\\textbf{Status : "
+		footer += "\\"+"color{OliveGreen}" if element.get( "status" ) == "valid" else "\\"+"color{red}"
+		footer += element.get( "status" ) + "}}"
+		detailTableData.append( [ footer ] )
 
 		detailTable.setContent( detailTableData )
 		detailTable.setBorders('closedHeader')
@@ -200,13 +209,11 @@ class XmlToLatex():
 	def getPlots( self, element ) :
 		plots = []
 		for child in list( element ) :
-			if len( list( child.attrib ) ) != 0 :
+			if child.get( "type" ) == "plot" :
+				plots.append( child )
+			else :
 				plots.extend( self.getPlots( child ) )
 				continue
-			
-			if child.text :
-				# print "  >> " + str(child)
-				plots.append( child )
 		return plots
 
 	def sortPlotsValues( self, plotsList ) :
@@ -279,7 +286,7 @@ class XmlToLatex():
 		logoPath = os.getenv( "QC_RESOURCES" ) + "imageCheckOK256.png"
 		
 		root = xmlParser.getRoot()
-		title = list( root.iter( "absolutePath" ) )[0].text
+		title = list( root.iter( "filename" ) )[0].text
 		parent_map = dict( (c, p) for p in root.getiterator() for c in p )
 
 		self.setReportDocument( title, "1.0", logoPath )
@@ -321,22 +328,4 @@ class XmlToLatex():
 
 	def getLatexStream( self ):
 			return self.lw.getStream()
-
-
-	# def checkSpecialDataCharacters( self, array, checkStrings=False ):
-	# 	if len( array ) == 0 :
-	# 		raise ValueError( "Empty list : list of lists expected" )
-	# 	if type(array) is not list :
-	# 		raise ValueError( "list of lists expected" )
-	# 	if len( array ) > 0 and type(array[0]) is not list :
-	# 		raise ValueError( "list of lists expected" )
-
-	# 	for i in range( 0, len( array ) ):
-	# 		for j in range( 0, len( array[0] ) ):
-	# 			if type( array[i][j] ) is unicode or type( array[i][j] ) is str :
-	# 				array[i][j] = transformSpecialCharacters( array[i][j] )
-	# 				if checkStrings :
-	# 					array[i][j] = checkString( array[i][j], 50 )
-	# 			elif type( array[i][j] ) is list and len( array[i][j] ) > 0 :
-	# 				array[i][j] = self.checkSpecialDataCharacters( array[i][j] )
-	# 	return array;
+			

@@ -14,6 +14,10 @@ class XmlToHtml():
 		self.plotNum = 0
 		self.plots = []
 
+		if type( os.getenv( "QC_RESOURCES" ) ) is not str :
+			raise ValueError( "You must define the 'QC_RESOURCES' macro" )
+		self.resourcePath = os.getenv( "QC_RESOURCES" )
+
 	def getHtml( self ):
 		doctype = "<!DOCTYPE html>"
 		content = ET.tostring( self.page, method="html" )
@@ -26,13 +30,13 @@ class XmlToHtml():
 		title.text = "QUALITY CHECK"
 		css = ET.SubElement( self.head, "link" )
 		css.set( "rel", "stylesheet" )
-		css.set( "href", "style.css" )
+		css.set( "href", self.resourcePath + "css/style.css" )
 		script1 = ET.SubElement( self.head, "script" )
 		script1.set( "type", "text/javascript" )
-		script1.set( "src", "js/jquery-1.10.1.js" )
+		script1.set( "src", self.resourcePath + "js/jquery-1.10.1.js" )
 		script2 = ET.SubElement( self.head, "script" )
 		script2.set( "type", "text/javascript" )
-		script2.set( "src", "js/jquery-ui-1.10.3.js" )
+		script2.set( "src", self.resourcePath + "js/jquery-ui-1.10.3.js" )
 		script3 = ET.SubElement( self.head, "script" )
 		script3.set( "type", "text/javascript" )
 		script3.set( "src", "https://www.google.com/jsapi" )
@@ -43,32 +47,33 @@ class XmlToHtml():
 	def setPageHeader( self ):
 		header = ET.SubElement( self.body, "div" )
 		header.set( "id", "header" )
-		# logo = ET.SubElement( header, "img" )
-		# logo.set( "id", "logo-qc" )
-		# logo.set( "src", "logo_qc.png" )
-		title = ET.SubElement( header, "h1" )
-		title.text = "Quality Check"
-		# logoMikros = ET.SubElement( header, "img" )
-		# logoMikros.set( "id", "logo-mikros" )
-		# logoMikros.set( "src", "logo_mikros.png" )
+		headerContent = ET.SubElement( header, "div" )
+		headerContent.set( "id", "header-content" )
+		title = ET.SubElement( headerContent, "div" )
+		title.set( "id", "title" )
+		logo = ET.SubElement( title, "img" )
+		logo.set( "id", "logo-qc" )
+		logo.set( "src", self.resourcePath + "img/logo_qc.png" )
+		titleText = ET.SubElement( title, "div" )
+		titleText.set( "id", "title-text" )
+		titleText.set( "title", "Quality Check" )
+		titleText.text = "Quality Check"
+		logoMikros = ET.SubElement( header, "img" )
+		logoMikros.set( "id", "logo-mikros" )
+		logoMikros.set( "src", self.resourcePath + "img/logo_mikros.png" )
 
 	def setPageFooter( self ):
 		js = ET.SubElement( self.page, "script" )
 		js.set( "type", "text/javascript" )
-		js.set( "src", "js/script.js" )
-
-
+		js.set( "src", self.resourcePath + "js/script.js" )
 
 	def getPlots( self, element ) :
 		for child in list( element ) :
-			if len( list( child.attrib ) ) != 0 :
+			if child.get( "type" ) == "plot" :
+				self.plots.append( child )
+			else :
 				self.getPlots( child )
 				continue
-			
-			if child.text :
-				self.plots.append( child )
-				# print "  >> " + str(child)
-
 	
 	def sortPlotsValues( self, plotsList ) :
 		data = []
@@ -111,7 +116,6 @@ class XmlToHtml():
 					values.append( otherPlot.tag )
 					values.extend( otherPlot.text.split( ", " ) )
 					childPlot.append( values )
-					# self.plots.remove( otherPlot )
 			# print len( childPlot )
 			# print childPlot
 			self.plots.remove( plot )
@@ -225,32 +229,10 @@ class XmlToHtml():
 		if not isinstance( xmlParser, XmlParser ):
 			raise ValueError("request a 'XmlParser' object")
 		
-		if type( os.getenv( "QC_RESOURCES" ) ) is not str :
-			raise ValueError( "You must define the 'QC_RESOURCES' macro" )
-
-		logoPath = os.getenv( "QC_RESOURCES" ) + "imageCheckOK256.png"
+		logoPath = self.resourcePath + "imageCheckOK256.png"
 		root = xmlParser.getRoot()
 
 		self.setHeader()
 		self.setPageHeader()
 		self.setPageContent( root )
 		self.setPageFooter()
-
-
-	# def checkSpecialDataCharacters( self, array, checkStrings=False ):
-	# 	if len( array ) == 0 :
-	# 		raise ValueError( "Empty list : list of lists expected" )
-	# 	if type(array) is not list :
-	# 		raise ValueError( "list of lists expected" )
-	# 	if len( array ) > 0 and type(array[0]) is not list :
-	# 		raise ValueError( "list of lists expected" )
-
-	# 	for i in range( 0, len( array ) ):
-	# 		for j in range( 0, len( array[0] ) ):
-	# 			if type( array[i][j] ) is unicode or type( array[i][j] ) is str :
-	# 				array[i][j] = transformSpecialCharacters( array[i][j] )
-	# 				if checkStrings :
-	# 					array[i][j] = checkString( array[i][j], 50 )
-	# 			elif type( array[i][j] ) is list and len( array[i][j] ) > 0 :
-	# 				array[i][j] = self.checkSpecialDataCharacters( array[i][j] )
-	# 	return array;
