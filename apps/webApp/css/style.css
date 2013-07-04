@@ -39,9 +39,18 @@ body
 
 #logo-qc
 {
+	/*background-image:url(logo_qc.png);*/
+	/*background-size: cover;*/
 	position: absolute;
+	/*width: 80px;*/
 	height: 80px;
 	left: 80px;
+	/*text-indent:-9999px;*/
+}
+
+#logo-qc:hover
+{
+	cursor: pointer;
 }
 
 #title
@@ -495,23 +504,46 @@ h1, h2, h3, h4, h5 { padding-left: 40px; }
 	        transition: max-height 0.5s ease-in-out;
 }
 
-.accordion input:checked ~ article.system-content
+.accordion input:checked ~ article
 {
 	height: auto;
-	min-height:    0px;
-	max-height: 1000px;
+	max-height: 10000px;
 }
 
-.accordion input:checked ~ article.summary-content
-{
-	height: auto;
-	max-height: 1000px;
+/* scrollbar*/
+
+.accordion article::-webkit-scrollbar
+{ 
+  /*width: 5px; (vertical scrollbar)*/
+  height: 10px; /*(horizontal scrollbar)*/
+  background-color: #222;
 }
 
-.accordion input:checked ~ article.detail-content
+.accordion article::-webkit-scrollbar-track
+{ 
+  background-color: #222; /*scrollbar background color*/
+}
+
+.accordion article::-webkit-scrollbar-thumb
+{ /*elevator*/
+  background-color: #151515;
+  /*border-radius: 15px;
+  -moz-border-radius: 15px;
+  -webkit-border-radius: 15px;*/
+}
+
+.accordion article::-webkit-scrollbar-thumb:hover
+{ /*elevator*/
+  background-color: #111;
+}
+
+.accordion input:checked ~ article
 {
-	height: auto;
-	max-height: 3000px;
+	-webkit-transition: max-height 0.5s ease-in-out;
+	   -moz-transition: max-height 0.5s ease-in-out;
+	     -o-transition: max-height 0.5s ease-in-out;
+	    -ms-transition: max-height 0.5s ease-in-out;
+	        transition: max-height 0.5s ease-in-out;
 }
 
 /*** CHARTS STYLE ***/

@@ -10,6 +10,8 @@ from cherrypy import tools
 
 from subprocess import *
 
+import xml.etree.ElementTree as ET
+
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -94,11 +96,17 @@ class Root(object):
 		# print inputFile
 		stream = ""
 		parser = XmlParser()
-		parser.parseXml( inputFile, "html" )
+		parser.setXmlFile( inputFile )
+		root = parser.getRoot()
+		# print root
 		if not pdf :
 			xth = XmlToHtml()
-			xth.convertToStream( parser )
-			stream   = xth.getHtmlStream()
+			main = ET.Element( "div" )
+			main.set( "id", "main" )
+			xth.setPageContent( root, main )
+			# print list( main )
+			for child in list( main ) :
+				stream += ET.tostring( child )
 		return stream;
 
 	def sendReport( self, email, date ):
@@ -134,10 +142,15 @@ class Root(object):
 			# self.reports.append( self.fileAnalyse( filename ) )
 			# if loudness :
 			# 	self.reports.append( self.loudnessAnalyse( filename ) )
+
 			reportPage  = pageHeader
 			reportPage += "<div id='date'>" + str(date) + "</div>"
 			reportPage += self.generateReport( filename )
 			reportPage += pageFooter
+			# print reportPage
+			# file = open( "reportPage.html", "w+" )
+			# file.write( reportPage )
+			# file.close()
 			return reportPage;
 
 		except Exception, e:

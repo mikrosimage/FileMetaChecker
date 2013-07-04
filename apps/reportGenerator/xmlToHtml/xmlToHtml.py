@@ -14,29 +14,25 @@ class XmlToHtml():
 		self.plotNum = 0
 		self.plots = []
 
-		if type( os.getenv( "QC_RESOURCES" ) ) is not str :
-			raise ValueError( "You must define the 'QC_RESOURCES' macro" )
-		self.resourcePath = os.getenv( "QC_RESOURCES" )
-
 	def getHtml( self ):
 		doctype = "<!DOCTYPE html>"
 		content = ET.tostring( self.page, method="html" )
 		return doctype + content
 
-	def setHeader( self ):
+	def setHeader( self, resourcePath ):
 		meta = ET.SubElement( self.head, "meta" )
 		meta.set( "charset", "utf-8" )
 		title = ET.SubElement( self.head, "title" )
 		title.text = "QUALITY CHECK"
 		css = ET.SubElement( self.head, "link" )
 		css.set( "rel", "stylesheet" )
-		css.set( "href", self.resourcePath + "css/style.css" )
+		css.set( "href", resourcePath + "css/style.css" )
 		script1 = ET.SubElement( self.head, "script" )
 		script1.set( "type", "text/javascript" )
-		script1.set( "src", self.resourcePath + "js/jquery-1.10.1.js" )
+		script1.set( "src", resourcePath + "js/jquery-1.10.1.js" )
 		script2 = ET.SubElement( self.head, "script" )
 		script2.set( "type", "text/javascript" )
-		script2.set( "src", self.resourcePath + "js/jquery-ui-1.10.3.js" )
+		script2.set( "src", resourcePath + "js/jquery-ui-1.10.3.js" )
 		script3 = ET.SubElement( self.head, "script" )
 		script3.set( "type", "text/javascript" )
 		script3.set( "src", "https://www.google.com/jsapi" )
@@ -44,7 +40,7 @@ class XmlToHtml():
 		script4.set( "type", "text/javascript" )
 		script4.set( "src", 'https://www.google.com/jsapi?autoload={"modules":[{"name":"visualization","version":"1","packages":["corechart","table"]}]}' )
 
-	def setPageHeader( self ):
+	def setPageHeader( self, resourcePath ):
 		header = ET.SubElement( self.body, "div" )
 		header.set( "id", "header" )
 		headerContent = ET.SubElement( header, "div" )
@@ -53,19 +49,19 @@ class XmlToHtml():
 		title.set( "id", "title" )
 		logo = ET.SubElement( title, "img" )
 		logo.set( "id", "logo-qc" )
-		logo.set( "src", self.resourcePath + "img/logo_qc.png" )
+		logo.set( "src", resourcePath + "img/logo_qc.png" )
 		titleText = ET.SubElement( title, "div" )
 		titleText.set( "id", "title-text" )
 		titleText.set( "title", "Quality Check" )
 		titleText.text = "Quality Check"
 		logoMikros = ET.SubElement( header, "img" )
 		logoMikros.set( "id", "logo-mikros" )
-		logoMikros.set( "src", self.resourcePath + "img/logo_mikros.png" )
+		logoMikros.set( "src", resourcePath + "img/logo_mikros.png" )
 
-	def setPageFooter( self ):
+	def setPageFooter( self, resourcePath ):
 		js = ET.SubElement( self.page, "script" )
 		js.set( "type", "text/javascript" )
-		js.set( "src", self.resourcePath + "js/script.js" )
+		js.set( "src", resourcePath + "js/script.js" )
 
 	def getPlots( self, element ) :
 		for child in list( element ) :
@@ -158,14 +154,12 @@ class XmlToHtml():
 			graph = ET.SubElement( parent, "div" )
 			graph.set( "class", "chart_div" )
 			graph.set( "id", elementTag + "-graph-" + str( self.plotNum ) )
+			graph.text = "Missing plot !"
 
 			self.plotNum += 1
 
-	def setPageContent( self, root ):
-		main = ET.SubElement( self.body, "div" )
-		main.set( "id", "main" )
-
-		section = ET.SubElement( main, "section" )
+	def setPageContent( self, root, parent ):
+		section = ET.SubElement( parent, "section" )
 		section.set( "class", "accordion" )
 		
 		for child in list( root ):
@@ -191,7 +185,7 @@ class XmlToHtml():
 
 			content = ET.SubElement( article, "div" )
 			content.set( "class", "section" )
-			content.set( "id", childTag + index )
+			content.set( "id", childTag )
 
 			table = HtmlTable()
 			parent_map = dict( (c, p) for p in root.getiterator() for c in p )
@@ -220,7 +214,7 @@ class XmlToHtml():
 			displayText += "google.setOnLoadCallback( drawChart_" + str(i) + "() )\n"
 		displayText += "}"
 
-		displayScript = ET.SubElement( main, "script" )
+		displayScript = ET.SubElement( parent, "script" )
 		displayScript.set( "type", "text/javascript" )
 		displayScript.text = displayText
 
@@ -228,11 +222,16 @@ class XmlToHtml():
 	def convertToFile( self, xmlParser ) :
 		if not isinstance( xmlParser, XmlParser ):
 			raise ValueError("request a 'XmlParser' object")
-		
-		logoPath = self.resourcePath + "imageCheckOK256.png"
+		if type( os.getenv( "QC_RESOURCES" ) ) is not str :
+			raise ValueError( "You must define the 'QC_RESOURCES' macro" )
+		resourcePath = os.getenv( "QC_RESOURCES" )
+
+		logoPath = resourcePath + "imageCheckOK256.png"
 		root = xmlParser.getRoot()
 
-		self.setHeader()
-		self.setPageHeader()
-		self.setPageContent( root )
-		self.setPageFooter()
+		self.setHeader( resourcePath )
+		self.setPageHeader( resourcePath )
+		main = ET.SubElement( self.body, "div" )
+		main.set( "id", "main" )
+		self.setPageContent( root, main )
+		self.setPageFooter( resourcePath )
