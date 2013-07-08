@@ -37,14 +37,14 @@ std::string to_string( const size_t size )
 
 void FileSystemInfo::getReport( Report* report )
 {
-	const std::string si     = "systemInfo";
-	const std::string perm   = "permissions";
-	const std::string owner  = "owner";
-	const std::string group  = "group";
-	const std::string others = "others";
-	const std::string read   = "read";
-	const std::string write  = "write";
-	const std::string exe    = "exe";
+	const std::string kSi     = "systemInfo";
+	const std::string kPerm   = "permissions";
+	const std::string kOwner  = "owner";
+	const std::string kGroup  = "group";
+	const std::string kOthers = "others";
+	const std::string kRead   = "read";
+	const std::string kWrite  = "write";
+	const std::string kExe    = "exe";
 	bool ownerRead, ownerWrite, ownerExe;
 	bool groupRead, groupWrite, groupExe;
 	bool othersRead, othersWrite, othersExe;
@@ -86,29 +86,49 @@ void FileSystemInfo::getReport( Report* report )
 	nodeReport.clear();
 	nodeReport.put( "<xmlattr>.label", "Rights" );
 	
-	bpt::ptree userPermNode;
 
-	userPermNode.put( read , to_string( ownerRead  ) );
-	userPermNode.put( write, to_string( ownerWrite ) );
-	userPermNode.put( exe  , to_string( ownerExe   ) );
+	bpt::ptree userPermNode, readNode, writeNode, exeNode;
+	
+	readNode.put(  "<xmlattr>.status", to_string( ownerRead  ) );
+	writeNode.put( "<xmlattr>.status", to_string( ownerWrite ) );
+	exeNode.put(   "<xmlattr>.status", to_string( ownerExe   ) );
+	userPermNode.push_back( bpt::ptree::value_type( kRead , readNode  ) );
+	userPermNode.push_back( bpt::ptree::value_type( kWrite, writeNode ) );
+	userPermNode.push_back( bpt::ptree::value_type( kExe  , exeNode   ) );
 	userPermNode.put( "<xmlattr>.label", "Owner" );
-	nodeReport.push_back( bpt::ptree::value_type( owner, userPermNode ));
+	nodeReport.push_back( bpt::ptree::value_type( kOwner, userPermNode ) );
 
-	userPermNode.put( read , to_string( groupRead  ) );
-	userPermNode.put( write, to_string( groupWrite ) );
-	userPermNode.put( exe  , to_string( groupExe   ) );
+	userPermNode.clear();
+	readNode.clear();
+	writeNode.clear();
+	exeNode.clear();
+
+	readNode.put(  "<xmlattr>.status", to_string( groupRead  ) );
+	writeNode.put( "<xmlattr>.status", to_string( groupWrite ) );
+	exeNode.put(   "<xmlattr>.status", to_string( groupExe   ) );
+	userPermNode.push_back( bpt::ptree::value_type( kRead , readNode  ) );
+	userPermNode.push_back( bpt::ptree::value_type( kWrite, writeNode ) );
+	userPermNode.push_back( bpt::ptree::value_type( kExe  , exeNode   ) );
 	userPermNode.put( "<xmlattr>.label", "Group" );
-	nodeReport.push_back( bpt::ptree::value_type( group, userPermNode ));
+	nodeReport.push_back( bpt::ptree::value_type( kGroup, userPermNode ) );
 
-	userPermNode.put( read , to_string( othersRead  ) );
-	userPermNode.put( write, to_string( othersWrite ) );
-	userPermNode.put( exe  , to_string( othersExe   ) );
+	userPermNode.clear();
+	readNode.clear();
+	writeNode.clear();
+	exeNode.clear();
+
+	readNode.put(  "<xmlattr>.status", to_string( othersRead  ) );
+	writeNode.put( "<xmlattr>.status", to_string( othersWrite ) );
+	exeNode.put(   "<xmlattr>.status", to_string( othersExe   ) );
+	userPermNode.push_back( bpt::ptree::value_type( kRead , readNode  ) );
+	userPermNode.push_back( bpt::ptree::value_type( kWrite, writeNode ) );
+	userPermNode.push_back( bpt::ptree::value_type( kExe  , exeNode   ) );
 	userPermNode.put( "<xmlattr>.label", "Others" );
-	nodeReport.push_back( bpt::ptree::value_type( others, userPermNode ));
-	fileSystemInfoReport.push_back( bpt::ptree::value_type( perm, nodeReport ));
+	nodeReport.push_back( bpt::ptree::value_type( kOthers, userPermNode ) );
 
+	fileSystemInfoReport.push_back( bpt::ptree::value_type( kPerm, nodeReport ) );
 
-	report->add( fileSystemInfoReport, si );
+	report->add( fileSystemInfoReport, kSi );
 }
 
 std::string FileSystemInfo::getFilename() const

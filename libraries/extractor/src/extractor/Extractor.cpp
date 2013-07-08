@@ -13,6 +13,8 @@
 #include <boost/none.hpp>
 #include <boost/algorithm/string.hpp>
 
+#include <ctime>
+
 namespace bfs = boost::filesystem;
 
 Extractor::Extractor()
@@ -48,8 +50,19 @@ void Extractor::closeFilename( )
 
 void Extractor::analyse( )
 {
+	// FOR EACH STREAM @todo
+	int index = 1;
+
 	Specs specs;
 	_specs->getSpecList( specs );
+	bpt::ptree metadataTree;
+	std::vector< std::string > streamType;
+
+	bpt::ptree statStreamReport, dateNode;
+	dateNode.put( "<xmlattr>.label", "Date" );
+	dateNode.put_value( getDate() );
+	_statusReport.push_back( bpt::ptree::value_type( "date", dateNode ) );
+
 	BOOST_FOREACH( Specification spec, specs )
 	{
 		_file->resetFile();
@@ -70,12 +83,14 @@ void Extractor::analyse( )
 		{
 			LOG_INFO( "-> Parse Header" );
 			SpecIt header = spec.getHeader( );
-			bpt::ptree specReport;
+			bpt::ptree specReport, statSpecReport;
 
 			specReport.put( "<xmlattr>.id",    spec.getId()    );
 			specReport.put( "<xmlattr>.label", spec.getLabel() );
 			specReport.put( "<xmlattr>.type",  spec.getType()  );
-			
+			statSpecReport = specReport;
+			streamType.push_back( spec.getType() );
+
 			NodeSpecification ns( _file );
 			bool isValidFile = true;
 			
@@ -95,6 +110,7 @@ void Extractor::analyse( )
 			if( isValidFile && _file->endOfFile() )
 			{
 				specReport.put( "<xmlattr>.status", "valid" );
+				statSpecReport.put( "<xmlattr>.status", "valid" );
 				LOG_INFO( common::Color::get()->_green << "**********" << common::Color::get()->_std );
 				LOG_INFO( common::Color::get()->_green << "VALID " << spec.getLabel() << common::Color::get()->_std );
 				LOG_INFO( common::Color::get()->_green << "**********" << common::Color::get()->_std );
@@ -104,17 +120,59 @@ void Extractor::analyse( )
 				if( !_file->endOfFile() )
 					LOG_ERROR( "File structure : the analyser did not reach the end of the file." );
 				specReport.put( "<xmlattr>.status", "not valid" );
+				statSpecReport.put( "<xmlattr>.status", "not valid" );
 				LOG_ERROR( "**********" );
 				LOG_ERROR( "NOT VALID " << spec.getLabel() << " : " << _file->getFilename() );
 				LOG_ERROR( "**********" );
 			}
-			_report.push_back( specReport );
+			statStreamReport.push_back( bpt::ptree::value_type( kSpec, statSpecReport ) );
+			
+			specReport.put( "<xmlattr>.date", getDate()  );
+			metadataTree.push_back( bpt::ptree::value_type( kSpec, specReport ) );
 		}
 	}
+	_streamReport.push_back( bpt::ptree::value_type( kMetadata, metadataTree ) );
+
+	if( !streamType.empty() )
+	{
+		bool uniqueType = true;
+		std::string refType = streamType.at(0);
+		BOOST_FOREACH( std::string type, streamType )
+		{
+			if( type != refType )
+				uniqueType = false;
+		}
+		if ( uniqueType )
+		{
+			_streamReport.put( "<xmlattr>.type", refType  );
+			statStreamReport.put( "<xmlattr>.type", refType );
+		}
+	}
+
+	std::stringstream streamLabel;
+	streamLabel << "Stream " << index;
+	_streamReport.put( "<xmlattr>.index", index );
+	_streamReport.put( "<xmlattr>.label", streamLabel.str() );
+	
+	statStreamReport.put( "<xmlattr>.index", index );
+	statStreamReport.put( "<xmlattr>.label", streamLabel.str() );
+
+	_statusReport.put( "<xmlattr>.label", "Main Status" );
+	_statusReport.push_back( bpt::ptree::value_type( kStream, statStreamReport ) );
 }
 
 void Extractor::getReport( Report* report )
 {
-	report->add( _report, kSpec );
+	report->add( _statusReport, kStatus );
+	report->add( _streamReport, kStream );
 }
 
+std::string Extractor::getDate()
+{
+	time_t now = time(0);
+	char buffer [80];
+	tm *ltm = localtime(&now);
+	strftime( buffer, 80, "%A, %d-%m-%Y %H:%M:%S", ltm );
+	std::string date = buffer;
+	return date;
+}
