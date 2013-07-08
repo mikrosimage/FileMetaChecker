@@ -39,17 +39,9 @@ body
 
 #logo-qc
 {
-	/*background-image:url(logo_qc.png);*/
-	/*background-size: cover;*/
 	position: absolute;
-	/*width: 80px;*/
 	height: 80px;
 	left: 80px;
-	/*text-indent:-9999px;*/
-}
-
-#logo-qc:hover
-{
 	cursor: pointer;
 }
 
@@ -68,6 +60,7 @@ body
 	padding-left: 230px;
 	color: #000;
 	font-size: 50pt;
+	text-decoration: none;
 	font-weight: bold;
 }
 

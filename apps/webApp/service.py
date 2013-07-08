@@ -20,7 +20,10 @@ from email import Encoders
 
 sys.path.append( os.environ['WRITER_ROOT'] + '/pythonToHtml' )
 sys.path.append( os.environ['REPORT_ROOT'] )
+sys.path.append( os.environ['REPORT_ROOT'] + '/mergeSimpleXml' )
+
 from xmlToHtml import *
+from merger import *
 
 emitter = "noreply@domain"
 
@@ -67,36 +70,44 @@ class Root(object):
 
 
 	def fileAnalyse( self, inputFile ):
+		print "*** CHECK ! ***"
 		print inputFile
-		cmdQc = "mikqc " + filename
-		processQc = Popen( cmd, stdout=PIPE, stderr=PIPE, env=env, shell=True )
+		cmdQc = "mikqc " + inputFile
+		processQc = Popen( cmdQc, stdout=PIPE, stderr=PIPE, env=os.environ, shell=True )
 		mikqcReport = inputFile + ".xml"
+		print "*** DONE ! (CHECK) ***"
 		return mikqcReport
 
 
-	def loudnessAnalyse( self, inputFile, loudnessStandard ):
-		print inputFile
-		print loudnessStandard
+	def loudnessAnalyse( self, inputFile, loudnessStandard=["ebu"] ):
+		# print "*** LOUDNESS ! ***"
+		# print inputFile
+		# print loudnessStandard
 
 		loudness = ""
-		if type( loudnessStandard ) == str :
-			loudness += " --standard=" + loudnessStandard + " "
-		if len( loudnessStandard ) != 0 :
-			for standard in loudnessStandard :
-				loudness += " --standard=" + standard + " "
-
+		for standard in loudnessStandard :
+			# print standard
+			loudness += " --standard=" + standard + " "
 		loudnessCmd = os.environ['LOUDNESS_PATH'] + " "  + loudness + inputFile
+		# print loudnessCmd
 		call( loudnessCmd, shell=True )
-		loudnessReport = inputFile + "_PLoud.xml"
 
+		loudnessReport = inputFile.replace( ".wav", "_PLoud.xml" )
+
+		# print "*** DONE ! (LOUDNESS) ***"
 		return loudnessReport
 
 
-	def generateReport( self, inputFile, pdf=False ):
-		# print inputFile
-		stream = ""
+	def generateReport( self, pdf=False ):
+		# print "*** REPORT ! ***"
+		print self.reports
+
+		# print " >>> MERGE <<< "
+		xmlStream = mergeXml( self.reports )
+
+		stream = ""		
 		parser = XmlParser()
-		parser.setXmlFile( inputFile )
+		parser.setXmlStream( xmlStream )
 		root = parser.getRoot()
 		# print root
 		if not pdf :
@@ -107,50 +118,81 @@ class Root(object):
 			# print list( main )
 			for child in list( main ) :
 				stream += ET.tostring( child )
+		# print "*** DONE ! (REPORT) ***"
+
 		return stream;
 
-	def sendReport( self, email, date ):
-		print "emitter  : " + emitter
-		print "receiver : " + email
-		if email.count( "@mikrosimage.eu", len( email )-15, len( email ) ) != 1 :
-			raise RuntimeError( "Forbidden e-mail address !" )
+	# def sendReport( self, email, date ):
+	# 	print "emitter  : " + emitter
+	# 	print "receiver : " + email
+	# 	if email.count( "@mikrosimage.eu", len( email )-15, len( email ) ) != 1 :
+	# 		raise RuntimeError( "Forbidden e-mail address !" )
 
-		receiver = email
-		msg = MIMEMultipart('alternative')
-		msg['Subject'] = "Quality Check report"
-		msg['From'] = emitter
-		msg['To'] = receiver
-		text  = "Hi there !\n\n"
-		text += "Here is your QC report !\n"
-		text += "QC started on : " + date + ".\n\n"
-		text += "Keep in touch ! ;)\n\n"
-		text += "- The QC Team"
+	# 	receiver = email
+	# 	msg = MIMEMultipart('alternative')
+	# 	msg['Subject'] = "Quality Check report"
+	# 	msg['From'] = emitter
+	# 	msg['To'] = receiver
+	# 	text  = "Hi there !\n\n"
+	# 	text += "Here is your QC report !\n"
+	# 	text += "QC started on : " + date + ".\n\n"
+	# 	text += "Keep in touch ! ;)\n\n"
+	# 	text += "- The QC Team"
 
-		part1 = MIMEText(text, 'plain')
-		msg.attach(part1)
+	# 	part1 = MIMEText(text, 'plain')
+	# 	msg.attach(part1)
 
-		server = smtplib.SMTP('localhost')
-		server.sendmail( emitter, receiver, msg.as_string() )
-		server.quit()
+	# 	server = smtplib.SMTP('localhost')
+	# 	server.sendmail( emitter, receiver, msg.as_string() )
+	# 	server.quit()
+
+	def clearTempFiles( self ):
+		for filepath in self.reports :
+			cmdClear = "rm " + filepath
+			call( cmdClear, shell=True )
 
 	@cherrypy.expose
-	def execute( self, filename, date=datetime.datetime.now(), display=True, loudness=False ):
-		env = os.environ
+	def execute(
+		self, 
+		filename, 
+		loudness, 
+		ebu=False, 
+		cst=False, 
+		atsc=False 
+		):
+
 		try :
-			print filename
-			print date
-			# self.reports.append( self.fileAnalyse( filename ) )
-			# if loudness :
-			# 	self.reports.append( self.loudnessAnalyse( filename ) )
+			date = datetime.datetime.now()
+			print ">>> Execute : " + filename + ", at " + str(date)
+
+			loudnessStandard = []
+			if ebu :
+				loudnessStandard.append(  "ebu" )
+			if cst :
+				loudnessStandard.append(  "cst" )
+			if atsc :
+				loudnessStandard.append( "atsc" )
+
+			self.reports.append( self.fileAnalyse( filename ) )
+			if loudness :
+				self.reports.append( self.loudnessAnalyse( filename, loudnessStandard ) )
+			
 
 			reportPage  = pageHeader
 			reportPage += "<div id='date'>" + str(date) + "</div>"
-			reportPage += self.generateReport( filename )
+			reportPage += self.generateReport()
 			reportPage += pageFooter
+			
 			# print reportPage
 			# file = open( "reportPage.html", "w+" )
 			# file.write( reportPage )
 			# file.close()
+
+			# CLEAR
+			self.clearTempFiles()
+			loudnessStandard = []
+			self.reports = []
+
 			return reportPage;
 
 		except Exception, e:
