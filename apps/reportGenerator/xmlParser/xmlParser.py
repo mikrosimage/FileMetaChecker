@@ -32,6 +32,10 @@ class XmlParser():
 		if type( xmlStream ) is not str :
 			raise ValueError( "xmlStream must be a string object !" )
 		try :
+			parser = etree.XMLParser( remove_blank_text=True )
+			stream = etree.XML( xmlStream, parser )
+			xmlStream = etree.tostring( stream )
+
 			ET.fromstring( xmlStream )
 			self.xmlStream = xmlStream
 		except ET.ParseError as e :
