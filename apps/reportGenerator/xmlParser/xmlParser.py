@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+from lxml import etree
 
 class XmlParser():
 	def __init__( self ):
@@ -9,6 +10,11 @@ class XmlParser():
 		try :
 			file = open( filename )
 			buffer = file.read()
+
+			parser = etree.XMLParser( remove_blank_text=True )
+			stream = etree.XML( buffer, parser )
+			buffer = etree.tostring( stream )
+
 			ET.fromstring( buffer )
 			self.xmlStream = buffer
 			file.close()
