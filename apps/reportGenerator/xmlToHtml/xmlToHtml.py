@@ -179,6 +179,8 @@ class XmlToHtml():
 			label = ET.SubElement( div, "label" )
 			label.set( "for", childTag + "-title" )
 			label.text = child.get( "label" )
+			if child.get( "type" ) :
+				label.text += " - " + child.get( "type" )
 
 			article = ET.SubElement( div, "article" )
 			# article.set( "class", childTag + index + "-content" )

@@ -102,7 +102,10 @@ class XmlToLatex():
 			pair = []
 			# print child
 			if child.get( "date" ) or child.get( "index" ) :
-				string  = "\\hline \\multicolumn{2}{|c|}{ \\textbf{" + child.get( "label" ) + "}"
+				string  = "\\hline \\multicolumn{2}{|c|}{ \\textbf{" + child.get( "label" )
+				if child.get( "type" ) :
+					string += " - " + child.get( "type" )
+				string += "}"
 				string += ": \\textit{" + child.get( "status" ) + "}" if child.get( "status" ) else ""
 				string += "}"
 				pair.append( string )
@@ -312,7 +315,10 @@ class XmlToLatex():
 		# ========== Detail ==========
 		if root.findall( "stream" ) is not None :
 			for stream in root.findall( "stream" ) :
-				self.lw.addHeader( stream.get( "label" ) + " :", 4 )
+				streamLabel = stream.get( "label" )
+				if stream.get( "type" ) :
+					streamLabel += " - " + stream.get( "type" )
+				self.lw.addHeader( streamLabel + " :", 4 )
 				if stream.iter( "specification" ) :
 					self.lw.addHeader( "Detail :", 5 )
 					for spec in list( stream.iter( "specification" ) ) :
