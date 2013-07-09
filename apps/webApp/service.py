@@ -7,6 +7,7 @@ print current_dir
 
 import cherrypy
 from cherrypy import tools
+from cherrypy.lib.static import *
 
 from subprocess import *
 
@@ -19,10 +20,12 @@ from email.MIMEBase import MIMEBase
 from email import Encoders
 
 sys.path.append( os.environ['WRITER_ROOT'] + '/pythonToHtml' )
+sys.path.append( os.environ['WRITER_ROOT'] + '/pythonToLatex' )
 sys.path.append( os.environ['REPORT_ROOT'] )
 sys.path.append( os.environ['REPORT_ROOT'] + '/mergeSimpleXml' )
 
 from xmlToHtml import *
+from xmlToLatex import *
 from merger import *
 
 emitter = "noreply@domain"
@@ -37,9 +40,20 @@ f = open( "pages/footer.html", "r" )
 pageFooter = f.read()
 f.close()
 
+
+class Download:
+	def __init__( self, filename ):
+		self.filename = filename + ".pdf"
+
+	@cherrypy.expose
+	def index(self, filepath ):
+		return serve_file( filepath, "application/x-download", "attachment", self.filename )
+
+
 class Root(object):
 	def __init__( self ):
 		self.reports = []
+		self.downloadFilepath = current_dir + "/downloads/fileToDownload.pdf"
 
 	@cherrypy.expose
 	def index( self ):
@@ -68,16 +82,14 @@ class Root(object):
 		list.sort()
 		return list
 
-
 	def fileAnalyse( self, inputFile ):
 		print "*** CHECK ! ***"
 		print inputFile
-		cmdQc = "mikqc " + inputFile
+		cmdQc = 'mikqc "' + inputFile + '"'
 		processQc = Popen( cmdQc, stdout=PIPE, stderr=PIPE, env=os.environ, shell=True )
 		mikqcReport = inputFile + ".xml"
 		print "*** DONE ! (CHECK) ***"
 		return mikqcReport
-
 
 	def loudnessAnalyse( self, inputFile, loudnessStandard=["ebu"] ):
 		# print "*** LOUDNESS ! ***"
@@ -97,8 +109,7 @@ class Root(object):
 		# print "*** DONE ! (LOUDNESS) ***"
 		return loudnessReport
 
-
-	def generateReport( self, pdf=False ):
+	def generateReport( self ):
 		# print "*** REPORT ! ***"
 		print self.reports
 
@@ -110,14 +121,23 @@ class Root(object):
 		parser.setXmlStream( xmlStream )
 		root = parser.getRoot()
 		# print root
-		if not pdf :
-			xth = XmlToHtml()
-			main = ET.Element( "div" )
-			main.set( "id", "main" )
-			xth.setPageContent( root, main )
-			# print list( main )
-			for child in list( main ) :
-				stream += ET.tostring( child )
+		# if not pdf :
+		xth = XmlToHtml()
+		main = ET.Element( "div" )
+		main.set( "id", "main" )
+		xth.setPageContent( root, main )
+		# print list( main )
+		for child in list( main ) :
+			stream += ET.tostring( child )
+
+		xtl = XmlToLatex()
+		xtl.convert( parser )
+		latexFilePath = current_dir + "/downloads/fileToDownload.tex"
+		file = open( latexFilePath, "w+" )
+		file.write( xtl.getLatexStream() )
+		file.close()
+		cmdPdf = 'pdflatex -output-directory=' + current_dir + '/downloads/ "' + latexFilePath + '"'
+		call( cmdPdf, shell=True )
 		# print "*** DONE ! (REPORT) ***"
 
 		return stream;
@@ -150,6 +170,8 @@ class Root(object):
 		for filepath in self.reports :
 			cmdClear = "rm " + filepath
 			call( cmdClear, shell=True )
+		# call( "rm " + current_dir + "/downloads/*", shell=True)
+
 
 	@cherrypy.expose
 	def execute(
@@ -177,9 +199,13 @@ class Root(object):
 			if loudness :
 				self.reports.append( self.loudnessAnalyse( filename, loudnessStandard ) )
 			
+			root.download = Download( filename )
 
 			reportPage  = pageHeader
-			reportPage += "<div id='date'>" + str(date) + "</div>"
+			reportPage += "<div id='main-header'>"
+			reportPage += "<div id='date'>Launched at : " + str(date) + "</div>"
+			reportPage += "<div id='download-button'><a href='/download/?filepath=" + self.downloadFilepath + "'>Download PDF Version</a><br/></div>"
+			reportPage += "</div>"
 			reportPage += self.generateReport()
 			reportPage += pageFooter
 			
@@ -200,4 +226,8 @@ class Root(object):
 			print error;
 
 
-cherrypy.quickstart( Root(), '/', 'config' )
+
+
+if __name__ == '__main__':
+	root = Root()
+	cherrypy.quickstart( root, '/', 'config' )
