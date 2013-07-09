@@ -11,27 +11,23 @@ html::-webkit-scrollbar
 	background-color: #111;
 }
 
-html::-webkit-scrollbar-track
+html::-webkit-scrollbar-track /*scrollbar background color*/
 {
-	background-color: #111; /*scrollbar background color*/
+	background-color: #111;
 }
 
-html::-webkit-scrollbar-thumb
-{ /*elevator*/
+html::-webkit-scrollbar-thumb /*elevator*/
+{
 	background: #282828;
-
 	-webkit-box-shadow: inset 1px 1px 0px 0px rgba(255,255,255, .1), 0px 1px 0px 0px rgba(0,0,0, .7);
 	   -moz-box-shadow: inset 1px 1px 0px 0px rgba(255,255,255, .1), 0px 1px 0px 0px rgba(0,0,0, .7);
 	        box-shadow: inset 1px 1px 0px 0px rgba(255,255,255, .1), 0px 1px 0px 0px rgba(0,0,0, .7);
-/*	border-radius: 15px;
-	-moz-border-radius: 15px;
-	-webkit-border-radius: 15px;*/
 }
 
 html::-webkit-scrollbar-thumb:hover
-{ /*elevator*/
-  	background: #333;
-  }
+{
+	background: #333;
+}
 
 body
 {
@@ -116,7 +112,6 @@ body
 {
 	position: relative;
 	width: 90%;
-	/*padding: 10px;*/
 	margin: auto;
 	font-size: 12pt;
 }
@@ -215,14 +210,6 @@ ul
 
 #inputCheck:active
 { 
-	/*background: #ae0007;
-	background:    -moz-linear-gradient( top,        #6e0007 0%, #ae0007 100% );
-	background: -webkit-linear-gradient( top,        #6e0007 0%, #ae0007 100% );
-	background:      -o-linear-gradient( top,        #6e0007 0%, #ae0007 100% );
-	background:     -ms-linear-gradient( top,        #6e0007 0%, #ae0007 100% );
-	background:         linear-gradient( to bottom,  #6e0007 0%, #ae0007 100% );
-	background:        -webkit-gradient( linear, left top, left bottom, color-stop( 0%, #6e0007 ), color-stop( 100%, #ae0007 ) );*/
-
 	-webkit-box-shadow: inset 0 2px 6px rgba(255, 255, 255, .5), 0 2px 10px rgba(0, 0, 0, .7);
 	   -moz-box-shadow: inset 0 2px 6px rgba(255, 255, 255, .5), 0 2px 10px rgba(0, 0, 0, .7);
 	        box-shadow: inset 0 2px 6px rgba(255, 255, 255, .5), 0 2px 10px rgba(0, 0, 0, .7);
@@ -268,6 +255,11 @@ ul
 	list-style: none; /* pour enlever les puces sur IE7 */
 	margin: 0px 10px 0px 10px;
 	width: 30%;
+}
+
+#options li article div
+{
+	margin: 6px 0px 6px 0px;
 }
 
 #options li input
@@ -472,6 +464,7 @@ ul
 {
 	height: 20px;
 	padding: 5px;
+	border-bottom: 1px solid white;
 }
 
 .systemInfo-column_1 { width: 120px; vertical-align: top; }
@@ -486,13 +479,6 @@ ul
 
 .loudness-column_1 { width: 200px; }
 .loudness-column_2 { text-align: right; }
-
-/*#summary,
-#file-system-table
-{
-	margin-top:    20px;
-	margin-bottom: 30px;
-}*/
 
 caption
 {
@@ -627,28 +613,24 @@ h1, h2, h3, h4, h5 { padding-left: 40px; }
 /* scrollbar*/
 
 .accordion article::-webkit-scrollbar
-{ 
-  /*width: 5px; (vertical scrollbar)*/
-  height: 10px; /*(horizontal scrollbar)*/
-  background-color: #222;
+{
+	height: 10px;
+	background-color: #222;
 }
 
-.accordion article::-webkit-scrollbar-track
-{ 
-  background-color: #222; /*scrollbar background color*/
+.accordion article::-webkit-scrollbar-track /*scrollbar background color*/
+{
+	background-color: #222;
 }
 
-.accordion article::-webkit-scrollbar-thumb
-{ /*elevator*/
-  background-color: #151515;
-  /*border-radius: 15px;
-  -moz-border-radius: 15px;
-  -webkit-border-radius: 15px;*/
+.accordion article::-webkit-scrollbar-thumb /*elevator*/
+{
+	background-color: #151515;
 }
 
 .accordion article::-webkit-scrollbar-thumb:hover
-{ /*elevator*/
-  background-color: #111;
+{
+	background-color: #111;
 }
 
 .accordion input:checked ~ article

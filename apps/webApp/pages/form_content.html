@@ -7,16 +7,24 @@
 				<li>
 					<div class="option-label">report</div>
 					<article>
-						<input id="send-mail" type="checkbox"/>
-						<label for="send-mail">Send a report to :</label>
-						<input id="inputMail" type="email" name="email" placeholder="E-mail" required></input>
-						<label id="format-mail-label" >Format : </label>
-						<input id="pdf-mail" type="radio" name="format" value="0" checked/>
-						<label id="pdf-mail-label" for="pdf-mail">PDF</label>
-						<input id="html-mail" type="radio" name="format" value="1"/>
-						<label id="html-mail-label" for="html-mail">HTML<br></label>
-						<input id="html-display" type="checkbox"/>
-						<label id="html-display-label" for="html-display">Do not display the HTML report</label>
+						<div>
+							<input id="generate-pdf" name="pdf" type="checkbox" checked/>
+							<label for="generate-pdf">Generate a PDF report (slower)<br></label>
+						</div>
+						<div>
+							<input id="send-mail" type="checkbox" disabled/>
+							<label for="send-mail">Send a report to :</label>
+							<input id="inputMail" type="email" name="email" placeholder="E-mail" required></input>
+							<label id="format-mail-label" >Format : </label>
+							<input id="pdf-mail" type="radio" name="format" value="0" checked/>
+							<label id="pdf-mail-label" for="pdf-mail">PDF</label>
+							<input id="html-mail" type="radio" name="format" value="1"/>
+							<label id="html-mail-label" for="html-mail">HTML<br></label>
+						</div>
+						<div>
+							<input id="html-display" type="checkbox"/>
+							<label id="html-display-label" for="html-display">Do not display the HTML report</label>
+						</div>
 					</article>
 				</li>
 				<li>
@@ -37,20 +45,22 @@
 						<div>
 							<input  id="loudness" type="checkbox" name="loudness" checked/>
 							<label for="loudness">Loudness</label>
-							<ul>
-								<li>
-									<input id="ebu" type="checkbox" name="ebu" checked/>
-									<label id="ebu-label" for="ebu">EBU-R128</label>
-								</li>
-								<li>
-									<input id="cst" type="checkbox" name="cst"/>
-									<label id="cst-label" for="cst">CST-R017</label>
-								</li>
-								<li>
-									<input id="atsc" type="checkbox" name="atsc"/>
-									<label id="atsc-label" for="atsc">ATSC-A85</label>
-								</li>
-							</ul>
+							<div>
+								<ul>
+									<li>
+										<input id="ebu" type="checkbox" name="ebu" checked/>
+										<label id="ebu-label" for="ebu">EBU-R128</label>
+									</li>
+									<li>
+										<input id="cst" type="checkbox" name="cst"/>
+										<label id="cst-label" for="cst">CST-R017</label>
+									</li>
+									<li>
+										<input id="atsc" type="checkbox" name="atsc"/>
+										<label id="atsc-label" for="atsc">ATSC-A85</label>
+									</li>
+								</ul>
+							</div>
 						</div>
 					</article>
 				</li>
