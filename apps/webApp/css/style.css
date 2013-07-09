@@ -2,7 +2,36 @@ html
 {
 	min-height: 100%;
 	font-family: Arial, Verdana, sans-serif;
+	overflow-y: scroll;
 }
+
+html::-webkit-scrollbar
+{
+	width: 12px; (vertical scrollbar)
+	background-color: #111;
+}
+
+html::-webkit-scrollbar-track
+{
+	background-color: #111; /*scrollbar background color*/
+}
+
+html::-webkit-scrollbar-thumb
+{ /*elevator*/
+	background: #282828;
+
+	-webkit-box-shadow: inset 1px 1px 0px 0px rgba(255,255,255, .1), 0px 1px 0px 0px rgba(0,0,0, .7);
+	   -moz-box-shadow: inset 1px 1px 0px 0px rgba(255,255,255, .1), 0px 1px 0px 0px rgba(0,0,0, .7);
+	        box-shadow: inset 1px 1px 0px 0px rgba(255,255,255, .1), 0px 1px 0px 0px rgba(0,0,0, .7);
+/*	border-radius: 15px;
+	-moz-border-radius: 15px;
+	-webkit-border-radius: 15px;*/
+}
+
+html::-webkit-scrollbar-thumb:hover
+{ /*elevator*/
+  	background: #333;
+  }
 
 body
 {
@@ -16,9 +45,9 @@ body
 ***************/
 #header
 {
-	-webkit-box-shadow: 0px 1px 10px 0px rgba(0,0,0, .7);
-	   -moz-box-shadow: 0px 1px 10px 0px rgba(0,0,0, .7);
-	        box-shadow: 0px 1px 10px 0px rgba(0,0,0, .7);
+	-webkit-box-shadow: inset -1px 0px 10px 0px rgba(0,0,0, .7), 0px 1px 10px 0px rgba(0,0,0, .7);
+	   -moz-box-shadow: inset -1px 0px 10px 0px rgba(0,0,0, .7), 0px 1px 10px 0px rgba(0,0,0, .7);
+	        box-shadow: inset -1px 0px 10px 0px rgba(0,0,0, .7), 0px 1px 10px 0px rgba(0,0,0, .7);
 
 	background: #ae0007;
 	background:    -moz-linear-gradient( top,        #ae0007 0%, #6e0007 100% );
@@ -353,25 +382,117 @@ ul
 	color: #ddd;
 }
 
+#main-header
+{
+	display: block;
+	height:  40px;
+}
+
 #date
 {
+	display: block;
+	float: left;
+	padding: 6px 20px;
+	width:  300px;
 	color: #aaa;
 	font-size:  10pt;
 	text-align: left;
 }
 
+#download-button
+{
+	display: block;
+	float: right;
+	width:  200px;
+	padding: 6px 20px;
+	text-align: center;
+
+	border-radius: 10px;
+
+	background: #ae0007;
+	background:    -moz-linear-gradient( top,        #ae0007 0%, #6e0007 100% );
+	background: -webkit-linear-gradient( top,        #ae0007 0%, #6e0007 100% );
+	background:      -o-linear-gradient( top,        #ae0007 0%, #6e0007 100% );
+	background:     -ms-linear-gradient( top,        #ae0007 0%, #6e0007 100% );
+	background:         linear-gradient( to bottom,  #ae0007 0%, #6e0007 100% );
+	background:        -webkit-gradient( linear, left top, left bottom, color-stop( 0%, #ae0007 ), color-stop( 100%, #6e0007 ) );
+
+	-webkit-box-shadow: inset 0px 1px 0px 0px rgba(255,255,255, .1), 0px 1px 10px 0px rgba(0,0,0, .7);
+	   -moz-box-shadow: inset 0px 1px 0px 0px rgba(255,255,255, .1), 0px 1px 10px 0px rgba(0,0,0, .7);
+	        box-shadow: inset 0px 1px 0px 0px rgba(255,255,255, .1), 0px 1px 10px 0px rgba(0,0,0, .7);
+}
+
+#download-button:hover
+{
+	background: #6e0007;
+	background:    -moz-linear-gradient( top,        #6e0007 0%, #ae0007 100% );
+	background: -webkit-linear-gradient( top,        #6e0007 0%, #ae0007 100% );
+	background:      -o-linear-gradient( top,        #6e0007 0%, #ae0007 100% );
+	background:     -ms-linear-gradient( top,        #6e0007 0%, #ae0007 100% );
+	background:         linear-gradient( to bottom,  #6e0007 0%, #ae0007 100% );
+	background:        -webkit-gradient( linear, left top, left bottom, color-stop( 0%, #6e0007 ), color-stop( 100%, #ae0007 ) );
+}
+
+#download-button:active
+{
+	-webkit-box-shadow: inset 0px 1px 0px 0px rgba(255,255,255, .1), 0px 1px 0px 0px rgba(0,0,0, .7);
+	   -moz-box-shadow: inset 0px 1px 0px 0px rgba(255,255,255, .1), 0px 1px 0px 0px rgba(0,0,0, .7);
+	        box-shadow: inset 0px 1px 0px 0px rgba(255,255,255, .1), 0px 1px 0px 0px rgba(0,0,0, .7);
+}
+
+#download-button a
+{
+	color: #ccc;
+	font-size:  10pt;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+/*table
+{
+	border-spacing: 0px;
+}
+*/
 .section
 {
 	margin: 10px auto 20px auto;
 	max-width: 80%;
 }
 
-#summary,
+.systemInfo-table,
+.status-table,
+.metadata-table,
+.loudness-table
+{
+	margin-top: 10px;
+	margin-bottom: 20px;
+}
+
+.section th
+{
+	height: 20px;
+	padding: 5px;
+}
+
+.systemInfo-column_1 { width: 120px; vertical-align: top; }
+.permissions-column_1 { vertical-align: top; }
+.permissions-column_2 table { border-spacing: 0px; }
+
+.status-column_1 { width: 200px; }
+.status-column_2 { text-align: right; }
+
+.metadata-column_1 { width: 200px; }
+.metadata-column_2 { text-align: right; }
+
+.loudness-column_1 { width: 200px; }
+.loudness-column_2 { text-align: right; }
+
+/*#summary,
 #file-system-table
 {
 	margin-top:    20px;
 	margin-bottom: 30px;
-}
+}*/
 
 caption
 {
