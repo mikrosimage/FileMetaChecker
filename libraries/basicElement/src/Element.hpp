@@ -1,6 +1,9 @@
 #ifndef _BASIC_ELEMENT_ELEMENT_HPP_
 #define _BASIC_ELEMENT_ELEMENT_HPP_
 
+#include <string>
+#include <common/global.hpp>
+
 namespace basic_element
 {
 
@@ -40,6 +43,10 @@ public:
 	EType       getType()   { return _type; }
 	EStatus     getStatus() { return _status; }
 
+	void setData( const char* data, const size_t& size );
+	virtual EStatus checkData() = 0;
+
+
 protected:
 	void setStatus( const EStatus status );
 
@@ -48,7 +55,6 @@ private:
 	std::string _label;
 	EType       _type;
 	EStatus     _status;
-
 };
 
 }
