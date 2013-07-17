@@ -22,4 +22,4 @@ BOOST_AUTO_TEST_SUITE_END()
 
 #include "translatorTests.hpp"
 #include "mapTests.hpp"
-// #include "rangeTests.hpp"
+#include "rangeTests.hpp"
