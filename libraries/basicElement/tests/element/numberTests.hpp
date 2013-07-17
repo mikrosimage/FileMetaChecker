@@ -504,9 +504,9 @@ BOOST_AUTO_TEST_CASE( basic_element_number_toString )
 	}
 }
 
-BOOST_AUTO_TEST_CASE( basic_element_number_getStringForType )
+BOOST_AUTO_TEST_CASE( basic_element_number_getStringFromType )
 {
-	LOG_INFO( "\n>>> basic_element_number_getStringForType <<<" );
+	LOG_INFO( "\n>>> basic_element_number_getStringFromType <<<" );
 	{
 		nbe::Number< nbe::int8 > num;
 		BOOST_CHECK_EQUAL( num.getStringFromType(), "int8" );
