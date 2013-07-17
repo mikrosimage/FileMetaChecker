@@ -429,79 +429,79 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 	}
 }
 
-// BOOST_AUTO_TEST_CASE( basic_element_number_toString )
-// {
-// 	LOG_INFO( "\n>>> basic_element_number_toString <<<" );
-// 	{
-// 		nbe::Number< nbe::int8 > num;
-// 		num.setData( dataInt8High, 1 );
-// 		BOOST_CHECK_EQUAL( num.toString(), "-1" );
-// 	}
-// 	{
-// 		nbe::Number< nbe::uint8 > num;
-// 		num.setData( dataInt8High, 1 );
-// 		BOOST_CHECK_EQUAL( num.toString(), "255" );
-// 	}
-// 	{
-// 		nbe::Number< nbe::int16 > num;
-// 		num.setData( dataInt16Full, 2 );
-// 		BOOST_CHECK_EQUAL( num.toString(), "-1" );
-// 	}
-// 	{
-// 		nbe::Number< nbe::uint16 > num;
-// 		num.setData( dataInt16Full, 2 );
-// 		BOOST_CHECK_EQUAL( num.toString(), "65535" );
-// 	}
-// 	{
-// 		nbe::Number< nbe::int32 > num;
-// 		num.setData( dataInt32Full, 4 );
-// 		BOOST_CHECK_EQUAL( num.toString(), "-1" );
-// 	}
-// 	{
-// 		nbe::Number< nbe::uint32 > num;
-// 		num.setData( dataInt32Full, 4 );
-// 		BOOST_CHECK_EQUAL( num.toString(), "4294967295" );
-// 	}
-// 	{
-// 		nbe::Number< nbe::int64 > num;
-// 		num.setData( dataInt64Full, 8 );
-// 		BOOST_CHECK_EQUAL( num.toString(), "-1" );
-// 	}
-// 	{
-// 		nbe::Number< nbe::uint64 > num;
-// 		num.setData( dataInt64Full, 8 );
-// 		BOOST_CHECK_EQUAL( num.toString(), "18446744073709551615" );
-// 	}
-// 	{
-// 		nbe::Number< float > num;
-// 		num.setData( dataFloatOneBigEndian, 4 );
-// 		BOOST_CHECK_EQUAL( num.toString(), "1" );
-// 	}
-// 	{
-// 		nbe::Number< float > num;
-// 		num.setData( dataFloatMaxBigEndian, 4 );
-// 		BOOST_CHECK_EQUAL( num.toString(), "3.40282e+38" );
-// 	}
-// 	{
-// 		nbe::Number< double > num;
-// 		num.setData( dataDoubleOneBigEndian, 8 );
-// 		BOOST_CHECK_EQUAL( num.toString(), "1" );
-// 	}
-// 	{
-// 		nbe::Number< double > num;
-// 		num.setData( dataDoubleMaxBigEndian, 8 );
-// 		BOOST_CHECK_EQUAL( num.toString(), "1.79769e+308" );
-// 	}
-// 	{
-// 		nbe::Number< nbe::ieeeExtended > num;
-// 		num.setData( dataIeeeExtendedOneBigEndian, 10 );
-// 		BOOST_CHECK_EQUAL( num.toString(), "1" );
-// 	}
-// 	{
-// 		nbe::Number< nbe::ieeeExtended > num;
-// 		num.setData( dataIeeeExtendedMaxBigEndian, 10 );
-// 		BOOST_CHECK_EQUAL( num.toString(), "1.18973e+4932" );
-// 	}
-// }
+BOOST_AUTO_TEST_CASE( basic_element_number_toString )
+{
+	LOG_INFO( "\n>>> basic_element_number_toString <<<" );
+	{
+		nbe::Number< nbe::int8 > num;
+		num.setData( dataInt8High, 1 );
+		BOOST_CHECK_EQUAL( num.toString(), "-1" );
+	}
+	{
+		nbe::Number< nbe::uint8 > num;
+		num.setData( dataInt8High, 1 );
+		BOOST_CHECK_EQUAL( num.toString(), "255" );
+	}
+	{
+		nbe::Number< nbe::int16 > num;
+		num.setData( dataInt16Full, 2 );
+		BOOST_CHECK_EQUAL( num.toString(), "-1" );
+	}
+	{
+		nbe::Number< nbe::uint16 > num;
+		num.setData( dataInt16Full, 2 );
+		BOOST_CHECK_EQUAL( num.toString(), "65535" );
+	}
+	{
+		nbe::Number< nbe::int32 > num;
+		num.setData( dataInt32Full, 4 );
+		BOOST_CHECK_EQUAL( num.toString(), "-1" );
+	}
+	{
+		nbe::Number< nbe::uint32 > num;
+		num.setData( dataInt32Full, 4 );
+		BOOST_CHECK_EQUAL( num.toString(), "4294967295" );
+	}
+	{
+		nbe::Number< nbe::int64 > num;
+		num.setData( dataInt64Full, 8 );
+		BOOST_CHECK_EQUAL( num.toString(), "-1" );
+	}
+	{
+		nbe::Number< nbe::uint64 > num;
+		num.setData( dataInt64Full, 8 );
+		BOOST_CHECK_EQUAL( num.toString(), "18446744073709551615" );
+	}
+	{
+		nbe::Number< float > num;
+		num.setData( dataFloatOneBigEndian, 4 );
+		BOOST_CHECK_EQUAL( num.toString(), "1" );
+	}
+	{
+		nbe::Number< float > num;
+		num.setData( dataFloatMaxBigEndian, 4 );
+		BOOST_CHECK_EQUAL( num.toString(), "3.40282e+38" );
+	}
+	{
+		nbe::Number< double > num;
+		num.setData( dataDoubleOneBigEndian, 8 );
+		BOOST_CHECK_EQUAL( num.toString(), "1" );
+	}
+	{
+		nbe::Number< double > num;
+		num.setData( dataDoubleMaxBigEndian, 8 );
+		BOOST_CHECK_EQUAL( num.toString(), "1.79769e+308" );
+	}
+	{
+		nbe::Number< nbe::ieeeExtended > num;
+		num.setData( dataIeeeExtendedOneBigEndian, 10 );
+		BOOST_CHECK_EQUAL( num.toString(), "1" );
+	}
+	{
+		nbe::Number< nbe::ieeeExtended > num;
+		num.setData( dataIeeeExtendedMaxBigEndian, 10 );
+		BOOST_CHECK_EQUAL( num.toString(), "1.18973e+4932" );
+	}
+}
 
 BOOST_AUTO_TEST_SUITE_END()
