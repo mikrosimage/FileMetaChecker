@@ -16,11 +16,7 @@ public:
 
 	void setData( const char* data, const size_t& size );
 	void getData( char* buffer ) const;
-
 	size_t getSize() const;
-	void setBigEndianess( bool isBigEndian );
-	bool getBigEndianess() const;
-
 	std::string getAscii() const;
 	std::string getHexa() const;
 	std::vector< unsigned int > toIntVector();
@@ -32,8 +28,6 @@ public:
 
 private:
 	char*  _data;
-	size_t _size;
-	bool   _isBigEndian;
 
 };
 

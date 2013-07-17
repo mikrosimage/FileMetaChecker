@@ -43,12 +43,21 @@ public:
 	EType       getType()   { return _type; }
 	EStatus     getStatus() { return _status; }
 
-	void setData( const char* data, const size_t& size );
+	void setBigEndianness( bool isBigEndian );
+	bool getBigEndianness() const;
+
+	void getEndianOrderedData( char* buffer, const char* data ) const;
+	void reverseEndianness( char* buffer, const char* data ) const;
+	
+	virtual void setData( const char* data, const size_t& size ) = 0;
+	virtual void getData( char* buffer ) const = 0;
 	virtual EStatus checkData() = 0;
 
 
 protected:
 	void setStatus( const EStatus status );
+	size_t      _size;
+	bool        _isBigEndian;
 
 private:
 	std::string _id;

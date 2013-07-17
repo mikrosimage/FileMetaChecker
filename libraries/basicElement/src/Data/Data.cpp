@@ -10,9 +10,8 @@ namespace data_element
 Data::Data()
 	: Element( Element::eTypeData )
 	, _data( NULL )
-	, _size( 0 )
-	, _isBigEndian( true )
 {
+	_size = 0;
 }
 
 Data::~Data()
@@ -29,22 +28,15 @@ void Data::setData( const char* data, const size_t& size )
 	LOG_INFO( " Data: \tSET DATA " );
 	_data = new char [size];
 	_size = size;
-	if( !_isBigEndian )
-	{
-		std::reverse_copy( data, data + _size, _data );
-		// LOG_INFO( " Data: \t_data[0] : " << (unsigned int)_data[0] << "\t\t\t@ " << &_data );
-	}
-	else
-	{
-		std::memcpy( _data, data, _size );
-		// LOG_INFO( " Data: \t_data[0] : " << (unsigned int)_data[0] << "\t\t\t@ " << &_data );
-	}
+	
+	getEndianOrderedData( _data, data );
 }
 
 void Data::getData( char* buffer ) const
 {
-	LOG_INFO( " Data: \tGET DATA from @ " << &_data << " to \t@ " << &buffer );
+	LOG_INFO( " Data: \tGET DATA from @ " << &_data << " to @ " << &buffer );
 	std::memcpy( buffer, _data, _size );
+	// std::reverse_copy( _data, _data + _size, buffer );
 	// LOG_INFO( " Data:\t _data : " << (unsigned int) _data[0] << "\t\t\t@ " << &_data );
 	// LOG_INFO( " Data:\t buffer: " << (unsigned int)buffer[0] << "\t\t\t@ " << &buffer );
 }
@@ -55,18 +47,9 @@ size_t Data::getSize() const
 	return _size;
 }
 
-void Data::setBigEndianess( bool isBigEndian )
-{
-	_isBigEndian = isBigEndian; 
-}
-
-bool Data::getBigEndianess() const
-{
-	return _isBigEndian; 
-}
-
 std::string Data::getAscii() const
 {
+	LOG_INFO( " Data: \tGET ASCII " );
 	std::stringstream sstr;
 	for (size_t i = 0; i < _size; ++i)
 		sstr << _data[i];
@@ -76,12 +59,13 @@ std::string Data::getAscii() const
 
 std::string Data::getHexa() const
 {
+	LOG_INFO( " Data: \tGET HEXA " );
 	std::stringstream sstr;
 	char* buffer = new char [ _size ];
 	std::memcpy( buffer, _data, _size );
 	for (size_t i = 0; i < _size; ++i)
 	{
-		sstr << std::hex << std::setfill('0') << std::setw(2) << (unsigned short)buffer[i];
+		sstr << std::hex << std::setfill('0') << std::setw(2) << (int)(unsigned char)buffer[i];
 	}
 	delete[] buffer;
 	LOG_INFO( " Data: \tTO STRING (Hexa): " << sstr.str() );

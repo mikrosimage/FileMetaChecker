@@ -11,7 +11,6 @@ namespace number_element
 {
 
 typedef          char       int8;
-typedef   signed char      sint8;
 typedef unsigned char      uint8;
 typedef          short      int16;
 typedef unsigned short     uint16;
@@ -25,26 +24,31 @@ typedef long double  ieeeExtended;     // 80 bit IEEE Standard 754 floating poin
 template< typename NumberType >
 class Number : public Element
 {
+	union NumberData
+	{
+		char       data[0];
+		NumberType value;
+	};
 public:
 	Number();
 
+	void setData( const char* data, const size_t& size );
+	void getData( char* buffer ) const;
+	size_t     getSize()  const;
+	NumberType getValue() const;
 	Range< NumberType >& getRange();
 	Map  < NumberType >& getMap();
 
-	void setEndianess( bool isBigEndian );
+	std::string toString() const;
 
-	void setData( const char* data );
-	NumberType getData() const;
-	
 	EStatus checkData();
 
 private:	
-	NumberType translate( const char* data );
+	void setSize();
+	void translate( const char* data );
 
 private:
-	NumberType _data;
-	bool       _isBigEndian;
-	size_t     _size;
+	NumberData          _numData;
 	Range< NumberType > _range;
 	Map  < NumberType > _map;
 };
