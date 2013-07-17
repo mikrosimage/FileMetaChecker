@@ -24,6 +24,8 @@ public:
 	void setRange( const ValueType& min, const ValueType& max )
 	{
 		LOG_INFO( " => Range: \tSET RANGE " );
+		if( min > max )
+			throw std::range_error( "The 'min' value must be less than the 'max' value" );
 		_range.push_back( min );
 		_range.push_back( max );
 	}
@@ -49,29 +51,40 @@ public:
 	}
 
 private:
+	size_t hexaToUint( const std::string& hexa )
+	{
+		size_t value;
+		std::stringstream sstr( hexa );
+		sstr >> std::hex >> value;
+		LOG_INFO( " \t hexa   : " << hexa << " ==> value: " << value );
+		return value;
+	}
+
+private:
 	std::vector< ValueType > _range;
 };
 
+// for Hexa values :
+template<>
+void Range< std::string >::setRange( const std::string& min, const std::string& max )
+{
+	LOG_INFO( " => Range: \tSET RANGE (string) " );
+	size_t minValue = hexaToUint( min );
+	size_t maxValue = hexaToUint( max );
+
+	if( minValue > maxValue )
+		throw std::range_error( "The 'min' value must be less than the 'max' value" );
+	_range.push_back( min );
+	_range.push_back( max );
+}
 
 template<>
 bool Range< std::string >::isInRange( const std::string& value )
 {
 	LOG_INFO( " => Range: \tIS IN RANGE (string) " );
-	size_t intValue;
-	size_t minValue;
-	size_t maxValue;
-
-	std::stringstream ssInt( value );
-	std::stringstream ssMin( _range.at(0) );
-	std::stringstream ssMax( _range.at(1) );
-
-	ssInt >> std::hex >> intValue;
-	ssMin >> std::hex >> minValue;
-	ssMax >> std::hex >> maxValue;
-
-	LOG_INFO( " \t value : " << value << " ==> intValue: " << intValue );
-	LOG_INFO( " \t min   : " << _range.at(0) << " ==> minValue: " << minValue );
-	LOG_INFO( " \t max   : " << _range.at(1) << " ==> maxValue: " << maxValue );
+	size_t intValue = hexaToUint( value );
+	size_t minValue = hexaToUint( _range.at(0) );
+	size_t maxValue = hexaToUint( _range.at(1) );
 
 	if( minValue <= intValue && maxValue >= intValue )
 		return true;
