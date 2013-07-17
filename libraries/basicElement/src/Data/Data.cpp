@@ -14,6 +14,14 @@ Data::Data()
 	_size = 0;
 }
 
+Data::Data( const Element::EType& type )
+	: Element( type )
+	, _data( NULL )
+{
+	_size = 0;
+}
+
+
 Data::~Data()
 {
 	if( _data != NULL )
@@ -83,10 +91,64 @@ std::vector< unsigned int > Data::toIntVector()
 	return vector;
 }
 
+void Data::setSpecData( const std::string& specValue )
+{
+	LOG_INFO( " Data: \tSET SPEC DATA " );
+	_specValue = specValue;
+}
+
 Element::EStatus Data::checkData()
 {
 	LOG_INFO( " Data: \tCHECK DATA " );
-	return eStatusUnknown;
+	if( _specValue.empty() )
+	{
+		setStatus( eStatusPassOver );
+		return eStatusPassOver;
+	}
+
+	Element::EStatus status = eStatusInvalid;
+	switch( getType() )
+	{
+		case eTypeUnknown :
+		{
+			status = eStatusUnknown;
+		} break;
+
+		case eTypeNumber :			// @todo : error ? translate to Number (~size) and check Number
+		{
+			status = eStatusPassOver; 
+		} break;
+
+		case eTypeAscii :
+		{
+			if( _specValue == getAscii() )
+				status = eStatusValid;
+		} break;
+
+		case eTypeHexa :
+		{
+			if( _specValue == getHexa()  )
+				status = eStatusValid;
+		} break;
+
+		case eTypeExif :			// @todo : error ?
+		{
+			status = eStatusPassOver;
+		} break;
+
+		case eTypeData :
+		{
+			status = eStatusPassOver;
+		} break;
+
+		case eTypeKlv :				// @todo : error ?
+		{
+			status = eStatusPassOver;
+		} break;
+	}
+	
+	setStatus( status );
+	return status;
 }
 
 Data& Data::operator=( const Data& other )

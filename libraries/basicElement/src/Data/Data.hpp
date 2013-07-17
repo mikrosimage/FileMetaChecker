@@ -12,6 +12,7 @@ class Data : public Element
 {
 public:
 	Data();
+	Data( const Element::EType& type );
 	~Data();
 
 	void setData( const char* data, const size_t& size );
@@ -21,6 +22,7 @@ public:
 	std::string getHexa() const;
 	std::vector< unsigned int > toIntVector();
 	
+	void setSpecData( const std::string& specValue );
 
 	EStatus checkData();
 
@@ -28,7 +30,7 @@ public:
 
 private:
 	char*  _data;
-
+	std::string _specValue;
 };
 
 }
