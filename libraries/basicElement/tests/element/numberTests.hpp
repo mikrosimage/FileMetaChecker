@@ -504,4 +504,53 @@ BOOST_AUTO_TEST_CASE( basic_element_number_toString )
 	}
 }
 
+BOOST_AUTO_TEST_CASE( basic_element_number_getStringForType )
+{
+	LOG_INFO( "\n>>> basic_element_number_getStringForType <<<" );
+	{
+		nbe::Number< nbe::int8 > num;
+		BOOST_CHECK_EQUAL( num.getStringFromType(), "int8" );
+	}
+	{
+		nbe::Number< nbe::uint8 > num;
+		BOOST_CHECK_EQUAL( num.getStringFromType(), "uint8" );
+	}
+	{
+		nbe::Number< nbe::int16 > num;
+		BOOST_CHECK_EQUAL( num.getStringFromType(), "int16" );
+	}
+	{
+		nbe::Number< nbe::uint16 > num;
+		BOOST_CHECK_EQUAL( num.getStringFromType(), "uint16" );
+	}
+	{
+		nbe::Number< nbe::int32 > num;
+		BOOST_CHECK_EQUAL( num.getStringFromType(), "int32" );
+	}
+	{
+		nbe::Number< nbe::uint32 > num;
+		BOOST_CHECK_EQUAL( num.getStringFromType(), "uint32" );
+	}
+	{
+		nbe::Number< nbe::int64 > num;
+		BOOST_CHECK_EQUAL( num.getStringFromType(), "int64" );
+	}
+	{
+		nbe::Number< nbe::uint64 > num;
+		BOOST_CHECK_EQUAL( num.getStringFromType(), "uint64" );
+	}
+	{
+		nbe::Number< float > num;
+		BOOST_CHECK_EQUAL( num.getStringFromType(), "float" );
+	}
+	{
+		nbe::Number< double > num;
+		BOOST_CHECK_EQUAL( num.getStringFromType(), "double" );
+	}
+	{
+		nbe::Number< nbe::ieeeExtended > num;
+		BOOST_CHECK_EQUAL( num.getStringFromType(), "ieeeExtended" );
+	}
+}
+
 BOOST_AUTO_TEST_SUITE_END()

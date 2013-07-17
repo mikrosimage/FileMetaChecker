@@ -142,6 +142,41 @@ Element::EStatus Number< NumberType >::checkData()
 	return eStatusUnknown;
 }
 
+template< typename NumberType >
+std::string Number< NumberType >::getStringFromType() { return ""; }
+
+template< >
+std::string Number< int8 >::getStringFromType() { return "int8"; }
+
+template< >
+std::string Number< uint8 >::getStringFromType() { return "uint8"; }
+
+template< >
+std::string Number< int16 >::getStringFromType() { return "int16"; }
+
+template< >
+std::string Number< uint16 >::getStringFromType() { return "uint16"; }
+
+template< >
+std::string Number< int32 >::getStringFromType() { return "int32"; }
+
+template< >
+std::string Number< uint32 >::getStringFromType() { return "uint32"; }
+
+template< >
+std::string Number< int64 >::getStringFromType() { return "int64"; }
+
+template< >
+std::string Number< uint64 >::getStringFromType() { return "uint64"; }
+
+template< >
+std::string Number< float >::getStringFromType() { return "float"; }
+
+template< >
+std::string Number< double >::getStringFromType() { return "double"; }
+
+template< >
+std::string Number< ieeeExtended >::getStringFromType() { return "ieeeExtended"; }
 
 
 }

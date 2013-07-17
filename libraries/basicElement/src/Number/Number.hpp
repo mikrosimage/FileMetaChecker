@@ -42,6 +42,8 @@ public:
 
 	EStatus checkData();
 
+	std::string getStringFromType();
+
 private:	
 	void setSize();
 	void translate( const char* data );
