@@ -33,6 +33,12 @@ public:
 		_map.insert( std::pair< KeyType, std::string >( key, label ) );
 	}
 
+	void insertPair( const std::pair< KeyType, std::string >& pair )
+	{
+		LOG_INFO( " => Map: \tINSERT PAIR " );
+		_map.insert( pair );
+	}
+
 	std::string getLabel( const KeyType& key )
 	{
 		LOG_INFO( " => Map: \tGET LABEL " );
