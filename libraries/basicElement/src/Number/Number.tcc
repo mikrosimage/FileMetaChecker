@@ -18,7 +18,7 @@ void Number< NumberType >::translate( const char* data )
 	LOG_INFO( " Number: \tTRANSLATE (generic) " );
 	char* buffer = new char [_size];
 	getEndianOrderedData( buffer, data );
-	std::reverse_copy( buffer, buffer + _size, _numData.data );	// @todo swap system if big endian (here if little endian)
+	reverseEndianness( _numData.data, buffer ); // @todo swap system if big endian (little endian here)
 	delete[] buffer;
 	LOG_INFO( " Number: \t_numData.value: " << _numData.value );
 }
@@ -134,12 +134,18 @@ template< typename NumberType >
 Element::EStatus Number< NumberType >::checkData()
 {
 	LOG_INFO( " Number: \tCHECK DATA " );
-	// bool isValidNumber;
-	// if( _range.size() == 2 )
-	// {
-	// 	isValidNumber = isInRange( _numData.data );
-	// }
-	return eStatusUnknown;
+	if( _range.getSize() != 2 )
+	{
+		setStatus( eStatusPassOver );
+		return eStatusPassOver;
+	}
+	
+	Element::EStatus status = eStatusInvalid;
+	if( _range.isInRange( _numData.value ) )
+		status = eStatusValid;
+	
+	setStatus( status );
+	return status;
 }
 
 template< typename NumberType >

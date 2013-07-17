@@ -553,4 +553,65 @@ BOOST_AUTO_TEST_CASE( basic_element_number_getStringFromType )
 	}
 }
 
+BOOST_AUTO_TEST_CASE( basic_element_number_checkData )
+{
+	LOG_INFO( "\n>>> basic_element_number_checkData <<<" );
+	{
+		nbe::Number< nbe::int32 > num;
+		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusPassOver );
+	}
+	{
+		nbe::Number< nbe::uint32 > num;
+		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusPassOver );
+	}
+	{
+		nbe::Number< float > num;
+		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusPassOver );
+	}
+	{
+		nbe::Number< double > num;
+		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusPassOver );
+	}
+	{
+		nbe::Number< nbe::ieeeExtended > num;
+		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusPassOver );
+	}
+	
+	{
+		nbe::Number< nbe::uint32 > num;
+		num.setData( dataInt32Low, sizeof( dataInt32High ) );
+		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusPassOver );
+	}
+	{
+		nbe::Number< nbe::uint32 > num;
+		num.getRange().setRange( 254, 256 );
+		num.setData( dataInt32Low, sizeof( dataInt32High ) );
+		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusValid );
+	}
+	{
+		nbe::Number< nbe::uint32 > num;
+		num.getRange().setRange( 256, 256 );
+		num.setData( dataInt32Low, sizeof( dataInt32High ) );
+		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusInvalid );
+	}
+
+	{
+		nbe::Number< nbe::ieeeExtended > num;
+		num.setData( dataIeeeExtendedOneLittleEndian, sizeof( dataIeeeExtendedOneLittleEndian ) );
+		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusPassOver );
+	}
+	{
+		nbe::Number< nbe::ieeeExtended > num;
+		num.getRange().setRange( 0, 2 );
+		num.setData( dataIeeeExtendedOneLittleEndian, sizeof( dataIeeeExtendedOneLittleEndian ) );
+		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusValid );
+	}
+	{
+		nbe::Number< nbe::ieeeExtended > num;
+		num.getRange().setRange( 1.5, 3.2 );
+		num.setData( dataIeeeExtendedOneLittleEndian, sizeof( dataIeeeExtendedOneLittleEndian ) );
+		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusInvalid );
+	}
+}
+
 BOOST_AUTO_TEST_SUITE_END()
