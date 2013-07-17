@@ -21,5 +21,5 @@ BOOST_AUTO_TEST_CASE( basic_element_init )
 BOOST_AUTO_TEST_SUITE_END()
 
 #include "translatorTests.hpp"
-// #include "mapTests.hpp"
+#include "mapTests.hpp"
 // #include "rangeTests.hpp"
