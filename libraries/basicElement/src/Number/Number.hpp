@@ -1,7 +1,6 @@
 #ifndef _BASIC_ELEMENT_NUMBER_NUMBER_HPP_
 #define _BASIC_ELEMENT_NUMBER_NUMBER_HPP_
 
-#include <vector>
 #include "Tools/Map.hpp"
 #include "Tools/Range.hpp"
 
