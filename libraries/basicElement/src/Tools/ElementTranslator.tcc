@@ -7,7 +7,7 @@ namespace translator_tool
 template< typename InputType, typename OutputType >
 OutputType ElementTranslator< InputType, OutputType >::translate( const InputType& element )
 {
-	LOG_INFO( " ElementTranslator: \tTRANSLATE" );
+	BE_LOG_TRACE( " ElementTranslator: \tTRANSLATE" );
 	OutputType translation;
 	size_t size = element.getSize();
 	char* buffer = new char [ size ];

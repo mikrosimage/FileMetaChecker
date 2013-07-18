@@ -1,6 +1,8 @@
 #ifndef _BASIC_ELEMENT_TOOLS_RANGE_HPP_
 #define _BASIC_ELEMENT_TOOLS_RANGE_HPP_
 
+#include <common.hpp>
+
 namespace basic_element
 {
 
@@ -32,7 +34,7 @@ public:
 
 	void setMinimum( const ValueType& min )
 	{
-		LOG_INFO( " => Range: \tSET MINIMUM " );
+		BE_LOG_TRACE( " => Range: \tSET MINIMUM " );
 		if( _max.isSet && min > _max.value )
 			throw std::range_error( "The 'min' value must be less than the 'max' value" );
 		_min.value = min;
@@ -41,7 +43,7 @@ public:
 
 	void setMaximum( const ValueType& max )
 	{
-		LOG_INFO( " => Range: \tSET MAXIMUM " );
+		BE_LOG_TRACE( " => Range: \tSET MAXIMUM " );
 		if( _min.isSet && max < _min.value )
 			throw std::range_error( "The 'min' value must be less than the 'max' value" );
 		_max.value = max;
@@ -50,7 +52,7 @@ public:
 
 	void setRange( const ValueType& min, const ValueType& max )
 	{
-		LOG_INFO( " => Range: \tSET RANGE " );
+		BE_LOG_TRACE( " => Range: \tSET RANGE " );
 		if( min > max )
 			throw std::range_error( "The 'min' value must be less than the 'max' value" );
 		_min.value = min;
@@ -61,12 +63,12 @@ public:
 
 	bool isInRange( const ValueType& value )
 	{
-		LOG_INFO( " => Range: \tIS IN RANGE " );
+		BE_LOG_TRACE( " => Range: \tIS IN RANGE " );
 		try
 		{
 			if( !isSet() )
 				throw std::range_error( "Range not set" );
-			
+
 			bool inRange = true;
 			if( _min.isSet && _min.value >  value )
 				inRange = false;
@@ -93,7 +95,7 @@ public:
 
 	bool isSet()
 	{
-		LOG_INFO( " => Range: \tIS SET " );
+		BE_LOG_TRACE( " => Range: \tIS SET " );
 		if( _min.isSet || _max.isSet )
 			return true;
 		return false;
@@ -105,7 +107,7 @@ private:
 		size_t value;
 		std::stringstream sstr( hexa );
 		sstr >> std::hex >> value;
-		LOG_INFO( " \t hexa   : " << hexa << " ==> value: " << value );
+		BE_LOG_TRACE( " \t hexa   : " << hexa << " ==> value: " << value );
 		return value;
 	}
 
@@ -118,7 +120,7 @@ private:
 template<>
 void Range< std::string >::setRange( const std::string& min, const std::string& max )
 {
-	LOG_INFO( " => Range: \tSET RANGE (string) " );
+	BE_LOG_TRACE( " => Range: \tSET RANGE (string) " );
 	if( hexaToUint( min ) > hexaToUint( max ) )
 		throw std::range_error( "The 'min' value must be less than the 'max' value" );
 	_min.value = min;
@@ -130,7 +132,7 @@ void Range< std::string >::setRange( const std::string& min, const std::string& 
 template<>
 bool Range< std::string >::isInRange( const std::string& value )
 {
-	LOG_INFO( " => Range: \tIS IN RANGE (string) " );
+	BE_LOG_TRACE( " => Range: \tIS IN RANGE (string) " );
 	try
 	{
 		if( !isSet() )

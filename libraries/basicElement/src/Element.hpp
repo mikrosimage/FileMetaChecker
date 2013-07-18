@@ -2,7 +2,7 @@
 #define _BASIC_ELEMENT_ELEMENT_HPP_
 
 #include <string>
-#include <common/global.hpp>
+#include "common.hpp"
 
 namespace basic_element
 {
