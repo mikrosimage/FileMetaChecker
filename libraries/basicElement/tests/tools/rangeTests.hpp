@@ -26,6 +26,26 @@ BOOST_AUTO_TEST_CASE( basic_element_range )
 		be::Range< int > rangeObj;
 		BOOST_CHECK_THROW( rangeObj.isInRange( 10 ), std::range_error );
 	}
+	{
+		be::Range< int > rangeObj;
+		rangeObj.setMinimum( 0 );
+		BOOST_CHECK_EQUAL( rangeObj.isSet(), true );
+		BOOST_CHECK_EQUAL( rangeObj.isInRange(   -1 ), false );
+		BOOST_CHECK_EQUAL( rangeObj.isInRange(    0 ), true  );
+		BOOST_CHECK_EQUAL( rangeObj.isInRange(    5 ), true  );
+		BOOST_CHECK_EQUAL( rangeObj.isInRange(   10 ), true  );
+		BOOST_CHECK_EQUAL( rangeObj.isInRange( 1110 ), true );
+	}
+	{
+		be::Range< int > rangeObj;
+		rangeObj.setMaximum( 0 );
+		BOOST_CHECK_EQUAL( rangeObj.isSet(), true );
+		BOOST_CHECK_EQUAL( rangeObj.isInRange(   -1 ), true );
+		BOOST_CHECK_EQUAL( rangeObj.isInRange(    0 ), true  );
+		BOOST_CHECK_EQUAL( rangeObj.isInRange(    5 ), false  );
+		BOOST_CHECK_EQUAL( rangeObj.isInRange(   10 ), false  );
+		BOOST_CHECK_EQUAL( rangeObj.isInRange( 1110 ), false );
+	}
 
 	{
 		be::Range< float > rangeObj;
@@ -58,6 +78,24 @@ BOOST_AUTO_TEST_CASE( basic_element_range )
 		rangeObj.setRange( "min", "max" );
 		BOOST_CHECK_EQUAL( rangeObj.isInRange( "0" ), true );
 		BOOST_CHECK_EQUAL( rangeObj.isInRange( "1" ), false );
+	}
+	{
+		be::Range< std::string > rangeObj;
+		rangeObj.setMinimum( "10" );
+		BOOST_CHECK_EQUAL( rangeObj.isSet(), true );
+		BOOST_CHECK_EQUAL( rangeObj.isInRange(    "0" ), false  );
+		BOOST_CHECK_EQUAL( rangeObj.isInRange(    "5" ), false  );
+		BOOST_CHECK_EQUAL( rangeObj.isInRange(   "10" ), true  );
+		BOOST_CHECK_EQUAL( rangeObj.isInRange( "1110" ), true );
+	}
+	{
+		be::Range< std::string > rangeObj;
+		rangeObj.setMaximum( "10" );
+		BOOST_CHECK_EQUAL( rangeObj.isSet(), true );
+		BOOST_CHECK_EQUAL( rangeObj.isInRange(    "0" ), true  );
+		BOOST_CHECK_EQUAL( rangeObj.isInRange(    "5" ), true  );
+		BOOST_CHECK_EQUAL( rangeObj.isInRange(   "10" ), true  );
+		BOOST_CHECK_EQUAL( rangeObj.isInRange( "1110" ), false );
 	}
 }
 
