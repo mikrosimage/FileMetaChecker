@@ -5,7 +5,7 @@ BOOST_AUTO_TEST_CASE( basic_element_memory_copy )
 {
 	LOG_INFO( "\n>>> basic_element_memory_copy <<<" );
 	{
-		LOG_INFO( "\n === memory copy ( 1 byte ) ===" );
+		LOG_INFO( " === memory copy ( 1 byte ) ===" );
 		char data[] = { 0x10 };
 		size_t size = sizeof( data );
 		char buffer1[ size ], buffer2[ size ];
@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_CASE( basic_element_memory_copy )
 		LOG_INFO( " //> buffer2: " << sstr3.str() );
 	}
 	{
-		LOG_INFO( "\n === memory copy ( 4 bytes ) ===" );
+		LOG_INFO( " === memory copy ( 4 bytes ) ===" );
 		char data[] = { 0x01, 0x02, 0x03, 0x04 };
 		size_t size = sizeof( data );
 		char buffer1[ size ], buffer2[ size ];
@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE( basic_element_memory_copy )
 		LOG_INFO( " //> buffer2: " << sstr3.str() );
 	}
 	{
-		LOG_INFO( "\n === memory copy ( 2 bytes, value ) ===" );
+		LOG_INFO( " === memory copy ( 2 bytes, value ) ===" );
 		char data[] = { 0x00, 0x01 };
 		size_t size = sizeof( data );
 		union NumberData
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_number )
 {
 	LOG_INFO( "\n>>> basic_element_translate_to_number <<<" );
 	{
-		LOG_INFO( "\n === to number: uint8 ===" );
+		LOG_INFO( " === to number: uint8 ===" );
 		dbe::Data data;
 		nbe::Number< nbe::uint8 > num;
 		char buffer[] = { 0x00 };
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_number )
 		BOOST_CHECK_EQUAL( num.getValue(), 0 );
 	}
 	{
-		LOG_INFO( "\n === to number: uint8 ===" );
+		LOG_INFO( " === to number: uint8 ===" );
 		dbe::Data data;
 		nbe::Number< nbe::uint8 > num;
 		char buffer[] = { 0x80 };
@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_number )
 		BOOST_CHECK_EQUAL( num.getValue(), 128 );
 	}
 	{
-		LOG_INFO( "\n === to number: uint16 ===" );
+		LOG_INFO( " === to number: uint16 ===" );
 		dbe::Data data;
 		nbe::Number< nbe::uint16 > num;
 		char buffer[] = { 0x00, 0xff };
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_number )
 		BOOST_CHECK_EQUAL( num.getValue(), 255 );
 	}
 	{
-		LOG_INFO( "\n === to number: uint32 ===" );
+		LOG_INFO( " === to number: uint32 ===" );
 		dbe::Data data;
 		nbe::Number< nbe::uint32 > num;
 		char buffer[] = { 0x00, 0x00, 0x00, 0xff };
@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_number )
 		BOOST_CHECK_EQUAL( num.getValue(), 255 );
 	}
 	{
-		LOG_INFO( "\n === to number: float ===" );
+		LOG_INFO( " === to number: float ===" );
 		dbe::Data data;
 		nbe::Number< float > num;
 		char buffer[] = { 0xff, 0xff, 0xff, 0xff };
@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_number )
 		BOOST_CHECK_EQUAL( isnan( num.getValue() ), true );
 	}
 	{
-		LOG_INFO( "\n === to number: ieeeExtended ===" );
+		LOG_INFO( " === to number: ieeeExtended ===" );
 		dbe::Data data;
 		nbe::Number< nbe::ieeeExtended > num;
 		char buffer[] = { 0x3f, 0xff, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
@@ -156,7 +156,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_number )
 		BOOST_CHECK_EQUAL( num.getValue(), 1 );
 	}
 	{
-		LOG_INFO( "\n === to number: ieeeExtended ===" );
+		LOG_INFO( " === to number: ieeeExtended ===" );
 		dbe::Data data;
 		nbe::Number< nbe::ieeeExtended > num;
 		char buffer[] = { 0x3f, 0xff, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_number )
 		BOOST_CHECK_EQUAL( num.getValue(), 1 );
 	}
 	{
-		LOG_INFO( "\n === to number: ieeeExtended ===" );
+		LOG_INFO( " === to number: ieeeExtended ===" );
 		dbe::Data data;
 		nbe::Number< nbe::ieeeExtended > num;
 		char buffer[] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_data )
 {
 	LOG_INFO( "\n>>> basic_element_translate_to_data <<<" );
 	{
-		LOG_INFO( "\n === to data ( uint8 ) ===" );
+		LOG_INFO( " === to data ( uint8 ) ===" );
 		dbe::Data data;
 		nbe::Number< nbe::uint8 > num;
 		char buffer[] = { 0x00 };
@@ -194,7 +194,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_data )
 		BOOST_CHECK_EQUAL( data.getHexa(), "00" );
 	}
 	{
-		LOG_INFO( "\n === to data ( int16 ) ===" );
+		LOG_INFO( " === to data ( int16 ) ===" );
 		dbe::Data data;
 		nbe::Number< nbe::int16 > num;
 		char buffer[] = { 0x00, 0xff };
@@ -205,7 +205,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_data )
 		BOOST_CHECK_EQUAL( data.getHexa(), "00ff" );
 	}
 	{
-		LOG_INFO( "\n === to data ( uint16 ) ===" );
+		LOG_INFO( " === to data ( uint16 ) ===" );
 		dbe::Data data;
 		nbe::Number< nbe::uint16 > num;
 		char buffer[] = { 0x00, 0xff };
@@ -216,7 +216,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_data )
 		BOOST_CHECK_EQUAL( data.getHexa(), "00ff" );
 	}
 	{
-		LOG_INFO( "\n === to data ( int16 ) ===" );
+		LOG_INFO( " === to data ( int16 ) ===" );
 		dbe::Data data;
 		nbe::Number< nbe::int16 > num;
 		num.setBigEndianness( false );
@@ -228,7 +228,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_data )
 		BOOST_CHECK_EQUAL( data.getHexa(), "ff00" );
 	}
 	{
-		LOG_INFO( "\n === to data ( uint16 ) ===" );
+		LOG_INFO( " === to data ( uint16 ) ===" );
 		dbe::Data data;
 		nbe::Number< nbe::uint16 > num;
 		num.setBigEndianness( false );
@@ -241,7 +241,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_data )
 	}
 
 	{
-		LOG_INFO( "\n === to data ( uint32 ) ===" );
+		LOG_INFO( " === to data ( uint32 ) ===" );
 		dbe::Data data;
 		nbe::Number< nbe::uint32 > num;
 		char buffer[] = { 0x01, 0x02, 0x03, 0x04 };
@@ -252,7 +252,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_data )
 		BOOST_CHECK_EQUAL( data.getHexa(), "01020304" );
 	}
 	{
-		LOG_INFO( "\n === to data ( uint32 ) ===" );
+		LOG_INFO( " === to data ( uint32 ) ===" );
 		dbe::Data data;
 		nbe::Number< nbe::uint32 > num;
 		num.setBigEndianness( false );
@@ -265,7 +265,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_data )
 	}
 
 	{
-		LOG_INFO( "\n === to data ( uint64 ) ===" );
+		LOG_INFO( " === to data ( uint64 ) ===" );
 		dbe::Data data;
 		nbe::Number< nbe::uint64 > num;
 		char buffer[] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 };
@@ -276,7 +276,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_data )
 		BOOST_CHECK_EQUAL( data.getHexa(), "0102030405060708" );
 	}
 	{
-		LOG_INFO( "\n === to data ( uint64 ) ===" );
+		LOG_INFO( " === to data ( uint64 ) ===" );
 		dbe::Data data;
 		nbe::Number< nbe::uint64 > num;
 		num.setBigEndianness( false );
@@ -289,7 +289,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_data )
 	}
 
 	{
-		LOG_INFO( "\n === to data ( float ) ===" );
+		LOG_INFO( " === to data ( float ) ===" );
 		dbe::Data data;
 		nbe::Number< float > num;
 		char buffer[] = { 0x01, 0x02, 0x03, 0x04 };
@@ -300,7 +300,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_data )
 		BOOST_CHECK_EQUAL( data.getHexa(), "01020304" );
 	}
 	{
-		LOG_INFO( "\n === to data ( float ) ===" );
+		LOG_INFO( " === to data ( float ) ===" );
 		dbe::Data data;
 		nbe::Number< float > num;
 		num.setBigEndianness( false );
@@ -313,7 +313,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_data )
 	}
 
 	{
-		LOG_INFO( "\n === to data ( double ) ===" );
+		LOG_INFO( " === to data ( double ) ===" );
 		dbe::Data data;
 		nbe::Number< double > num;
 		char buffer[] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 };
@@ -324,7 +324,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_data )
 		BOOST_CHECK_EQUAL( data.getHexa(), "0102030405060708" );
 	}
 	{
-		LOG_INFO( "\n === to data ( double ) ===" );
+		LOG_INFO( " === to data ( double ) ===" );
 		dbe::Data data;
 		nbe::Number< double > num;
 		num.setBigEndianness( false );
@@ -337,7 +337,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_data )
 	}
 
 	{
-		LOG_INFO( "\n === to data ( ieeeExtended ) ===" );
+		LOG_INFO( " === to data ( ieeeExtended ) ===" );
 		dbe::Data data;
 		nbe::Number< nbe::ieeeExtended > num;
 		char buffer[] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10 };
@@ -348,7 +348,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_data )
 		BOOST_CHECK_EQUAL( data.getHexa(), "01020304050607080910" );
 	}
 	{
-		LOG_INFO( "\n === to data ( ieeeExtended ) ===" );
+		LOG_INFO( " === to data ( ieeeExtended ) ===" );
 		dbe::Data data;
 		nbe::Number< nbe::ieeeExtended > num;
 		num.setBigEndianness( false );
@@ -362,7 +362,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_data )
 
 
 	{
-		LOG_INFO( "\n === to data ( uint32 ) ===" );
+		LOG_INFO( " === to data ( uint32 ) ===" );
 		dbe::Data data;
 		nbe::Number< nbe::uint32 > num;
 		char buffer[] = { 0x46, 0x6f, 0x75, 0x72 };
@@ -374,7 +374,7 @@ BOOST_AUTO_TEST_CASE( basic_element_translate_to_data )
 		BOOST_CHECK_EQUAL( data.getAscii(), "Four" );
 	}
 	{
-		LOG_INFO( "\n === to data ( uint32 ) ===" );
+		LOG_INFO( " === to data ( uint32 ) ===" );
 		dbe::Data data;
 		nbe::Number< nbe::uint32 > num;
 		num.setBigEndianness( false );
