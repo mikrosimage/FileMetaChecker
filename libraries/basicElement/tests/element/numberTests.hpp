@@ -89,9 +89,7 @@ BOOST_AUTO_TEST_CASE( basic_element_number )
 		BOOST_CHECK_EQUAL( num.getLabel(), label );
 		
 		num.getRange().setRange( min, max );
-		BOOST_CHECK_EQUAL( num.getRange().at(0),  0 );
-		BOOST_CHECK_EQUAL( num.getRange().at(1), 10 );
-		BOOST_CHECK_EQUAL( num.getRange().getSize(), 2 );
+		BOOST_CHECK_EQUAL( num.getRange().isSet(), true );
 
 		num.getMap().addPair( min, label );
 		BOOST_CHECK_EQUAL( num.getMap().getLabel(0), label );

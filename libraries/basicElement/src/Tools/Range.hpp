@@ -7,18 +7,45 @@ namespace basic_element
 template< typename ValueType >
 class Range
 {
+	struct Bound
+	{
+		ValueType value;
+		bool      isSet;
+	};
 public:
 	Range()
 	{
+		_min.isSet = false;
+		_max.isSet = false;
 	}
 
-	Range( const std::vector< ValueType >& range )
-		: _range( range )
+	Range( const ValueType& min, const ValueType& max )
 	{
+		_min.isSet = false;
+		_max.isSet = false;
+		setRange( min, max );
 	}
 
 	~Range()
 	{
+	}
+
+	void setMinimum( const ValueType& min )
+	{
+		LOG_INFO( " => Range: \tSET MINIMUM " );
+		if( _max.isSet && min > _max.value )
+			throw std::range_error( "The 'min' value must be less than the 'max' value" );
+		_min.value = min;
+		_min.isSet = true;
+	}
+
+	void setMaximum( const ValueType& max )
+	{
+		LOG_INFO( " => Range: \tSET MAXIMUM " );
+		if( _min.isSet && max < _min.value )
+			throw std::range_error( "The 'min' value must be less than the 'max' value" );
+		_max.value = max;
+		_max.isSet = true;
 	}
 
 	void setRange( const ValueType& min, const ValueType& max )
@@ -26,28 +53,50 @@ public:
 		LOG_INFO( " => Range: \tSET RANGE " );
 		if( min > max )
 			throw std::range_error( "The 'min' value must be less than the 'max' value" );
-		_range.push_back( min );
-		_range.push_back( max );
+		_min.value = min;
+		_min.isSet = true;
+		_max.value = max;
+		_max.isSet = true;
 	}
 
 	bool isInRange( const ValueType& value )
 	{
 		LOG_INFO( " => Range: \tIS IN RANGE " );
-		if( _range.at(0) <= value && _range.at(1) >= value )
+		try
+		{
+			if( !isSet() )
+				throw std::range_error( "Range not set" );
+			
+			bool inRange = true;
+			if( _min.isSet && _min.value >  value )
+				inRange = false;
+			if( _max.isSet && _max.value <  value )
+				inRange = false;
+			return inRange;
+		}
+		catch( std::range_error& e )
+		{
+			LOG_ERROR( e.what() );
+			throw;
+		}
+		catch( std::exception& e )
+		{
+			LOG_ERROR( e.what() );
+			throw;
+		}
+		catch( ... )
+		{
+			LOG_ERROR( "Unknown error" );
+			throw;
+		}
+	}
+
+	bool isSet()
+	{
+		LOG_INFO( " => Range: \tIS SET " );
+		if( _min.isSet || _max.isSet )
 			return true;
 		return false;
-	}
-
-	const ValueType& at( const size_t& index )
-	{
-		LOG_INFO( " => Range: \tGET VALUE " );
-		return _range.at( index );
-	}
-
-	size_t getSize()
-	{
-		LOG_INFO( " => Range: \tGET SIZE " );
-		return _range.size();
 	}
 
 private:
@@ -61,7 +110,8 @@ private:
 	}
 
 private:
-	std::vector< ValueType > _range;
+	Bound _min;
+	Bound _max;
 };
 
 // for Hexa values :
@@ -69,26 +119,56 @@ template<>
 void Range< std::string >::setRange( const std::string& min, const std::string& max )
 {
 	LOG_INFO( " => Range: \tSET RANGE (string) " );
-	size_t minValue = hexaToUint( min );
-	size_t maxValue = hexaToUint( max );
-
-	if( minValue > maxValue )
+	if( hexaToUint( min ) > hexaToUint( max ) )
 		throw std::range_error( "The 'min' value must be less than the 'max' value" );
-	_range.push_back( min );
-	_range.push_back( max );
+	_min.value = min;
+	_min.isSet = true;
+	_max.value = max;
+	_max.isSet = true;
 }
 
 template<>
 bool Range< std::string >::isInRange( const std::string& value )
 {
 	LOG_INFO( " => Range: \tIS IN RANGE (string) " );
-	size_t intValue = hexaToUint( value );
-	size_t minValue = hexaToUint( _range.at(0) );
-	size_t maxValue = hexaToUint( _range.at(1) );
+	try
+	{
+		if( !isSet() )
+			throw std::range_error( "Range not set" );
 
-	if( minValue <= intValue && maxValue >= intValue )
-		return true;
-	return false;
+		size_t intValue = hexaToUint( value );
+		bool inRange = true;
+
+		if( _min.isSet )
+		{
+			size_t minValue = hexaToUint( _min.value );
+			if( minValue > intValue )
+				inRange = false;
+		}
+		if( _max.isSet )
+		{
+			size_t maxValue = hexaToUint( _max.value );
+			if( maxValue < intValue )
+				inRange = false;
+		}
+
+		return inRange;
+	}
+	catch( std::range_error& e )
+	{
+		LOG_ERROR( e.what() );
+		throw;
+	}
+	catch( std::exception& e )
+	{
+		LOG_ERROR( e.what() );
+		throw;
+	}
+	catch( ... )
+	{
+		LOG_ERROR( "Unknown error" );
+		throw;
+	}
 }
 
 

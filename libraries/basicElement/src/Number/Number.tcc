@@ -134,7 +134,7 @@ template< typename NumberType >
 Element::EStatus Number< NumberType >::checkData()
 {
 	LOG_INFO( " Number: \tCHECK DATA " );
-	if( _range.getSize() != 2 )
+	if( !_range.isSet() )
 	{
 		setStatus( eStatusPassOver );
 		return eStatusPassOver;
