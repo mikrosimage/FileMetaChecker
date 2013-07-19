@@ -17,8 +17,8 @@ public:
 	void clearSpecifications();
 	void clearDirectories();
 
-	void getSpec( Specification& spec, const size_t index ) const;
-	void getSpecList( std::vector< Specification >& specs ) const;
+	Specification getSpec( const std::string& specId ) const;
+	void getSpecList( std::map< std::string, std::string >& specIds ) const;
 	
 	size_t getSpecNumber() const;
 

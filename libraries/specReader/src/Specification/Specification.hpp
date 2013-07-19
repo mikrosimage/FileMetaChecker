@@ -1,13 +1,10 @@
 #ifndef _SPECREADER_SPECIFICATION_HPP_
 #define _SPECREADER_SPECIFICATION_HPP_
 
-#include <common/global.hpp>
 
-#include <boost/property_tree/ptree.hpp>
+#include <SpecNode/SpecNode.hpp>
+
 #include <boost/property_tree/json_parser.hpp>
-#include <vector>
-
-namespace bpt = boost::property_tree;
 
 class Specification
 {

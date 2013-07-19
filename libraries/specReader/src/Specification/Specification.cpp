@@ -8,10 +8,7 @@ namespace bfs = boost::filesystem;
 const std::string kExtension = "extension";
 const std::string kFooter    = "footer";
 const std::string kHeader    = "header";
-const std::string kId        = "id";
-const std::string kLabel     = "label";
 const std::string kStandard  = "standard";
-const std::string kType      = "type";
 
 Specification::Specification()
 {

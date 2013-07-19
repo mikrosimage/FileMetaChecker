@@ -3,7 +3,6 @@
 #include <boost/test/unit_test.hpp>
 
 #include <SpecList/SpecList.hpp>
-#include <Specification/Specification.hpp>
 
 using namespace boost::unit_test;
 

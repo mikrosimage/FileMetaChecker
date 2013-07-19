@@ -81,14 +81,30 @@ void SpecList::clearDirectories()
 	_directories.clear();
 }
 
-void SpecList::getSpec( Specification& spec, const size_t index ) const
+Specification SpecList::getSpec( const std::string& specId ) const
 {
-	spec = _specifications.at( index );
+	try
+	{
+		BOOST_FOREACH( Specification spec, _specifications )
+		{
+			if( spec.getId() == specId )
+				return spec;
+		}
+		throw std::runtime_error( "No fitting specification found." );
+	}
+	catch( std::runtime_error& e )
+	{
+		LOG_ERROR( e.what() );
+		throw;
+	}
 }
 
-void SpecList::getSpecList( std::vector< Specification >& specs ) const
+void SpecList::getSpecList( std::map< std::string, std::string >& specIds ) const
 {
-	specs = _specifications;
+	BOOST_FOREACH( Specification spec, _specifications )
+	{
+		specIds[ spec.getId() ] = spec.getLabel();
+	}
 }
 
 size_t SpecList::getSpecNumber() const

@@ -31,7 +31,8 @@ BOOST_AUTO_TEST_CASE( spec_reader_specList )
 		specList.addSpecification( spec1 );
 		BOOST_CHECK_EQUAL( specList.getSpecNumber(), 1 );
 
-		specList.getSpec( spec2, 0 );
+		
+		spec2 = specList.getSpec( "test" );
 		BOOST_CHECK_EQUAL( specList.getSpecNumber(), 1 );
 		BOOST_CHECK_EQUAL( spec1.getId(),    spec2.getId()    );
 		BOOST_CHECK_EQUAL( spec1.getLabel(), spec2.getLabel() );
@@ -53,8 +54,12 @@ BOOST_AUTO_TEST_CASE( spec_reader_specList )
 		std::vector< Specification > specs;
 		specList.addDirectoryPath( "./fileSpecification" );
 		specList.addSpecFromDirectories();
-		specList.getSpecList( specs );
-		BOOST_CHECK_EQUAL( specList.getSpecNumber(), specs.size() );
+
+		std::map< std::string, std::string > specIds;
+		specList.getSpecList( specIds );
+		BOOST_CHECK_EQUAL( specList.getSpecNumber(), specIds.size() );
+		for( std::map< std::string, std::string >::iterator it = specIds.begin(); it != specIds.end(); ++it )
+   			LOG_INFO( it->first << " => " << it->second );
 	}
 
 	{
@@ -62,7 +67,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specList )
 		specList.addDirectoryPath( "./NoDirectory" );
 		specList.addSpecFromDirectories();
 		BOOST_CHECK_EQUAL( specList.getSpecNumber(), 0 );
-		
+
 		specList.clearDirectories();
 		specList.addDirectoryPath( "./test.json" );
 		specList.addSpecFromDirectories();
