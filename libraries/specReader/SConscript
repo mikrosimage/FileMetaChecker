@@ -1,0 +1,11 @@
+Import( 'project', 'libs' )
+
+project.StaticLibrary(
+		'specReader',
+		dirs      = ['src'],
+		includes  = ['src'],
+		libraries = [
+			libs.common,
+			],
+		shared = True
+	)

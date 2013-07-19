@@ -36,6 +36,7 @@ SConscript(
 				'libraries/common',
 				'libraries/basicElement',
 				'libraries/fileReader',
+				'libraries/specReader',
 				'libraries/report',
 				'libraries/systemInfo',
 				'libraries/extractor',
