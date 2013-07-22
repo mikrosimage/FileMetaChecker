@@ -60,17 +60,17 @@ public:
 
 	std::vector< std::string > getValues();
 
-	// std::vector< std::pair< std::string > > getRange();			// @todo
-	// std::vector< std::pair< std::string > > getRepetition();		// @todo
+	std::vector< std::pair< std::string, std::string > > getRange();
+	std::vector< std::pair< std::string, std::string > > getRepetition();
 
-	// std::map< std::string, std::string > getMap();				// @todo
+	std::map< std::string, std::string > getMap();
 
 	bool isBigEndian();
 	bool isOptional();
 	bool isOrdered();
 
 	bool hasGroup();
-	// std::string getGroupSize();									// @todo
+	std::string getGroupSize();
 
 private:
 	bpt::ptree _node;
