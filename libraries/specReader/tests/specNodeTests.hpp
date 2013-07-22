@@ -15,25 +15,12 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode )
 		bpt::ptree tree;
 
 		bpt::read_json( isstream, tree );
-		size_t i = 0;
-		BOOST_FOREACH( bpt::ptree::value_type n, tree.get_child( "header" ) )
-		{
-			SpecNode node;
-			node.setNode( n );
-			BOOST_CHECK_EQUAL( node.getId(), "node" );
-			i++;
-		}
-		BOOST_CHECK_EQUAL( i, 2 );
 		
-		i = 0;
-		BOOST_FOREACH( bpt::ptree::value_type n, tree.get_child( "header" ) )
-		{
-			SpecNode node( n );
-			BOOST_CHECK_EQUAL( node.getLabel(), "Node" );
-			BOOST_CHECK_EQUAL( node.getType(),  "type" );
-			i++;
-		}
-		BOOST_CHECK_EQUAL( i, 2 );
+		SpecNode node;
+		node.setNode( tree.get_child( "header" ).begin() );
+		BOOST_CHECK_EQUAL( node.getId(),    "node" );
+		BOOST_CHECK_EQUAL( node.getLabel(), "Node" );
+		BOOST_CHECK_EQUAL( node.getType(),  "type" );
 	}
 	{
 		std::string jsonString = " { \"header\": [ ";
@@ -44,16 +31,11 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode )
 		bpt::ptree tree;
 
 		bpt::read_json( isstream, tree );
-		size_t i = 0;
-		BOOST_FOREACH( bpt::ptree::value_type n, tree.get_child( "header" ) )
-		{
-			SpecNode node( n );
-			BOOST_CHECK_EQUAL( node.getDisplayType(), "display" );
-			BOOST_CHECK_EQUAL( node.getCount(),  "123" );
-			BOOST_CHECK_EQUAL( node.getRequired(),  "true" );
-			i++;
-		}
-		BOOST_CHECK_EQUAL( i, 1 );
+
+		SpecNode node( tree.get_child( "header" ).begin() );
+		BOOST_CHECK_EQUAL( node.getDisplayType(), "display" );
+		BOOST_CHECK_EQUAL( node.getCount(),       "123" );
+		BOOST_CHECK_EQUAL( node.getRequired(),    "true" );
 	}
 
 	{
@@ -65,15 +47,9 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode )
 		bpt::ptree tree;
 
 		bpt::read_json( isstream, tree );
-		size_t i = 0;
-		BOOST_FOREACH( bpt::ptree::value_type n, tree.get_child( "header" ) )
-		{
-			SpecNode node( n );
-			BOOST_CHECK_EQUAL( node.hasGroup(),  true );
-			BOOST_CHECK_EQUAL( node.getGroupSize(), "size" );
-			i++;
-		}
-		BOOST_CHECK_EQUAL( i, 1 );
+		SpecNode node( tree.get_child( "header" ).begin() );
+		BOOST_CHECK_EQUAL( node.hasGroup(),  true );
+		BOOST_CHECK_EQUAL( node.getGroupSize(), "size" );
 	}
 }
 
@@ -90,15 +66,10 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_values )
 		bpt::ptree tree;
 
 		bpt::read_json( isstream, tree );
-		size_t i = 0;
-		BOOST_FOREACH( bpt::ptree::value_type n, tree.get_child( "header" ) )
-		{
-			SpecNode node( n );
-			BOOST_CHECK_EQUAL( node.getValues().at(0), "value" );
-			BOOST_CHECK_EQUAL( node.getValues().size(), 1 );
-			i++;
-		}
-		BOOST_CHECK_EQUAL( i, 1 );
+
+		SpecNode node( tree.get_child( "header" ).begin() );
+		BOOST_CHECK_EQUAL( node.getValues().at(0), "value" );
+		BOOST_CHECK_EQUAL( node.getValues().size(), 1 );
 	}
 	{
 		std::string jsonString = " { \"header\": [ ";
@@ -109,17 +80,12 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_values )
 		bpt::ptree tree;
 
 		bpt::read_json( isstream, tree );
-		size_t i = 0;
-		BOOST_FOREACH( bpt::ptree::value_type n, tree.get_child( "header" ) )
-		{
-			SpecNode node( n );
-			BOOST_CHECK_EQUAL( node.getValues().at(0), "value1" );
-			BOOST_CHECK_EQUAL( node.getValues().at(1), "value2" );
-			BOOST_CHECK_EQUAL( node.getValues().at(2), "value3" );
-			BOOST_CHECK_EQUAL( node.getValues().size(), 3 );
-			i++;
-		}
-		BOOST_CHECK_EQUAL( i, 1 );
+
+		SpecNode node( tree.get_child( "header" ).begin() );
+		BOOST_CHECK_EQUAL( node.getValues().at(0), "value1" );
+		BOOST_CHECK_EQUAL( node.getValues().at(1), "value2" );
+		BOOST_CHECK_EQUAL( node.getValues().at(2), "value3" );
+		BOOST_CHECK_EQUAL( node.getValues().size(), 3 );
 	}
 	
 }
@@ -138,16 +104,11 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_range )
 		bpt::ptree tree;
 
 		bpt::read_json( isstream, tree );
-		size_t i = 0;
-		BOOST_FOREACH( bpt::ptree::value_type n, tree.get_child( "header" ) )
-		{
-			SpecNode node( n );
-			BOOST_CHECK_EQUAL( node.getRange().at(0).first,  "value1" );
-			BOOST_CHECK_EQUAL( node.getRange().at(0).second, "value2" );
-			BOOST_CHECK_EQUAL( node.getRange().size(), 1 );
-			i++;
-		}
-		BOOST_CHECK_EQUAL( i, 1 );
+
+		SpecNode node( tree.get_child( "header" ).begin() );
+		BOOST_CHECK_EQUAL( node.getRange().at(0).first,  "value1" );
+		BOOST_CHECK_EQUAL( node.getRange().at(0).second, "value2" );
+		BOOST_CHECK_EQUAL( node.getRange().size(), 1 );
 	}
 	{
 		std::string jsonString = " { \"header\": [ ";
@@ -160,16 +121,11 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_range )
 		bpt::ptree tree;
 
 		bpt::read_json( isstream, tree );
-		size_t i = 0;
-		BOOST_FOREACH( bpt::ptree::value_type n, tree.get_child( "header" ) )
-		{
-			SpecNode node( n );
-			BOOST_CHECK_EQUAL( node.getRange().at(0).first,  "value1" );
-			BOOST_CHECK_EQUAL( node.getRange().at(0).second, "" );
-			BOOST_CHECK_EQUAL( node.getRange().size(), 1 );
-			i++;
-		}
-		BOOST_CHECK_EQUAL( i, 1 );
+		
+		SpecNode node( tree.get_child( "header" ).begin() );
+		BOOST_CHECK_EQUAL( node.getRange().at(0).first,  "value1" );
+		BOOST_CHECK_EQUAL( node.getRange().at(0).second, "" );
+		BOOST_CHECK_EQUAL( node.getRange().size(), 1 );
 	}
 	{
 		std::string jsonString = " { \"header\": [ ";
@@ -183,18 +139,13 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_range )
 		bpt::ptree tree;
 
 		bpt::read_json( isstream, tree );
-		size_t i = 0;
-		BOOST_FOREACH( bpt::ptree::value_type n, tree.get_child( "header" ) )
-		{
-			SpecNode node( n );
-			BOOST_CHECK_EQUAL( node.getRange().at(0).first,  "value1" );
-			BOOST_CHECK_EQUAL( node.getRange().at(0).second, "value2" );
-			BOOST_CHECK_EQUAL( node.getRange().at(1).first,  "value3" );
-			BOOST_CHECK_EQUAL( node.getRange().at(1).second, "value4" );
-			BOOST_CHECK_EQUAL( node.getRange().size(), 2 );
-			i++;
-		}
-		BOOST_CHECK_EQUAL( i, 1 );
+		
+		SpecNode node( tree.get_child( "header" ).begin() );
+		BOOST_CHECK_EQUAL( node.getRange().at(0).first,  "value1" );
+		BOOST_CHECK_EQUAL( node.getRange().at(0).second, "value2" );
+		BOOST_CHECK_EQUAL( node.getRange().at(1).first,  "value3" );
+		BOOST_CHECK_EQUAL( node.getRange().at(1).second, "value4" );
+		BOOST_CHECK_EQUAL( node.getRange().size(), 2 );
 	}
 	{
 		std::string jsonString = " { \"header\": [ ";
@@ -208,18 +159,13 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_range )
 		bpt::ptree tree;
 
 		bpt::read_json( isstream, tree );
-		size_t i = 0;
-		BOOST_FOREACH( bpt::ptree::value_type n, tree.get_child( "header" ) )
-		{
-			SpecNode node( n );
-			BOOST_CHECK_EQUAL( node.getRange().at(0).first,  "" );
-			BOOST_CHECK_EQUAL( node.getRange().at(0).second, "value1" );
-			BOOST_CHECK_EQUAL( node.getRange().at(1).first,  "value2" );
-			BOOST_CHECK_EQUAL( node.getRange().at(1).second, "" );
-			BOOST_CHECK_EQUAL( node.getRange().size(), 2 );
-			i++;
-		}
-		BOOST_CHECK_EQUAL( i, 1 );
+		
+		SpecNode node( tree.get_child( "header" ).begin() );
+		BOOST_CHECK_EQUAL( node.getRange().at(0).first,  "" );
+		BOOST_CHECK_EQUAL( node.getRange().at(0).second, "value1" );
+		BOOST_CHECK_EQUAL( node.getRange().at(1).first,  "value2" );
+		BOOST_CHECK_EQUAL( node.getRange().at(1).second, "" );
+		BOOST_CHECK_EQUAL( node.getRange().size(), 2 );
 	}
 	{
 		std::string jsonString = " { \"header\": [ ";
@@ -234,20 +180,15 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_range )
 		bpt::ptree tree;
 
 		bpt::read_json( isstream, tree );
-		size_t i = 0;
-		BOOST_FOREACH( bpt::ptree::value_type n, tree.get_child( "header" ) )
-		{
-			SpecNode node( n );
-			BOOST_CHECK_EQUAL( node.getRange().at(0).first,  "value1" );
-			BOOST_CHECK_EQUAL( node.getRange().at(0).second, "" );
-			BOOST_CHECK_EQUAL( node.getRange().at(1).first,  "value2" );
-			BOOST_CHECK_EQUAL( node.getRange().at(1).second, "value3" );
-			BOOST_CHECK_EQUAL( node.getRange().at(2).first,  "" );
-			BOOST_CHECK_EQUAL( node.getRange().at(2).second, "value4" );
-			BOOST_CHECK_EQUAL( node.getRange().size(), 3 );
-			i++;
-		}
-		BOOST_CHECK_EQUAL( i, 1 );
+		
+		SpecNode node( tree.get_child( "header" ).begin() );
+		BOOST_CHECK_EQUAL( node.getRange().at(0).first,  "value1" );
+		BOOST_CHECK_EQUAL( node.getRange().at(0).second, "" );
+		BOOST_CHECK_EQUAL( node.getRange().at(1).first,  "value2" );
+		BOOST_CHECK_EQUAL( node.getRange().at(1).second, "value3" );
+		BOOST_CHECK_EQUAL( node.getRange().at(2).first,  "" );
+		BOOST_CHECK_EQUAL( node.getRange().at(2).second, "value4" );
+		BOOST_CHECK_EQUAL( node.getRange().size(), 3 );
 	}
 }
 
@@ -263,16 +204,11 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 		bpt::ptree tree;
 
 		bpt::read_json( isstream, tree );
-		size_t i = 0;
-		BOOST_FOREACH( bpt::ptree::value_type n, tree.get_child( "header" ) )
-		{
-			SpecNode node( n );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "5" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "5" );
-			BOOST_CHECK_EQUAL( node.getRepetition().size(), 1 );
-			i++;
-		}
-		BOOST_CHECK_EQUAL( i, 1 );
+		
+		SpecNode node( tree.get_child( "header" ).begin() );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "5" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "5" );
+		BOOST_CHECK_EQUAL( node.getRepetition().size(), 1 );
 	}
 	{
 		std::string jsonString = " { \"header\": [ ";
@@ -283,16 +219,11 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 		bpt::ptree tree;
 
 		bpt::read_json( isstream, tree );
-		size_t i = 0;
-		BOOST_FOREACH( bpt::ptree::value_type n, tree.get_child( "header" ) )
-		{
-			SpecNode node( n );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "value" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "value" );
-			BOOST_CHECK_EQUAL( node.getRepetition().size(), 1 );
-			i++;
-		}
-		BOOST_CHECK_EQUAL( i, 1 );
+		
+		SpecNode node( tree.get_child( "header" ).begin() );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "value" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "value" );
+		BOOST_CHECK_EQUAL( node.getRepetition().size(), 1 );
 	}
 	{
 		std::string jsonString = " { \"header\": [ ";
@@ -305,16 +236,11 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 		bpt::ptree tree;
 
 		bpt::read_json( isstream, tree );
-		size_t i = 0;
-		BOOST_FOREACH( bpt::ptree::value_type n, tree.get_child( "header" ) )
-		{
-			SpecNode node( n );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "value1" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "value2" );
-			BOOST_CHECK_EQUAL( node.getRepetition().size(), 1 );
-			i++;
-		}
-		BOOST_CHECK_EQUAL( i, 1 );
+		
+		SpecNode node( tree.get_child( "header" ).begin() );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "value1" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "value2" );
+		BOOST_CHECK_EQUAL( node.getRepetition().size(), 1 );
 	}
 	{
 		std::string jsonString = " { \"header\": [ ";
@@ -327,16 +253,11 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 		bpt::ptree tree;
 
 		bpt::read_json( isstream, tree );
-		size_t i = 0;
-		BOOST_FOREACH( bpt::ptree::value_type n, tree.get_child( "header" ) )
-		{
-			SpecNode node( n );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "value1" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "" );
-			BOOST_CHECK_EQUAL( node.getRepetition().size(), 1 );
-			i++;
-		}
-		BOOST_CHECK_EQUAL( i, 1 );
+		
+		SpecNode node( tree.get_child( "header" ).begin() );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "value1" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "" );
+		BOOST_CHECK_EQUAL( node.getRepetition().size(), 1 );
 	}
 	{
 		std::string jsonString = " { \"header\": [ ";
@@ -350,18 +271,13 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 		bpt::ptree tree;
 
 		bpt::read_json( isstream, tree );
-		size_t i = 0;
-		BOOST_FOREACH( bpt::ptree::value_type n, tree.get_child( "header" ) )
-		{
-			SpecNode node( n );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "value1" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "value2" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(1).first,  "value3" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(1).second, "value4" );
-			BOOST_CHECK_EQUAL( node.getRepetition().size(), 2 );
-			i++;
-		}
-		BOOST_CHECK_EQUAL( i, 1 );
+		
+		SpecNode node( tree.get_child( "header" ).begin() );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "value1" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "value2" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(1).first,  "value3" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(1).second, "value4" );
+		BOOST_CHECK_EQUAL( node.getRepetition().size(), 2 );
 	}
 	{
 		std::string jsonString = " { \"header\": [ ";
@@ -375,18 +291,13 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 		bpt::ptree tree;
 
 		bpt::read_json( isstream, tree );
-		size_t i = 0;
-		BOOST_FOREACH( bpt::ptree::value_type n, tree.get_child( "header" ) )
-		{
-			SpecNode node( n );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "value1" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(1).first,  "value2" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(1).second, "" );
-			BOOST_CHECK_EQUAL( node.getRepetition().size(), 2 );
-			i++;
-		}
-		BOOST_CHECK_EQUAL( i, 1 );
+		
+		SpecNode node( tree.get_child( "header" ).begin() );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "value1" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(1).first,  "value2" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(1).second, "" );
+		BOOST_CHECK_EQUAL( node.getRepetition().size(), 2 );
 	}
 	{
 		std::string jsonString = " { \"header\": [ ";
@@ -401,20 +312,15 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 		bpt::ptree tree;
 
 		bpt::read_json( isstream, tree );
-		size_t i = 0;
-		BOOST_FOREACH( bpt::ptree::value_type n, tree.get_child( "header" ) )
-		{
-			SpecNode node( n );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "value1" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(1).first,  "value2" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(1).second, "value3" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(2).first,  "" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(2).second, "value4" );
-			BOOST_CHECK_EQUAL( node.getRepetition().size(), 3 );
-			i++;
-		}
-		BOOST_CHECK_EQUAL( i, 1 );
+		
+		SpecNode node( tree.get_child( "header" ).begin() );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "value1" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(1).first,  "value2" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(1).second, "value3" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(2).first,  "" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(2).second, "value4" );
+		BOOST_CHECK_EQUAL( node.getRepetition().size(), 3 );
 	}
 	{
 		std::string jsonString = " { \"header\": [ ";
@@ -429,20 +335,15 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 		bpt::ptree tree;
 
 		bpt::read_json( isstream, tree );
-		size_t i = 0;
-		BOOST_FOREACH( bpt::ptree::value_type n, tree.get_child( "header" ) )
-		{
-			SpecNode node( n );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "value1" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(1).first,  "value2" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(1).second, "value3" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(2).first,  "value4" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(2).second, "value4" );
-			BOOST_CHECK_EQUAL( node.getRepetition().size(), 3 );
-			i++;
-		}
-		BOOST_CHECK_EQUAL( i, 1 );
+		
+		SpecNode node( tree.get_child( "header" ).begin() );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "value1" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(1).first,  "value2" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(1).second, "value3" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(2).first,  "value4" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(2).second, "value4" );
+		BOOST_CHECK_EQUAL( node.getRepetition().size(), 3 );
 	}
 	{
 		std::string jsonString = " { \"header\": [ ";
@@ -458,22 +359,17 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 		bpt::ptree tree;
 
 		bpt::read_json( isstream, tree );
-		size_t i = 0;
-		BOOST_FOREACH( bpt::ptree::value_type n, tree.get_child( "header" ) )
-		{
-			SpecNode node( n );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "value1" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(1).first,  "value2" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(1).second, "value3" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(2).first,  "value4" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(2).second, "value4" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(3).first,  "23" );
-			BOOST_CHECK_EQUAL( node.getRepetition().at(3).second, "23" );
-			BOOST_CHECK_EQUAL( node.getRepetition().size(), 4 );
-			i++;
-		}
-		BOOST_CHECK_EQUAL( i, 1 );
+		
+		SpecNode node( tree.get_child( "header" ).begin() );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "value1" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(1).first,  "value2" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(1).second, "value3" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(2).first,  "value4" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(2).second, "value4" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(3).first,  "23" );
+		BOOST_CHECK_EQUAL( node.getRepetition().at(3).second, "23" );
+		BOOST_CHECK_EQUAL( node.getRepetition().size(), 4 );
 	}
 }
 
@@ -494,18 +390,35 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_map )
 		bpt::ptree tree;
 
 		bpt::read_json( isstream, tree );
-		size_t i = 0;
-		BOOST_FOREACH( bpt::ptree::value_type n, tree.get_child( "header" ) )
-		{
-			SpecNode node( n );
-			BOOST_CHECK_EQUAL( node.getMap()[ "index1" ],  "value1" );
-			BOOST_CHECK_EQUAL( node.getMap()[ "index2" ],  "value2" );
-			BOOST_CHECK_EQUAL( node.getMap()[ "index3" ],  "value3" );
-			BOOST_CHECK_EQUAL( node.getMap()[ "index4" ],  "value4" );
-			BOOST_CHECK_EQUAL( node.getMap().size(), 4 );
-			i++;
-		}
-		BOOST_CHECK_EQUAL( i, 1 );
+		SpecNode node( tree.get_child( "header" ).begin() );
+		BOOST_CHECK_EQUAL( node.getMap()[ "index1" ],  "value1" );
+		BOOST_CHECK_EQUAL( node.getMap()[ "index2" ],  "value2" );
+		BOOST_CHECK_EQUAL( node.getMap()[ "index3" ],  "value3" );
+		BOOST_CHECK_EQUAL( node.getMap()[ "index4" ],  "value4" );
+		BOOST_CHECK_EQUAL( node.getMap().size(), 4 );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( spec_reader_specNode_next )
+{
+	LOG_INFO( "\n>>> spec_reader_specNode_next <<<" );
+	{
+		std::string jsonString = " { \"header\": [ ";
+		jsonString += " { \"id\": \"value1\" },";
+		jsonString += " { \"id\": \"value2\" },";
+		jsonString += " { \"id\": \"value3\" },";
+		jsonString += " { \"id\": \"value4\" }";
+		jsonString += " ] } ";
+
+		std::istringstream isstream( jsonString );
+		bpt::ptree tree;
+
+		bpt::read_json( isstream, tree );
+		SpecNode node( tree.get_child( "header" ).begin() );
+		BOOST_CHECK_EQUAL( node.getId(),                      "value1" );
+		BOOST_CHECK_EQUAL( node.next().getId(),               "value2" );
+		BOOST_CHECK_EQUAL( node.next().next().getId(),        "value3" );
+		BOOST_CHECK_EQUAL( node.next().next().next().getId(), "value4" );
 	}
 }
 

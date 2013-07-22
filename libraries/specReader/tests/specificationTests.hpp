@@ -35,10 +35,6 @@ BOOST_AUTO_TEST_CASE( spec_reader_specification )
 		BOOST_CHECK_EQUAL( ext.at(1), "ext2" );
 		BOOST_CHECK_EQUAL( ext.at(2), "ext3" );
 
-		bpt::ptree bodyTree = spec.getBody();
-		BOOST_CHECK_EQUAL( bodyTree.get_child( "key1" ).data(), "value1" );
-		BOOST_CHECK_EQUAL( bodyTree.get_child( "key2" ).data(), "value2" );
-		BOOST_CHECK_EQUAL( bodyTree.get_child( "key3" ).data(), "value3" );
 		// write_json( "test.json", bodyTree );
 
 	}
@@ -74,6 +70,37 @@ BOOST_AUTO_TEST_CASE( spec_reader_specification )
 		bool isSet = spec.setFromFile( "test" );
 		BOOST_CHECK_EQUAL( isSet, false );
 	}
+}
+
+BOOST_AUTO_TEST_CASE( spec_reader_specification_get_nodes )
+{
+	LOG_INFO( "\n>>> spec_reader_specification_get_nodes <<<" );
+	{
+		bpt::ptree pt, nodeExt, nodeStd, node1, node2, node3;
+
+		nodeExt.push_back( std::make_pair( "", "ext1" ) );
+		nodeExt.push_back( std::make_pair( "", "ext2" ) );
+		nodeExt.push_back( std::make_pair( "", "ext3" ) );
+
+		nodeStd.add_child( "extension", nodeExt );
+		pt.add_child( "standard", nodeStd );
+
+		node1.put( "id", "test1" );
+		node2.put( "id", "test2" );
+		node3.put( "id", "test3" );
+		pt.add_child( "header.", node1 );
+		pt.add_child( "header.", node2 );
+		pt.add_child( "header.", node3 );
+
+		write_json( "test.json", pt );
+
+		Specification spec;
+		spec.setFromTree( pt );
+		SpecNode node = spec.getFirstNode();
+		// BOOST_CHECK_EQUAL( node.getId(), "test1" );
+
+	}
+	
 }
 
 BOOST_AUTO_TEST_SUITE_END()

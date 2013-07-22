@@ -2,11 +2,13 @@
 #include <boost/foreach.hpp>
 
 SpecNode::SpecNode()
+	: _parent( NULL )
 {
 }
 
-SpecNode::SpecNode( const bpt::ptree::value_type& node )
-	: _node( node.second )
+SpecNode::SpecNode( const bpt::ptree::const_iterator node )
+	: _node( node )
+	, _parent( NULL )
 {
 }
 
@@ -14,54 +16,54 @@ SpecNode::~SpecNode()
 {
 }
 
-void SpecNode::setNode( const bpt::ptree::value_type& node  )
+void SpecNode::setNode( const bpt::ptree::const_iterator node  )
 {
-	_node = node.second;
+	_node = node;
 }
 
 
 
 std::string SpecNode::getId()
 {
-	return _node.get< std::string >( kId );
+	return _node->second.get< std::string >( kId );
 }
 
 std::string SpecNode::getLabel()
 {
-	return _node.get< std::string >( kLabel );
+	return _node->second.get< std::string >( kLabel );
 }
 
 std::string SpecNode::getType()
 {
-	return _node.get< std::string >( kType );
+	return _node->second.get< std::string >( kType );
 }
 
 std::string SpecNode::getDisplayType()
 {
-	return _node.get< std::string >( kDisplayType, "" );
+	return _node->second.get< std::string >( kDisplayType, "" );
 }
 
 
 std::string SpecNode::getCount()
 {
-	return _node.get< std::string >( kCount, "" );
+	return _node->second.get< std::string >( kCount, "" );
 }
 
 std::string SpecNode::getRequired()
 {
-	return _node.get< std::string >( kRequired, "" );
+	return _node->second.get< std::string >( kRequired, "" );
 }
 
 
 std::vector< std::string > SpecNode::getValues()
 {
 	std::vector< std::string > values;
-	if( boost::optional< bpt::ptree& > valuesNode = _node.get_child_optional( kValues ) )
+	if( boost::optional< const bpt::ptree& > valuesNode = _node->second.get_child_optional( kValues ) )
 	{
-		std::string stringValue = _node.get< std::string >( kValues );
+		std::string stringValue = _node->second.get< std::string >( kValues );
 		if( stringValue.empty() )
 		{
-			BOOST_FOREACH( bpt::ptree::value_type& value, valuesNode.get( ) )
+			BOOST_FOREACH( const bpt::ptree::value_type& value, valuesNode.get( ) )
 				values.push_back( value.second.get_value< std::string >() );
 		}
 		else
@@ -75,9 +77,9 @@ std::vector< std::string > SpecNode::getValues()
 std::vector< std::pair< std::string, std::string > > SpecNode::getRange()
 {
 	std::vector< std::pair< std::string, std::string > > ranges;
-	if( boost::optional< bpt::ptree& > rangeNode = _node.get_child_optional( kRange ) )
+	if( boost::optional< const bpt::ptree& > rangeNode = _node->second.get_child_optional( kRange ) )
 	{
-		BOOST_FOREACH( bpt::ptree::value_type& r, rangeNode.get() )
+		BOOST_FOREACH( const bpt::ptree::value_type& r, rangeNode.get() )
 		{
 			std::pair< std::string, std::string > range;
 			if( r.second.get_child_optional( kMin ) )
@@ -95,9 +97,9 @@ std::vector< std::pair< std::string, std::string > > SpecNode::getRange()
 std::vector< std::pair< std::string, std::string > > SpecNode::getRepetition()
 {
 	std::vector< std::pair< std::string, std::string > > repetitions;
-	if( boost::optional< bpt::ptree& > repetitionNode = _node.get_child_optional( kRepetition ) )
+	if( boost::optional< const bpt::ptree& > repetitionNode = _node->second.get_child_optional( kRepetition ) )
 	{
-		std::string repetitionExpr = _node.get< std::string >( kRepetition );
+		std::string repetitionExpr = _node->second.get< std::string >( kRepetition );
 		if( !repetitionExpr.empty() )
 		{
 			LOG_TRACE( " --- CASE EXPRESSION --- " );
@@ -109,7 +111,7 @@ std::vector< std::pair< std::string, std::string > > SpecNode::getRepetition()
 		else
 		{
 			LOG_TRACE( " --- CASE MULTIPLE --- " );
-			BOOST_FOREACH( bpt::ptree::value_type& r, repetitionNode.get() )
+			BOOST_FOREACH( const bpt::ptree::value_type& r, repetitionNode.get() )
 			{
 				std::pair< std::string, std::string > repetition;
 				if( !r.second.get_child_optional( kMin ) && !r.second.get_child_optional( kMax ) )
@@ -135,9 +137,9 @@ std::vector< std::pair< std::string, std::string > > SpecNode::getRepetition()
 std::map< std::string, std::string > SpecNode::getMap()
 {
 	std::map< std::string, std::string > map;
-	if( boost::optional< bpt::ptree& > mapNode = _node.get_child_optional( kMap ) )
+	if( boost::optional< const bpt::ptree& > mapNode = _node->second.get_child_optional( kMap ) )
 	{
-		BOOST_FOREACH( bpt::ptree::value_type& m, mapNode.get() )
+		BOOST_FOREACH( const bpt::ptree::value_type& m, mapNode.get() )
 		{
 			std::string index = m.second.ordered_begin()->first;
 			map[ index ] = m.second.get< std::string >( index );
@@ -149,25 +151,33 @@ std::map< std::string, std::string > SpecNode::getMap()
 
 bool SpecNode::isBigEndian()
 {
-	return ( _node.get<std::string>( kEndian, kEndianBig ) == kEndianBig );
+	return ( _node->second.get<std::string>( kEndian, kEndianBig ) == kEndianBig );
 }
 
 bool SpecNode::isOptional()
 {
-	return ( _node.get<std::string>( kOptional, kOptionalFalse ) == kOptionalTrue );
+	return ( _node->second.get<std::string>( kOptional, kOptionalFalse ) == kOptionalTrue );
 }
 
 bool SpecNode::isOrdered()
 {
-	return ( _node.get<std::string>( kOrdered, kOrderedTrue ) == kOrderedTrue );
+	return ( _node->second.get<std::string>( kOrdered, kOrderedTrue ) == kOrderedTrue );
 }
 
 bool SpecNode::hasGroup()
 {
-	return _node.get_child_optional( kGroup );
+	return _node->second.get_child_optional( kGroup );
 }
 
 std::string SpecNode::getGroupSize()
 {
-	return _node.get< std::string >( kGroupSize, "" );
+	return _node->second.get< std::string >( kGroupSize, "" );
 }
+
+SpecNode SpecNode::next()
+{
+	bpt::ptree::const_iterator node = _node;
+	// if( node != _parent.getLastChild() )		// @todo
+	return SpecNode( ++node );
+}
+

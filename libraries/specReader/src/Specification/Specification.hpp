@@ -21,7 +21,11 @@ public:
 	std::string getType();
 	std::vector< std::string > getSupportedExtensions();
 
-	bpt::ptree getBody( );
+	SpecNode getFirstNode();
+	// bpt::ptree::const_iterator getLastChild( );		// @todo
+
+private:
+	bpt::ptree::const_iterator getBody( );
 
 private:
 	bpt::ptree _specTree;

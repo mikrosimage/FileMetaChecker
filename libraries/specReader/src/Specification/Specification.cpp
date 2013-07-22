@@ -92,7 +92,12 @@ std::vector< std::string > Specification::getSupportedExtensions( )
 	return list;
 }
 
-bpt::ptree Specification::getBody( )
+bpt::ptree::const_iterator Specification::getBody( )
 {
-	return _specTree.get_child( kHeader );
+	return _specTree.get_child( kHeader ).begin();
+}
+
+SpecNode Specification::getFirstNode()
+{
+	return SpecNode( getBody() );
 }

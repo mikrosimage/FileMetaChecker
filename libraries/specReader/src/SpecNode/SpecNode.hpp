@@ -45,10 +45,10 @@ class SpecNode
 {
 public:
 	SpecNode();
-	SpecNode( const bpt::ptree::value_type& node );
+	SpecNode( const bpt::ptree::const_iterator node );
 	~SpecNode();
 
-	void setNode( const bpt::ptree::value_type& node );
+	void setNode( const bpt::ptree::const_iterator node );
 
 	std::string getId();
 	std::string getLabel();
@@ -72,12 +72,13 @@ public:
 	bool hasGroup();
 	std::string getGroupSize();
 
+	SpecNode next();
+	// SpecNode first_child();		// @todo
+	// SpecNode parent();			// @todo
+
 private:
-	bpt::ptree _node;
+	bpt::ptree::const_iterator _node;
+	SpecNode*                  _parent;
 };
-
-
-
-
 
 #endif
