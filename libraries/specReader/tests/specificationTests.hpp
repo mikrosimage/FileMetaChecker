@@ -96,11 +96,9 @@ BOOST_AUTO_TEST_CASE( spec_reader_specification_get_nodes )
 
 		Specification spec;
 		spec.setFromTree( pt );
-		SpecNode node = spec.getFirstNode();
-		// BOOST_CHECK_EQUAL( node.getId(), "test1" );
-
+		SpecNode firstNode = spec.getFirstNode();
+		BOOST_CHECK_EQUAL( firstNode.getId(), "test1" );
 	}
-	
 }
 
 BOOST_AUTO_TEST_SUITE_END()

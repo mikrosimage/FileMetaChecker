@@ -97,7 +97,13 @@ bpt::ptree::const_iterator Specification::getBody( )
 	return _specTree.get_child( kHeader ).begin();
 }
 
+size_t Specification::getBodySize( )
+{
+	return _specTree.get_child( kHeader ).size();
+}
+
 SpecNode Specification::getFirstNode()
 {
-	return SpecNode( getBody() );
+	return SpecNode( getBody(), 0, getBodySize() );
 }
+

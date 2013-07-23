@@ -23,5 +23,5 @@ BOOST_AUTO_TEST_CASE( basic_element_element )
 BOOST_AUTO_TEST_SUITE_END()
 
 #include "specificationTests.hpp"
-// #include "specListTests.hpp"
+#include "specListTests.hpp"
 #include "specNodeTests.hpp"

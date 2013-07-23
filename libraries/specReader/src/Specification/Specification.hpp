@@ -22,10 +22,10 @@ public:
 	std::vector< std::string > getSupportedExtensions();
 
 	SpecNode getFirstNode();
-	// bpt::ptree::const_iterator getLastChild( );		// @todo
 
 private:
-	bpt::ptree::const_iterator getBody( );
+	bpt::ptree::const_iterator getBody();
+	size_t getBodySize();
 
 private:
 	bpt::ptree _specTree;

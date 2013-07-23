@@ -44,11 +44,9 @@ const std::string kDisplayType   = "displayType";
 class SpecNode
 {
 public:
-	SpecNode();
-	SpecNode( const bpt::ptree::const_iterator node );
+	
+	SpecNode( const bpt::ptree::const_iterator node, const size_t& index, const size_t& indexTotal );
 	~SpecNode();
-
-	void setNode( const bpt::ptree::const_iterator node );
 
 	std::string getId();
 	std::string getLabel();
@@ -73,12 +71,15 @@ public:
 	std::string getGroupSize();
 
 	SpecNode next();
-	// SpecNode first_child();		// @todo
-	// SpecNode parent();			// @todo
+	SpecNode firstChild();
+
+	size_t getIndex();
+	size_t getIndexTotal();
 
 private:
 	bpt::ptree::const_iterator _node;
-	SpecNode*                  _parent;
+	size_t        _index;
+	size_t        _indexTotal;
 };
 
 #endif

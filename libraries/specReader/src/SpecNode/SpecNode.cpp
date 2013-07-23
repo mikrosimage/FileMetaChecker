@@ -1,26 +1,16 @@
 #include "SpecNode.hpp"
 #include <boost/foreach.hpp>
 
-SpecNode::SpecNode()
-	: _parent( NULL )
-{
-}
-
-SpecNode::SpecNode( const bpt::ptree::const_iterator node )
+SpecNode::SpecNode( const bpt::ptree::const_iterator node, const size_t& index, const size_t& indexTotal )
 	: _node( node )
-	, _parent( NULL )
+	, _index( index )
+	, _indexTotal( indexTotal )
 {
 }
 
 SpecNode::~SpecNode()
 {
 }
-
-void SpecNode::setNode( const bpt::ptree::const_iterator node  )
-{
-	_node = node;
-}
-
 
 
 std::string SpecNode::getId()
@@ -176,8 +166,43 @@ std::string SpecNode::getGroupSize()
 
 SpecNode SpecNode::next()
 {
-	bpt::ptree::const_iterator node = _node;
-	// if( node != _parent.getLastChild() )		// @todo
-	return SpecNode( ++node );
+	try
+	{
+		if( _index == _indexTotal-1 )
+			throw std::runtime_error( "next: This node is the last child, cannot carry on." );
+		bpt::ptree::const_iterator node = _node;
+		size_t index = _index;
+		return SpecNode( ++node, ++index, _indexTotal );
+	}
+	catch( std::runtime_error& e )
+	{
+		LOG_ERROR( e.what() );
+		throw;
+	}
+}
+
+SpecNode SpecNode::firstChild()
+{
+	try
+	{
+		if( !hasGroup() )
+			throw std::runtime_error( "firstChild: This node has no child." );
+		return SpecNode( _node->second.get_child( kGroup ).begin(), 0, _node->second.get_child( kGroup ).size() );
+	}
+	catch( std::runtime_error& e )
+	{
+		LOG_ERROR( e.what() );
+		throw;
+	}
+}
+
+size_t SpecNode::getIndex()
+{
+	return _index;
+}
+
+size_t SpecNode::getIndexTotal()
+{
+	return _indexTotal;
 }
 
