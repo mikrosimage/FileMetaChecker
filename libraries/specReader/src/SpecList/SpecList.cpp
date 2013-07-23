@@ -6,6 +6,9 @@
 
 namespace bfs = boost::filesystem;
 
+namespace spec_reader
+{
+
 SpecList::SpecList()
 {
 }
@@ -110,4 +113,6 @@ void SpecList::getSpecList( std::map< std::string, std::string >& specIds ) cons
 size_t SpecList::getSpecNumber() const
 {
 	return _specifications.size();
+}
+
 }

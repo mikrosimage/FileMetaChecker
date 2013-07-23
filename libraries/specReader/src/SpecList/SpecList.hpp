@@ -3,6 +3,9 @@
 
 #include <Specification/Specification.hpp>
 
+namespace spec_reader
+{
+
 class SpecList
 {
 public:
@@ -26,5 +29,7 @@ private:
 	std::vector< Specification >  _specifications;
 	std::vector< std::string >    _directories;
 };
+
+}
 
 #endif

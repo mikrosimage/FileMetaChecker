@@ -41,6 +41,9 @@ const std::string kOrderedFalse  = "false";
 const std::string kData          = "data";
 const std::string kDisplayType   = "displayType";
 
+namespace spec_reader
+{
+
 class SpecNode
 {
 public:
@@ -81,5 +84,7 @@ private:
 	size_t        _index;
 	size_t        _indexTotal;
 };
+
+}
 
 #endif

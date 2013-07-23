@@ -5,6 +5,7 @@
 #include <SpecList/SpecList.hpp>
 
 using namespace boost::unit_test;
+using namespace spec_reader;
 
 boost::shared_ptr<common::formatters::Formatter> formatter( common::formatters::Formatter::get() );
 boost::shared_ptr<common::Color>                 color( common::Color::get() );

@@ -10,6 +10,9 @@ const std::string kFooter    = "footer";
 const std::string kHeader    = "header";
 const std::string kStandard  = "standard";
 
+namespace spec_reader
+{
+
 Specification::Specification()
 {
 }
@@ -148,3 +151,4 @@ SpecNode Specification::getFirstNode()
 	}
 }
 
+}

@@ -1,6 +1,9 @@
 #include "SpecNode.hpp"
 #include <boost/foreach.hpp>
 
+namespace spec_reader
+{
+
 SpecNode::SpecNode( const bpt::ptree::const_iterator node, const size_t& index, const size_t& indexTotal )
 	: _node( node )
 {
@@ -240,3 +243,4 @@ size_t SpecNode::getIndexTotal()
 	return _indexTotal;
 }
 
+}

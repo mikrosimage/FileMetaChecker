@@ -6,6 +6,9 @@
 
 #include <boost/property_tree/json_parser.hpp>
 
+namespace spec_reader
+{
+
 class Specification
 {
 public:
@@ -30,5 +33,7 @@ private:
 private:
 	bpt::ptree _specTree;
 };
+
+}
 
 #endif
