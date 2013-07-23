@@ -48,6 +48,22 @@ BOOST_AUTO_TEST_CASE( spec_reader_specification )
 		BOOST_CHECK_EQUAL( spec.getType(), "tester" );
 	}
 	{
+		std::string jsonString = " { \"standard\": { \"key\": \"label\" } } ";
+
+		Specification spec;
+		spec.setFromString( jsonString );
+		BOOST_CHECK_THROW( spec.getId(),    std::runtime_error );
+		BOOST_CHECK_THROW( spec.getLabel(), std::runtime_error );
+		BOOST_CHECK_THROW( spec.getType(),  std::runtime_error );
+		BOOST_CHECK_THROW( spec.getSupportedExtensions(), std::runtime_error );
+		BOOST_CHECK_THROW( spec.getFirstNode(), std::runtime_error );
+	}
+	{
+		std::string jsonString = " { \"standard\": \"id\": \"test\" } } ";
+		Specification spec;
+		BOOST_CHECK_THROW( spec.setFromString( jsonString ), std::runtime_error );
+	}
+	{
 		Specification spec;
 		bool isSet = spec.setFromFile( "test.json" );
 		BOOST_CHECK_EQUAL( isSet, true );

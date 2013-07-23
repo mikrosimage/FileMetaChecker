@@ -63,33 +63,66 @@ void Specification::setFromString( const std::string& string )
 	catch( const std::exception& ex )
 	{
 		LOG_ERROR( "Specification from String: " <<  ex.what() );
+		throw;
 	}
 }
 
 
 std::string Specification::getId( )
 {
-	return _specTree.get< std::string >( kStandard + "." + kId );
+	try
+	{
+		return _specTree.get< std::string >( kStandard + "." + kId );
+	}
+	catch( const std::runtime_error& e )
+	{
+		LOG_ERROR( e.what() );
+		throw;
+	}
 }
 
 std::string Specification::getLabel( )
 {
-	return _specTree.get< std::string >( kStandard + "." + kLabel );
+	try
+	{
+		return _specTree.get< std::string >( kStandard + "." + kLabel );
+	}
+	catch( const std::runtime_error& e )
+	{
+		LOG_ERROR( e.what() );
+		throw;
+	}
 }
 
 std::string Specification::getType( )
 {
-	return _specTree.get< std::string >( kStandard + "." + kType );
+	try
+	{
+		return _specTree.get< std::string >( kStandard + "." + kType );
+	}
+	catch( const std::runtime_error& e )
+	{
+		LOG_ERROR( e.what() );
+		throw;
+	}
 }
 
 std::vector< std::string > Specification::getSupportedExtensions( )
 {
-	std::vector< std::string > list;
-	BOOST_FOREACH( bpt::ptree::value_type &node, _specTree.get_child( kStandard + "." + kExtension ) )
+	try
 	{
-		list.push_back( node.second.data() );
+		std::vector< std::string > list;
+		BOOST_FOREACH( bpt::ptree::value_type &node, _specTree.get_child( kStandard + "." + kExtension ) )
+		{
+			list.push_back( node.second.data() );
+		}
+		return list;
 	}
-	return list;
+	catch( const std::runtime_error& e )
+	{
+		LOG_ERROR( e.what() );
+		throw;
+	}
 }
 
 bpt::ptree::const_iterator Specification::getBody( )
@@ -104,6 +137,14 @@ size_t Specification::getBodySize( )
 
 SpecNode Specification::getFirstNode()
 {
-	return SpecNode( getBody(), 0, getBodySize() );
+	try
+	{
+		return SpecNode( getBody(), 0, getBodySize() );
+	}
+	catch( const std::runtime_error& e )
+	{
+		LOG_ERROR( e.what() );
+		throw;
+	}
 }
 
