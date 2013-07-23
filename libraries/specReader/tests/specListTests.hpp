@@ -37,6 +37,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specList )
 		BOOST_CHECK_EQUAL( spec1.getId(),    spec2.getId()    );
 		BOOST_CHECK_EQUAL( spec1.getLabel(), spec2.getLabel() );
 		BOOST_CHECK_EQUAL( spec1.getType(),  spec2.getType()  );
+		BOOST_CHECK_THROW( specList.getSpec( "error" ), std::runtime_error );
 
 		specList.clearSpecifications();
 		BOOST_CHECK_EQUAL( specList.getSpecNumber(), 0 );
@@ -59,7 +60,18 @@ BOOST_AUTO_TEST_CASE( spec_reader_specList )
 		specList.getSpecList( specIds );
 		BOOST_CHECK_EQUAL( specList.getSpecNumber(), specIds.size() );
 		for( std::map< std::string, std::string >::iterator it = specIds.begin(); it != specIds.end(); ++it )
-   			LOG_INFO( it->first << " => " << it->second );
+			LOG_INFO( it->first << " => " << it->second );
+	}
+	{
+		SpecList specList;
+		std::vector< Specification > specs;
+		
+		std::map< std::string, std::string > specIds;
+		specList.getSpecList( specIds );
+		BOOST_CHECK_EQUAL( specList.getSpecNumber(), 0 );
+		BOOST_CHECK_EQUAL( specList.getSpecNumber(), specIds.size() );
+		for( std::map< std::string, std::string >::iterator it = specIds.begin(); it != specIds.end(); ++it )
+			LOG_INFO( it->first << " => " << it->second );
 	}
 
 	{
