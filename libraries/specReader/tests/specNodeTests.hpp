@@ -7,7 +7,9 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode )
 	LOG_INFO( "\n>>> spec_reader_specNode <<<" );
 	{
 		std::string jsonString = " { \"header\": [ ";
-		jsonString += " { \"displayType\": \"display\", \"count\": \"123\", \"required\": true }";
+		jsonString += " { \"id\": \"id\", \"label\": \"label\", \"type\": \"type\",";
+		jsonString += "   \"displayType\": \"display\", \"count\": \"123\", \"required\": true,";
+		jsonString += "   \"groupSize\": \"size\", \"group\": [ \"123\" ] }";
 		jsonString += " ] } ";
 
 		std::istringstream isstream( jsonString );
@@ -16,23 +18,30 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode )
 		bpt::read_json( isstream, tree );
 
 		SpecNode node( tree.get_child( "header" ).begin(), 0, 1 );
+		BOOST_CHECK_EQUAL( node.getId(),          "id"      );
+		BOOST_CHECK_EQUAL( node.getLabel(),       "label"   );
+		BOOST_CHECK_EQUAL( node.getType(),        "type"    );
 		BOOST_CHECK_EQUAL( node.getDisplayType(), "display" );
-		BOOST_CHECK_EQUAL( node.getCount(),       "123" );
-		BOOST_CHECK_EQUAL( node.getRequired(),    "true" );
+		BOOST_CHECK_EQUAL( node.getCount(),       "123"     );
+		BOOST_CHECK_EQUAL( node.getRequired(),    "true"    );
+		BOOST_CHECK_EQUAL( node.hasGroup(),       true      );
+		BOOST_CHECK_EQUAL( node.getGroupSize(),   "size"    );
 	}
 
 	{
 		std::string jsonString = " { \"header\": [ ";
-		jsonString += " { \"groupSize\": \"size\", \"group\": [ \"123\" ] }";
+		jsonString += "  { \"key\": \"value\" }";
 		jsonString += " ] } ";
 
 		std::istringstream isstream( jsonString );
 		bpt::ptree tree;
 
 		bpt::read_json( isstream, tree );
-		SpecNode node( tree.get_child( "header" ).begin(), 0, 1 );
-		BOOST_CHECK_EQUAL( node.hasGroup(),  true );
-		BOOST_CHECK_EQUAL( node.getGroupSize(), "size" );
+		BOOST_CHECK_THROW( SpecNode node( tree.get_child( "header" ).begin(), 1, 1 ), std::runtime_error );
+		SpecNode node( tree.get_child( "header" ).begin(), 0, 0 );
+		BOOST_CHECK_THROW( node.getId(),    std::runtime_error );
+		BOOST_CHECK_THROW( node.getLabel(), std::runtime_error );
+		BOOST_CHECK_THROW( node.getType(),  std::runtime_error );
 	}
 }
 

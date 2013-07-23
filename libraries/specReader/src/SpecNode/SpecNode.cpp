@@ -3,9 +3,21 @@
 
 SpecNode::SpecNode( const bpt::ptree::const_iterator node, const size_t& index, const size_t& indexTotal )
 	: _node( node )
-	, _index( index )
-	, _indexTotal( indexTotal )
+	// , _index( index )
+	// , _indexTotal( indexTotal )
 {
+	try 
+	{
+		if( index > indexTotal-1 )
+			throw std::runtime_error( "SpecNode: index must be less than indexTotal. " );
+		_index      = index;
+		_indexTotal = indexTotal;		
+	}
+	catch( std::runtime_error& e )
+	{
+		LOG_ERROR( e.what() << "Cannot construct SpecNode." );
+		throw;
+	}
 }
 
 SpecNode::~SpecNode()
@@ -15,17 +27,41 @@ SpecNode::~SpecNode()
 
 std::string SpecNode::getId()
 {
-	return _node->second.get< std::string >( kId );
+	try 
+	{
+		return _node->second.get< std::string >( kId );
+	}
+	catch( std::runtime_error& e )
+	{
+		LOG_ERROR( e.what() );
+		throw;
+	}
 }
 
 std::string SpecNode::getLabel()
 {
-	return _node->second.get< std::string >( kLabel );
+	try 
+	{
+		return _node->second.get< std::string >( kLabel );
+	}
+	catch( std::runtime_error& e )
+	{
+		LOG_ERROR( e.what() );
+		throw;
+	}
 }
 
 std::string SpecNode::getType()
 {
-	return _node->second.get< std::string >( kType );
+	try 
+	{
+		return _node->second.get< std::string >( kType );
+	}
+	catch( std::runtime_error& e )
+	{
+		LOG_ERROR( e.what() );
+		throw;
+	}
 }
 
 std::string SpecNode::getDisplayType()
