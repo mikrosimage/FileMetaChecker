@@ -6,19 +6,9 @@ namespace spec_reader
 
 SpecNode::SpecNode( const bpt::ptree::const_iterator node, const size_t& index, const size_t& indexTotal )
 	: _node( node )
+	, _index( index )
+	, _indexTotal( indexTotal )
 {
-	try 
-	{
-		if( index > indexTotal-1 )
-			throw std::runtime_error( "SpecNode: index must be less than indexTotal. " );
-		_index      = index;
-		_indexTotal = indexTotal;		
-	}
-	catch( std::runtime_error& e )
-	{
-		LOG_ERROR( e.what() << "Cannot construct SpecNode." );
-		throw;
-	}
 }
 
 SpecNode::~SpecNode()
@@ -28,57 +18,38 @@ SpecNode::~SpecNode()
 
 std::string SpecNode::getId()
 {
-	try 
-	{
-		return _node->second.get< std::string >( kId );
-	}
-	catch( std::runtime_error& e )
-	{
-		LOG_ERROR( e.what() );
-		throw;
-	}
+	return getProperty( kId );
 }
 
 std::string SpecNode::getLabel()
 {
-	try 
-	{
-		return _node->second.get< std::string >( kLabel );
-	}
-	catch( std::runtime_error& e )
-	{
-		LOG_ERROR( e.what() );
-		throw;
-	}
+	return getProperty( kLabel );
 }
 
 std::string SpecNode::getType()
 {
-	try 
-	{
-		return _node->second.get< std::string >( kType );
-	}
-	catch( std::runtime_error& e )
-	{
-		LOG_ERROR( e.what() );
-		throw;
-	}
+	return getProperty( kType );
 }
 
 std::string SpecNode::getDisplayType()
 {
-	return _node->second.get< std::string >( kDisplayType, "" );
+	return getProperty( kDisplayType, "" );
 }
 
 
 std::string SpecNode::getCount()
 {
-	return _node->second.get< std::string >( kCount, "" );
+	return getProperty( kCount, "" );
 }
 
 std::string SpecNode::getRequired()
 {
-	return _node->second.get< std::string >( kRequired, "" );
+	return getProperty( kRequired, "" );
+}
+
+std::string SpecNode::getGroupSize()
+{
+	return getProperty( kGroupSize, "" );
 }
 
 
@@ -178,17 +149,17 @@ std::map< std::string, std::string > SpecNode::getMap()
 
 bool SpecNode::isBigEndian()
 {
-	return ( _node->second.get<std::string>( kEndian, kEndianBig ) == kEndianBig );
+	return ( getProperty( kEndian, kEndianBig ) == kEndianBig );
 }
 
 bool SpecNode::isOptional()
 {
-	return ( _node->second.get<std::string>( kOptional, kOptionalFalse ) == kOptionalTrue );
+	return ( getProperty( kOptional, kOptionalFalse ) == kOptionalTrue );
 }
 
 bool SpecNode::isOrdered()
 {
-	return ( _node->second.get<std::string>( kOrdered, kOrderedTrue ) == kOrderedTrue );
+	return ( getProperty( kOrdered, kOrderedTrue ) == kOrderedTrue );
 }
 
 bool SpecNode::hasGroup()
@@ -196,26 +167,14 @@ bool SpecNode::hasGroup()
 	return _node->second.get_child_optional( kGroup );
 }
 
-std::string SpecNode::getGroupSize()
-{
-	return _node->second.get< std::string >( kGroupSize, "" );
-}
-
 SpecNode SpecNode::next()
 {
-	try
-	{
-		if( _index == _indexTotal-1 )
-			throw std::runtime_error( "next: This node is the last child, cannot carry on." );
-		bpt::ptree::const_iterator node = _node;
-		size_t index = _index;
-		return SpecNode( ++node, ++index, _indexTotal );
-	}
-	catch( std::runtime_error& e )
-	{
-		LOG_ERROR( e.what() );
-		throw;
-	}
+	bpt::ptree::const_iterator node = _node;
+	size_t index = _index;
+
+	if( _index >= _indexTotal - 1 )
+		return SpecNode( node, _indexTotal, _indexTotal );
+	return SpecNode( ++node, ++index, _indexTotal );
 }
 
 SpecNode SpecNode::firstChild()
@@ -243,4 +202,27 @@ size_t SpecNode::getIndexTotal()
 	return _indexTotal;
 }
 
+
+std::string SpecNode::getProperty( const std::string& prop )
+{
+	try 
+	{
+		return _node->second.get< std::string >( prop );
+	}
+	catch( std::runtime_error& e )
+	{
+		LOG_ERROR( e.what() );
+		throw;
+	}
 }
+
+std::string SpecNode::getProperty( const std::string& prop, const std::string& defaultValue )
+{
+	return _node->second.get< std::string >( prop, defaultValue );
+}
+
+}
+
+
+
+

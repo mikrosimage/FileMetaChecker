@@ -27,7 +27,6 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode )
 		BOOST_CHECK_EQUAL( node.hasGroup(),       true      );
 		BOOST_CHECK_EQUAL( node.getGroupSize(),   "size"    );
 	}
-
 	{
 		std::string jsonString = " { \"header\": [ ";
 		jsonString += "  { \"key\": \"value\" }";
@@ -37,7 +36,6 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode )
 		bpt::ptree tree;
 
 		bpt::read_json( isstream, tree );
-		BOOST_CHECK_THROW( SpecNode node( tree.get_child( "header" ).begin(), 1, 1 ), std::runtime_error );
 		SpecNode node( tree.get_child( "header" ).begin(), 0, 0 );
 		BOOST_CHECK_THROW( node.getId(),    std::runtime_error );
 		BOOST_CHECK_THROW( node.getLabel(), std::runtime_error );
@@ -435,17 +433,25 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_first_child )
 		BOOST_CHECK_EQUAL( node.getId(),  "value1" );
 		BOOST_CHECK_EQUAL( node.getIndex(),      0 );
 		BOOST_CHECK_EQUAL( node.getIndexTotal(), 1 );
-		BOOST_CHECK_EQUAL( node.firstChild().getId(), "value11" );
-		BOOST_CHECK_EQUAL( node.firstChild().getIndex(),      0 );
-		BOOST_CHECK_EQUAL( node.firstChild().getIndexTotal(), 3 );
-		BOOST_CHECK_EQUAL( node.firstChild().next().getId(), "value12" );
-		BOOST_CHECK_EQUAL( node.firstChild().next().getIndex(),      1 );
-		BOOST_CHECK_EQUAL( node.firstChild().next().getIndexTotal(), 3 );
-		BOOST_CHECK_EQUAL( node.firstChild().next().next().getId(), "value13" );
-		BOOST_CHECK_EQUAL( node.firstChild().next().next().getIndex(),      2 );
-		BOOST_CHECK_EQUAL( node.firstChild().next().next().getIndexTotal(), 3 );
 
-		BOOST_CHECK_THROW( node.firstChild().next().next().next(), std::runtime_error );
+		node = node.firstChild();
+		BOOST_CHECK_EQUAL( node.getId(), "value11" );
+		BOOST_CHECK_EQUAL( node.getIndex(),      0 );
+		BOOST_CHECK_EQUAL( node.getIndexTotal(), 3 );
+
+		node = node.next();
+		BOOST_CHECK_EQUAL( node.getId(), "value12" );
+		BOOST_CHECK_EQUAL( node.getIndex(),      1 );
+		BOOST_CHECK_EQUAL( node.getIndexTotal(), 3 );
+
+		node = node.next();
+		BOOST_CHECK_EQUAL( node.getId(), "value13" );
+		BOOST_CHECK_EQUAL( node.getIndex(),      2 );
+		BOOST_CHECK_EQUAL( node.getIndexTotal(), 3 );
+
+		node = node.next();
+		BOOST_CHECK_EQUAL( node.getIndex(),      3 );
+		BOOST_CHECK_EQUAL( node.getIndexTotal(), 3 );
 	}
 	{
 		std::string jsonString = " { \"header\": [ ";
@@ -462,11 +468,19 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_first_child )
 		SpecNode node( tree.get_child( "header" ).begin(), 0, 4 );
 		BOOST_CHECK_EQUAL( node.getId(), "value1"  );
 		BOOST_CHECK_THROW( node.firstChild(), std::runtime_error );
-		BOOST_CHECK_EQUAL( node.next().getId(), "value2" );
-		BOOST_CHECK_EQUAL( node.next().next().getId(), "value3" );
-		BOOST_CHECK_EQUAL( node.next().next().next().getId(), "value4" );
 
-		BOOST_CHECK_THROW( node.next().next().next().next(), std::runtime_error );
+		node = node.next();
+		BOOST_CHECK_EQUAL( node.getId(), "value2" );
+
+		node = node.next();
+		BOOST_CHECK_EQUAL( node.getId(), "value3" );
+
+		node = node.next();
+		BOOST_CHECK_EQUAL( node.getId(), "value4" );
+
+		node = node.next();
+		BOOST_CHECK_EQUAL( node.getIndex(),      4 );
+		BOOST_CHECK_EQUAL( node.getIndexTotal(), 4 );
 	}
 }
 
@@ -498,29 +512,56 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_first_child_recursivity )
 		BOOST_CHECK_EQUAL( node.getId(),  "value1" );
 		BOOST_CHECK_EQUAL( node.getIndex(),      0 );
 		BOOST_CHECK_EQUAL( node.getIndexTotal(), 1 );
-		BOOST_CHECK_EQUAL( node.firstChild().getId(), "value11" );
-		BOOST_CHECK_EQUAL( node.firstChild().getIndex(),      0 );
-		BOOST_CHECK_EQUAL( node.firstChild().getIndexTotal(), 3 );
-		BOOST_CHECK_EQUAL( node.firstChild().next().getId(), "value12" );
-		BOOST_CHECK_EQUAL( node.firstChild().next().getIndex(),      1 );
-		BOOST_CHECK_EQUAL( node.firstChild().next().getIndexTotal(), 3 );
-		BOOST_CHECK_EQUAL( node.firstChild().next().firstChild().getId(), "value121" );
-		BOOST_CHECK_EQUAL( node.firstChild().next().firstChild().getIndex(),       0 );
-		BOOST_CHECK_EQUAL( node.firstChild().next().firstChild().getIndexTotal(),  1 );
-		BOOST_CHECK_THROW( node.firstChild().next().firstChild().next(), std::runtime_error );
-		BOOST_CHECK_EQUAL( node.firstChild().next().firstChild().firstChild().getId(), "value1211" );
-		BOOST_CHECK_EQUAL( node.firstChild().next().firstChild().firstChild().getIndex(),        0 );
-		BOOST_CHECK_EQUAL( node.firstChild().next().firstChild().firstChild().getIndexTotal(),   2 );
-		BOOST_CHECK_EQUAL( node.firstChild().next().firstChild().firstChild().next().getId(), "value1212" );
-		BOOST_CHECK_EQUAL( node.firstChild().next().firstChild().firstChild().next().getIndex(),        1 );
-		BOOST_CHECK_EQUAL( node.firstChild().next().firstChild().firstChild().next().getIndexTotal(),   2 );
-		BOOST_CHECK_THROW( node.firstChild().next().firstChild().firstChild().next().next(), std::runtime_error );
-		BOOST_CHECK_THROW( node.firstChild().next().firstChild().firstChild().next().firstChild(), std::runtime_error );
-		BOOST_CHECK_EQUAL( node.firstChild().next().next().getId(), "value13" );
-		BOOST_CHECK_EQUAL( node.firstChild().next().next().getIndex(),      2 );
-		BOOST_CHECK_EQUAL( node.firstChild().next().next().getIndexTotal(), 3 );
 
-		BOOST_CHECK_THROW( node.firstChild().next().next().next(), std::runtime_error );
+		node = node.firstChild();
+		BOOST_CHECK_EQUAL( node.getId(), "value11" );
+		BOOST_CHECK_EQUAL( node.getIndex(),      0 );
+		BOOST_CHECK_EQUAL( node.getIndexTotal(), 3 );
+		
+		node = node.next();
+		BOOST_CHECK_EQUAL( node.getId(), "value12" );
+		BOOST_CHECK_EQUAL( node.getIndex(),      1 );
+		BOOST_CHECK_EQUAL( node.getIndexTotal(), 3 );
+
+		SpecNode childNode = node.firstChild();
+		BOOST_CHECK_EQUAL( childNode.getId(), "value121" );
+		BOOST_CHECK_EQUAL( childNode.getIndex(),       0 );
+		BOOST_CHECK_EQUAL( childNode.getIndexTotal(),  1 );
+
+		childNode = childNode.next();
+		BOOST_CHECK_EQUAL( childNode.getIndex(),      1 );
+		BOOST_CHECK_EQUAL( childNode.getIndexTotal(), 1 );
+
+		childNode = childNode.firstChild();
+		BOOST_CHECK_EQUAL( childNode.getId(), "value1211" );
+		BOOST_CHECK_EQUAL( childNode.getIndex(),        0 );
+		BOOST_CHECK_EQUAL( childNode.getIndexTotal(),   2 );
+
+		childNode = childNode.next();
+		BOOST_CHECK_EQUAL( childNode.getId(), "value1212" );
+		BOOST_CHECK_EQUAL( childNode.getIndex(),        1 );
+		BOOST_CHECK_EQUAL( childNode.getIndexTotal(),   2 );
+
+		BOOST_CHECK_THROW( childNode.firstChild(), std::runtime_error );
+		
+		childNode = childNode.next();
+		BOOST_CHECK_EQUAL( childNode.getIndex(),      2 );
+		BOOST_CHECK_EQUAL( childNode.getIndexTotal(), 2 );
+
+		node = node.next();
+		BOOST_CHECK_EQUAL( node.getId(), "value13" );
+		BOOST_CHECK_EQUAL( node.getIndex(),      2 );
+		BOOST_CHECK_EQUAL( node.getIndexTotal(), 3 );
+
+		BOOST_CHECK_THROW( node.firstChild(), std::runtime_error );
+
+		node = node.next();
+		BOOST_CHECK_EQUAL( node.getIndex(),      3 );
+		BOOST_CHECK_EQUAL( node.getIndexTotal(), 3 );
+
+		node = node.next();
+		BOOST_CHECK_EQUAL( node.getIndex(),      3 );
+		BOOST_CHECK_EQUAL( node.getIndexTotal(), 3 );
 	}
 }
 

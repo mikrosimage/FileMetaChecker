@@ -79,10 +79,14 @@ public:
 	size_t getIndex();
 	size_t getIndexTotal();
 
+protected:
+	std::string getProperty( const std::string& prop );
+	std::string getProperty( const std::string& prop, const std::string& defaultValue );
+
 private:
 	bpt::ptree::const_iterator _node;
-	size_t        _index;
-	size_t        _indexTotal;
+	size_t _index;
+	size_t _indexTotal;
 };
 
 }
