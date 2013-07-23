@@ -3,8 +3,6 @@
 
 SpecNode::SpecNode( const bpt::ptree::const_iterator node, const size_t& index, const size_t& indexTotal )
 	: _node( node )
-	// , _index( index )
-	// , _indexTotal( indexTotal )
 {
 	try 
 	{
