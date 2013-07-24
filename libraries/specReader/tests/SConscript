@@ -1,10 +1,20 @@
 Import( 'project', 'libs' )
 
 project.UnitTest(
-	target = project.getDirs([-1]),
-	dirs = ['.'],
+	target = "TestSpecification",
+	dirs = ['Specification'],
 	libraries = [
 		libs.specReader,
 		libs.boost_unit_test_framework,
 	]
 )
+
+project.UnitTest(
+	target = "TestExpressionParser",
+	dirs = ['ExpressionParser'],
+	libraries = [
+		libs.specReader,
+		libs.boost_unit_test_framework,
+	]
+)
+

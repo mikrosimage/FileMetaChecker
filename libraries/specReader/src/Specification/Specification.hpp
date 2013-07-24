@@ -1,7 +1,6 @@
 #ifndef _SPECREADER_SPECIFICATION_HPP_
 #define _SPECREADER_SPECIFICATION_HPP_
 
-
 #include <SpecNode/SpecNode.hpp>
 
 #include <boost/property_tree/json_parser.hpp>

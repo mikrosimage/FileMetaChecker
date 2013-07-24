@@ -1,4 +1,5 @@
 #include "Specification.hpp"
+#include <ExpressionParser/ExpressionParser.hpp>
 
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
