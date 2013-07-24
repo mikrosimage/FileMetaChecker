@@ -13,9 +13,9 @@ boost::shared_ptr<common::Color>                 color( common::Color::get() );
 std::string id    = "id";
 std::string label = "label";
 
-BOOST_AUTO_TEST_SUITE( basic_element_test_suite01 )
+BOOST_AUTO_TEST_SUITE( spec_reader_test_suite01 )
 
-BOOST_AUTO_TEST_CASE( basic_element_element )
+BOOST_AUTO_TEST_CASE( spec_reader )
 {
 	formatter->init_logging();
 	color->enable();
