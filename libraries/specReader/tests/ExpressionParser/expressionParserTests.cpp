@@ -72,6 +72,14 @@ BOOST_AUTO_TEST_CASE( spec_reader_expression_parser_set_variables )
 
 		BOOST_CHECK_EQUAL( expParser.getContextString(), "long1 = -600\nlong2 = 1000\nlong3 = 1\n" );
 	}
+	{
+		std::map < std::string, unsigned long long > map;
+		map["longlong1"]= std::numeric_limits< unsigned long long >::min();
+		map["longlong2"]= std::numeric_limits< unsigned long long >::max();
+		ExpressionParser expParser = ExpressionParser( map );
+
+		BOOST_CHECK_EQUAL( expParser.getContextString(), "longlong1 = 0\nlonglong2 = 18446744073709551615\n" );
+	}
 }
 
 BOOST_AUTO_TEST_CASE( spec_reader_expression_parser_addPythonHeader )
