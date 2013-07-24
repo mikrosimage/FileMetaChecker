@@ -24,13 +24,13 @@ size_t FileReader::getPosition()
 
 bool FileReader::readData( char* data, const size_t size )
 {
-	_fileBuffer.read( data, size );
+	_fileBuffer.readsome( data, size );
 	return ( _fileBuffer.gcount() == (int)size );
 }
 
 void FileReader::goToBegin()
 {
-	_fileBuffer.seekg( std::ios_base::beg );
+	_fileBuffer.seekg( 0, _fileBuffer.beg );
 }
 
 void FileReader::goBack( const std::size_t size )
@@ -45,7 +45,7 @@ void FileReader::goForward( const std::size_t size )
 
 bool FileReader::isEndOfFile( )
 {
-	return _fileBuffer.eof();
+	return getPosition() == getLength();
 }
 
 }
