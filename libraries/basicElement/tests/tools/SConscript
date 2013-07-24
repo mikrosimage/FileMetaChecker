@@ -1,7 +1,7 @@
 Import( 'project', 'libs' )
 
 project.UnitTest(
-	target = project.getDirs([-1]),
+	target = "TestBasicElementTools",
 	dirs = ['.'],
 	libraries = [
 		libs.basicelement,

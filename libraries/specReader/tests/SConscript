@@ -9,12 +9,3 @@ project.UnitTest(
 	]
 )
 
-project.UnitTest(
-	target = "TestExpressionParser",
-	dirs = ['ExpressionParser'],
-	libraries = [
-		libs.specReader,
-		libs.boost_unit_test_framework,
-	]
-)
-
