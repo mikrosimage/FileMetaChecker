@@ -1,5 +1,5 @@
-#ifndef _SPECREADER_EXPRESSION_PARSER_HPP_
-#define _SPECREADER_EXPRESSION_PARSER_HPP_
+#ifndef _BASIC_ELEMENT_TOOLS_EXPRESSION_PARSER_HPP_
+#define _BASIC_ELEMENT_TOOLS_EXPRESSION_PARSER_HPP_
 
 #include <map>
 
@@ -8,7 +8,7 @@
 
 namespace bpy = boost::python;
 
-namespace spec_reader
+namespace basic_element
 {
 namespace expression_parser
 {

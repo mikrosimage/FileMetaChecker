@@ -1,24 +1,11 @@
-#define BOOST_TEST_MODULE qc_spec_reader_expression_parser
 
-#include <boost/test/unit_test.hpp>
-#include <common/global.hpp>
-#include <ExpressionParser/ExpressionParser.hpp>
+BOOST_AUTO_TEST_SUITE( basic_element_tests_expression_parser )
 
-using namespace boost::unit_test;
-using namespace spec_reader::expression_parser;
-
-boost::shared_ptr<common::formatters::Formatter> formatter( common::formatters::Formatter::get() );
-boost::shared_ptr<common::Color>                 color( common::Color::get() );
-
-BOOST_AUTO_TEST_SUITE( spec_reader_tests_expression_parser )
-
-BOOST_AUTO_TEST_CASE( spec_reader_expression_parser_set_variables )
+BOOST_AUTO_TEST_CASE( basic_element_expression_parser_set_variables )
 {
-	formatter->init_logging();
-	color->enable();
-	LOG_INFO( " >>> spec_reader_expression_parser_set_variables <<< " );
+	LOG_INFO( "\n >>> basic_element_expression_parser <<< " );
 	{
-		ExpressionParser expParser = ExpressionParser();
+		bep::ExpressionParser expParser = bep::ExpressionParser();
 		std::map < std::string, short > map;
 		map["abcd"]= 0;
 
@@ -27,7 +14,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_expression_parser_set_variables )
 		BOOST_CHECK_EQUAL( expParser.getContextString(), "abcd = 0\n" );
 	}
 	{
-		ExpressionParser expParser = ExpressionParser();
+		bep::ExpressionParser expParser = bep::ExpressionParser();
 		std::map < std::string, unsigned int > map;
 		map["abcd"]= 0;
 		map["efgh"]= 1;
@@ -39,7 +26,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_expression_parser_set_variables )
 		BOOST_CHECK_EQUAL( expParser.getContextString(), "abcd = 0\nefgh = 1\nijkl = 2\nmnop = 3\n" );
 	}
 	{
-		ExpressionParser expParser = ExpressionParser();
+		bep::ExpressionParser expParser = bep::ExpressionParser();
 		std::map < std::string, short > mapShort;
 		std::map < std::string, int > mapInt;
 		mapShort["abcd"]= 0;
@@ -53,7 +40,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_expression_parser_set_variables )
 		BOOST_CHECK_EQUAL( expParser.getContextString(), "abcd = 0\nefgh = 1\nijkl = -20\nmnop = 30\n" );
 	}
 	{
-		ExpressionParser expParser = ExpressionParser();
+		bep::ExpressionParser expParser = bep::ExpressionParser();
 		std::map < std::string, float > map;
 		map["float1"]= 0.001;
 		map["float2"]= 1.23;
@@ -63,12 +50,11 @@ BOOST_AUTO_TEST_CASE( spec_reader_expression_parser_set_variables )
 		BOOST_CHECK_EQUAL( expParser.getContextString(), "float1 = 0.001\nfloat2 = 1.23\nfloat3 = 1\n" );
 	}
 	{
-		
 		std::map < std::string, long > map;
 		map["long1"]= -600;
 		map["long2"]= 1000;
 		map["long3"]= true;
-		ExpressionParser expParser = ExpressionParser( map );
+		bep::ExpressionParser expParser = bep::ExpressionParser( map );
 
 		BOOST_CHECK_EQUAL( expParser.getContextString(), "long1 = -600\nlong2 = 1000\nlong3 = 1\n" );
 	}
@@ -76,17 +62,16 @@ BOOST_AUTO_TEST_CASE( spec_reader_expression_parser_set_variables )
 		std::map < std::string, unsigned long long > map;
 		map["longlong1"]= std::numeric_limits< unsigned long long >::min();
 		map["longlong2"]= std::numeric_limits< unsigned long long >::max();
-		ExpressionParser expParser = ExpressionParser( map );
+		bep::ExpressionParser expParser = bep::ExpressionParser( map );
 
 		BOOST_CHECK_EQUAL( expParser.getContextString(), "longlong1 = 0\nlonglong2 = 18446744073709551615\n" );
 	}
 }
 
-BOOST_AUTO_TEST_CASE( spec_reader_expression_parser_addPythonHeader )
+BOOST_AUTO_TEST_CASE( basic_element_expression_parser_addPythonHeader )
 {
-	LOG_INFO( " >>> spec_reader_expression_parser_addPythonHeader <<< " );
 	{
-		ExpressionParser expParser = ExpressionParser();
+		bep::ExpressionParser expParser = bep::ExpressionParser();
 		std::map < std::string, short > map;
 		map["abcd"]= 0;
 		map["efgh"]= 1;
@@ -100,11 +85,10 @@ BOOST_AUTO_TEST_CASE( spec_reader_expression_parser_addPythonHeader )
 	}
 }
 
-BOOST_AUTO_TEST_CASE( spec_reader_expression_parser_get_expression_result )
+BOOST_AUTO_TEST_CASE( basic_element_expression_parser_get_expression_result )
 {
-	LOG_INFO( " >>> spec_reader_expression_parser_get_expression_result <<< " );
 	{
-		ExpressionParser expParser = ExpressionParser();
+		bep::ExpressionParser expParser = bep::ExpressionParser();
 		std::map < std::string, int > map;
 		map["abcd"]= 0;
 		map["efgh"]= 1;
@@ -137,7 +121,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_expression_parser_get_expression_result )
 		BOOST_CHECK_THROW( expParser.getExpressionResult<std::string>( "quotation marks are missing" ), boost::python::error_already_set );
 	}
 	{
-		ExpressionParser expParser = ExpressionParser();
+		bep::ExpressionParser expParser = bep::ExpressionParser();
 		BOOST_CHECK_THROW( expParser.getExpressionResult< int >( "log(1)" ), boost::python::error_already_set );
 	}
 }
