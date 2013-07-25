@@ -1,35 +1,35 @@
 Import( 'project', 'libs' )
 
-mikSystemInfo = project.Program(
-	target='miksi',
-	dirs=['mikSystemInfo'],
-	includes=['mikSystemInfo'],
-	libraries = [
-		libs.boost_filesystem,
-		libs.boost_program_options,
-		libs.boost_thread,
-		libs.boost_log,
-		libs.common,
-		libs.report,
-		libs.systemInfo,
-	]
-)
+# mikSystemInfo = project.Program(
+# 	target='miksi',
+# 	dirs=['mikSystemInfo'],
+# 	includes=['mikSystemInfo'],
+# 	libraries = [
+# 		libs.boost_filesystem,
+# 		libs.boost_program_options,
+# 		libs.boost_thread,
+# 		libs.boost_log,
+# 		libs.common,
+# 		# libs.report,
+# 		# libs.systemInfo,
+# 	]
+# )
 
 
-qc = project.Program(
-	target='mikqc',
-	dirs=['mikQualityCheck'],
-	includes=['mikQualityCheck'],
-	libraries = [
-		libs.boost_filesystem,
-		libs.boost_program_options,
-		libs.boost_thread,
-		libs.boost_log,
-		libs.common,
-		libs.report,
-		libs.analyser,
-		libs.extractor,
-		libs.systemInfo,
-	]
-)
+# qc = project.Program(
+# 	target='mikqc',
+# 	dirs=['mikQualityCheck'],
+# 	includes=['mikQualityCheck'],
+# 	libraries = [
+# 		libs.boost_filesystem,
+# 		libs.boost_program_options,
+# 		libs.boost_thread,
+# 		libs.boost_log,
+# 		libs.common,
+# 		# libs.report,
+# 		# libs.analyser,
+# 		# libs.extractor,
+# 		# libs.systemInfo,
+# 	]
+# )
 
