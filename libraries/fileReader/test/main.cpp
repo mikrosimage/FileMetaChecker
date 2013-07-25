@@ -159,7 +159,8 @@ BOOST_AUTO_TEST_CASE( fileReader_test_filebuffer )
 	BOOST_CHECK_EQUAL( fr.getLength(),  content.size() );
 	BOOST_CHECK_EQUAL( fr.getPosition(), 0 );
 
-	char buffer[ content.size() ];
+	char buffer[ content.size() + 1 ];
+	std::memset( buffer, 0, content.size() + 1 );	// "+ 1" to compensate the NULL char ending std::strings
 	bool ret;
 
 	ret= fr.readData( buffer, content.size() );

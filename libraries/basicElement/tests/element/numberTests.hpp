@@ -1,9 +1,13 @@
 
 #include <limits>
 
-const char max_char = std::numeric_limits<unsigned char>::max();
-const char mid_char = 0x7F;
-const char min_char = std::numeric_limits<unsigned char>::min();
+const char max_char = static_cast< char >( std::numeric_limits<unsigned char>::max() );
+const char mid_char = static_cast< char >( 0x7F );
+const char h80_char = static_cast< char >( 0x80 );
+const char hEF_char = static_cast< char >( 0xEF );
+const char hF0_char = static_cast< char >( 0xF0 );
+const char hFE_char = static_cast< char >( 0xFE );
+const char min_char = static_cast< char >( std::numeric_limits<unsigned char>::min() );
 
 const char dataInt8Low[]  = { min_char };
 const char dataInt8High[] = { max_char };
@@ -23,12 +27,12 @@ const char dataInt64Full[] = { max_char, max_char, max_char, max_char, max_char,
 
 const char dataFloatZero[]                = { min_char, min_char, min_char, min_char };		// 0.0 ( http://babbage.cs.qc.cuny.edu/IEEE-754/index.xhtml )
 
-const char dataFloatOneBigEndian[]        = { 0x3f, 0x80, 0x00, 0x00 };						// 1.0
+const char dataFloatOneBigEndian[]        = {     0x3f, h80_char,     0x00,     0x00 };						// 1.0
 const char dataFloatMaxBigEndian[]        = { mid_char, mid_char, max_char, max_char };		// max value supported by the float type :  3.4028234e+38
 const char dataFloatNegMaxBigEndian[]     = { max_char, mid_char, max_char, max_char };		// min value supported by the float type : -3.4028234e+38
 const char dataFloatMinBigEndian[]        = { min_char, mid_char, max_char, max_char };		// min positive value supported by the float type : 1.17549e-38
 
-const char dataFloatOneLittleEndian[]     = { 0x00, 0x00, 0x80, 0x3f };						// 1.0
+const char dataFloatOneLittleEndian[]     = {     0x00,     0x00, h80_char,     0x3f };						// 1.0
 const char dataFloatMaxLittleEndian[]     = { max_char, max_char, mid_char, mid_char };		// max value supported by the float type :  3.4028234e+38
 const char dataFloatNegMaxLittleEndian[]  = { max_char, max_char, mid_char, max_char };		// min value supported by the float type : -3.4028234e+38
 const char dataFloatMinLittleEndian[]     = { max_char, max_char, mid_char, min_char };		// min positive value supported by the float type : 1.17549e-38
@@ -36,28 +40,28 @@ const char dataFloatMinLittleEndian[]     = { max_char, max_char, mid_char, min_
 
 const char dataDoubleZero[]               = { min_char, min_char, min_char, min_char, min_char, min_char, min_char, min_char };	// 0.0 ( http://babbage.cs.qc.cuny.edu/IEEE-754/index.xhtml )
 
-const char dataDoubleOneBigEndian[]       = { 0x3f, 0xf0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };									// 1.0
-const char dataDoubleMaxBigEndian[]       = { mid_char, 0xef, max_char, max_char, max_char, max_char, max_char, max_char };		// max value supported by the double type :  1.7976931348623157e+308
-const char dataDoubleNegMaxBigEndian[]    = { max_char, 0xef, max_char, max_char, max_char, max_char, max_char, max_char };		// min value supported by the double type : -1.7976931348623157e+308
+const char dataDoubleOneBigEndian[]       = {     0x3f, hF0_char,     0x00,     0x00,     0x00,    0x00,      0x00,     0x00 };									// 1.0
+const char dataDoubleMaxBigEndian[]       = { mid_char, hEF_char, max_char, max_char, max_char, max_char, max_char, max_char };		// max value supported by the double type :  1.7976931348623157e+308
+const char dataDoubleNegMaxBigEndian[]    = { max_char, hEF_char, max_char, max_char, max_char, max_char, max_char, max_char };		// min value supported by the double type : -1.7976931348623157e+308
 const char dataDoubleMinBigEndian[]       = { min_char, 0x10, min_char, min_char, min_char, min_char, min_char, min_char };		// min positive value supported by the double type : 2.2250738585072014e−308
 
-const char dataDoubleOneLittleEndian[]    = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf0, 0x3f };									// 1.0
-const char dataDoubleMaxLittleEndian[]    = { max_char, max_char, max_char, max_char, max_char, max_char, 0xef, mid_char };		// max value supported by the double type :  1.7976931348623157e+308
-const char dataDoubleNegMaxLittleEndian[] = { max_char, max_char, max_char, max_char, max_char, max_char, 0xef, max_char };		// min value supported by the double type : -1.7976931348623157e+308
-const char dataDoubleMinLittleEndian[]    = { min_char, min_char, min_char, min_char, min_char, min_char, 0x10, min_char };		// min positive value supported by the double type : 2.2250738585072014e−308
+const char dataDoubleOneLittleEndian[]    = {     0x00,     0x00,     0x00,     0x00,     0x00,     0x00, hF0_char,     0x3f };									// 1.0
+const char dataDoubleMaxLittleEndian[]    = { max_char, max_char, max_char, max_char, max_char, max_char, hEF_char, mid_char };		// max value supported by the double type :  1.7976931348623157e+308
+const char dataDoubleNegMaxLittleEndian[] = { max_char, max_char, max_char, max_char, max_char, max_char, hEF_char, max_char };		// min value supported by the double type : -1.7976931348623157e+308
+const char dataDoubleMinLittleEndian[]    = { min_char, min_char, min_char, min_char, min_char, min_char,     0x10, min_char };		// min positive value supported by the double type : 2.2250738585072014e−308
 
 
 const char dataIeeeExtendedZero[]            = { min_char, min_char, min_char, min_char, min_char, min_char, min_char, min_char, min_char, min_char };	// 0
 
-const char dataIeeeExtendedOneBigEndian[]    = {     0x3f, max_char,     0x80, min_char, min_char, min_char, min_char, min_char, min_char, min_char };	// 1
-const char dataIeeeExtendedMaxBigEndian[]    = {     0x7f,     0xfe, max_char, max_char, max_char, max_char, max_char, max_char, max_char, max_char };	// max value supported by the IEEE Extended type :   1.18973149535723176502e+4932
-const char dataIeeeExtendedNegMaxBigEndian[] = { max_char,     0xfe, max_char, max_char, max_char, max_char, max_char, max_char, max_char, max_char };	// min value supported by the IEEE Extended type :  -1.18973149535723176502e+4932
-const char dataIeeeExtendedMinBigEndian[]    = { min_char, min_char,     0x80, min_char, min_char, min_char, min_char, min_char, min_char, min_char };	// min positive value supported by the double type : 3.36210314311209350626e-4932
+const char dataIeeeExtendedOneBigEndian[]    = {     0x3f, max_char, h80_char, min_char, min_char, min_char, min_char, min_char, min_char, min_char };	// 1
+const char dataIeeeExtendedMaxBigEndian[]    = { mid_char, hFE_char, max_char, max_char, max_char, max_char, max_char, max_char, max_char, max_char };	// max value supported by the IEEE Extended type :   1.18973149535723176502e+4932
+const char dataIeeeExtendedNegMaxBigEndian[] = { max_char, hFE_char, max_char, max_char, max_char, max_char, max_char, max_char, max_char, max_char };	// min value supported by the IEEE Extended type :  -1.18973149535723176502e+4932
+const char dataIeeeExtendedMinBigEndian[]    = { min_char, min_char, h80_char, min_char, min_char, min_char, min_char, min_char, min_char, min_char };	// min positive value supported by the double type : 3.36210314311209350626e-4932
 
-const char dataIeeeExtendedOneLittleEndian[]    = { min_char, min_char, min_char, min_char, min_char, min_char, min_char,     0x80, max_char,     0x3f };	// 1
-const char dataIeeeExtendedMaxLittleEndian[]    = { max_char, max_char, max_char, max_char, max_char, max_char, max_char, max_char,     0xfe,     0x7f };	// max value supported by the IEEE Extended type :   1.18973149535723176502e+4932
-const char dataIeeeExtendedNegMaxLittleEndian[] = { max_char, max_char, max_char, max_char, max_char, max_char, max_char, max_char,     0xfe, max_char };	// min value supported by the IEEE Extended type :  -1.18973149535723176502e+4932
-const char dataIeeeExtendedMinLittleEndian[]    = { min_char, min_char, min_char, min_char, min_char, min_char, min_char,     0x80, min_char, min_char };	// min positive value supported by the double type : 3.36210314311209350626e-4932
+const char dataIeeeExtendedOneLittleEndian[]    = { min_char, min_char, min_char, min_char, min_char, min_char, min_char, h80_char, max_char,     0x3f };	// 1
+const char dataIeeeExtendedMaxLittleEndian[]    = { max_char, max_char, max_char, max_char, max_char, max_char, max_char, max_char, hFE_char, mid_char };	// max value supported by the IEEE Extended type :   1.18973149535723176502e+4932
+const char dataIeeeExtendedNegMaxLittleEndian[] = { max_char, max_char, max_char, max_char, max_char, max_char, max_char, max_char, hFE_char, max_char };	// min value supported by the IEEE Extended type :  -1.18973149535723176502e+4932
+const char dataIeeeExtendedMinLittleEndian[]    = { min_char, min_char, min_char, min_char, min_char, min_char, min_char, h80_char, min_char, min_char };	// min positive value supported by the double type : 3.36210314311209350626e-4932
 
 
 BOOST_AUTO_TEST_SUITE( basic_element_test_number )
