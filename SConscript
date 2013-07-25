@@ -22,6 +22,9 @@ if project.env['mode'] == 'production' :
 if 'sharedNoUndefined' in project.CC:
 	qualityCheckFlags['SHLINKFLAGS'] = [project.CC['sharedNoUndefined']]
 
+if project.env['compiler'] == "gcc" :
+	qualityCheckFlags['CXXFLAGS'] = ' -std=gnu++0x'
+
 # Creates a dependency target without associated code or compiled object,
 # but only associated with compilation flags
 qualityCheck = project.ObjectLibrary( 'qualityCheckDefault', envFlags=qualityCheckFlags )
