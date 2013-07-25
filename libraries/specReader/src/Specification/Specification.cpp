@@ -44,13 +44,13 @@ bool Specification::setFromFile( const std::string& filepath )
 		bpt::read_json( path.string(), _specTree );
 		return true;
 	}
-	catch( const std::runtime_error& ex )
-	{
-		LOG_WARNING( "Specification from file: "<< path.string() <<  ex.what() );
-	}
 	catch( const bfs::filesystem_error& ex )
 	{
 		LOG_ERROR( "Specification from file: " <<  ex.what() );
+	}
+	catch( const std::runtime_error& ex )
+	{
+		LOG_WARNING( "Specification from file: "<< path.string() <<  ex.what() );
 	}
 	return false;
 }
