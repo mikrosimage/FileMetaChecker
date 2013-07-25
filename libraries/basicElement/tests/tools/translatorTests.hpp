@@ -78,8 +78,8 @@ BOOST_AUTO_TEST_CASE( basic_element_memory_copy )
 		LOG_INFO( " //>   sstr5: " << sstr5.str() );
 		LOG_INFO( " //>    val1: " << val1 );
 		LOG_INFO( " //>    val2: " << val2 );
-		BOOST_CHECK_EQUAL( buffer1.value, 256 );	// should be 1
-		BOOST_CHECK_EQUAL( buffer2.value, 1 );		// should be 256
+		BOOST_CHECK_EQUAL( static_cast< int >( buffer1.value ), 256 );	// should be 1
+		BOOST_CHECK_EQUAL( static_cast< int >( buffer2.value ), 1 );	// should be 256
 		BOOST_CHECK_EQUAL( static_cast< char >( val1 ), 1 );
 		BOOST_CHECK_EQUAL( val2, 256 );
 		// ==> This System writes in little endian order !
