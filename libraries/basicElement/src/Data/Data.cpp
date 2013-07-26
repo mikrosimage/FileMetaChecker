@@ -11,13 +11,15 @@ Data::Data()
 	: Element( Element::eTypeData )
 	, _data( NULL )
 {
+	_subType = Element::eDataTypeRaw;
 	_size = 0;
 }
 
-Data::Data( const Element::EType& type )
-	: Element( type )
+Data::Data( const Element::EDataType& subType )
+	: Element( Element::eTypeData )
 	, _data( NULL )
 {
+	_subType = subType;
 	_size = 0;
 }
 
@@ -107,41 +109,26 @@ Element::EStatus Data::checkData()
 	}
 
 	Element::EStatus status = eStatusInvalid;
-	switch( getType() )
+	switch( getDataSubType() )
 	{
-		case eTypeUnknown :
+		case eDataTypeUnknown :
 		{
 			status = eStatusUnknown;
 		} break;
 
-		case eTypeNumber :			// @todo : error ? translate to Number (~size) and check Number
-		{
-			status = eStatusPassOver; 
-		} break;
-
-		case eTypeAscii :
+		case eDataTypeAscii :
 		{
 			if( _specValue == getAscii() )
 				status = eStatusValid;
 		} break;
 
-		case eTypeHexa :
+		case eDataTypeHexa :
 		{
 			if( _specValue == getHexa()  )
 				status = eStatusValid;
 		} break;
 
-		case eTypeExif :			// @todo : error ?
-		{
-			status = eStatusPassOver;
-		} break;
-
-		case eTypeData :
-		{
-			status = eStatusPassOver;
-		} break;
-
-		case eTypeKlv :				// @todo : error ?
+		case eDataTypeRaw :
 		{
 			status = eStatusPassOver;
 		} break;

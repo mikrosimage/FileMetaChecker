@@ -14,11 +14,33 @@ public:
 	{
 		eTypeUnknown = 0,
 		eTypeNumber,
-		eTypeAscii,
-		eTypeHexa,
 		eTypeExif,
 		eTypeData,
 		eTypeKlv
+	};
+
+	enum ENumberType
+	{
+		eNumberTypeUnknown = 0,
+		eNumberTypeInt8,
+		eNumberTypeUInt8,
+		eNumberTypeInt16,
+		eNumberTypeUInt16,
+		eNumberTypeInt32,
+		eNumberTypeUInt32,
+		eNumberTypeInt64,
+		eNumberTypeUInt64,
+		eNumberTypeFloat,
+		eNumberTypeDouble,
+		eNumberTypeIeeeExtended
+	};
+
+	enum EDataType
+	{
+		eDataTypeUnknown = 0,
+		eDataTypeAscii,
+		eDataTypeHexa,
+		eDataTypeRaw
 	};
 
 	enum EStatus
@@ -38,10 +60,15 @@ public:
 	void setId   ( const std::string& id );
 	void setLabel( const std::string& label );
 
-	std::string getId()     { return _id; }
-	std::string getLabel()  { return _label; }
-	EType       getType()   { return _type; }
-	EStatus     getStatus() { return _status; }
+	std::string getId()       { return _id; }
+	std::string getLabel()    { return _label; }
+	EType       getType()     { return _type; }
+	
+	ENumberType getNumberSubType();
+	EDataType   getDataSubType();
+
+	EStatus     getStatus()   { return _status; }
+	size_t      getUniqueId() { return _uniqueId; }
 
 	void setBigEndianness( bool isBigEndian );
 	bool getBigEndianness() const;
@@ -53,17 +80,23 @@ public:
 	virtual void getData( char* buffer ) const = 0;
 	virtual EStatus checkData() = 0;
 
+	// static EType getType( const std::string& type );		// @todo
 
 protected:
 	void setStatus( const EStatus status );
-	size_t      _size;
-	bool        _isBigEndian;
 
 private:
-	std::string _id;
-	std::string _label;
-	EType       _type;
-	EStatus     _status;
+	std::string   _id;
+	std::string   _label;
+	EType         _type;
+	EStatus       _status;
+	size_t        _uniqueId;
+	static size_t _lastUniqueId;
+
+protected:
+	int    _subType;
+	size_t _size;
+	bool   _isBigEndian;
 };
 
 }

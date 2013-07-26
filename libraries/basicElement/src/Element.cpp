@@ -4,10 +4,14 @@
 namespace basic_element
 {
 
+size_t Element::_lastUniqueId = 0;
+
 Element::Element( EType type )
-	: _isBigEndian( true )
-	, _type( type )
+	: _type( type )
 	, _status( eStatusUnknown )
+	, _uniqueId( _lastUniqueId++ )
+	, _subType ( 0 )
+	, _isBigEndian( true )
 {
 }
 
@@ -22,6 +26,21 @@ void Element::setLabel( const std::string& label )
 	BE_LOG_TRACE( " Element: SET LABEL " );
 	_label = label;
 }
+
+Element::ENumberType Element::getNumberSubType()
+{
+	if( _type != eTypeNumber )
+		return eNumberTypeUnknown;
+	return ( ENumberType ) _subType;
+}
+
+Element::EDataType Element::getDataSubType()
+{
+	if( _type != eTypeData )
+		return eDataTypeUnknown;
+	return ( EDataType ) _subType;
+}
+
 
 void Element::setStatus( const EStatus status )
 {

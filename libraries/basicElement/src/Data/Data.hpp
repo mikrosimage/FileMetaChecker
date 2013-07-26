@@ -12,7 +12,7 @@ class Data : public Element
 {
 public:
 	Data();
-	Data( const Element::EType& type );
+	Data( const Element::EDataType& subType );
 	~Data();
 
 	void setData( const char* data, const size_t& size );
@@ -29,8 +29,8 @@ public:
 	Data& operator=( const Data& other );
 
 private:
-	char*  _data;
 	std::string _specValue;
+	char*  _data;
 };
 
 }
