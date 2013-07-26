@@ -21,13 +21,7 @@ ExpressionParser::ExpressionParser( const std::map < std::string, NumberType >& 
 	_mainModule = bpy::import( "__main__" );
 	_mainNamespace = _mainModule.attr( "__dict__" );
 
-	typedef std::pair< std::string, NumberType > VarType;
-	BOOST_FOREACH( VarType var, varMap )
-	{
-		std::ostringstream oss;
-		oss << var.first << " = " << var.second << std::endl;
-		_contextString += oss.str();
-	}
+	setVariables( varMap );
 }
 
 ExpressionParser::~ExpressionParser() 

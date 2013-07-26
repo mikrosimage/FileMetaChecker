@@ -90,11 +90,11 @@ private:
 	std::string   _id;
 	std::string   _label;
 	EType         _type;
-	EStatus       _status;
 	size_t        _uniqueId;
 	static size_t _lastUniqueId;
 
 protected:
+	EStatus       _status;
 	int    _subType;
 	size_t _size;
 	bool   _bigEndianData;

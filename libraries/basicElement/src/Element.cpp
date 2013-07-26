@@ -39,7 +39,6 @@ Element::EDataType Element::getDataSubType()
 	return ( EDataType ) _subType;
 }
 
-
 void Element::setStatus( const EStatus status )
 {
 	_status = status;
@@ -47,28 +46,27 @@ void Element::setStatus( const EStatus status )
 
 void Element::setBigEndianness( bool isBigEndian )
 {
-	_bigEndianData = isBigEndian; 
+	_bigEndianData = isBigEndian;
 }
 
 bool Element::getBigEndianness() const
 {
-	return _bigEndianData; 
+	return _bigEndianData;
 }
 
 void Element::getEndianOrderedData( char* buffer, const char* data ) const
 {
 	if( !_bigEndianData )
 	{
-		BE_LOG_TRACE( " EndianessConverter: case 1 ( little ) " );
+		//BE_LOG_TRACE( " EndianessConverter: case 1 ( little ) " );
 		std::reverse_copy( data, data + _size, buffer );
 	}
 	else
 	{
-		BE_LOG_TRACE( " EndianessConverter: case 2 ( big ) " );
+		//BE_LOG_TRACE( " EndianessConverter: case 2 ( big ) " );
 		std::memcpy( buffer, data, _size );
 	}
 }
-
 
 void Element::reverseEndianness( char* buffer, const char* data ) const
 {

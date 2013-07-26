@@ -33,22 +33,22 @@ public:
 	Number();
 	~Number();
 
-	void setData( const char* data, const size_t& size );
-	void getData( char* buffer ) const;
-	size_t     getSize()  const;
-	NumberType getValue() const;
+	void                 setData ( const char* data, const size_t& size );
+	void                 getData ( char* buffer ) const;
+	size_t               getSize () const;
+	NumberType           getValue() const;
 	Range< NumberType >& getRange();
-	Map  < NumberType >& getMap();
+	Map  < NumberType >& getMap  ();
 
 	std::string toString() const;
 
-	EStatus checkData();
+	EStatus     checkData();
 
 	std::string getStringFromType();
 
 private:
-	void setSize();
-	void translate( const char* data );
+	void setSize   ();
+	void translate ( const char* data );
 	void setSubType();
 
 private:

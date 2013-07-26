@@ -43,7 +43,7 @@ void Data::setData( const char* data, const size_t& size )
 
 void Data::getData( char* buffer ) const
 {
-	BE_LOG_TRACE( " Data: \tGET DATA from @ " << &_data << " to @ " << &buffer );
+	//BE_LOG_TRACE( " Data: \tGET DATA from @ " << &_data << " to @ " << &buffer );
 	std::memcpy( buffer, _data, _size );
 }
 
@@ -57,7 +57,7 @@ std::string Data::getAscii() const
 	std::stringstream sstr;
 	for (size_t i = 0; i < _size; ++i)
 		sstr << _data[i];
-	BE_LOG_TRACE( " Data: \tTO STRING (Ascii): " << sstr.str() );
+	//BE_LOG_TRACE( " Data: \tTO STRING (Ascii): " << sstr.str() );
 	return sstr.str();
 }
 
@@ -81,7 +81,7 @@ std::vector< unsigned int > Data::toIntVector()
 	for( size_t i = 0; i < _size; ++i )
 	{
 		vector.push_back( ( unsigned char ) _data[i] );
-		BE_LOG_TRACE( " Data: \tTO INT VECTOR : " << vector.at( i ) );
+		//BE_LOG_TRACE( " Data: \tTO INT VECTOR : " << vector.at( i ) );
 	}
 	return vector;
 }
@@ -136,15 +136,15 @@ Data& Data::operator=( const Data& other )
 {
 	if( this != &other )
 	{
-		size_t size = other.getSize();
-		char* buffer = new char [ size ];
-		other.getData( buffer );
-		this->setData( buffer, size );
-		delete[] buffer;
+		this->setData( other.getDataPtr(), other.getSize() );
 	}
 	return *this;
 }
 
+char* Data::getDataPtr( ) const
+{
+	return _data;
+}
 
 }
 }

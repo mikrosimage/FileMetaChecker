@@ -28,9 +28,12 @@ public:
 
 	Data& operator=( const Data& other );
 
+protected:
+	char* getDataPtr (  ) const;
+	
 private:
 	std::string _specValue;
-	char*  _data;
+	char*       _data;
 };
 
 }

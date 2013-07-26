@@ -26,25 +26,21 @@ public:
 
 	void setMap( const std::map< KeyType, std::string >& map )
 	{
-		BE_LOG_TRACE( " => Map: \tSET MAP " );
 		_map = map;
 	}
 
 	void addPair( const KeyType& key, const std::string& label )
 	{
-		BE_LOG_TRACE( " => Map: \tADD PAIR " );
 		_map.insert( std::pair< KeyType, std::string >( key, label ) );
 	}
 
 	void insertPair( const std::pair< KeyType, std::string >& pair )
 	{
-		BE_LOG_TRACE( " => Map: \tINSERT PAIR " );
 		_map.insert( pair );
 	}
 
 	std::string getLabel( const KeyType& key )
 	{
-		BE_LOG_TRACE( " => Map: \tGET LABEL " );
 		std::string label = _map[ key ];
 		if( label == "" )
 			_map.erase( key );
@@ -53,7 +49,6 @@ public:
 
 	size_t getSize()
 	{
-		BE_LOG_TRACE( " => Map: \tGET SIZE " );
 		return _map.size();
 	}
 
