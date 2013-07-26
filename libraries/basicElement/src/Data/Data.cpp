@@ -11,13 +11,15 @@ Data::Data()
 	: Element( Element::eTypeData )
 	, _data( NULL )
 {
+	_subType = Element::eDataTypeRaw;
 	_size = 0;
 }
 
-Data::Data( const Element::EType& type )
-	: Element( type )
+Data::Data( const Element::EDataType& subType )
+	: Element( Element::eTypeData )
 	, _data( NULL )
 {
+	_subType = subType;
 	_size = 0;
 }
 
@@ -43,9 +45,6 @@ void Data::getData( char* buffer ) const
 {
 	BE_LOG_TRACE( " Data: \tGET DATA from @ " << &_data << " to @ " << &buffer );
 	std::memcpy( buffer, _data, _size );
-	// std::reverse_copy( _data, _data + _size, buffer );
-	// BE_LOG_TRACE( " Data:\t _data : " << (unsigned int) _data[0] << "\t\t\t@ " << &_data );
-	// BE_LOG_TRACE( " Data:\t buffer: " << (unsigned int)buffer[0] << "\t\t\t@ " << &buffer );
 }
 
 size_t Data::getSize() const
@@ -101,37 +100,32 @@ Element::EStatus Data::checkData()
 	}
 
 	Element::EStatus status = eStatusInvalid;
-	switch( getType() )
+	switch( getDataSubType() )
 	{
-		case eTypeUnknown :
+		case eDataTypeUnknown :
 		{
 			status = eStatusUnknown;
 			break;
 		}
-		
-		case eTypeAscii :
+		case eDataTypeAscii :
 		{
 			if( _specValue == getAscii() )
 				status = eStatusValid;
 			break;
 		}
 
-		case eTypeHexa :
+		case eDataTypeHexa :
 		{
 			if( _specValue == getHexa()  )
 				status = eStatusValid;
 			break;
 		}
 
-		case eTypeNumber :			// @todo : error ? translate to Number (~size) and check Number
-		case eTypeExif :			// @todo : error ?
-		case eTypeKlv :				// @todo : error ?
-		case eTypeData :
+		case eDataTypeRaw :
 		{
 			status = eStatusPassOver;
 			break;
 		}
-
 	}
 	
 	setStatus( status );

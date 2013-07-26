@@ -4,10 +4,14 @@
 namespace basic_element
 {
 
+size_t Element::_lastUniqueId = 0;
+
 Element::Element( EType type )
-	: _bigEndianData( true )
-	, _type( type )
-	, _status( eStatusUnknown )
+	: _type          ( type )
+	, _status        ( eStatusUnknown )
+	, _uniqueId      ( _lastUniqueId++ )
+	, _subType       ( 0 )
+	, _bigEndianData ( true )
 {
 }
 
@@ -20,6 +24,21 @@ void Element::setLabel( const std::string& label )
 {
 	_label = label;
 }
+
+Element::ENumberType Element::getNumberSubType()
+{
+	if( _type != eTypeNumber )
+		return eNumberTypeUnknown;
+	return ( ENumberType ) _subType;
+}
+
+Element::EDataType Element::getDataSubType()
+{
+	if( _type != eTypeData )
+		return eDataTypeUnknown;
+	return ( EDataType ) _subType;
+}
+
 
 void Element::setStatus( const EStatus status )
 {
@@ -38,16 +57,6 @@ bool Element::getBigEndianness() const
 
 void Element::getEndianOrderedData( char* buffer, const char* data ) const
 {
-	std::stringstream sstr, sstr2;
-	for( size_t i = 0; i < _size; ++i )
-	{
-		sstr  << (int)(unsigned char) data[i]   << " ";
-		sstr2 << (int)(unsigned char) buffer[i] << " ";
-	}
-	BE_LOG_TRACE( " ++>   data: "  << sstr.str() );
-	BE_LOG_TRACE( " ++> buffer: " << sstr2.str() );
-
-	BE_LOG_TRACE( " EndianessConverter: GET ENDIANESS " );
 	if( !_bigEndianData )
 	{
 		BE_LOG_TRACE( " EndianessConverter: case 1 ( little ) " );
@@ -58,15 +67,6 @@ void Element::getEndianOrderedData( char* buffer, const char* data ) const
 		BE_LOG_TRACE( " EndianessConverter: case 2 ( big ) " );
 		std::memcpy( buffer, data, _size );
 	}
-
-	std::stringstream sstr3, sstr4;
-	for( size_t i = 0; i < _size; ++i )
-	{
-		sstr3  << (int)(unsigned char) data[i]   << " ";
-		sstr4 << (int)(unsigned char) buffer[i] << " ";
-	}
-	BE_LOG_TRACE( " ==>   data: "  << sstr3.str() );
-	BE_LOG_TRACE( " ==> buffer: " << sstr4.str() );
 }
 
 

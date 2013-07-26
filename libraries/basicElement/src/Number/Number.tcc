@@ -9,7 +9,13 @@ template< typename NumberType >
 Number< NumberType >::Number()
 	: Element( Element::eTypeNumber )
 {
+	setSubType();
 	setSize();
+}
+
+template< typename NumberType >
+Number< NumberType >::~Number()
+{
 }
 
 template< typename NumberType >
@@ -184,6 +190,42 @@ std::string Number< double >::getStringFromType() { return "double"; }
 template< >
 std::string Number< ieeeExtended >::getStringFromType() { return "ieeeExtended"; }
 
+
+template< typename NumberType >
+void Number< NumberType >::setSubType() { _subType = Element::eNumberTypeUnknown; }
+
+template< >
+void Number<  int8  >::setSubType() { _subType = Element::eNumberTypeInt8; }
+
+template< >
+void Number< uint8  >::setSubType() { _subType = Element::eNumberTypeUInt8; }
+
+template< >
+void Number<  int16 >::setSubType() { _subType = Element::eNumberTypeInt16; }
+
+template< >
+void Number< uint16 >::setSubType() { _subType = Element::eNumberTypeUInt16; }
+
+template< >
+void Number<  int32 >::setSubType() { _subType = Element::eNumberTypeInt32; }
+
+template< >
+void Number< uint32 >::setSubType() { _subType = Element::eNumberTypeUInt32; }
+
+template< >
+void Number<  int64 >::setSubType() { _subType = Element::eNumberTypeInt64; }
+
+template< >
+void Number< uint64 >::setSubType() { _subType = Element::eNumberTypeUInt64; }
+
+template< >
+void Number<  float >::setSubType() { _subType = Element::eNumberTypeFloat; }
+
+template< >
+void Number< double >::setSubType() { _subType = Element::eNumberTypeDouble; }
+
+template< >
+void Number< ieeeExtended >::setSubType() { _subType = Element::eNumberTypeIeeeExtended; }
 
 }
 }

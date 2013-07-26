@@ -3,6 +3,7 @@
 
 #include "Tools/Map.hpp"
 #include "Tools/Range.hpp"
+#include "Element.hpp"
 
 namespace basic_element
 {
@@ -30,6 +31,7 @@ class Number : public Element
 	};
 public:
 	Number();
+	~Number();
 
 	void setData( const char* data, const size_t& size );
 	void getData( char* buffer ) const;
@@ -44,14 +46,15 @@ public:
 
 	std::string getStringFromType();
 
-private:	
+private:
 	void setSize();
 	void translate( const char* data );
+	void setSubType();
 
 private:
-	NumberData          _numData;
 	Range< NumberType > _range;
 	Map  < NumberType > _map;
+	NumberData          _numData;
 };
 
 
