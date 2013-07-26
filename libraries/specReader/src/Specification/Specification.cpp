@@ -3,12 +3,9 @@
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
 
-namespace bfs = boost::filesystem;
+#include <specDefinition.hpp>
 
-const std::string kExtension = "extension";
-const std::string kFooter    = "footer";
-const std::string kHeader    = "header";
-const std::string kStandard  = "standard";
+namespace bfs = boost::filesystem;
 
 namespace spec_reader
 {
@@ -40,7 +37,6 @@ bool Specification::setFromFile( const std::string& filepath )
 		if ( path.extension() != ".json" )
 			throw std::runtime_error( " - Invalid extension: '.json' expected" );
 
-		LOG_TRACE( path.string() << ": Reading JSON..." );
 		bpt::read_json( path.string(), _specTree );
 		return true;
 	}
@@ -60,7 +56,6 @@ void Specification::setFromString( const std::string& string )
 	std::istringstream isstream( string );
 	try
 	{
-		LOG_TRACE( "Reading JSON..." );
 		bpt::read_json( isstream, _specTree );
 	}
 	catch( const std::exception& ex )
@@ -115,7 +110,7 @@ std::vector< std::string > Specification::getSupportedExtensions( )
 	try
 	{
 		std::vector< std::string > list;
-		BOOST_FOREACH( bpt::ptree::value_type &node, _specTree.get_child( kStandard + "." + kExtension ) )
+		for( bpt::ptree::value_type& node : _specTree.get_child( kStandard + "." + kExtension ) )
 		{
 			list.push_back( node.second.data() );
 		}

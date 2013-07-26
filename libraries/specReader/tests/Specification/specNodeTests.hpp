@@ -1,4 +1,5 @@
 #include <boost/foreach.hpp>
+#include <map>
 
 BOOST_AUTO_TEST_SUITE( spec_reader_test_specNode )
 
@@ -367,13 +368,56 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_map )
 {
 	LOG_INFO( "\n>>> spec_reader_specNode_get_map <<<" );
 	{
-		std::string jsonString = " { \"header\": [ ";
-		jsonString += " { \"map\": [ ";
-		jsonString += " { \"index1\": \"value1\" },";
-		jsonString += " { \"index2\": \"value2\" },";
-		jsonString += " { \"index3\": \"value3\" },";
-		jsonString += " { \"index4\": \"value4\" }";
-		jsonString += " ] } ";
+		std::map<std::string, std::string> testMap {
+			{ "index1", "value1" },
+			{ "index2", "value2" },
+			{ "index3", "value3" },
+			{ "index4", "value4" }
+		};
+		
+		std::string jsonString = " { \"header\": [ { \"map\": [ ";
+		for( auto mapElem : testMap )
+			jsonString += " { \"" + mapElem.first + "\": \"" + mapElem.second + "\" },";
+
+		jsonString.erase( jsonString.end() - 1, jsonString.end() );
+		jsonString += " ] } ] } ";
+
+		std::istringstream isstream( jsonString );
+		bpt::ptree tree;
+
+		bpt::read_json( isstream, tree );
+		SpecNode node( tree.get_child( "header" ).begin(), 0, 1 );
+		
+		for( auto mapElem : testMap )
+			BOOST_CHECK_EQUAL( node.getMap()[ mapElem.first ],  mapElem.second );
+
+		BOOST_CHECK_EQUAL( node.getMap().size(), 4 );
+	}
+	
+	{
+		std::string jsonString = " { \"header\": [ { \"map\": [ ] } ] } ";
+
+		std::istringstream isstream( jsonString );
+		bpt::ptree tree;
+
+		bpt::read_json( isstream, tree );
+		SpecNode node( tree.get_child( "header" ).begin(), 0, 1 );
+		BOOST_CHECK_EQUAL( node.getMap().size(), 0 );
+	}
+
+	{
+		std::string jsonString = " { \"header\": [ { \"unknownKey\": \"noValue\"} ] } ";
+
+		std::istringstream isstream( jsonString );
+		bpt::ptree tree;
+
+		bpt::read_json( isstream, tree );
+		SpecNode node( tree.get_child( "header" ).begin(), 0, 1 );
+		BOOST_CHECK_EQUAL( node.getMap().size(), 0 );
+	}
+	
+	{
+		std::string jsonString = " { \"header\": [ { }";
 		jsonString += " ] } ";
 
 		std::istringstream isstream( jsonString );
@@ -381,11 +425,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_map )
 
 		bpt::read_json( isstream, tree );
 		SpecNode node( tree.get_child( "header" ).begin(), 0, 1 );
-		BOOST_CHECK_EQUAL( node.getMap()[ "index1" ],  "value1" );
-		BOOST_CHECK_EQUAL( node.getMap()[ "index2" ],  "value2" );
-		BOOST_CHECK_EQUAL( node.getMap()[ "index3" ],  "value3" );
-		BOOST_CHECK_EQUAL( node.getMap()[ "index4" ],  "value4" );
-		BOOST_CHECK_EQUAL( node.getMap().size(), 4 );
+		BOOST_CHECK_EQUAL( node.getMap().size(), 0 );
 	}
 }
 

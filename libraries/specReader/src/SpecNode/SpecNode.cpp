@@ -1,6 +1,8 @@
 #include "SpecNode.hpp"
 #include <boost/foreach.hpp>
 
+#include <specDefinition.hpp>
+
 namespace spec_reader
 {
 
@@ -14,7 +16,6 @@ SpecNode::SpecNode( const bpt::ptree::const_iterator node, const size_t& index, 
 SpecNode::~SpecNode()
 {
 }
-
 
 std::string SpecNode::getId()
 {
@@ -36,7 +37,6 @@ std::string SpecNode::getDisplayType()
 	return getProperty( kDisplayType, "" );
 }
 
-
 std::string SpecNode::getCount()
 {
 	return getProperty( kCount, "" );
@@ -52,7 +52,6 @@ std::string SpecNode::getGroupSize()
 	return getProperty( kGroupSize, "" );
 }
 
-
 std::vector< std::string > SpecNode::getValues()
 {
 	std::vector< std::string > values;
@@ -61,7 +60,7 @@ std::vector< std::string > SpecNode::getValues()
 		std::string stringValue = _node->second.get< std::string >( kValues );
 		if( stringValue.empty() )
 		{
-			BOOST_FOREACH( const bpt::ptree::value_type& value, valuesNode.get( ) )
+			for( const bpt::ptree::value_type& value : valuesNode.get( ) )
 				values.push_back( value.second.get_value< std::string >() );
 		}
 		else
@@ -77,16 +76,17 @@ std::vector< std::pair< std::string, std::string > > SpecNode::getRange()
 	std::vector< std::pair< std::string, std::string > > ranges;
 	if( boost::optional< const bpt::ptree& > rangeNode = _node->second.get_child_optional( kRange ) )
 	{
-		BOOST_FOREACH( const bpt::ptree::value_type& r, rangeNode.get() )
+		for( const bpt::ptree::value_type& rangeElement : rangeNode.get() )
 		{
-			std::pair< std::string, std::string > range;
-			if( r.second.get_child_optional( kMin ) )
-				range.first = r.second.get< std::string >( kMin );
+			std::pair< std::string, std::string > range { "", "" };
+			if( rangeElement.second.get_child_optional( kMin ) )
+				range.first = rangeElement.second.get< std::string >( kMin );
 
-			if( r.second.get_child_optional( kMax ) )
-				range.second = r.second.get< std::string >( kMax );
+			if( rangeElement.second.get_child_optional( kMax ) )
+				range.second = rangeElement.second.get< std::string >( kMax );
 
-			ranges.push_back( range );
+			if( range.first != "" || range.second != "" )
+				ranges.push_back( range );
 		}
 	}
 	return ranges;
@@ -98,9 +98,8 @@ std::vector< std::pair< std::string, std::string > > SpecNode::getRepetition()
 	if( boost::optional< const bpt::ptree& > repetitionNode = _node->second.get_child_optional( kRepetition ) )
 	{
 		std::string repetitionExpr = _node->second.get< std::string >( kRepetition );
-		if( !repetitionExpr.empty() )
+		if( ! repetitionExpr.empty() )
 		{
-			LOG_TRACE( " --- CASE EXPRESSION --- " );
 			std::pair< std::string, std::string > repetition;
 			repetition.first  = repetitionExpr;
 			repetition.second = repetitionExpr;
@@ -108,22 +107,21 @@ std::vector< std::pair< std::string, std::string > > SpecNode::getRepetition()
 		}
 		else
 		{
-			LOG_TRACE( " --- CASE MULTIPLE --- " );
-			BOOST_FOREACH( const bpt::ptree::value_type& r, repetitionNode.get() )
+			for( const bpt::ptree::value_type& repetitionElement : repetitionNode.get() )
 			{
-				std::pair< std::string, std::string > repetition;
-				if( !r.second.get_child_optional( kMin ) && !r.second.get_child_optional( kMax ) )
+				std::pair< std::string, std::string > repetition { "", "" };
+				if( ! repetitionElement.second.get_child_optional( kMin ) && ! repetitionElement.second.get_child_optional( kMax ) )
 				{
-					std::string repetitionExpr = r.second.data();
+					std::string repetitionExpr = repetitionElement.second.data();
 					repetition.first  = repetitionExpr;
 					repetition.second = repetitionExpr;
 				}
 
-				if( r.second.get_child_optional( kMin ) )
-					repetition.first = r.second.get< std::string >( kMin );
+				if( repetitionElement.second.get_child_optional( kMin ) )
+					repetition.first = repetitionElement.second.get< std::string >( kMin );
 
-				if( r.second.get_child_optional( kMax ) )
-					repetition.second = r.second.get< std::string >( kMax );
+				if( repetitionElement.second.get_child_optional( kMax ) )
+					repetition.second = repetitionElement.second.get< std::string >( kMax );
 
 				repetitions.push_back( repetition );
 			}
@@ -135,12 +133,13 @@ std::vector< std::pair< std::string, std::string > > SpecNode::getRepetition()
 std::map< std::string, std::string > SpecNode::getMap()
 {
 	std::map< std::string, std::string > map;
+
 	if( boost::optional< const bpt::ptree& > mapNode = _node->second.get_child_optional( kMap ) )
 	{
-		BOOST_FOREACH( const bpt::ptree::value_type& m, mapNode.get() )
+		for( const bpt::ptree::value_type& mapElements : mapNode.get() )
 		{
-			std::string index = m.second.ordered_begin()->first;
-			map[ index ] = m.second.get< std::string >( index );
+			std::string index = mapElements.second.ordered_begin()->first;
+			map[ index ] = mapElements.second.get< std::string >( index );
 		}
 	}
 	return map;
@@ -174,6 +173,7 @@ SpecNode SpecNode::next()
 
 	if( _index >= _indexTotal - 1 )
 		return SpecNode( node, _indexTotal, _indexTotal );
+
 	return SpecNode( ++node, ++index, _indexTotal );
 }
 

@@ -20,8 +20,8 @@ public:
 	void clearSpecifications();
 	void clearDirectories();
 
-	Specification getSpec( const std::string& specId ) const;
-	void getSpecList( std::map< std::string, std::string >& specIds ) const;
+	Specification getSpec( const std::string& specId );
+	void getSpecList( std::map< std::string, std::string >& specIds );
 	
 	size_t getSpecNumber() const;
 

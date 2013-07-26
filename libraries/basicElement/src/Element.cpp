@@ -8,8 +8,8 @@ size_t Element::_lastUniqueId = 0;
 
 Element::Element( EType type )
 	: _type          ( type )
-	, _status        ( eStatusUnknown )
 	, _uniqueId      ( _lastUniqueId++ )
+	, _status        ( eStatusUnknown )
 	, _subType       ( 0 )
 	, _bigEndianData ( true )
 {

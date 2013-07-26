@@ -84,7 +84,6 @@ public:
 	virtual EStatus checkData() = 0;
 
 	// static EType getType( const std::string& type );		// @todo
-protected:
 
 private:
 	std::string   _id;
@@ -95,9 +94,9 @@ private:
 
 protected:
 	EStatus       _status;
-	int    _subType;
-	size_t _size;
-	bool   _bigEndianData;
+	int           _subType;
+	size_t        _size;
+	bool          _bigEndianData;
 };
 
 }

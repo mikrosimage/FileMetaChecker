@@ -14,7 +14,7 @@ public:
 	Specification();
 	~Specification();
 
-	void setFromTree  ( const bpt::ptree& spec );
+	void setFromTree  ( const bpt::ptree&  spec );
 	bool setFromFile  ( const std::string& filepath );
 	void setFromString( const std::string& string );
 
