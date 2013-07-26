@@ -17,13 +17,20 @@ Report::~Report()
 
 void Report::addBasicElement( std::shared_ptr< be::Element > element )
 {
-	_elementMap.insert( std::make_pair( element->getUniqueId(), element ) );
-	_basicElementTree.add( element->getId(), element->getUniqueId() );
+	_basicElementTree.add( toKey( element->getUniqueId() ), element );
 }
 
 std::shared_ptr< be::Element > Report::getBasicElement( const size_t uniqueId )
 {
-	return _elementMap.at( uniqueId );
+	return _basicElementTree.get_child( toKey( uniqueId ) ).data();
 }
+
+std::string Report::toKey( size_t id )
+{
+	std::stringstream sstr;
+	sstr << id;
+	return sstr.str();
+}
+
 
 }

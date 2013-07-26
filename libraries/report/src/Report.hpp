@@ -2,8 +2,9 @@
 #define _REPORT_REPORT_HPP_
 
 #include <boost/property_tree/ptree.hpp>
-
 #include <Element.hpp>
+
+#include "ReportNode.hpp"
 
 namespace bpt = boost::property_tree;
 namespace be  = basic_element;
@@ -22,9 +23,10 @@ public:
 	std::shared_ptr< be::Element > getBasicElement( const size_t uniqueId );
 	
 private:
-	std::map< size_t, std::shared_ptr< be::Element > > _elementMap;
+	std::string toKey( size_t id );
 
-	bpt::basic_ptree< std::string, size_t, std::less< std::string > > _basicElementTree;
+private:
+	bpt::basic_ptree< std::string, std::shared_ptr< be::Element > > _basicElementTree;
 };
 
 }
