@@ -5,7 +5,7 @@ namespace basic_element
 {
 
 Element::Element( EType type )
-	: _isBigEndian( true )
+	: _bigEndianData( true )
 	, _type( type )
 	, _status( eStatusUnknown )
 {
@@ -13,32 +13,27 @@ Element::Element( EType type )
 
 void Element::setId( const std::string& id )
 {
-	BE_LOG_TRACE( " Element: SET ID " );
 	_id = id;
 }
 
 void Element::setLabel( const std::string& label )
 {
-	BE_LOG_TRACE( " Element: SET LABEL " );
 	_label = label;
 }
 
 void Element::setStatus( const EStatus status )
 {
-	BE_LOG_TRACE( " Element: SET STATUS " );
 	_status = status;
 }
 
 void Element::setBigEndianness( bool isBigEndian )
 {
-	BE_LOG_TRACE( " Element: SET BIG ENDIANESS " );
-	_isBigEndian = isBigEndian; 
+	_bigEndianData = isBigEndian; 
 }
 
 bool Element::getBigEndianness() const
 {
-	BE_LOG_TRACE( " Element: GET BIG ENDIANESS " );
-	return _isBigEndian; 
+	return _bigEndianData; 
 }
 
 void Element::getEndianOrderedData( char* buffer, const char* data ) const
@@ -53,7 +48,7 @@ void Element::getEndianOrderedData( char* buffer, const char* data ) const
 	BE_LOG_TRACE( " ++> buffer: " << sstr2.str() );
 
 	BE_LOG_TRACE( " EndianessConverter: GET ENDIANESS " );
-	if( !_isBigEndian )
+	if( !_bigEndianData )
 	{
 		BE_LOG_TRACE( " EndianessConverter: case 1 ( little ) " );
 		std::reverse_copy( data, data + _size, buffer );

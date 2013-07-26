@@ -37,7 +37,10 @@ public:
 
 	void setId   ( const std::string& id );
 	void setLabel( const std::string& label );
-
+protected:
+	void setStatus( const EStatus status );
+	
+public:
 	std::string getId()     { return _id; }
 	std::string getLabel()  { return _label; }
 	EType       getType()   { return _type; }
@@ -47,17 +50,15 @@ public:
 	bool getBigEndianness() const;
 
 	void getEndianOrderedData( char* buffer, const char* data ) const;
-	void reverseEndianness( char* buffer, const char* data ) const;
+	void reverseEndianness   ( char* buffer, const char* data ) const;
 	
 	virtual void setData( const char* data, const size_t& size ) = 0;
 	virtual void getData( char* buffer ) const = 0;
 	virtual EStatus checkData() = 0;
 
-
 protected:
-	void setStatus( const EStatus status );
 	size_t      _size;
-	bool        _isBigEndian;
+	bool        _bigEndianData;
 
 private:
 	std::string _id;

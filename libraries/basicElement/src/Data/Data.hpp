@@ -15,11 +15,11 @@ public:
 	Data( const Element::EType& type );
 	~Data();
 
-	void setData( const char* data, const size_t& size );
-	void getData( char* buffer ) const;
-	size_t getSize() const;
+	void        setData ( const char* data, const size_t& size );
+	void        getData ( char* buffer ) const;
+	size_t      getSize () const;
 	std::string getAscii() const;
-	std::string getHexa() const;
+	std::string getHexa () const;
 	std::vector< unsigned int > toIntVector();
 	
 	void setSpecData( const std::string& specValue );
@@ -29,7 +29,7 @@ public:
 	Data& operator=( const Data& other );
 
 private:
-	char*  _data;
+	char*       _data;
 	std::string _specValue;
 };
 
