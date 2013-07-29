@@ -2,13 +2,14 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include <Report.hpp>
+#include <Report/Report.hpp>
 #include <Number/Number.hpp>
 
 using namespace boost::unit_test;
 using namespace report_generator;
 
 namespace ben = basic_element::number_element;
+namespace bpt = boost::property_tree;
 
 boost::shared_ptr<common::formatters::Formatter> formatter( common::formatters::Formatter::get() );
 boost::shared_ptr<common::Color>                 color( common::Color::get() );

@@ -14,6 +14,16 @@ ReportNode::~ReportNode()
 {
 }
 
+ReportNode ReportNode::next()
+{
+	bpt::ptree::const_iterator node = _node;
+	size_t index = _index;
+
+	if( _index >= _indexTotal - 1 )
+		return ReportNode( node, _indexTotal, _indexTotal );
+
+	return ReportNode( ++node, ++index, _indexTotal );
+}
 
 size_t ReportNode::getIndex()
 {

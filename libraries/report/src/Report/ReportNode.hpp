@@ -1,12 +1,12 @@
-#ifndef _REPORT_REPORT_HPP_
-#define _REPORT_REPORT_HPP_
+#ifndef _REPORT_REPORT_NODE_HPP_
+#define _REPORT_REPORT_NODE_HPP_
 
 #include <boost/property_tree/ptree.hpp>
 
 #include <Element.hpp>
 
-namespace bpt = boost::property_tree;
 namespace be  = basic_element;
+namespace bpt = boost::property_tree;
 
 namespace report_generator
 {
@@ -21,7 +21,7 @@ public:
 	// void appendNext ( std::shared_ptr< be::Element > element );	// @todo
 	// void appendChild( std::shared_ptr< be::Element > element );	// @todo
 
-	// ReportNode next();		// @todo
+	ReportNode next();		// @todo
 	// ReportNode firstChild();	// @todo
 	// ReportNode* parent();	// @todo
 
