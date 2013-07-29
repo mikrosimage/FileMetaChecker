@@ -16,17 +16,21 @@ class Report
 {
 public:
 	Report();
+	Report( const ReportTree& reportTree );
 	~Report();
 
 	void addBasicElement( std::shared_ptr< be::Element > element );
 
-	std::shared_ptr< be::Element > getBasicElement( const size_t uniqueId );
+	ReportNode getFirstNode();
+
+	ReportIterator getBegin();
+	size_t getSize();
 	
 private:
 	std::string toKey( size_t id );
 
 private:
-	bpt::basic_ptree< std::string, std::shared_ptr< be::Element > > _basicElementTree;
+	ReportTree _basicElementTree;
 };
 
 }

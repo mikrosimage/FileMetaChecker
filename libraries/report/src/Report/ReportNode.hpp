@@ -11,20 +11,25 @@ namespace bpt = boost::property_tree;
 namespace report_generator
 {
 
+typedef bpt::basic_ptree< std::string, std::shared_ptr< be::Element > > ReportTree;
+typedef bpt::basic_ptree< std::string, std::shared_ptr< be::Element > >::const_iterator ReportIterator;
+
 class ReportNode
 {
 public:
 	
-	ReportNode( const bpt::ptree::const_iterator node, const size_t& index, const size_t& indexTotal );
-	ReportNode( const bpt::ptree::const_iterator node, const size_t& index, const size_t& indexTotal, ReportNode* parent );
+	ReportNode( const ReportIterator node, const size_t& index, const size_t& indexTotal );
+	ReportNode( const ReportIterator node, const size_t& index, const size_t& indexTotal, ReportNode* parent );
 	~ReportNode();
 
-	// void appendNext ( std::shared_ptr< be::Element > element );	// @todo
+	// void appendNext( std::shared_ptr< be::Element > element );	// @todo
 	// void appendChild( std::shared_ptr< be::Element > element );	// @todo
 
 	ReportNode next();
 	ReportNode firstChild();
 	ReportNode* parent();
+
+	std::shared_ptr< be::Element > getElementPointer();
 
 	bool hasGroup();
 
@@ -32,7 +37,7 @@ public:
 	size_t getIndexTotal();
 
 private:
-	bpt::ptree::const_iterator _node;
+	ReportIterator _node;
 	ReportNode* _parent;
 	size_t _index;
 	size_t _indexTotal;

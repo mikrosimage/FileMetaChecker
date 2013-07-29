@@ -1,11 +1,12 @@
 #include "ReportNode.hpp"
+#include <typeinfo>
 
 static const std::string kGroup = "group";
 
 namespace report_generator
 {
 
-ReportNode::ReportNode( const bpt::ptree::const_iterator node, const size_t& index, const size_t& indexTotal )
+ReportNode::ReportNode( const ReportIterator node, const size_t& index, const size_t& indexTotal )
 	: _node( node )
 	, _parent( NULL )
 	, _index( index )
@@ -13,7 +14,7 @@ ReportNode::ReportNode( const bpt::ptree::const_iterator node, const size_t& ind
 {
 }
 
-ReportNode::ReportNode( const bpt::ptree::const_iterator node, const size_t& index, const size_t& indexTotal, ReportNode* parent )
+ReportNode::ReportNode( const ReportIterator node, const size_t& index, const size_t& indexTotal, ReportNode* parent )
 	: _node( node )
 	, _parent( parent )
 	, _index( index )
@@ -27,7 +28,7 @@ ReportNode::~ReportNode()
 
 ReportNode ReportNode::next()
 {
-	bpt::ptree::const_iterator node = _node;
+	ReportIterator node = _node;
 	size_t index = _index;
 
 	if( _index >= _indexTotal - 1 )
@@ -66,6 +67,15 @@ ReportNode* ReportNode::parent()
 	}
 }
 
+std::shared_ptr< be::Element > ReportNode::getElementPointer()
+{
+	ReportIterator ptr = _node->second.begin();
+	// LOG_INFO( ptr->first );
+	// LOG_INFO( typeid( ptr->second.data().get() ).name() );
+	while( ptr->first == kGroup )
+		ptr++;
+	return ptr->second.data();
+}
 
 bool ReportNode::hasGroup()
 {
