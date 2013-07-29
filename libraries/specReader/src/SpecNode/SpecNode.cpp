@@ -8,6 +8,15 @@ namespace spec_reader
 
 SpecNode::SpecNode( const bpt::ptree::const_iterator node, const size_t& index, const size_t& indexTotal )
 	: _node( node )
+	, _parent( NULL )
+	, _index( index )
+	, _indexTotal( indexTotal )
+{
+}
+
+SpecNode::SpecNode( const bpt::ptree::const_iterator node, const size_t& index, const size_t& indexTotal, SpecNode* parent )
+	: _node( node )
+	, _parent( parent )
 	, _index( index )
 	, _indexTotal( indexTotal )
 {
@@ -183,7 +192,22 @@ SpecNode SpecNode::firstChild()
 	{
 		if( !hasGroup() )
 			throw std::runtime_error( "firstChild: This node has no child." );
-		return SpecNode( _node->second.get_child( kGroup ).begin(), 0, _node->second.get_child( kGroup ).size() );
+		return SpecNode( _node->second.get_child( kGroup ).begin(), 0, _node->second.get_child( kGroup ).size(), this );
+	}
+	catch( std::runtime_error& e )
+	{
+		LOG_ERROR( e.what() );
+		throw;
+	}
+}
+
+SpecNode* SpecNode::parent()
+{
+	try
+	{
+		if( _parent == NULL )
+			throw std::runtime_error( "parent: This node has no parent." );
+		return _parent;
 	}
 	catch( std::runtime_error& e )
 	{

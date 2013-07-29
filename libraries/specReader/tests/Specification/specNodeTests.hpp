@@ -605,4 +605,41 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_first_child_recursivity )
 	}
 }
 
+BOOST_AUTO_TEST_CASE( spec_reader_specNode_parent )
+{
+	LOG_INFO( ">>> spec_reader_specNode_parent <<<" );
+	{
+		std::string jsonString;
+		jsonString  = " { \"header\": [ ";
+		jsonString += " { \"id\": \"value1\" },";
+		jsonString += " { \"id\": \"value2\",";
+		jsonString += "   \"group\": [ ";
+		jsonString += "       { \"id\": \"value21\" }";
+		jsonString += "   ] } ";
+		jsonString += " ] } ";
+
+		std::istringstream isstream( jsonString );
+		bpt::ptree tree;
+		bpt::read_json( isstream, tree );
+
+		SpecNode node( tree.get_child( "header" ).begin(), 0, 4 );
+		BOOST_CHECK_EQUAL( node.getIndex(),      0 );
+		BOOST_CHECK_EQUAL( node.getIndexTotal(), 4 );
+
+		node = node.next();
+		BOOST_CHECK_EQUAL( node.getIndex(),      1 );
+		BOOST_CHECK_EQUAL( node.getIndexTotal(), 4 );
+
+		SpecNode child = node.firstChild();
+		BOOST_CHECK_EQUAL( child.getIndex(),      0 );
+		BOOST_CHECK_EQUAL( child.getIndexTotal(), 1 );
+
+		BOOST_CHECK_EQUAL( child.parent()->getIndex(),      1 );
+		BOOST_CHECK_EQUAL( child.parent()->getId(),  "value2" );
+		BOOST_CHECK_EQUAL( child.parent()->getIndexTotal(), 4 );
+		
+		BOOST_CHECK_THROW( node.parent(), std::runtime_error );
+	}
+}
+
 BOOST_AUTO_TEST_SUITE_END()

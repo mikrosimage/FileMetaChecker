@@ -15,6 +15,7 @@ class SpecNode
 public:
 	
 	SpecNode( const bpt::ptree::const_iterator node, const size_t& index, const size_t& indexTotal );
+	SpecNode( const bpt::ptree::const_iterator node, const size_t& index, const size_t& indexTotal, SpecNode* parent );
 	~SpecNode();
 
 	std::string getId();
@@ -41,6 +42,7 @@ public:
 
 	SpecNode next();
 	SpecNode firstChild();
+	SpecNode* parent();	// @todo
 
 	size_t getIndex();
 	size_t getIndexTotal();
@@ -51,6 +53,7 @@ protected:
 
 private:
 	bpt::ptree::const_iterator _node;
+	SpecNode* _parent;	// @todo
 	size_t _index;
 	size_t _indexTotal;
 };
