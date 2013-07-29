@@ -42,7 +42,7 @@ public:
 
 	SpecNode next();
 	SpecNode firstChild();
-	SpecNode* parent();	// @todo
+	SpecNode* parent();
 
 	size_t getIndex();
 	size_t getIndexTotal();
@@ -53,7 +53,7 @@ protected:
 
 private:
 	bpt::ptree::const_iterator _node;
-	SpecNode* _parent;	// @todo
+	SpecNode* _parent;
 	size_t _index;
 	size_t _indexTotal;
 };
