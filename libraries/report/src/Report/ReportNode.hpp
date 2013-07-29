@@ -21,9 +21,11 @@ public:
 	// void appendNext ( std::shared_ptr< be::Element > element );	// @todo
 	// void appendChild( std::shared_ptr< be::Element > element );	// @todo
 
-	ReportNode next();		// @todo
-	// ReportNode firstChild();	// @todo
+	ReportNode next();
+	ReportNode firstChild();
 	// ReportNode* parent();	// @todo
+
+	bool hasGroup();
 
 	size_t getIndex();
 	size_t getIndexTotal();
