@@ -16,6 +16,7 @@ class ReportNode
 public:
 	
 	ReportNode( const bpt::ptree::const_iterator node, const size_t& index, const size_t& indexTotal );
+	ReportNode( const bpt::ptree::const_iterator node, const size_t& index, const size_t& indexTotal, ReportNode* parent );
 	~ReportNode();
 
 	// void appendNext ( std::shared_ptr< be::Element > element );	// @todo
@@ -23,7 +24,7 @@ public:
 
 	ReportNode next();
 	ReportNode firstChild();
-	// ReportNode* parent();	// @todo
+	ReportNode* parent();
 
 	bool hasGroup();
 
@@ -31,8 +32,8 @@ public:
 	size_t getIndexTotal();
 
 private:
-	// ReportNode* _parent;		// @todo
 	bpt::ptree::const_iterator _node;
+	ReportNode* _parent;
 	size_t _index;
 	size_t _indexTotal;
 };

@@ -140,4 +140,48 @@ BOOST_AUTO_TEST_CASE( report_report_node_first_child )
 	}
 }
 
+BOOST_AUTO_TEST_CASE( report_report_node_parent )
+{
+	LOG_INFO( ">>> report_report_node_parent <<<" );
+	{
+		std::string jsonString;
+		jsonString  = " { \"header\": [ ";
+		jsonString += " { \"id\": \"value1\" },";
+		jsonString += " { \"id\": \"value2\",";
+		jsonString += "   \"group\": [ ";
+		jsonString += "       { \"id\": \"value21\" }";
+		jsonString += "   ] }, ";
+		jsonString += " { \"id\": \"value3\" },";
+		jsonString += " { \"id\": \"value4\" }";
+		jsonString += " ] } ";
+
+		std::istringstream isstream( jsonString );
+		bpt::ptree tree;
+		bpt::read_json( isstream, tree );
+
+		ReportNode node( tree.get_child( "header" ).begin(), 0, 4 );
+		BOOST_CHECK_EQUAL( node.getIndex(),      0 );
+		BOOST_CHECK_EQUAL( node.getIndexTotal(), 4 );
+
+		node = node.next();
+		BOOST_CHECK_EQUAL( node.getIndex(),      1 );
+		BOOST_CHECK_EQUAL( node.getIndexTotal(), 4 );
+
+		ReportNode child = node.firstChild();
+		BOOST_CHECK_EQUAL( child.getIndex(),      0 );
+		BOOST_CHECK_EQUAL( child.getIndexTotal(), 1 );
+		BOOST_CHECK_EQUAL( child.parent()->getIndex(),      1 );
+		BOOST_CHECK_EQUAL( child.parent()->getIndexTotal(), 4 );
+
+		node = child.parent()->next();
+		BOOST_CHECK_EQUAL( node.getIndex(),      2 );
+		BOOST_CHECK_EQUAL( node.getIndexTotal(), 4 );
+
+		node = node.next();
+		BOOST_CHECK_EQUAL( node.getIndex(),      3 );
+		BOOST_CHECK_EQUAL( node.getIndexTotal(), 4 );
+		BOOST_CHECK_THROW( node.parent(), std::runtime_error );
+	}
+}
+
 BOOST_AUTO_TEST_SUITE_END()
