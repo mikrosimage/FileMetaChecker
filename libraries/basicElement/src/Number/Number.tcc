@@ -141,6 +141,13 @@ Element::EStatus Number< NumberType >::checkData()
 	return _status;
 }
 
+template< typename NumberType >
+std::vector< std::pair< std::string, std::string > > Number< NumberType >::getElementInfo()
+{
+	std::vector< std::pair< std::string, std::string > > elemInfo;
+	return elemInfo;
+}
+
 template< >
 std::string Number< int8 >::getStringFromType() { return "int8"; }
 

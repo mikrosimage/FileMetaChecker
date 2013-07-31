@@ -132,6 +132,12 @@ Element::EStatus Data::checkData()
 	return status;
 }
 
+std::vector< std::pair< std::string, std::string > > Data::getElementInfo()
+{
+	std::vector< std::pair< std::string, std::string > > elemInfo;
+	return elemInfo;
+}
+
 Data& Data::operator=( const Data& other )
 {
 	if( this != &other )

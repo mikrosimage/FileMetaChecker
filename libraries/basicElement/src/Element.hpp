@@ -82,8 +82,10 @@ public:
 	virtual void setData( const char* data, const size_t& size ) = 0;
 	virtual void getData( char* buffer ) const = 0;
 	virtual EStatus checkData() = 0;
+	virtual std::vector< std::pair< std::string, std::string > > getElementInfo() = 0;
 
 	// static EType getType( const std::string& type );		// @todo
+
 
 private:
 	std::string   _id;

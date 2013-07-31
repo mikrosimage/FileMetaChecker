@@ -25,6 +25,7 @@ public:
 	void setSpecData( const std::string& specValue );
 
 	EStatus checkData();
+	std::vector< std::pair< std::string, std::string > > getElementInfo();
 
 	Data& operator=( const Data& other );
 

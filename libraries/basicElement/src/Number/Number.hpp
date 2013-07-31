@@ -43,6 +43,7 @@ public:
 	std::string toString() const;
 
 	EStatus     checkData();
+	std::vector< std::pair< std::string, std::string > > getElementInfo();
 
 	std::string getStringFromType();
 
