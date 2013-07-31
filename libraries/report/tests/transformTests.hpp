@@ -26,7 +26,7 @@ BOOST_AUTO_TEST_CASE( report_transform )
 	{
 		LOG_INFO( ">>> report_transform_transform <<<" );
 		Transform tr( elementReport );
-		tr.transform();
+		tr.transformTree( Transform::eReportTypeXml );
 	}
 
 }

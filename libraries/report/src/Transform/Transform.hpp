@@ -15,24 +15,32 @@ namespace report_generator
 class Transform
 {
 public:
+	enum EReportType
+	{
+		eReportTypeXml = 0,
+		eReportTypeJson
+	};
+
 	Transform();
 	Transform( const Report& report );
 	~Transform();
 
 	void setBasicElementReport( const Report& report );
-
-	void transform();
+	void transformTree( const EReportType& type );
 
 protected:
 	bpt::ptree translate( ReportTree::value_type& rootNode );
-	void extractElement( std::shared_ptr< be::Element > element );
-	
+	bpt::ptree extractElement( std::shared_ptr< be::Element > element );
+
+	bpt::ptree toXml( std::vector< std::pair< std::string, std::string > > elementInfo );
+
 	template < typename ElementType >
 	std::shared_ptr< ElementType > translateElement( std::shared_ptr< be::Element > element );
 
 private:
-	ReportTree _basicElementTree;
-	bpt::ptree _report;
+	ReportTree  _basicElementTree;
+	bpt::ptree  _report;
+	EReportType _type;
 };
 
 }
