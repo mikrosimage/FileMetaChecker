@@ -42,5 +42,9 @@ std::string Report::toKey( size_t id )
 	return sstr.str();
 }
 
+ReportTree* Report::getReportTree()
+{
+	return const_cast< ReportTree* >( &_basicElementTree );
+}
 
 }
