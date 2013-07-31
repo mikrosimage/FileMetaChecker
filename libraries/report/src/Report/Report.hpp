@@ -16,13 +16,10 @@ class Report
 {
 public:
 	Report();
-	Report( const ReportTree& reportTree );
 	~Report();
 
-	void addBasicElement( std::shared_ptr< be::Element > element );
-
+	ReportNode addFirstElement( std::shared_ptr< be::Element > element );
 	ReportNode getFirstNode();
-
 	ReportIterator getBegin();
 	size_t getSize();
 	
