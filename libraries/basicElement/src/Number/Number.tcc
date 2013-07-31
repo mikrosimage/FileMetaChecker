@@ -145,6 +145,20 @@ template< typename NumberType >
 std::vector< std::pair< std::string, std::string > > Number< NumberType >::getElementInfo()
 {
 	std::vector< std::pair< std::string, std::string > > elemInfo;
+	std::string status;
+	switch( getStatus() )
+	{
+		case Element::eStatusUnknown  : status = "Unknown";   break;
+		case Element::eStatusValid    : status = "Valid";     break;
+		case Element::eStatusInvalid  : status = "Invalid";   break;
+		case Element::eStatusPassOver : status = "Pass over"; break;
+	}
+
+	elemInfo.push_back( std::make_pair( "id",     getId()             ) );
+	elemInfo.push_back( std::make_pair( "label",  getLabel()          ) );
+	elemInfo.push_back( std::make_pair( "status", status              ) );
+	elemInfo.push_back( std::make_pair( "type",   getStringFromType() ) );
+	elemInfo.push_back( std::make_pair( "value",  toString()          ) );
 	return elemInfo;
 }
 

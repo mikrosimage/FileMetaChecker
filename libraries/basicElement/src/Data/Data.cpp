@@ -135,6 +135,28 @@ Element::EStatus Data::checkData()
 std::vector< std::pair< std::string, std::string > > Data::getElementInfo()
 {
 	std::vector< std::pair< std::string, std::string > > elemInfo;
+	std::string status;
+	switch( getStatus() )
+	{
+		case Element::eStatusUnknown  : status = "Unknown";   break;
+		case Element::eStatusValid    : status = "Valid";     break;
+		case Element::eStatusInvalid  : status = "Invalid";   break;
+		case Element::eStatusPassOver : status = "Pass over"; break;
+	}
+
+	std::string data;
+	switch( getDataSubType() )
+	{
+		case Element::eStatusUnknown : data = "";         break;
+		case Element::eDataTypeAscii : data = getAscii(); break;
+		case Element::eDataTypeHexa  : data = getHexa();  break;
+		case Element::eDataTypeRaw   : data = "";         break;
+	}
+	
+	elemInfo.push_back( std::make_pair( "id",     getId()    ) );
+	elemInfo.push_back( std::make_pair( "label",  getLabel() ) );
+	elemInfo.push_back( std::make_pair( "status", status     ) );
+	elemInfo.push_back( std::make_pair( "data",   data       ) );
 	return elemInfo;
 }
 
