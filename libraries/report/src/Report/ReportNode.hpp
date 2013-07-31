@@ -8,39 +8,33 @@
 namespace be  = basic_element;
 namespace bpt = boost::property_tree;
 
+static const std::string kGroup = "group";
+static const std::string kReport = "report";
+
 namespace report_generator
 {
 
-typedef bpt::basic_ptree< std::string, std::shared_ptr< be::Element > > ReportTree;
+typedef bpt::basic_ptree< std::string, std::shared_ptr< be::Element > >                 ReportTree;
 typedef bpt::basic_ptree< std::string, std::shared_ptr< be::Element > >::const_iterator ReportIterator;
 
 class ReportNode
 {
 public:
-	
-	ReportNode( const ReportIterator node, const size_t& index, const size_t& indexTotal );
-	ReportNode( const ReportIterator node, const size_t& index, const size_t& indexTotal, ReportNode* parent );
+	ReportNode( const ReportIterator node, const size_t& index, ReportTree* tree );
+	ReportNode( const ReportIterator node, const size_t& index, ReportTree* tree, ReportNode* parent );
 	~ReportNode();
 
-	// void appendNext( std::shared_ptr< be::Element > element );	// @todo
-	// void appendChild( std::shared_ptr< be::Element > element );	// @todo
-
-	ReportNode next();
-	ReportNode firstChild();
+	ReportNode appendNext ( std::shared_ptr< be::Element > element );
+	ReportNode appendChild( std::shared_ptr< be::Element > element );
 	ReportNode* parent();
-
-	std::shared_ptr< be::Element > getElementPointer();
-
-	bool hasGroup();
-
+	ReportTree* getSecond();
 	size_t getIndex();
-	size_t getIndexTotal();
 
 private:
-	ReportIterator _node;
-	ReportNode* _parent;
-	size_t _index;
-	size_t _indexTotal;
+	ReportIterator _nodeIt;
+	ReportNode*    _parent;
+	ReportTree*    _tree;
+	size_t         _index;
 };
 
 }

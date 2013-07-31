@@ -1,24 +1,22 @@
 #include "ReportNode.hpp"
 #include <typeinfo>
 
-static const std::string kGroup = "group";
-
 namespace report_generator
 {
 
-ReportNode::ReportNode( const ReportIterator node, const size_t& index, const size_t& indexTotal )
-	: _node( node )
+ReportNode::ReportNode( const ReportIterator nodeIt, const size_t& index, ReportTree* tree )
+	: _nodeIt( nodeIt )
 	, _parent( NULL )
+	, _tree( tree )
 	, _index( index )
-	, _indexTotal( indexTotal )
 {
 }
 
-ReportNode::ReportNode( const ReportIterator node, const size_t& index, const size_t& indexTotal, ReportNode* parent )
-	: _node( node )
+ReportNode::ReportNode( const ReportIterator nodeIt, const size_t& index, ReportTree* tree, ReportNode* parent )
+	: _nodeIt( nodeIt )
 	, _parent( parent )
+	, _tree( tree )
 	, _index( index )
-	, _indexTotal( indexTotal )
 {
 }
 
@@ -26,30 +24,40 @@ ReportNode::~ReportNode()
 {
 }
 
-ReportNode ReportNode::next()
+ReportNode ReportNode::appendNext( std::shared_ptr< be::Element > element )
 {
-	ReportIterator node = _node;
+	std::stringstream sstr;
 	size_t index = _index;
-
-	if( _index >= _indexTotal - 1 )
-		return ReportNode( node, _indexTotal, _indexTotal );
-
-	return ReportNode( ++node, ++index, _indexTotal );
+	ReportTree node;
+	ReportIterator nodeIt = _nodeIt;
+	
+	if( _parent )
+		sstr << _parent->getIndex() << "-";
+	sstr << ++index;
+	
+	node.add( sstr.str(), element );
+	
+	if( _parent )
+	{
+		_parent->getSecond()->add_child( kGroup + ".", node );
+	}
+	else
+	{
+		_tree->add_child( kReport + ".", node );
+	}
+	return ReportNode( ++nodeIt, index, _tree, _parent );
 }
 
-ReportNode ReportNode::firstChild()
+ReportNode ReportNode::appendChild( std::shared_ptr< be::Element > element )
 {
-	try
-	{
-		if( !hasGroup() )
-			throw std::runtime_error( "firstChild: This node has no child." );
-		return ReportNode( _node->second.get_child( kGroup ).begin(), 0, _node->second.get_child( kGroup ).size(), this );
-	}
-	catch( std::runtime_error& e )
-	{
-		LOG_ERROR( e.what() );
-		throw;
-	}
+	std::stringstream sstr;
+	sstr << getSecond()->begin()->first << "-" << 0;
+	
+	ReportTree node;
+	node.add( sstr.str(), element );
+
+	getSecond()->add_child( kGroup + ".", node );
+	return ReportNode( getSecond()->get_child( kGroup ).begin(), 0, _tree, this );
 }
 
 ReportNode* ReportNode::parent()
@@ -67,30 +75,16 @@ ReportNode* ReportNode::parent()
 	}
 }
 
-std::shared_ptr< be::Element > ReportNode::getElementPointer()
+ReportTree* ReportNode::getSecond()
 {
-	ReportIterator ptr = _node->second.begin();
-	// LOG_INFO( ptr->first );
-	// LOG_INFO( typeid( ptr->second.data().get() ).name() );
-	while( ptr->first == kGroup )
-		ptr++;
-	return ptr->second.data();
+	return const_cast< ReportTree* >( &_nodeIt->second );
 }
 
-bool ReportNode::hasGroup()
-{
-	return _node->second.get_child_optional( kGroup );
-}
 
 size_t ReportNode::getIndex()
 {
 	return _index;
 }
 
-size_t ReportNode::getIndexTotal()
-{
-	return _indexTotal;
 }
 
-
-}
