@@ -14,49 +14,18 @@ Report::~Report()
 {
 }
 
-ReportNode Report::addFirstElement( std::shared_ptr< be::Element > element )
+ReportNode Report::addRootElement( std::shared_ptr< be::Element > element )
 {
-	if( getSize() > 0 )
-	{
-		LOG_WARNING( "addFirstElement: first node already exist.");
-	}
-	else
-	{
-		ReportTree tree;
-		tree.add( toKey( getSize() ), element );
-		_basicElementTree.add_child( kReport + ".", tree );
-	}
-	return getFirstNode();
-}
+	ReportTree tree;
+	size_t index = getSize();
 
-ReportNode Report::getFirstNode()
-{
-	try
-	{
-		if( getSize() == 0 )
-			throw std::runtime_error( "getFirstNode: empty tree." );
-		return ReportNode( getBegin(), 0, &_basicElementTree );
-	}
-	catch( const std::runtime_error& e )
-	{
-		LOG_ERROR( e.what() );
-		throw;
-	}
-}
-
-ReportIterator Report::getBegin()
-{
-	try
-	{
-		if( getSize() == 0 )
-			throw std::runtime_error( "getBegin: empty tree." );
-		return _basicElementTree.get_child( kReport ).begin();
-	}
-	catch( const std::runtime_error& e )
-	{
-		LOG_ERROR( e.what() );
-		throw;
-	}
+	tree.add( toKey( index ), element );
+	_basicElementTree.add_child( kReport + ".", tree );
+	
+	ReportIterator it = _basicElementTree.get_child( kReport ).begin();
+	std::advance( it, index );
+	
+	return ReportNode( it, index, &_basicElementTree );;
 }
 
 size_t Report::getSize()

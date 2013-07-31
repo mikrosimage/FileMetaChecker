@@ -18,9 +18,7 @@ public:
 	Report();
 	~Report();
 
-	ReportNode addFirstElement( std::shared_ptr< be::Element > element );
-	ReportNode getFirstNode();
-	ReportIterator getBegin();
+	ReportNode addRootElement( std::shared_ptr< be::Element > element );
 	size_t getSize();
 	
 private:
