@@ -21,7 +21,7 @@ public:
 	ReportNode addRootElement( std::shared_ptr< be::Element > element );
 	size_t getSize();
 
-	ReportTree* getReportTree();
+	ReportTree getReportTree() const;
 	
 private:
 	std::string toKey( size_t id );
