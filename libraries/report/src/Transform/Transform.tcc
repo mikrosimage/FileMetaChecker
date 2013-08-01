@@ -1,5 +1,11 @@
 #include <memory>
 
+static const std::string kValidator      = "fileValidator";
+static const std::string kSpecification  = "specification";
+static const std::string kElement        = "element";
+static const std::string kData  = "data";		// cf. basic_element, Data.cpp,   getElementInfo()
+static const std::string kValue = "value";		// cf. basic_element, Number.tcc, getElementInfo()
+
 namespace report_generator
 {
 
@@ -22,50 +28,42 @@ void Transform::setBasicElementReport( const Report& report )
 	_basicElementTree = report.getReportTree();
 }
 
-void Transform::transformTree( const EReportType& type )
+bpt::ptree Transform::transformTree( const EReportType& type )
 {
 	_type = type;
 	for( ReportTree::value_type& rootNode : _basicElementTree.get_child( kReport ) )
-	{
-		LOG_INFO( "--> root node :" );
-		_report.add_child( kReport + ".", translate( rootNode ) );
-	}
+		_report.push_back( bpt::ptree::value_type( kSpecification, translate( rootNode ) ) );
+	return _report;
 }
-
 
 bpt::ptree Transform::translate( ReportTree::value_type& elementNode )
 {
-	bpt::ptree node;
-
-	for( ReportTree::value_type& pair : elementNode.second )
+	bpt::ptree elemNode;
+	for( ReportTree::value_type& elem : elementNode.second )
 	{
-		LOG_INFO( pair.first );
-		if( pair.first != kGroup )
+		if( elem.first == kGroup )
 		{
-			extractElement( pair.second.data() );
+			for( ReportTree::value_type& child : elem.second )
+				elemNode.push_back( bpt::ptree::value_type( kElement, translate( child ) ) );
 		}
 		else
 		{
-			for( ReportTree::value_type& elem : pair.second )
-				node.add_child( kGroup + ".", translate( elem ) );
+			elemNode = extractElement( elem.second.data() );
 		}
 	}
-
-	return node;
+	return elemNode;
 }
 
 bpt::ptree Transform::extractElement( std::shared_ptr< be::Element > element )
 {
-	LOG_INFO( "be::Element::eType: " << element->getType() );
-	bpt::ptree node;
+	bpt::ptree elemNode;
 	std::vector< std::pair< std::string, std::string > > elemInfo;
+
 	switch( element->getType() )
 	{
 		case be::Element::eTypeUnknown : LOG_WARNING( "Element " << element->getUniqueId() << ": unknown type." ); break;
-		
 		case be::Element::eTypeNumber  : 
 		{
-			LOG_INFO( "be::Element::eNumberType: " << element->getNumberSubType() );
 			switch( element->getNumberSubType() )
 			{
 				case be::Element::eNumberTypeUnknown      : LOG_WARNING( "Number " << element->getUniqueId()  << ": unknown type." ); break;
@@ -82,7 +80,6 @@ bpt::ptree Transform::extractElement( std::shared_ptr< be::Element > element )
 				case be::Element::eNumberTypeIeeeExtended : elemInfo = translateElement< ben::Number< ben::ieeeExtended > >( element )->getElementInfo(); break;
 			}
 		} break;
-
 		case be::Element::eTypeExif    : LOG_INFO( "Exif !");                      break;
 		case be::Element::eTypeData    : elemInfo = translateElement< bed::Data >( element )->getElementInfo(); break;
 		case be::Element::eTypeKlv     : LOG_INFO( "Klv !");                       break;
@@ -90,17 +87,25 @@ bpt::ptree Transform::extractElement( std::shared_ptr< be::Element > element )
 
 	switch( _type )
 	{
-		case eReportTypeXml  : node = toXml( elemInfo ); break;
+		case eReportTypeXml  : elemNode = toXml( elemInfo ); break;
 		case eReportTypeJson : LOG_WARNING( "Json report not available yet." ); break;
 	}
-	return node;
+
+	return elemNode;
 }
 
 bpt::ptree Transform::toXml( std::vector< std::pair< std::string, std::string > > elementInfo )
 {
 	bpt::ptree xmlNode;
 	for( std::pair< std::string, std::string >& pair : elementInfo )
-		LOG_INFO( pair.first << " : " << pair.second );		// @todo: make the xml node !
+	{
+		if( pair.first == kData || pair.first == kValue )
+		{
+			xmlNode.put_value( pair.second );
+			continue;
+		}
+		xmlNode.put( "<xmlattr>." + pair.first, pair.second );
+	}
 	return xmlNode;
 }
 

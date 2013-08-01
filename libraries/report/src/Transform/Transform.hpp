@@ -26,12 +26,11 @@ public:
 	~Transform();
 
 	void setBasicElementReport( const Report& report );
-	void transformTree( const EReportType& type );
+	bpt::ptree transformTree( const EReportType& type );
 
 protected:
 	bpt::ptree translate( ReportTree::value_type& rootNode );
 	bpt::ptree extractElement( std::shared_ptr< be::Element > element );
-
 	bpt::ptree toXml( std::vector< std::pair< std::string, std::string > > elementInfo );
 
 	template < typename ElementType >
