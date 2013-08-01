@@ -4,6 +4,7 @@
 
 #include <Report/Report.hpp>
 #include <Transform/Transform.hpp>
+#include <Export/Export.hpp>
 
 using namespace boost::unit_test;
 using namespace report_generator;
@@ -29,4 +30,4 @@ BOOST_AUTO_TEST_SUITE_END()
 
 #include "reportTests.hpp"
 #include "reportNodeTests.hpp"
-#include "transformTests.hpp"
+#include "transformAndExportTests.hpp"
