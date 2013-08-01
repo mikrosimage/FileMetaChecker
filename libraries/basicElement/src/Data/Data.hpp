@@ -30,6 +30,8 @@ public:
 	Data& operator=( const Data& other );
 
 protected:
+	std::string getStringFromType();
+	std::string getStringFromData();
 	char* getDataPtr (  ) const;
 	
 private:

@@ -135,28 +135,12 @@ Element::EStatus Data::checkData()
 std::vector< std::pair< std::string, std::string > > Data::getElementInfo()
 {
 	std::vector< std::pair< std::string, std::string > > elemInfo;
-	std::string status;
-	switch( getStatus() )
-	{
-		case Element::eStatusUnknown  : status = "Unknown";   break;
-		case Element::eStatusValid    : status = "Valid";     break;
-		case Element::eStatusInvalid  : status = "Invalid";   break;
-		case Element::eStatusPassOver : status = "Pass over"; break;
-	}
-
-	std::string data;
-	switch( getDataSubType() )
-	{
-		case Element::eStatusUnknown : data = "";         break;
-		case Element::eDataTypeAscii : data = getAscii(); break;
-		case Element::eDataTypeHexa  : data = getHexa();  break;
-		case Element::eDataTypeRaw   : data = "";         break;
-	}
+	std::vector< std::pair< std::string, std::string > > commonInfo = getCommonElementInfo();
 	
-	elemInfo.push_back( std::make_pair( "id",     getId()    ) );
-	elemInfo.push_back( std::make_pair( "label",  getLabel() ) );
-	elemInfo.push_back( std::make_pair( "status", status     ) );
-	elemInfo.push_back( std::make_pair( "data",   data       ) );
+	elemInfo.insert( elemInfo.end(), commonInfo.begin(), commonInfo.end() );
+
+	elemInfo.push_back( std::make_pair( "type", getStringFromType() ) );
+	elemInfo.push_back( std::make_pair( "data", getStringFromData() ) );
 	return elemInfo;
 }
 
@@ -167,6 +151,32 @@ Data& Data::operator=( const Data& other )
 		this->setData( other.getDataPtr(), other.getSize() );
 	}
 	return *this;
+}
+
+std::string Data::getStringFromType()
+{
+	std::string type;
+	switch( getDataSubType() )
+	{
+		case Element::eStatusUnknown : type = "unknown"; break;
+		case Element::eDataTypeAscii : type = "ascii";   break;
+		case Element::eDataTypeHexa  : type = "hexa";    break;
+		case Element::eDataTypeRaw   : type = "raw";     break;
+	}
+	return type;
+}
+
+std::string Data::getStringFromData()
+{
+	std::string data;
+	switch( getDataSubType() )
+	{
+		case Element::eStatusUnknown : data = "";         break;
+		case Element::eDataTypeAscii : data = getAscii(); break;
+		case Element::eDataTypeHexa  : data = getHexa();  break;
+		case Element::eDataTypeRaw   : data = "";         break;
+	}
+	return data;
 }
 
 char* Data::getDataPtr( ) const

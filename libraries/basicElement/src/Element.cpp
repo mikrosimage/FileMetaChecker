@@ -73,4 +73,26 @@ void Element::reverseEndianness( char* buffer, const char* data ) const
 	std::reverse_copy( data, data + _size, buffer );
 }
 
+std::vector< std::pair< std::string, std::string > > Element::getCommonElementInfo()
+{
+	std::vector< std::pair< std::string, std::string > > commonInfo;
+	commonInfo.push_back( std::make_pair( "id",     getId()             ) );
+	commonInfo.push_back( std::make_pair( "label",  getLabel()          ) );
+	commonInfo.push_back( std::make_pair( "status", getStatusString()   ) );
+	return commonInfo;
+}
+
+std::string Element::getStatusString()
+{
+	std::string status;
+	switch( getStatus() )
+	{
+		case Element::eStatusUnknown  : status = "Unknown";   break;
+		case Element::eStatusValid    : status = "Valid";     break;
+		case Element::eStatusInvalid  : status = "Invalid";   break;
+		case Element::eStatusPassOver : status = "Pass over"; break;
+	}
+	return status;
+}
+
 }
