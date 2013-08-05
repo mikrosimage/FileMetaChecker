@@ -37,10 +37,11 @@ project.commonLibs.append( qualityCheck )
 SConscript(
 		project.scanFiles( [
 				'libraries/common',
+				'libraries/specReader',
 				'libraries/basicElement',
 				'libraries/fileReader',
-				'libraries/specReader',
 				'libraries/report',
+				'libraries/comparator',
 				# 'libraries/systemInfo',
 				# 'libraries/extractor',
 				# 'libraries/analyser',
