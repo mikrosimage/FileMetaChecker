@@ -5,11 +5,10 @@
 
 #include <Element.hpp>
 
+static const std::string kReport    = "report";
+
 namespace be  = basic_element;
 namespace bpt = boost::property_tree;
-
-static const std::string kGroup = "group";
-static const std::string kReport = "report";
 
 namespace report_generator
 {

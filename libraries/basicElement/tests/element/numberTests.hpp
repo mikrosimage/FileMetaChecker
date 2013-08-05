@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE( basic_element_number )
 	map.insert( std::pair< nbe::uint8, std::string >( 3, "Third number"  ) );
 
 	{
-		BOOST_CHECK_EQUAL( num.getType(),   be::Element::eTypeNumber  );
+		BOOST_CHECK_EQUAL( num.getType(),   eTypeNumber  );
 		BOOST_CHECK_EQUAL( num.getStatus(), be::Element::eStatusUnknown );
 
 		num.setId( id );
@@ -621,52 +621,52 @@ BOOST_AUTO_TEST_CASE( basic_element_number_subType )
 	LOG_INFO( "\n>>> basic_element_number_subType <<<" );
 	{
 		nbe::Number< nbe::int8 > num;
-		BOOST_CHECK_EQUAL( num.getNumberSubType(), be::Element::eNumberTypeInt8 );
+		BOOST_CHECK_EQUAL( num.getNumberSubType(), eNumberTypeInt8 );
 	}
 	{
 		nbe::Number< nbe::uint8 > num;
-		BOOST_CHECK_EQUAL( num.getNumberSubType(), be::Element::eNumberTypeUInt8 );
+		BOOST_CHECK_EQUAL( num.getNumberSubType(), eNumberTypeUInt8 );
 	}
 	{
 		nbe::Number< nbe::int16 > num;
-		BOOST_CHECK_EQUAL( num.getNumberSubType(), be::Element::eNumberTypeInt16 );
+		BOOST_CHECK_EQUAL( num.getNumberSubType(), eNumberTypeInt16 );
 	}
 	{
 		nbe::Number< nbe::uint16 > num;
-		BOOST_CHECK_EQUAL( num.getNumberSubType(), be::Element::eNumberTypeUInt16 );
+		BOOST_CHECK_EQUAL( num.getNumberSubType(), eNumberTypeUInt16 );
 	}
 	{
 		nbe::Number< nbe::int32 > num;
-		BOOST_CHECK_EQUAL( num.getNumberSubType(), be::Element::eNumberTypeInt32 );
+		BOOST_CHECK_EQUAL( num.getNumberSubType(), eNumberTypeInt32 );
 	}
 	{
 		nbe::Number< nbe::uint32 > num;
-		BOOST_CHECK_EQUAL( num.getNumberSubType(), be::Element::eNumberTypeUInt32 );
+		BOOST_CHECK_EQUAL( num.getNumberSubType(), eNumberTypeUInt32 );
 	}
 	{
 		nbe::Number< nbe::int64 > num;
-		BOOST_CHECK_EQUAL( num.getNumberSubType(), be::Element::eNumberTypeInt64 );
+		BOOST_CHECK_EQUAL( num.getNumberSubType(), eNumberTypeInt64 );
 	}
 	{
 		nbe::Number< nbe::uint64 > num;
-		BOOST_CHECK_EQUAL( num.getNumberSubType(), be::Element::eNumberTypeUInt64 );
+		BOOST_CHECK_EQUAL( num.getNumberSubType(), eNumberTypeUInt64 );
 	}
 	{
 		nbe::Number< float > num;
-		BOOST_CHECK_EQUAL( num.getNumberSubType(), be::Element::eNumberTypeFloat );
+		BOOST_CHECK_EQUAL( num.getNumberSubType(), eNumberTypeFloat );
 	}
 	{
 		nbe::Number< double > num;
-		BOOST_CHECK_EQUAL( num.getNumberSubType(), be::Element::eNumberTypeDouble );
+		BOOST_CHECK_EQUAL( num.getNumberSubType(), eNumberTypeDouble );
 	}
 	{
 		nbe::Number< nbe::ieeeExtended > num;
-		BOOST_CHECK_EQUAL( num.getNumberSubType(), be::Element::eNumberTypeIeeeExtended );
+		BOOST_CHECK_EQUAL( num.getNumberSubType(), eNumberTypeIeeeExtended );
 	}
 
 	{
 		nbe::Number< nbe::int8 > num;
-		BOOST_CHECK_EQUAL( num.getDataSubType(), be::Element::eDataTypeUnknown );
+		BOOST_CHECK_EQUAL( num.getDataSubType(), eDataTypeUnknown );
 	}
 }
 

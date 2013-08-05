@@ -8,15 +8,15 @@ namespace data_element
 {
 
 Data::Data()
-	: Element( Element::eTypeData )
+	: Element( eTypeData )
 	, _data( NULL )
 {
-	_subType = Element::eDataTypeRaw;
+	_subType = eDataTypeRaw;
 	_size = 0;
 }
 
-Data::Data( const Element::EDataType& subType )
-	: Element( Element::eTypeData )
+Data::Data( const EDataType& subType )
+	: Element( eTypeData )
 	, _data( NULL )
 {
 	_subType = subType;
@@ -158,10 +158,10 @@ std::string Data::getStringFromType()
 	std::string type;
 	switch( getDataSubType() )
 	{
-		case Element::eStatusUnknown : type = "unknown"; break;
-		case Element::eDataTypeAscii : type = "ascii";   break;
-		case Element::eDataTypeHexa  : type = "hexa";    break;
-		case Element::eDataTypeRaw   : type = "raw";     break;
+		case eStatusUnknown : type = "unknown"; break;
+		case eDataTypeAscii : type = "ascii";   break;
+		case eDataTypeHexa  : type = "hexa";    break;
+		case eDataTypeRaw   : type = "raw";     break;
 	}
 	return type;
 }
@@ -171,10 +171,10 @@ std::string Data::getStringFromData()
 	std::string data;
 	switch( getDataSubType() )
 	{
-		case Element::eStatusUnknown : data = "";         break;
-		case Element::eDataTypeAscii : data = getAscii(); break;
-		case Element::eDataTypeHexa  : data = getHexa();  break;
-		case Element::eDataTypeRaw   : data = "";         break;
+		case eStatusUnknown : data = "";         break;
+		case eDataTypeAscii : data = getAscii(); break;
+		case eDataTypeHexa  : data = getHexa();  break;
+		case eDataTypeRaw   : data = "";         break;
 	}
 	return data;
 }

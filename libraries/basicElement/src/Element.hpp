@@ -3,6 +3,7 @@
 
 #include <string>
 #include "common.hpp"
+#include <specDefinition.hpp>
 
 namespace basic_element
 {
@@ -10,39 +11,6 @@ namespace basic_element
 class Element
 {
 public:
-	enum EType
-	{
-		eTypeUnknown = 0,
-		eTypeNumber,
-		eTypeExif,
-		eTypeData,
-		eTypeKlv
-	};
-
-	enum ENumberType
-	{
-		eNumberTypeUnknown = 0,
-		eNumberTypeInt8,
-		eNumberTypeUInt8,
-		eNumberTypeInt16,
-		eNumberTypeUInt16,
-		eNumberTypeInt32,
-		eNumberTypeUInt32,
-		eNumberTypeInt64,
-		eNumberTypeUInt64,
-		eNumberTypeFloat,
-		eNumberTypeDouble,
-		eNumberTypeIeeeExtended
-	};
-
-	enum EDataType
-	{
-		eDataTypeUnknown = 0,
-		eDataTypeAscii,
-		eDataTypeHexa,
-		eDataTypeRaw
-	};
-
 	enum EStatus
 	{
 		eStatusUnknown = 0,

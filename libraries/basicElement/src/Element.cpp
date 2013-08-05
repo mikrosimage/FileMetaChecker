@@ -25,14 +25,14 @@ void Element::setLabel( const std::string& label )
 	_label = label;
 }
 
-Element::ENumberType Element::getNumberSubType()
+ENumberType Element::getNumberSubType()
 {
 	if( _type != eTypeNumber )
 		return eNumberTypeUnknown;
 	return ( ENumberType ) _subType;
 }
 
-Element::EDataType Element::getDataSubType()
+EDataType Element::getDataSubType()
 {
 	if( _type != eTypeData )
 		return eDataTypeUnknown;

@@ -61,28 +61,28 @@ bpt::ptree Transform::extractElement( std::shared_ptr< be::Element > element )
 
 	switch( element->getType() )
 	{
-		case be::Element::eTypeUnknown : LOG_WARNING( "Element " << element->getUniqueId() << ": unknown type." ); break;
-		case be::Element::eTypeNumber  : 
+		case eTypeUnknown : LOG_WARNING( "Element " << element->getUniqueId() << ": unknown type." ); break;
+		case eTypeNumber  : 
 		{
 			switch( element->getNumberSubType() )
 			{
-				case be::Element::eNumberTypeUnknown      : LOG_WARNING( "Number " << element->getUniqueId()  << ": unknown type." ); break;
-				case be::Element::eNumberTypeInt8         : elemInfo = translateElement< ben::Number< ben::int8         > >( element )->getElementInfo(); break;
-				case be::Element::eNumberTypeUInt8        : elemInfo = translateElement< ben::Number< ben::uint8        > >( element )->getElementInfo(); break;
-				case be::Element::eNumberTypeInt16        : elemInfo = translateElement< ben::Number< ben::int16        > >( element )->getElementInfo(); break;
-				case be::Element::eNumberTypeUInt16       : elemInfo = translateElement< ben::Number< ben::uint16       > >( element )->getElementInfo(); break;
-				case be::Element::eNumberTypeInt32        : elemInfo = translateElement< ben::Number< ben::int32        > >( element )->getElementInfo(); break;
-				case be::Element::eNumberTypeUInt32       : elemInfo = translateElement< ben::Number< ben::uint32       > >( element )->getElementInfo(); break;
-				case be::Element::eNumberTypeInt64        : elemInfo = translateElement< ben::Number< ben::int64        > >( element )->getElementInfo(); break;
-				case be::Element::eNumberTypeUInt64       : elemInfo = translateElement< ben::Number< ben::uint64       > >( element )->getElementInfo(); break;
-				case be::Element::eNumberTypeFloat        : elemInfo = translateElement< ben::Number< float             > >( element )->getElementInfo(); break;
-				case be::Element::eNumberTypeDouble       : elemInfo = translateElement< ben::Number< double            > >( element )->getElementInfo(); break;
-				case be::Element::eNumberTypeIeeeExtended : elemInfo = translateElement< ben::Number< ben::ieeeExtended > >( element )->getElementInfo(); break;
+				case eNumberTypeUnknown      : LOG_WARNING( "Number " << element->getUniqueId()  << ": unknown type." ); break;
+				case eNumberTypeInt8         : elemInfo = translateElement< ben::Number< ben::int8         > >( element )->getElementInfo(); break;
+				case eNumberTypeUInt8        : elemInfo = translateElement< ben::Number< ben::uint8        > >( element )->getElementInfo(); break;
+				case eNumberTypeInt16        : elemInfo = translateElement< ben::Number< ben::int16        > >( element )->getElementInfo(); break;
+				case eNumberTypeUInt16       : elemInfo = translateElement< ben::Number< ben::uint16       > >( element )->getElementInfo(); break;
+				case eNumberTypeInt32        : elemInfo = translateElement< ben::Number< ben::int32        > >( element )->getElementInfo(); break;
+				case eNumberTypeUInt32       : elemInfo = translateElement< ben::Number< ben::uint32       > >( element )->getElementInfo(); break;
+				case eNumberTypeInt64        : elemInfo = translateElement< ben::Number< ben::int64        > >( element )->getElementInfo(); break;
+				case eNumberTypeUInt64       : elemInfo = translateElement< ben::Number< ben::uint64       > >( element )->getElementInfo(); break;
+				case eNumberTypeFloat        : elemInfo = translateElement< ben::Number< float             > >( element )->getElementInfo(); break;
+				case eNumberTypeDouble       : elemInfo = translateElement< ben::Number< double            > >( element )->getElementInfo(); break;
+				case eNumberTypeIeeeExtended : elemInfo = translateElement< ben::Number< ben::ieeeExtended > >( element )->getElementInfo(); break;
 			}
 		} break;
-		case be::Element::eTypeExif    : LOG_INFO( "Exif !");                      break;
-		case be::Element::eTypeData    : elemInfo = translateElement< bed::Data >( element )->getElementInfo(); break;
-		case be::Element::eTypeKlv     : LOG_INFO( "Klv !");                       break;
+		case eTypeExif    : LOG_INFO( "Exif !");                      break;
+		case eTypeData    : elemInfo = translateElement< bed::Data >( element )->getElementInfo(); break;
+		case eTypeKlv     : LOG_INFO( "Klv !");                       break;
 	}
 
 	switch( _type )

@@ -12,7 +12,7 @@ class Data : public Element
 {
 public:
 	Data();
-	Data( const Element::EDataType& subType );
+	Data( const EDataType& subType );
 	~Data();
 
 	void        setData ( const char* data, const size_t& size );
@@ -24,7 +24,7 @@ public:
 	
 	void setSpecData( const std::string& specValue );
 
-	EStatus checkData();
+	Element::EStatus checkData();
 	std::vector< std::pair< std::string, std::string > > getElementInfo();
 
 	Data& operator=( const Data& other );
