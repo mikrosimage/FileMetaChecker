@@ -14,14 +14,13 @@ class SpecNode
 {
 public:
 	
-	SpecNode( const bpt::ptree::const_iterator node, const size_t& index, const size_t& indexTotal );
-	SpecNode( const bpt::ptree::const_iterator node, const size_t& index, const size_t& indexTotal, SpecNode* parent );
+	SpecNode( const bpt::ptree::const_iterator node, const size_t& index, const size_t& indexTotal, const SpecNode* parent = NULL );
 	~SpecNode();
 
-	std::string getId();
-	std::string getLabel();
-	std::string getType();
-	std::string getDisplayType();
+	std::string getId()    const;
+	std::string getLabel() const;
+	std::string getType()  const;
+	std::string getDisplayType() const;
 
 	std::string getCount();
 	std::string getRequired();
@@ -33,27 +32,29 @@ public:
 
 	std::map< std::string, std::string > getMap();
 
-	bool isBigEndian();
-	bool isOptional();
-	bool isOrdered();
+	bool isBigEndian() const;
+	bool isOptional() const;
+	bool isOrdered() const;
 
-	bool hasGroup();
+	bool hasGroup() const;
 	std::string getGroupSize();
 
-	SpecNode next();
-	SpecNode firstChild();
+	SpecNode next() const;
+	SpecNode firstChild() const;
 	SpecNode* parent();
 
-	size_t getIndex();
-	size_t getIndexTotal();
+	bool isLastNode() const;
+
+	size_t getIndex();			//@todo Delete !!!!
+	size_t getIndexTotal();		//@todo Delete !!!!
 
 protected:
-	std::string getProperty( const std::string& prop );
-	std::string getProperty( const std::string& prop, const std::string& defaultValue );
+	std::string getProperty( const std::string& prop ) const;
+	std::string getProperty( const std::string& prop, const std::string& defaultValue ) const;
 
 private:
 	bpt::ptree::const_iterator _node;
-	SpecNode* _parent;
+	const SpecNode* _parent;
 	size_t _index;
 	size_t _indexTotal;
 };

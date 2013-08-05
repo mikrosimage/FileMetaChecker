@@ -6,15 +6,7 @@
 namespace spec_reader
 {
 
-SpecNode::SpecNode( const bpt::ptree::const_iterator node, const size_t& index, const size_t& indexTotal )
-	: _node( node )
-	, _parent( NULL )
-	, _index( index )
-	, _indexTotal( indexTotal )
-{
-}
-
-SpecNode::SpecNode( const bpt::ptree::const_iterator node, const size_t& index, const size_t& indexTotal, SpecNode* parent )
+SpecNode::SpecNode( const bpt::ptree::const_iterator node, const size_t& index, const size_t& indexTotal, const SpecNode* parent )
 	: _node( node )
 	, _parent( parent )
 	, _index( index )
@@ -26,22 +18,22 @@ SpecNode::~SpecNode()
 {
 }
 
-std::string SpecNode::getId()
+std::string SpecNode::getId() const
 {
 	return getProperty( kId );
 }
 
-std::string SpecNode::getLabel()
+std::string SpecNode::getLabel() const
 {
 	return getProperty( kLabel );
 }
 
-std::string SpecNode::getType()
+std::string SpecNode::getType() const
 {
 	return getProperty( kType );
 }
 
-std::string SpecNode::getDisplayType()
+std::string SpecNode::getDisplayType() const
 {
 	return getProperty( kDisplayType, "" );
 }
@@ -155,27 +147,27 @@ std::map< std::string, std::string > SpecNode::getMap()
 }
 
 
-bool SpecNode::isBigEndian()
+bool SpecNode::isBigEndian() const
 {
 	return ( getProperty( kEndian, kEndianBig ) == kEndianBig );
 }
 
-bool SpecNode::isOptional()
+bool SpecNode::isOptional() const
 {
-	return ( getProperty( kOptional, kOptionalFalse ) == kOptionalTrue );
+	return ( getProperty( kOptional, kFalse ) == kTrue );
 }
 
-bool SpecNode::isOrdered()
+bool SpecNode::isOrdered() const
 {
-	return ( getProperty( kOrdered, kOrderedTrue ) == kOrderedTrue );
+	return ( getProperty( kOrdered, kTrue ) == kTrue );
 }
 
-bool SpecNode::hasGroup()
+bool SpecNode::hasGroup() const
 {
 	return _node->second.get_child_optional( kGroup );
 }
 
-SpecNode SpecNode::next()
+SpecNode SpecNode::next() const
 {
 	bpt::ptree::const_iterator node = _node;
 	size_t index = _index;
@@ -186,7 +178,7 @@ SpecNode SpecNode::next()
 	return SpecNode( ++node, ++index, _indexTotal );
 }
 
-SpecNode SpecNode::firstChild()
+SpecNode SpecNode::firstChild() const
 {
 	try
 	{
@@ -207,7 +199,7 @@ SpecNode* SpecNode::parent()
 	{
 		if( _parent == NULL )
 			throw std::runtime_error( "parent: This node has no parent." );
-		return _parent;
+		return const_cast< SpecNode*>( _parent );
 	}
 	catch( std::runtime_error& e )
 	{
@@ -216,18 +208,23 @@ SpecNode* SpecNode::parent()
 	}
 }
 
-size_t SpecNode::getIndex()
+bool SpecNode::isLastNode() const
+{
+	return ( _index == _indexTotal - 1 );
+}
+
+size_t SpecNode::getIndex()				//@todo Delete !!!!
 {
 	return _index;
 }
 
-size_t SpecNode::getIndexTotal()
+size_t SpecNode::getIndexTotal()		//@todo Delete !!!!
 {
 	return _indexTotal;
 }
 
 
-std::string SpecNode::getProperty( const std::string& prop )
+std::string SpecNode::getProperty( const std::string& prop ) const
 {
 	try 
 	{
@@ -240,7 +237,7 @@ std::string SpecNode::getProperty( const std::string& prop )
 	}
 }
 
-std::string SpecNode::getProperty( const std::string& prop, const std::string& defaultValue )
+std::string SpecNode::getProperty( const std::string& prop, const std::string& defaultValue ) const
 {
 	return _node->second.get< std::string >( prop, defaultValue );
 }

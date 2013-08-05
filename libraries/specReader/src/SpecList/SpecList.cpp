@@ -23,6 +23,9 @@ void SpecList::initDirectoryPaths()
 	std::vector< std::string > dirList;
 	if( const char* env_options = std::getenv( "QC_SPECS_DIR" ) )
 		boost::algorithm::split( dirList, env_options, boost::algorithm::is_any_of(" ") );
+	
+	if( dirList.size() == 0 )
+		LOG_WARNING( "initDirectoryPaths: No specification file found.");
 
 	for( std::string& dirPath : dirList )
 		addDirectoryPath( dirPath );
