@@ -1,0 +1,15 @@
+Import( 'project', 'libs' )
+
+project.StaticLibrary(
+		'comparator',
+		dirs      = ['src'],
+		includes  = ['src'],
+		libraries = [
+			libs.common,
+			libs.specReader,
+			libs.fileReader,
+			libs.basicelement,
+			libs.report,
+			],
+		shared = True
+	)
