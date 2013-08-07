@@ -1,10 +1,16 @@
 #include <memory>
+#include <Number/Number.hpp>
+#include <Data/Data.hpp>
 
 static const std::string kValidator      = "fileValidator";
 static const std::string kSpecification  = "specification";
 static const std::string kElement        = "element";
 static const std::string kData  = "data";		// cf. basic_element, Data.cpp,   getElementInfo()
 static const std::string kValue = "value";		// cf. basic_element, Number.tcc, getElementInfo()
+
+namespace be  = basic_element;
+namespace ben = be::number_element;
+namespace bed = be::data_element;
 
 namespace report_generator
 {

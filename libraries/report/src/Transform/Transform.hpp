@@ -2,12 +2,9 @@
 #define _REPORT_TRANSFORM_HPP_
 
 #include "Report/Report.hpp"
-#include <Tools/ElementTranslator.hpp>
+#include <Element.hpp>
 
 namespace bpt = boost::property_tree;
-namespace be  = basic_element;
-namespace ben = be::number_element;
-namespace bed = be::data_element;
 
 namespace report_generator
 {
@@ -30,11 +27,11 @@ public:
 
 protected:
 	bpt::ptree translate( ReportTree::value_type& rootNode );
-	bpt::ptree extractElement( std::shared_ptr< be::Element > element );
+	bpt::ptree extractElement( std::shared_ptr< basic_element::Element > element );
 	bpt::ptree toXml( std::vector< std::pair< std::string, std::string > > elementInfo );
 
 	template < typename ElementType >
-	std::shared_ptr< ElementType > translateElement( std::shared_ptr< be::Element > element );
+	std::shared_ptr< ElementType > translateElement( std::shared_ptr< basic_element::Element > element );
 
 private:
 	ReportTree  _basicElementTree;
