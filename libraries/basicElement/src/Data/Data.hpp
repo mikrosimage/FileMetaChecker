@@ -23,6 +23,7 @@ public:
 	std::vector< unsigned int > toIntVector();
 	
 	void setSpecData( const std::string& specValue );
+	void setSpecData( const std::vector< std::string >& specValues );
 
 	Element::EStatus checkData();
 	std::vector< std::pair< std::string, std::string > > getElementInfo();
@@ -35,8 +36,9 @@ protected:
 	char* getDataPtr (  ) const;
 	
 private:
-	std::string _specValue;
-	char*       _data;
+	std::string                _specValue;
+	std::vector< std::string > _specValues;
+	char*                      _data;
 };
 
 }

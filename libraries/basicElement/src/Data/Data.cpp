@@ -54,6 +54,9 @@ size_t Data::getSize() const
 
 std::string Data::getAscii() const
 {
+	if( _data == NULL )
+		return "";
+
 	std::stringstream sstr;
 	for (size_t i = 0; i < _size; ++i)
 		sstr << _data[i];
@@ -63,6 +66,9 @@ std::string Data::getAscii() const
 
 std::string Data::getHexa() const
 {
+	if( _data == NULL )
+		return "";
+
 	std::stringstream sstr;
 	char* buffer = new char [ _size ];
 	std::memcpy( buffer, _data, _size );
@@ -89,11 +95,25 @@ std::vector< unsigned int > Data::toIntVector()
 void Data::setSpecData( const std::string& specValue )
 {
 	_specValue = specValue;
+	_size = _specValue.size();
+}
+
+void Data::setSpecData( const std::vector< std::string >& specValues )
+{
+	_specValues = specValues;
+	size_t size = 0;
+	for( std::string value: _specValues )
+	{
+		if( size != 0 && size != value.size() )
+			throw std::runtime_error( "Specification Error: Multiple values must have the same size" );
+		size = value.size();
+	}
+	_size = size;
 }
 
 Element::EStatus Data::checkData()
 {
-	if( _specValue.empty() )
+	if( _specValue.empty() && _specValues.empty() )
 	{
 		setStatus( eStatusPassOver );
 		return eStatusPassOver;
@@ -109,15 +129,27 @@ Element::EStatus Data::checkData()
 		}
 		case eDataTypeAscii :
 		{
-			if( _specValue == getAscii() )
+			if( ! _specValue.empty() && _specValue == getAscii() )
 				status = eStatusValid;
+			if( ! _specValues.empty() )
+			{
+				for( std::string value : _specValues )
+					if( value == getAscii() )
+						status = eStatusValid;
+			}
 			break;
 		}
 
 		case eDataTypeHexa :
 		{
-			if( _specValue == getHexa()  )
+			if( ! _specValue.empty() && _specValue == getHexa()  )
 				status = eStatusValid;
+			if( ! _specValues.empty() )
+			{
+				for( std::string value : _specValues )
+					if( value == getHexa() )
+						status = eStatusValid;
+			}
 			break;
 		}
 

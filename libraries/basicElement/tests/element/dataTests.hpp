@@ -104,6 +104,43 @@ BOOST_AUTO_TEST_CASE( basic_element_data_hexa )
 		data.setData( buffer, sizeof( buffer ) );
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusValid );
 	}
+	{
+		dbe::Data data( eDataTypeHexa );
+		std::vector< std::string > values;
+		values.push_back( "00ff" );
+		data.setSpecData( values );
+		char buffer[] = { 0x00, static_cast< char >( 0xff ) };
+		data.setData( buffer, sizeof( buffer ) );
+		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusValid );
+	}
+	{
+		dbe::Data data( eDataTypeHexa );
+		std::vector< std::string > values;
+		values.push_back( "f00f" );
+		values.push_back( "ff00" );
+		data.setSpecData( values );
+		data.setBigEndianness( false );
+		char buffer[] = { 0x00, static_cast< char >( 0xff ) };
+		data.setData( buffer, sizeof( buffer ) );
+		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusValid );
+	}
+	{
+		dbe::Data data( eDataTypeHexa );
+		std::vector< std::string > values;
+		values.push_back( "f00f" );
+		values.push_back( "0ff0" );
+		data.setSpecData( values );
+		char buffer[] = { 0x00, static_cast< char >( 0xff ) };
+		data.setData( buffer, sizeof( buffer ) );
+		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusInvalid );
+	}
+	{
+		dbe::Data data( eDataTypeHexa );
+		std::vector< std::string > values;
+		values.push_back( "000000" );
+		values.push_back( "ffffffff" );
+		BOOST_CHECK_THROW( data.setSpecData( values ), std::runtime_error );
+	}
 }
 
 BOOST_AUTO_TEST_CASE( basic_element_data_ascii )
@@ -139,6 +176,44 @@ BOOST_AUTO_TEST_CASE( basic_element_data_ascii )
 		char buffer[] = {'d','a','t','a'};
 		data.setData( buffer, sizeof( buffer ) );
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusValid );
+	}
+	{
+		dbe::Data data( eDataTypeAscii );
+		std::vector< std::string > values;
+		values.push_back( "atad" );
+		data.setSpecData( values );
+		data.setBigEndianness( false );
+		char buffer[] = {'d','a','t','a'};
+		data.setData( buffer, sizeof( buffer ) );
+		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusValid );
+	}
+	{
+		dbe::Data data( eDataTypeAscii );
+		std::vector< std::string > values;
+		values.push_back( "atad" );
+		values.push_back( "taad" );
+		data.setSpecData( values );
+		data.setBigEndianness( false );
+		char buffer[] = {'d','a','t','a'};
+		data.setData( buffer, sizeof( buffer ) );
+		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusValid );
+	}
+	{
+		dbe::Data data( eDataTypeAscii );
+		std::vector< std::string > values;
+		values.push_back( "atad" );
+		values.push_back( "taad" );
+		data.setSpecData( values );
+		char buffer[] = {'d','a','t','a'};
+		data.setData( buffer, sizeof( buffer ) );
+		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusInvalid );
+	}
+	{
+		dbe::Data data( eDataTypeAscii );
+		std::vector< std::string > values;
+		values.push_back( "long" );
+		values.push_back( "toolong" );
+		BOOST_CHECK_THROW( data.setSpecData( values ), std::runtime_error );
 	}
 }
 
