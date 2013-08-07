@@ -1,8 +1,7 @@
 Import( 'project', 'libs' )
 
-project.StaticLibrary(
+project.ObjectLibrary(
 		'comparator',
-		dirs      = ['src'],
 		includes  = ['src'],
 		libraries = [
 			libs.common,
@@ -11,5 +10,4 @@ project.StaticLibrary(
 			libs.basicelement,
 			libs.report,
 			],
-		shared = True
 	)
