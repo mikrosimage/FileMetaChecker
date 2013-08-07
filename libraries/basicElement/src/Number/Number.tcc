@@ -93,11 +93,16 @@ NumberType Number< NumberType >::getValue() const
 }
 
 
+template< typename NumberType >
+void Number< NumberType >::addRange( const NumberType& min, const NumberType& max )
+{
+	_ranges.push_back( Range< NumberType >( min, max ) );
+}
 
 template< typename NumberType >
-Range< NumberType >& Number< NumberType >::getRange()
+std::vector< Range< NumberType > >& Number< NumberType >::getRange()
 {
-	return _range;
+	return _ranges;
 }
 
 template< typename NumberType >
@@ -129,14 +134,17 @@ Element::EStatus Number< NumberType >::checkData()
 {
 	_status = eStatusInvalid;
 	
-	if( !_range.isSet() )
+	if( _ranges.empty() )
 	{
 		_status = eStatusPassOver;
 		return eStatusPassOver;
 	}
 	
-	if( _range.isInRange( _numData.value ) )
-		_status = eStatusValid;
+	for( Range< NumberType > range : _ranges )
+	{
+		if( range.isInRange( _numData.value ) )
+			_status = eStatusValid;
+	}
 	
 	return _status;
 }

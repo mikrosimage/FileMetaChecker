@@ -37,8 +37,9 @@ public:
 	void                 getData ( char* buffer ) const;
 	size_t               getSize () const;
 	NumberType           getValue() const;
-	Range< NumberType >& getRange();
 	Map  < NumberType >& getMap  ();
+	void                 addRange( const NumberType& min, const NumberType& max );
+	std::vector< Range< NumberType > >& getRange();
 
 	std::string toString() const;
 
@@ -53,9 +54,9 @@ private:
 	void setSubType();
 
 private:
-	Range< NumberType > _range;
-	Map  < NumberType > _map;
-	NumberData          _numData;
+	std::vector< Range< NumberType > > _ranges;
+	Map  < NumberType >                _map;
+	NumberData                         _numData;
 };
 
 

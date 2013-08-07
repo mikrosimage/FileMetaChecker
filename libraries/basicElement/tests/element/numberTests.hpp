@@ -92,8 +92,8 @@ BOOST_AUTO_TEST_CASE( basic_element_number )
 		num.setLabel( label );
 		BOOST_CHECK_EQUAL( num.getLabel(), label );
 		
-		num.getRange().setRange( min, max );
-		BOOST_CHECK_EQUAL( num.getRange().isSet(), true );
+		num.addRange( min, max );
+		BOOST_CHECK_EQUAL( num.getRange().at(0).isSet(), true );
 
 		num.getMap().addPair( min, label );
 		BOOST_CHECK_EQUAL( num.getMap().getLabel(0), label );
@@ -586,15 +586,36 @@ BOOST_AUTO_TEST_CASE( basic_element_number_checkData )
 	}
 	{
 		nbe::Number< nbe::uint32 > num;
-		num.getRange().setRange( 254, 256 );
+		num.addRange( 254, 256 );
 		num.setData( dataInt32Low, sizeof( dataInt32High ) );
 		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusValid );
 	}
 	{
 		nbe::Number< nbe::uint32 > num;
-		num.getRange().setRange( 256, 256 );
+		num.addRange( 256, 256 );
 		num.setData( dataInt32Low, sizeof( dataInt32High ) );
 		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusInvalid );
+	}
+	{
+		nbe::Number< nbe::uint32 > num;
+		num.addRange( 254, 256 );
+		num.addRange( 0, 1 );
+		num.setData( dataInt32Low, sizeof( dataInt32High ) );
+		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusValid );
+	}
+	{
+		nbe::Number< nbe::uint32 > num;
+		num.addRange( 245, 254 );
+		num.addRange( 0, 1 );
+		num.setData( dataInt32Low, sizeof( dataInt32High ) );
+		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusInvalid );
+	}
+	{
+		nbe::Number< nbe::uint32 > num;
+		num.addRange( 245, 256 );
+		num.addRange( 254, 1000 );
+		num.setData( dataInt32Low, sizeof( dataInt32High ) );
+		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusValid );
 	}
 
 	{
@@ -604,13 +625,13 @@ BOOST_AUTO_TEST_CASE( basic_element_number_checkData )
 	}
 	{
 		nbe::Number< nbe::ieeeExtended > num;
-		num.getRange().setRange( 0, 2 );
+		num.addRange( 0, 2 );
 		num.setData( dataIeeeExtendedOneLittleEndian, sizeof( dataIeeeExtendedOneLittleEndian ) );
 		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusValid );
 	}
 	{
 		nbe::Number< nbe::ieeeExtended > num;
-		num.getRange().setRange( 1.5, 3.2 );
+		num.addRange( 1.5, 3.2 );
 		num.setData( dataIeeeExtendedOneLittleEndian, sizeof( dataIeeeExtendedOneLittleEndian ) );
 		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusInvalid );
 	}
