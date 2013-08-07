@@ -22,10 +22,10 @@ public:
 	std::string getType()  const;
 	std::string getDisplayType() const;
 
-	std::string getCount();
+	std::string getCount() const;
 	std::string getRequired();
 
-	std::vector< std::string > getValues();
+	std::vector< std::string > getValues() const;
 
 	std::vector< std::pair< std::string, std::string > > getRange();
 	std::vector< std::pair< std::string, std::string > > getRepetition();
@@ -41,7 +41,7 @@ public:
 
 	SpecNode next() const;
 	SpecNode firstChild() const;
-	SpecNode* parent();
+	SpecNode* parent() const;
 
 	bool isLastNode() const;
 

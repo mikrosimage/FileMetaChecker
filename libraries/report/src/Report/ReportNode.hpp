@@ -19,6 +19,7 @@ typedef bpt::basic_ptree< std::string, std::shared_ptr< be::Element > >::const_i
 class ReportNode
 {
 public:
+	ReportNode() {}
 	ReportNode( const ReportIterator node, const size_t& index, ReportTree* tree );
 	ReportNode( const ReportIterator node, const size_t& index, ReportTree* tree, ReportNode* parent );
 	~ReportNode();

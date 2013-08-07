@@ -38,7 +38,7 @@ std::string SpecNode::getDisplayType() const
 	return getProperty( kDisplayType, "" );
 }
 
-std::string SpecNode::getCount()
+std::string SpecNode::getCount() const
 {
 	return getProperty( kCount, "" );
 }
@@ -53,7 +53,7 @@ std::string SpecNode::getGroupSize()
 	return getProperty( kGroupSize, "" );
 }
 
-std::vector< std::string > SpecNode::getValues()
+std::vector< std::string > SpecNode::getValues() const
 {
 	std::vector< std::string > values;
 	if( boost::optional< const bpt::ptree& > valuesNode = _node->second.get_child_optional( kValues ) )
@@ -175,7 +175,7 @@ SpecNode SpecNode::next() const
 	if( _index >= _indexTotal - 1 )
 		return SpecNode( node, _indexTotal, _indexTotal );
 
-	return SpecNode( ++node, ++index, _indexTotal );
+	return SpecNode( ++node, ++index, _indexTotal, _parent );
 }
 
 SpecNode SpecNode::firstChild() const
@@ -193,19 +193,9 @@ SpecNode SpecNode::firstChild() const
 	}
 }
 
-SpecNode* SpecNode::parent()
+SpecNode* SpecNode::parent() const
 {
-	try
-	{
-		if( _parent == NULL )
-			throw std::runtime_error( "parent: This node has no parent." );
-		return const_cast< SpecNode*>( _parent );
-	}
-	catch( std::runtime_error& e )
-	{
-		LOG_ERROR( e.what() );
-		throw;
-	}
+	return const_cast< SpecNode*>( _parent );
 }
 
 bool SpecNode::isLastNode() const

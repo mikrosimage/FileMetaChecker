@@ -637,8 +637,6 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_parent )
 		BOOST_CHECK_EQUAL( child.parent()->getIndex(),      1 );
 		BOOST_CHECK_EQUAL( child.parent()->getId(),  "value2" );
 		BOOST_CHECK_EQUAL( child.parent()->getIndexTotal(), 4 );
-		
-		BOOST_CHECK_THROW( node.parent(), std::runtime_error );
 	}
 }
 
