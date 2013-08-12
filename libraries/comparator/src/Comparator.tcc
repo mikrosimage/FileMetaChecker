@@ -21,27 +21,9 @@ Comparator::~Comparator()
 {
 }
 
-
-void Comparator::compare( const std::string& specId, rg::Report& report )
-{
-	// @todo: init ExpressionParser variable map with first pass! or not...
-	
-	_report = &report;
-	sr::Specification spec = _specs.getSpec( specId );
-	sr::SpecNode node = spec.getFirstNode();
-
-	LOG_TRACE( "\ncompare: Specification ID: " << spec.getId() );
-	LOG_TRACE( "compare:    First node ID: "   << node.getId() );
-	LOG_TRACE( "compare:      Report size: "   << _report->getSize() );
-	
-	checkNode( node );
-}
-
-
 template< >
 EDataType Comparator::getNodeSubType< EDataType >( const std::string& nodeType )
 {
-	LOG_INFO( "EDataType" );
 	if( nodeType == kAscii  ) return eDataTypeAscii;
 	if( nodeType == kHexa   ) return eDataTypeHexa;
 	if( nodeType == kRaw    ) return eDataTypeRaw;
@@ -51,7 +33,6 @@ EDataType Comparator::getNodeSubType< EDataType >( const std::string& nodeType )
 template< >
 ENumberType Comparator::getNodeSubType< ENumberType >( const std::string& nodeType )
 {
-	LOG_INFO( "ENumberType" );
 	if( nodeType == kInt8         ) return eNumberTypeInt8;
 	if( nodeType == kUInt8        ) return eNumberTypeUInt8;
 	if( nodeType == kInt16        ) return eNumberTypeInt16;
@@ -69,12 +50,13 @@ ENumberType Comparator::getNodeSubType< ENumberType >( const std::string& nodeTy
 template< typename ElementType >
 std::shared_ptr< ElementType > Comparator::getElement( const sr::SpecNode& node )
 {
-	LOG_INFO( "°°° NUMBER ! °°°" );
 	std::shared_ptr< ElementType > element( new ElementType() );
 	element->setId( node.getId() );
 	element->setLabel( node.getLabel() );
 	element->setBigEndianness( node.isBigEndian() );
 	// element->setData( /*fromFileData*/, element->getSize() );		// @todo: when file reading supported!
+	element->setRanges( node.getRange() );
+
 	element->checkData();
 	return element;
 }
@@ -82,7 +64,6 @@ std::shared_ptr< ElementType > Comparator::getElement( const sr::SpecNode& node 
 template< >
 std::shared_ptr< be::data_element::Data > Comparator::getElement< be::data_element::Data >( const sr::SpecNode& node )
 {
-	LOG_INFO( "°°° DATA ! °°°" );
 	EDataType subtype = getNodeSubType< EDataType >( node.getType() );
 	std::shared_ptr< be::data_element::Data > element( new be::data_element::Data( subtype ) );
 	element->setId( node.getId() );
@@ -103,63 +84,70 @@ std::shared_ptr< be::data_element::Data > Comparator::getElement< be::data_eleme
 }
 
 
-void Comparator::checkNode( const sr::SpecNode& node, const bool& isFirstChild )
+void Comparator::compare( const std::string& specId, rg::Report& report )
 {
-	LOG_TRACE( "\nCheck: " << node.getId() );
-
-	checkElementFromNode( node, isFirstChild );
-	if( node.hasGroup() )
-		checkNode( node.firstChild(), true );
-	if( ! node.isLastNode() )
-		checkNode( node.next() );
+	// @todo: init ExpressionParser variable map with first pass! or not...
+	LOG_TRACE( "COMPARE !");
+	_report = &report;
+	
+	sr::Specification spec = _specs.getSpec( specId );
+	sr::SpecNode      node = spec.getFirstNode();
+	rg::ReportNode    reportNode;
+	checkNode( node, reportNode );
 }
 
-void Comparator::checkElementFromNode( const sr::SpecNode& node, const bool& isFirstChild )
+void Comparator::checkNode( const sr::SpecNode& node, report_generator::ReportNode& reportNode, const bool& isFirstChild )
+{
+	LOG_TRACE( "CHECK NODE " << node.getId() );
+	std::shared_ptr< be::Element > element( getElementFromNode( node ) );
+
+	if( isFirstChild )
+	{
+		rg::ReportNode newReportNode = reportNode.appendChild( element );
+
+		if( node.hasGroup() )
+			checkNode( node.firstChild(), newReportNode, true );
+
+		if( ! node.isLastNode() )
+			checkNode( node.next(), newReportNode );
+		return;
+	}
+
+	if( node.parent() == NULL )
+		reportNode = _report->addRootElement( element );
+	else
+		reportNode = reportNode.appendNext( element );
+
+	if( node.hasGroup() )
+		checkNode( node.firstChild(), reportNode, true );
+
+	if( ! node.isLastNode() )
+		checkNode( node.next(), reportNode );
+
+}
+
+std::shared_ptr< be::Element > Comparator::getElementFromNode( const sr::SpecNode& node )
 {
 	if( getNodeSubType< EDataType >( node.getType() ) != eDataTypeUnknown )
-		addElementToReport( node, getElement< be::data_element::Data >( node ), isFirstChild );
+		return getElement< be::data_element::Data >( node );
 
 	switch( getNodeSubType< ENumberType >( node.getType() ) )
 	{
 		case eNumberTypeUnknown      : break;
-		case eNumberTypeInt8         : addElementToReport( node, getElement< be::number_element::Number< be::number_element::int8         > >( node ), isFirstChild ); break;
-		case eNumberTypeUInt8        : addElementToReport( node, getElement< be::number_element::Number< be::number_element::uint8        > >( node ), isFirstChild );  break;
-		case eNumberTypeInt16        : addElementToReport( node, getElement< be::number_element::Number< be::number_element::int16        > >( node ), isFirstChild );  break;
-		case eNumberTypeUInt16       : addElementToReport( node, getElement< be::number_element::Number< be::number_element::uint16       > >( node ), isFirstChild );  break;
-		case eNumberTypeInt32        : addElementToReport( node, getElement< be::number_element::Number< be::number_element::int32        > >( node ), isFirstChild );  break;
-		case eNumberTypeUInt32       : addElementToReport( node, getElement< be::number_element::Number< be::number_element::uint32       > >( node ), isFirstChild );  break;
-		case eNumberTypeInt64        : addElementToReport( node, getElement< be::number_element::Number< be::number_element::int64        > >( node ), isFirstChild );  break;
-		case eNumberTypeUInt64       : addElementToReport( node, getElement< be::number_element::Number< be::number_element::uint64       > >( node ), isFirstChild );  break;
-		case eNumberTypeFloat        : addElementToReport( node, getElement< be::number_element::Number< float                            > >( node ), isFirstChild );  break;
-		case eNumberTypeDouble       : addElementToReport( node, getElement< be::number_element::Number< double                           > >( node ), isFirstChild );    break;
-		case eNumberTypeIeeeExtended : addElementToReport( node, getElement< be::number_element::Number< be::number_element::ieeeExtended > >( node ), isFirstChild );    break;
+		case eNumberTypeInt8         : return getElement< be::number_element::Number< be::number_element::int8         > >( node ); break;
+		case eNumberTypeUInt8        : return getElement< be::number_element::Number< be::number_element::uint8        > >( node ); break;
+		case eNumberTypeInt16        : return getElement< be::number_element::Number< be::number_element::int16        > >( node ); break;
+		case eNumberTypeUInt16       : return getElement< be::number_element::Number< be::number_element::uint16       > >( node ); break;
+		case eNumberTypeInt32        : return getElement< be::number_element::Number< be::number_element::int32        > >( node ); break;
+		case eNumberTypeUInt32       : return getElement< be::number_element::Number< be::number_element::uint32       > >( node ); break;
+		case eNumberTypeInt64        : return getElement< be::number_element::Number< be::number_element::int64        > >( node ); break;
+		case eNumberTypeUInt64       : return getElement< be::number_element::Number< be::number_element::uint64       > >( node ); break;
+		case eNumberTypeFloat        : return getElement< be::number_element::Number< float                            > >( node ); break;
+		case eNumberTypeDouble       : return getElement< be::number_element::Number< double                           > >( node ); break;
+		case eNumberTypeIeeeExtended : return getElement< be::number_element::Number< be::number_element::ieeeExtended > >( node ); break;
 	}
+	throw std::runtime_error( "getElementFromNode: Unknown type" );
 }
-
-void Comparator::addElementToReport( const sr::SpecNode& node, const std::shared_ptr< be::Element >& element, const bool& isFirstChild )
-{
-	LOG_TRACE( "parent  ? " << node.parent() );
-	LOG_TRACE( "lastNode? " << node.isLastNode() );
-	if( node.parent() == NULL )
-	{
-		_currentReportNode = _report->addRootElement( element );
-	}
-	else if( isFirstChild )
-	{
-		_currentReportNode = _currentReportNode.appendChild( element );
-	}
-	else if( node.isLastNode() )
-	{
-		_currentReportNode = *_currentReportNode.parent();
-	}
-	else
-	{
-		_currentReportNode = _currentReportNode.appendNext( element );
-	}
-	LOG_TRACE( "==> report size: " << _report->getSize() );
-}
-
-
 
 }
 
