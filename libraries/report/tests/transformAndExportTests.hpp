@@ -36,8 +36,14 @@ BOOST_AUTO_TEST_CASE( report_transform_and_export )
 		LOG_INFO( ">>> report_transform_and_export <<<" );
 		Transform tr( elementReport );
 		Export exporter( tr.transformTree( Transform::eReportTypeXml ) );
-		exporter.writeXml( "report.xml" );
-		exporter.writeXml( "report.xml", true );
+		exporter.writeXmlFile( "report.xml" );
+		exporter.writeXmlFile( "report.xml", true );
+	}
+	{
+		LOG_INFO( ">>> report_transform_and_export <<<" );
+		Transform tr( elementReport );
+		Export exporter( tr.transformTree( Transform::eReportTypeXml ) );
+		LOG_INFO( exporter.getXmlString() );
 	}
 }
 
