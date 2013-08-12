@@ -617,7 +617,7 @@ BOOST_AUTO_TEST_CASE( basic_element_number_checkData )
 		num.setData( dataInt32Low, sizeof( dataInt32High ) );
 		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusValid );
 	}
-
+	
 	{
 		nbe::Number< nbe::ieeeExtended > num;
 		num.setData( dataIeeeExtendedOneLittleEndian, sizeof( dataIeeeExtendedOneLittleEndian ) );
@@ -634,6 +634,62 @@ BOOST_AUTO_TEST_CASE( basic_element_number_checkData )
 		num.addRange( 1.5, 3.2 );
 		num.setData( dataIeeeExtendedOneLittleEndian, sizeof( dataIeeeExtendedOneLittleEndian ) );
 		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusInvalid );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( basic_element_number_ranges_fromString )
+{
+	LOG_INFO( "\n>>> basic_element_number_ranges_fromString <<<" );
+	{
+		std::vector< std::pair< std::string, std::string > > ranges { {"245", "256"}, {"254", "1000"} };
+		nbe::Number< nbe::uint32 > num;
+		num.setRanges( ranges );
+		num.setData( dataInt32Low, sizeof( dataInt32High ) );
+		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusValid );
+	}
+
+	{
+		std::vector< std::pair< std::string, std::string > > ranges { {"-1", "1"} };
+		nbe::Number< nbe::int8 > num;
+		num.setRanges( ranges );
+		num.setData( dataInt8Low, sizeof( dataInt8Low ) );
+		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusValid );
+	}
+	{
+		std::vector< std::pair< std::string, std::string > > ranges { { "0", "1" } };
+		nbe::Number< nbe::uint8 > num;
+		num.setRanges( ranges );
+		num.setData( dataInt8Low, sizeof( dataInt8Low ) );
+		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusValid );
+	}
+	{
+		std::vector< std::pair< std::string, std::string > > ranges { { "10", "111" } };
+		nbe::Number< nbe::uint8 > num;
+		num.setRanges( ranges );
+		num.setData( dataInt8Low, sizeof( dataInt8Low ) );
+		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusInvalid );
+	}
+
+	{
+		std::vector< std::pair< std::string, std::string > > ranges { { "0", "128" } };
+		nbe::Number< nbe::int8 > num;
+		BOOST_CHECK_THROW( num.setRanges( ranges ), std::range_error );
+	}
+	{
+		std::vector< std::pair< std::string, std::string > > ranges { { "-129", "0" } };
+		nbe::Number< nbe::int8 > num;
+		BOOST_CHECK_THROW( num.setRanges( ranges ), std::range_error );
+	}
+
+	{
+		std::vector< std::pair< std::string, std::string > > ranges { { "-1", "0" } };
+		nbe::Number< nbe::uint8 > num;
+		BOOST_CHECK_THROW( num.setRanges( ranges ), std::range_error );
+	}
+	{
+		std::vector< std::pair< std::string, std::string > > ranges { { "0", "256" } };
+		nbe::Number< nbe::uint8 > num;
+		BOOST_CHECK_THROW( num.setRanges( ranges ), std::range_error );
 	}
 }
 

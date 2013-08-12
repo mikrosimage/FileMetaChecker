@@ -43,6 +43,7 @@ void Number< uint8 >::translate( const char* data )
 }
 
 
+
 template< typename NumberType >
 std::string Number< NumberType >::toString() const
 {
@@ -65,6 +66,64 @@ std::string Number< uint8 >::toString( ) const
 	std::stringstream sstr;
 	sstr << (int) _numData.value;
 	return sstr.str();
+}
+
+template< typename NumberType >
+NumberType Number< NumberType >::fromString( const std::string& value )
+{
+	try
+	{
+		NumberType ret;
+		std::stringstream sstr( value );
+		sstr >> ret;
+		LOG_INFO( "fromString: " << ret );
+		return ret;
+	}
+	catch( const std::range_error& e )
+	{
+		LOG_ERROR( e.what() );
+		throw;
+	}
+}
+
+template< >
+int8 Number< int8 >::fromString( const std::string& value )
+{
+	try
+	{
+		short ret;
+		std::stringstream sstr( value );
+		sstr >> ret;
+		LOG_INFO( "fromString: " << ret );
+		if( ret > 127 || ret < -128 )
+			throw std::range_error( "fromString: string cannot be converted to int8" );
+		return (int8) ret;
+	}
+	catch( const std::range_error& e )
+	{
+		LOG_ERROR( e.what() );
+		throw;
+	}
+}
+
+template< >
+uint8 Number< uint8 >::fromString( const std::string& value )
+{
+	try
+	{
+		unsigned short ret;
+		std::stringstream sstr( value );
+		sstr >> ret;
+		LOG_INFO( "fromString: " << ret );
+		if( ret > 255 || ret < 0 )
+			throw std::range_error( "fromString: string cannot be converted to uint8" );
+		return (uint8) ret;
+	}
+	catch( const std::range_error& e )
+	{
+		LOG_ERROR( e.what() );
+		throw;
+	}
 }
 
 
@@ -97,6 +156,13 @@ template< typename NumberType >
 void Number< NumberType >::addRange( const NumberType& min, const NumberType& max )
 {
 	_ranges.push_back( Range< NumberType >( min, max ) );
+}
+
+template< typename NumberType >
+void Number< NumberType >::setRanges( const std::vector< std::pair< std::string, std::string > >& ranges )
+{
+	for( std::pair< std::string, std::string > range : ranges )
+		addRange( fromString( range.first ), fromString( range.second ) );
 }
 
 template< typename NumberType >

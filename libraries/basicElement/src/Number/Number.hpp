@@ -38,7 +38,9 @@ public:
 	size_t               getSize () const;
 	NumberType           getValue() const;
 	Map  < NumberType >& getMap  ();
-	void                 addRange( const NumberType& min, const NumberType& max );
+
+	void addRange( const NumberType& min, const NumberType& max );
+	void setRanges( const std::vector< std::pair< std::string, std::string > >& ranges );
 	std::vector< Range< NumberType > >& getRange();
 
 	std::string toString() const;
@@ -46,11 +48,15 @@ public:
 	EStatus     checkData();
 	std::vector< std::pair< std::string, std::string > > getElementInfo();
 
-	std::string getStringFromType();
-
-private:
+protected:
+	NumberType fromString( const std::string& value );
 	void setSize   ();
 	void translate ( const char* data );
+
+public:
+	std::string getStringFromType();
+
+protected:
 	void setSubType();
 
 private:
