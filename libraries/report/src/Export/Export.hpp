@@ -13,8 +13,10 @@ class Export
 public:
 	Export( const bpt::ptree& report );
 	
-	void writeJson( const std::string& filename );
-	void writeXml ( const std::string& filename, bool compact = false );
+	void writeJsonFile( const std::string& filename );
+	void writeXmlFile ( const std::string& filename, bool compact = false );
+	std::string getJsonString();
+	std::string getXmlString();
 	
 private:
 	bpt::ptree _report;
