@@ -72,7 +72,7 @@ std::vector< std::string > SpecNode::getValues() const
 	return values;
 }
 
-std::vector< std::pair< std::string, std::string > > SpecNode::getRange()
+std::vector< std::pair< std::string, std::string > > SpecNode::getRange() const
 {
 	std::vector< std::pair< std::string, std::string > > ranges;
 	if( boost::optional< const bpt::ptree& > rangeNode = _node->second.get_child_optional( kRange ) )
@@ -93,7 +93,7 @@ std::vector< std::pair< std::string, std::string > > SpecNode::getRange()
 	return ranges;
 }
 
-std::vector< std::pair< std::string, std::string > > SpecNode::getRepetition()
+std::vector< std::pair< std::string, std::string > > SpecNode::getRepetition() const
 {
 	std::vector< std::pair< std::string, std::string > > repetitions;
 	if( boost::optional< const bpt::ptree& > repetitionNode = _node->second.get_child_optional( kRepetition ) )

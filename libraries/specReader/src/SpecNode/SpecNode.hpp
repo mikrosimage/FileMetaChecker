@@ -27,8 +27,8 @@ public:
 
 	std::vector< std::string > getValues() const;
 
-	std::vector< std::pair< std::string, std::string > > getRange();
-	std::vector< std::pair< std::string, std::string > > getRepetition();
+	std::vector< std::pair< std::string, std::string > > getRange() const;
+	std::vector< std::pair< std::string, std::string > > getRepetition() const;
 
 	std::map< std::string, std::string > getMap();
 
