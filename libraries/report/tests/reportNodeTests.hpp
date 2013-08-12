@@ -17,12 +17,20 @@ BOOST_AUTO_TEST_CASE( report_report_node )
 		ReportNode rptNode1( tree.get_child( "report" ).begin(), 0, &tree );
 		BOOST_CHECK_EQUAL( rptNode1.getIndex(), 0 );
 		BOOST_CHECK_EQUAL( rptNode1.getSecond()->begin()->first, "0" );
-		BOOST_CHECK_THROW( rptNode1.parent(), std::runtime_error );
+
+		bool parent = true;
+		if( rptNode1.parent() == NULL ) parent = false;
+		BOOST_CHECK_EQUAL( parent, false );
+
 
 		ReportNode rptNode2 = rptNode1.appendNext( dataPtr );
 		BOOST_CHECK_EQUAL( rptNode2.getIndex(), 1 );
 		BOOST_CHECK_EQUAL( rptNode2.getSecond()->begin()->first, "1" );
-		BOOST_CHECK_THROW( rptNode2.parent(), std::runtime_error );
+
+		parent = true;
+		if( rptNode2.parent() == NULL ) parent = false;
+		BOOST_CHECK_EQUAL( parent, false );
+		
 
 		ReportNode rptNode3 = rptNode2.appendChild( numPtr );
 		BOOST_CHECK_EQUAL( rptNode3.getIndex(), 0 );
@@ -71,7 +79,9 @@ BOOST_AUTO_TEST_CASE( report_report_node )
 		BOOST_CHECK_EQUAL( subchild.parent()->getSecond()->begin()->first, "2-1" );
 		BOOST_CHECK_EQUAL( subchild.parent()->parent()->getSecond()->begin()->first, "2" );
 
-		BOOST_CHECK_THROW( subchild.parent()->parent()->parent(), std::runtime_error );
+		bool parent = true;
+		if( subchild.parent()->parent()->parent() == NULL ) parent = false;
+		BOOST_CHECK_EQUAL( parent, false );
 	}
 }
 

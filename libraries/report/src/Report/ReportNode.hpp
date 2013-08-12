@@ -19,9 +19,8 @@ typedef bpt::basic_ptree< std::string, std::shared_ptr< be::Element > >::const_i
 class ReportNode
 {
 public:
-	ReportNode() {}
-	ReportNode( const ReportIterator node, const size_t& index, ReportTree* tree );
-	ReportNode( const ReportIterator node, const size_t& index, ReportTree* tree, ReportNode* parent );
+	ReportNode();
+	ReportNode( const ReportIterator node, const size_t& index, ReportTree* tree, ReportNode* parent = NULL );
 	~ReportNode();
 
 	ReportNode appendNext ( std::shared_ptr< be::Element > element );
@@ -29,6 +28,15 @@ public:
 	ReportNode* parent();
 	ReportTree* getSecond();
 	size_t getIndex();
+
+	ReportNode& operator=( const ReportNode& node )
+	{
+		_nodeIt = node._nodeIt;
+		_parent = node._parent;
+		_tree   = node._tree;
+		_index  = node._index;
+		return *this;
+	}
 
 private:
 	ReportIterator _nodeIt;
