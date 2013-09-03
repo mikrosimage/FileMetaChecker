@@ -51,11 +51,18 @@ template< typename ElementType >
 std::shared_ptr< ElementType > Comparator::getElement( const sr::SpecNode& node )
 {
 	std::shared_ptr< ElementType > element( new ElementType() );
+	size_t size = element->getSize();
+	char buffer[ size ];
+
 	element->setId( node.getId() );
 	element->setLabel( node.getLabel() );
 	element->setBigEndianness( node.isBigEndian() );
-	// element->setData( /*fromFileData*/, element->getSize() );		// @todo: when file reading supported!
+
+	_file->readData( buffer, size );
+
+	element->setData( buffer, size );
 	element->setRanges( node.getRange() );
+	element->setMap( node.getMap() );
 
 	element->checkData();
 	return element;
@@ -66,19 +73,23 @@ std::shared_ptr< be::data_element::Data > Comparator::getElement< be::data_eleme
 {
 	EDataType subtype = getNodeSubType< EDataType >( node.getType() );
 	std::shared_ptr< be::data_element::Data > element( new be::data_element::Data( subtype ) );
+	
 	element->setId( node.getId() );
 	element->setLabel( node.getLabel() );
 	element->setBigEndianness( node.isBigEndian() );
 	element->setSpecData( node.getValues() );
 
-	// size_t size = element->getSize();
+	size_t size = element->getSize();
+	char buffer[ size ];
+
 	// if( size == 0 && ! node.getCount().empty() )						// @todo: when variables map is got!
 	// {
 	// 	be::expression_parser::ExpressionParser< size_t > sizeParser( /*variablesMap*/ );
 	// 	size = sizeParser.getExpressionResult< size_t >( node.getCount() );
 	// }
-	// element->setData( /*fromFileData*/, size );						// @todo: when file reading supported!
 
+	_file->readData( buffer, size );
+	element->setData( buffer, size );
 	element->checkData();
 	return element;
 }
