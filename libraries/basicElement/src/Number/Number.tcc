@@ -206,7 +206,7 @@ template< typename NumberType >
 Element::EStatus Number< NumberType >::checkData()
 {
 	_status = eStatusInvalid;
-	
+
 	if( _ranges.empty() )
 	{
 		_status = eStatusPassOver;
@@ -231,7 +231,23 @@ std::vector< std::pair< std::string, std::string > > Number< NumberType >::getEl
 	elemInfo.insert( elemInfo.end(), commonInfo.begin(), commonInfo.end() );
 
 	elemInfo.push_back( std::make_pair( "type",   getStringFromType() ) );
-	elemInfo.push_back( std::make_pair( "value",  toString()          ) );
+
+	if( _map.getSize() == 0 )
+	{
+		elemInfo.push_back( std::make_pair( "value", toString() ) );
+	}
+	else
+	{
+		std::string value = _map.getLabel( _numData.value );
+		
+		if( ! value.empty() )
+			value.append( " (" + toString() + ")" );
+		else
+			value = "- unknown - (" + toString() + ")";
+		
+		elemInfo.push_back( std::make_pair( "value", value ) );
+	}
+
 	return elemInfo;
 }
 
