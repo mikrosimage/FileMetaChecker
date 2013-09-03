@@ -76,7 +76,7 @@ NumberType Number< NumberType >::fromString( const std::string& value )
 		NumberType ret;
 		std::stringstream sstr( value );
 		sstr >> ret;
-		LOG_INFO( "fromString: " << ret );
+		LOG_TRACE( "fromString: " << ret );
 		return ret;
 	}
 	catch( const std::range_error& e )
@@ -94,7 +94,7 @@ int8 Number< int8 >::fromString( const std::string& value )
 		short ret;
 		std::stringstream sstr( value );
 		sstr >> ret;
-		LOG_INFO( "fromString: " << ret );
+		LOG_TRACE( "fromString: " << ret );
 		if( ret > 127 || ret < -128 )
 			throw std::range_error( "fromString: string cannot be converted to int8" );
 		return (int8) ret;
@@ -114,7 +114,7 @@ uint8 Number< uint8 >::fromString( const std::string& value )
 		unsigned short ret;
 		std::stringstream sstr( value );
 		sstr >> ret;
-		LOG_INFO( "fromString: " << ret );
+		LOG_TRACE( "fromString: " << ret );
 		if( ret > 255 || ret < 0 )
 			throw std::range_error( "fromString: string cannot be converted to uint8" );
 		return (uint8) ret;
@@ -175,6 +175,13 @@ template< typename NumberType >
 Map< NumberType >& Number< NumberType >::getMap()
 {
 	return _map;
+}
+
+template< typename NumberType >
+void Number< NumberType >::setMap( const std::map< std::string, std::string >& map )
+{
+	for( const std::pair< std::string, std::string > mapPair : map )
+		_map.addPair( fromString( mapPair.first ), mapPair.second );	
 }
 
 template< typename NumberType >

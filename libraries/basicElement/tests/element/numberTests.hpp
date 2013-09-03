@@ -74,15 +74,15 @@ BOOST_AUTO_TEST_CASE( basic_element_number )
 
 	nbe::Number< nbe::uint8 > num;
 
-	nbe::uint8 min = 0;
-	nbe::uint8 max = 10;
-
-	std::map< nbe::uint8, std::string > map;
-	map.insert( std::pair< nbe::uint8, std::string >( 1, "First number"  ) );
-	map.insert( std::pair< nbe::uint8, std::string >( 2, "Second number" ) );
-	map.insert( std::pair< nbe::uint8, std::string >( 3, "Third number"  ) );
-
 	{
+		nbe::uint8 min = 0;
+		nbe::uint8 max = 10;
+
+		std::map< nbe::uint8, std::string > map;
+		map.insert( std::pair< nbe::uint8, std::string >( 1, "First number"  ) );
+		map.insert( std::pair< nbe::uint8, std::string >( 2, "Second number" ) );
+		map.insert( std::pair< nbe::uint8, std::string >( 3, "Third number"  ) );
+
 		BOOST_CHECK_EQUAL( num.getType(),   eTypeNumber  );
 		BOOST_CHECK_EQUAL( num.getStatus(), be::Element::eStatusUnknown );
 
@@ -100,6 +100,29 @@ BOOST_AUTO_TEST_CASE( basic_element_number )
 		BOOST_CHECK_EQUAL( num.getMap().getSize(), 1 );
 
 		num.getMap().setMap( map );
+		BOOST_CHECK_EQUAL( num.getMap().getLabel(0), ""              );
+		BOOST_CHECK_EQUAL( num.getMap().getLabel(1), "First number"  );
+		BOOST_CHECK_EQUAL( num.getMap().getLabel(2), "Second number" );
+		BOOST_CHECK_EQUAL( num.getMap().getLabel(3), "Third number"  );
+		BOOST_CHECK_EQUAL( num.getMap().getSize(), 3 );
+	}
+
+	{
+		std::map< std::string, std::string > map;
+		map.insert( std::pair< std::string, std::string >( "1", "First number"  ) );
+		map.insert( std::pair< std::string, std::string >( "2", "Second number" ) );
+		map.insert( std::pair< std::string, std::string >( "3", "Third number"  ) );
+
+		BOOST_CHECK_EQUAL( num.getType(),   eTypeNumber  );
+		BOOST_CHECK_EQUAL( num.getStatus(), be::Element::eStatusUnknown );
+
+		num.setId( id );
+		BOOST_CHECK_EQUAL( num.getId(), id );
+
+		num.setLabel( label );
+		BOOST_CHECK_EQUAL( num.getLabel(), label );
+
+		num.setMap( map );
 		BOOST_CHECK_EQUAL( num.getMap().getLabel(0), ""              );
 		BOOST_CHECK_EQUAL( num.getMap().getLabel(1), "First number"  );
 		BOOST_CHECK_EQUAL( num.getMap().getLabel(2), "Second number" );

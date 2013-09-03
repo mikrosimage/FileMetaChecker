@@ -39,6 +39,8 @@ public:
 	NumberType           getValue() const;
 	Map  < NumberType >& getMap  ();
 
+	void setMap( const std::map< std::string, std::string >& map );
+
 	void addRange( const NumberType& min, const NumberType& max );
 	void setRanges( const std::vector< std::pair< std::string, std::string > >& ranges );
 	std::vector< Range< NumberType > >& getRange();
