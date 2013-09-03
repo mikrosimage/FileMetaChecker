@@ -131,7 +131,7 @@ std::vector< std::pair< std::string, std::string > > SpecNode::getRepetition() c
 	return repetitions;
 }
 
-std::map< std::string, std::string > SpecNode::getMap()
+std::map< std::string, std::string > SpecNode::getMap() const
 {
 	std::map< std::string, std::string > map;
 
