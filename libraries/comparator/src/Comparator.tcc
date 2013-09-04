@@ -78,16 +78,17 @@ std::shared_ptr< be::data_element::Data > Comparator::getElement< be::data_eleme
 	element->setLabel( node.getLabel() );
 	element->setBigEndianness( node.isBigEndian() );
 	element->setSpecData( node.getValues() );
+	element->setDisplayType( node.getDisplayType() );
 
 	size_t size = element->getSize();
+	if( size == 0 && ! node.getCount().empty() )		// @todo: create a map of variables for expression parser!
+	{
+		std::map < std::string, size_t > varMap;				// @todelete: when variables map is got!
+		be::expression_parser::ExpressionParser sizeParser( varMap );
+		size = sizeParser.getExpressionResult< size_t >( node.getCount() );
+	}
+
 	char buffer[ size ];
-
-	// if( size == 0 && ! node.getCount().empty() )						// @todo: when variables map is got!
-	// {
-	// 	be::expression_parser::ExpressionParser< size_t > sizeParser( /*variablesMap*/ );
-	// 	size = sizeParser.getExpressionResult< size_t >( node.getCount() );
-	// }
-
 	_file->readData( buffer, size );
 	element->setData( buffer, size );
 	element->checkData();
@@ -97,7 +98,6 @@ std::shared_ptr< be::data_element::Data > Comparator::getElement< be::data_eleme
 
 void Comparator::compare( const std::string& specId, rg::Report& report )
 {
-	// @todo: init ExpressionParser variable map with first pass! or not...
 	LOG_TRACE( "COMPARE !");
 	_report = &report;
 	

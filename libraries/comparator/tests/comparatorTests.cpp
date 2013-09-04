@@ -35,7 +35,7 @@ void fillVectorXml( bpt::ptree& tree, std::vector< std::string >& vect, const st
 		if( child.first == "<xmlattr>" )
 			continue;
 		vect.push_back( child.second.get< std::string >( key ) );
-		LOG_INFO( child.first << " " <<  child.second.get< std::string >( key ) << "\tsize: "<< child.second.size() );
+		// LOG_INFO( child.first << " " <<  child.second.get< std::string >( key ) << "\tsize: "<< child.second.size() );
 		fillVectorXml( child.second, vect, key );
 	}
 }
@@ -45,7 +45,7 @@ void fillVectorJson( bpt::ptree& tree, std::vector< std::string >& vect, const s
 	for( bpt::ptree::value_type& child : tree )
 	{
 		vect.push_back( child.second.get< std::string >( key ) );
-		LOG_INFO( child.second.get< std::string >( key ) << "\tsize: "<< child.second.size() );
+		// LOG_INFO( child.second.get< std::string >( key ) << "\tsize: "<< child.second.size() );
 		if( boost::optional< bpt::ptree& > groupNode = child.second.get_child_optional( "group" ) )
 			fillVectorJson( groupNode.get(), vect, key );
 	}
@@ -95,14 +95,14 @@ BOOST_AUTO_TEST_CASE( comparator_comparator )
 		spec.setFromString( jsonString );
 		specList.addSpecification( spec );
 
-		std::ifstream is;
-		is.open( "test.txt", std::ios::in );
-		fr::FileReader file( is.rdbuf() );
+		std::stringbuf buffer;
+		buffer.str( "FILE reader" );
+		fr::FileReader file( &buffer );
 
 		Comparator comp( &file, specList );
 		
-		// rg::Report report;
-		// BOOST_CHECK_THROW( comp.compare( "test", report ), std::runtime_error );
+		rg::Report report;
+		BOOST_CHECK_THROW( comp.compare( "test", report ), std::runtime_error );
 	}
 }
 
@@ -147,18 +147,8 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_only_root )
 		specList.addSpecification( spec );
 
 		std::stringbuf buffer;
+		buffer.str( "FILE reader" );
 		fr::FileReader file( &buffer );
-		buffer.sputc( 'F' );
-		buffer.sputc( 'I' );
-		buffer.sputc( 'L' );
-		buffer.sputc( 'E' );
-		buffer.sputc( ' ' );
-		buffer.sputc( 'r' );
-		buffer.sputc( 'e' );
-		buffer.sputc( 'a' );
-		buffer.sputc( 'd' );
-		buffer.sputc( 'e' );
-		buffer.sputc( 'r' );
 
 		Comparator comp( &file, specList );
 		
@@ -168,9 +158,10 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_only_root )
 		rg::Transform tr( report );
 		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
 		
-		exporter.writeXmlFile( "test.xml" );
-
 		LOG_INFO( "\n==== REPORT ====" );
+		// exporter.writeXmlFile( "test.xml" );
+		LOG_INFO( exporter.getXmlString() );
+
 		std::istringstream  xmlStream( exporter.getXmlString() );
 		std::istringstream jsonStream( jsonString );
 		bpt::ptree  xmlReport;
@@ -184,10 +175,7 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_only_root )
 		std::vector< std::string > jsonIds;
 
 		fillVectorXml( xmlReport, xmlIds, "<xmlattr>.id" );
-		LOG_INFO( std::endl );
 		fillVectorJson( jsonReport.get_child( "header" ), jsonIds, "id" );
-		LOG_INFO( " xmlIds: " <<  xmlIds.size() );
-		LOG_INFO( "jsonIds: " << jsonIds.size() );
 
 		BOOST_CHECK_EQUAL( xmlIds.size(), jsonIds.size() );
 		for( size_t i = 0; i < xmlIds.size(); ++i )
@@ -244,18 +232,8 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_one_child )
 		specList.addSpecification( spec );
 
 		std::stringbuf buffer;
+		buffer.str( "FILE reader" );
 		fr::FileReader file( &buffer );
-		buffer.sputc( 'F' );
-		buffer.sputc( 'I' );
-		buffer.sputc( 'L' );
-		buffer.sputc( 'E' );
-		buffer.sputc( ' ' );
-		buffer.sputc( 'r' );
-		buffer.sputc( 'e' );
-		buffer.sputc( 'a' );
-		buffer.sputc( 'd' );
-		buffer.sputc( 'e' );
-		buffer.sputc( 'r' );
 
 		Comparator comp( &file, specList );
 		
@@ -265,9 +243,10 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_one_child )
 		rg::Transform tr( report );
 		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
 		
-		exporter.writeXmlFile( "test_one_child.xml" );
-
 		LOG_INFO( "\n==== REPORT ====" );
+		// exporter.writeXmlFile( "test_one_child.xml" );
+		LOG_INFO( exporter.getXmlString() );
+
 		std::istringstream  xmlStream( exporter.getXmlString() );
 		std::istringstream jsonStream( jsonString );
 		bpt::ptree  xmlReport;
@@ -281,10 +260,7 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_one_child )
 		std::vector< std::string > jsonIds;
 
 		fillVectorXml( xmlReport, xmlIds, "<xmlattr>.id" );
-		LOG_INFO( std::endl );
 		fillVectorJson( jsonReport.get_child( "header" ), jsonIds, "id" );
-		LOG_INFO( " xmlIds: " <<  xmlIds.size() );
-		LOG_INFO( "jsonIds: " << jsonIds.size() );
 
 		BOOST_CHECK_EQUAL( xmlIds.size(), jsonIds.size() );
 		for( size_t i = 0; i < xmlIds.size(); ++i )
@@ -366,18 +342,8 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_children )
 		specList.addSpecification( spec );
 
 		std::stringbuf buffer;
+		buffer.str( "FILE reader" );
 		fr::FileReader file( &buffer );
-		buffer.sputc( 'F' );
-		buffer.sputc( 'I' );
-		buffer.sputc( 'L' );
-		buffer.sputc( 'E' );
-		buffer.sputc( ' ' );
-		buffer.sputc( 'r' );
-		buffer.sputc( 'e' );
-		buffer.sputc( 'a' );
-		buffer.sputc( 'd' );
-		buffer.sputc( 'e' );
-		buffer.sputc( 'r' );
 
 		Comparator comp( &file, specList );
 		
@@ -387,9 +353,10 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_children )
 		rg::Transform tr( report );
 		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
 		
-		exporter.writeXmlFile( "test_n_child.xml" );
-
 		LOG_INFO( "\n==== REPORT ====" );
+		// exporter.writeXmlFile( "test_n_child.xml" );
+		LOG_INFO( exporter.getXmlString() );
+
 		std::istringstream  xmlStream( exporter.getXmlString() );
 		std::istringstream jsonStream( jsonString );
 		bpt::ptree  xmlReport;
@@ -403,10 +370,7 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_children )
 		std::vector< std::string > jsonIds;
 
 		fillVectorXml( xmlReport, xmlIds, "<xmlattr>.id" );
-		LOG_INFO( std::endl );
 		fillVectorJson( jsonReport.get_child( "header" ), jsonIds, "id" );
-		LOG_INFO( " xmlIds: " <<  xmlIds.size() );
-		LOG_INFO( "jsonIds: " << jsonIds.size() );
 
 		BOOST_CHECK_EQUAL( xmlIds.size(), jsonIds.size() );
 		for( size_t i = 0; i < xmlIds.size(); ++i )
@@ -478,18 +442,8 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_one_subchild )
 		specList.addSpecification( spec );
 
 		std::stringbuf buffer;
+		buffer.str( "FILE reader" );
 		fr::FileReader file( &buffer );
-		buffer.sputc( 'F' );
-		buffer.sputc( 'I' );
-		buffer.sputc( 'L' );
-		buffer.sputc( 'E' );
-		buffer.sputc( ' ' );
-		buffer.sputc( 'r' );
-		buffer.sputc( 'e' );
-		buffer.sputc( 'a' );
-		buffer.sputc( 'd' );
-		buffer.sputc( 'e' );
-		buffer.sputc( 'r' );
 
 		Comparator comp( &file, specList );
 		
@@ -499,9 +453,10 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_one_subchild )
 		rg::Transform tr( report );
 		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
 		
-		exporter.writeXmlFile( "test_one_subchild.xml" );
-
 		LOG_INFO( "\n==== REPORT ====" );
+		// exporter.writeXmlFile( "test_one_subchild.xml" );
+		LOG_INFO( exporter.getXmlString() );
+
 		std::istringstream  xmlStream( exporter.getXmlString() );
 		std::istringstream jsonStream( jsonString );
 		bpt::ptree  xmlReport;
@@ -515,10 +470,7 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_one_subchild )
 		std::vector< std::string > jsonIds;
 
 		fillVectorXml( xmlReport, xmlIds, "<xmlattr>.id" );
-		LOG_INFO( std::endl );
 		fillVectorJson( jsonReport.get_child( "header" ), jsonIds, "id" );
-		LOG_INFO( " xmlIds: " <<  xmlIds.size() );
-		LOG_INFO( "jsonIds: " << jsonIds.size() );
 
 		BOOST_CHECK_EQUAL( xmlIds.size(), jsonIds.size() );
 		for( size_t i = 0; i < xmlIds.size(); ++i )
@@ -595,18 +547,8 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_subchildren )
 		specList.addSpecification( spec );
 
 		std::stringbuf buffer;
+		buffer.str( "FILE reader" );
 		fr::FileReader file( &buffer );
-		buffer.sputc( 'F' );
-		buffer.sputc( 'I' );
-		buffer.sputc( 'L' );
-		buffer.sputc( 'E' );
-		buffer.sputc( ' ' );
-		buffer.sputc( 'r' );
-		buffer.sputc( 'e' );
-		buffer.sputc( 'a' );
-		buffer.sputc( 'd' );
-		buffer.sputc( 'e' );
-		buffer.sputc( 'r' );
 
 		Comparator comp( &file, specList );
 		
@@ -616,9 +558,10 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_subchildren )
 		rg::Transform tr( report );
 		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
 		
-		exporter.writeXmlFile( "test_n_subchildren.xml" );
-
 		LOG_INFO( "\n==== REPORT ====" );
+		// exporter.writeXmlFile( "test_n_subchildren.xml" );
+		LOG_INFO( exporter.getXmlString() );
+
 		std::istringstream  xmlStream( exporter.getXmlString() );
 		std::istringstream jsonStream( jsonString );
 		bpt::ptree  xmlReport;
@@ -632,10 +575,7 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_subchildren )
 		std::vector< std::string > jsonIds;
 
 		fillVectorXml( xmlReport, xmlIds, "<xmlattr>.id" );
-		LOG_INFO( std::endl );
 		fillVectorJson( jsonReport.get_child( "header" ), jsonIds, "id" );
-		LOG_INFO( " xmlIds: " <<  xmlIds.size() );
-		LOG_INFO( "jsonIds: " << jsonIds.size() );
 
 		BOOST_CHECK_EQUAL( xmlIds.size(), jsonIds.size() );
 		for( size_t i = 0; i < xmlIds.size(); ++i )
@@ -772,18 +712,8 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_levels )
 		specList.addSpecification( spec );
 
 		std::stringbuf buffer;
+		buffer.str( "FILE reader" );
 		fr::FileReader file( &buffer );
-		buffer.sputc( 'F' );
-		buffer.sputc( 'I' );
-		buffer.sputc( 'L' );
-		buffer.sputc( 'E' );
-		buffer.sputc( ' ' );
-		buffer.sputc( 'r' );
-		buffer.sputc( 'e' );
-		buffer.sputc( 'a' );
-		buffer.sputc( 'd' );
-		buffer.sputc( 'e' );
-		buffer.sputc( 'r' );
 
 		Comparator comp( &file, specList );
 		
@@ -793,9 +723,10 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_levels )
 		rg::Transform tr( report );
 		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
 		
-		exporter.writeXmlFile( "test_n_levels.xml" );
-
 		LOG_INFO( "\n==== REPORT ====" );
+		// exporter.writeXmlFile( "test_n_levels.xml" );
+		LOG_INFO( exporter.getXmlString() );
+
 		std::istringstream  xmlStream( exporter.getXmlString() );
 		std::istringstream jsonStream( jsonString );
 		bpt::ptree  xmlReport;
@@ -809,10 +740,7 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_levels )
 		std::vector< std::string > jsonIds;
 
 		fillVectorXml( xmlReport, xmlIds, "<xmlattr>.id" );
-		LOG_INFO( std::endl );
 		fillVectorJson( jsonReport.get_child( "header" ), jsonIds, "id" );
-		LOG_INFO( " xmlIds: " <<  xmlIds.size() );
-		LOG_INFO( "jsonIds: " << jsonIds.size() );
 
 		BOOST_CHECK_EQUAL( xmlIds.size(), jsonIds.size() );
 		for( size_t i = 0; i < xmlIds.size(); ++i )
@@ -912,18 +840,8 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_levels_2 )
 		specList.addSpecification( spec );
 
 		std::stringbuf buffer;
+		buffer.str( "FILE reader" );
 		fr::FileReader file( &buffer );
-		buffer.sputc( 'F' );
-		buffer.sputc( 'I' );
-		buffer.sputc( 'L' );
-		buffer.sputc( 'E' );
-		buffer.sputc( ' ' );
-		buffer.sputc( 'r' );
-		buffer.sputc( 'e' );
-		buffer.sputc( 'a' );
-		buffer.sputc( 'd' );
-		buffer.sputc( 'e' );
-		buffer.sputc( 'r' );
 
 		Comparator comp( &file, specList );
 		
@@ -933,9 +851,10 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_levels_2 )
 		rg::Transform tr( report );
 		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
 		
-		exporter.writeXmlFile( "test_n_levels_2.xml" );
-
 		LOG_INFO( "\n==== REPORT ====" );
+		// exporter.writeXmlFile( "test_n_levels_2.xml" );
+		LOG_INFO( exporter.getXmlString() );
+
 		std::istringstream  xmlStream( exporter.getXmlString() );
 		std::istringstream jsonStream( jsonString );
 		bpt::ptree  xmlReport;
@@ -949,10 +868,7 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_levels_2 )
 		std::vector< std::string > jsonIds;
 
 		fillVectorXml( xmlReport, xmlIds, "<xmlattr>.id" );
-		LOG_INFO( std::endl );
 		fillVectorJson( jsonReport.get_child( "header" ), jsonIds, "id" );
-		LOG_INFO( " xmlIds: " <<  xmlIds.size() );
-		LOG_INFO( "jsonIds: " << jsonIds.size() );
 
 		BOOST_CHECK_EQUAL( xmlIds.size(), jsonIds.size() );
 		for( size_t i = 0; i < xmlIds.size(); ++i )
@@ -997,16 +913,16 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_1 )
 				{
 					"id": "number",
 					"label": "It is a number",
-					"type": "uint32",
+					"type": "uint8",
 					"endian": "little",
 					"map" : [
-						{ "0" : "Value of the number" }
+						{ "32" : "Value of the number" }
 					]
 				},
 				{
 					"id": "otherNumber",
 					"label": "It is an other number",
-					"type": "uint16",
+					"type": "uint8",
 					"map" : [
 						{ "33" : "Something" }
 					],
@@ -1025,24 +941,8 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_1 )
 		specList.addSpecification( spec );
 
 		std::stringbuf buffer;
+		buffer.str( "FILE reader  " );
 		fr::FileReader file( &buffer );
-		buffer.sputc( 'F' );
-		buffer.sputc( 'I' );
-		buffer.sputc( 'L' );
-		buffer.sputc( 'E' );
-		buffer.sputc( ' ' );
-		buffer.sputc( 'r' );
-		buffer.sputc( 'e' );
-		buffer.sputc( 'a' );
-		buffer.sputc( 'd' );
-		buffer.sputc( 'e' );
-		buffer.sputc( 'r' );
-		buffer.sputc( '\0' );
-		buffer.sputc( '\0' );
-		buffer.sputc( '\0' );
-		buffer.sputc( '\0' );
-		buffer.sputc( '\0' );
-		buffer.sputc( ' ' );
 
 		Comparator comp( &file, specList );
 		
@@ -1052,9 +952,10 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_1 )
 		rg::Transform tr( report );
 		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
 		
-		exporter.writeXmlFile( "test_validation_1.xml" );
-
 		LOG_INFO( "\n==== REPORT ====" );
+		// exporter.writeXmlFile( "test_validation_1.xml" );
+		LOG_INFO( exporter.getXmlString() );
+
 		std::istringstream  xmlStream( exporter.getXmlString() );
 		std::istringstream jsonStream( jsonString );
 		bpt::ptree  xmlReport;
@@ -1068,10 +969,7 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_1 )
 		std::vector< std::string > jsonIds;
 
 		fillVectorXml( xmlReport, xmlIds, "<xmlattr>.id" );
-		LOG_INFO( std::endl );
 		fillVectorJson( jsonReport.get_child( "header" ), jsonIds, "id" );
-		LOG_INFO( " xmlIds: " <<  xmlIds.size() );
-		LOG_INFO( "jsonIds: " << jsonIds.size() );
 
 		BOOST_CHECK_EQUAL( xmlIds.size(), jsonIds.size() );
 		for( size_t i = 0; i < xmlIds.size(); ++i )
@@ -1079,5 +977,142 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_1 )
 	}
 }
 
+BOOST_AUTO_TEST_CASE( comparator_comparator_validation_2 )
+{
+	LOG_WARNING( ">>> comparator_comparator_validation_2 <<<" );
+	{
+		std::string jsonString = R"*(
+		{
+			"standard":
+			{
+				"id": "test",
+				"extension": [
+				"ext1"
+				]
+			},
+			"header": [
+				{
+					"id": "file",
+					"label": "It is written FILE",
+					"type": "ascii",
+					"values": "FILE"
+				},
+				{
+					"id": "space",
+					"label": "It is a space character",
+					"type": "uint8",
+					"range": [
+						{ "min": 31, "max": 33 }
+					]
+				},
+				{
+					"id": "reader",
+					"label": "It is a written reader",
+					"type": "ascii",
+					"values": "reader"
+				},
+				{
+					"id": "number",
+					"label": "It is a number",
+					"type": "uint8",
+					"endian": "little",
+					"map": [
+						{ "32" : "Value of the number" }
+					]
+				},
+				{
+					"id": "hexaSpace",
+					"label": "It is an other space character",
+					"type": "hexa",
+					"values": "20"
+				},
+				{
+					"id": "rawData",
+					"label": "There is some raw data",
+					"type": "raw",
+					"count": "7",
+					"displayType": "ascii"
+				},
+				{
+					"id": "hexaToAscii",
+					"label": "There are hexa characters",
+					"type": "hexa",
+					"values": "40202e",
+					"displayType": "ascii"
+				},
+				{
+					"id": "hexaToRaw",
+					"label": "There are other hexa characters",
+					"type": "hexa",
+					"values": "2f2c2b",
+					"displayType": "raw"
+				},
+				{
+					"id": "zeroToHexa",
+					"label": "It is a zero character",
+					"type": "ascii",
+					"values": "0",
+					"displayType": "hexa"
+				},
+				{
+					"id": "digitsToHexa",
+					"label": "There are some digit characters",
+					"type": "ascii",
+					"count": "5",
+					"displayType": "hexa"
+				},
+				{
+					"id": "charactersToRaw",
+					"label": "There are some characters",
+					"type": "ascii",
+					"count": "8",
+					"displayType": "raw"
+				}
+			]
+		}
+		)*";
+
+		sr::Specification spec;
+		sr::SpecList specList;
+
+		spec.setFromString( jsonString );
+		specList.addSpecification( spec );
+
+		std::stringbuf buffer;
+		buffer.str( "FILE reader  nothing@ ./,+0031560?12!3#4" );
+		fr::FileReader file( &buffer );
+
+		Comparator comp( &file, specList );
+		
+		rg::Report report;
+		comp.compare( "test", report );
+
+		rg::Transform tr( report );
+		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
+		
+		LOG_INFO( "\n==== REPORT ====" );
+		// exporter.writeXmlFile( "test_validation_2.xml" );
+		LOG_INFO( exporter.getXmlString() );
+
+		std::istringstream  xmlStream( exporter.getXmlString() );
+		std::istringstream jsonStream( jsonString );
+		bpt::ptree  xmlReport;
+		bpt::ptree jsonReport;
+		bpt::read_xml (  xmlStream,  xmlReport );
+		bpt::read_json( jsonStream, jsonReport );
+
+		BOOST_CHECK_EQUAL( xmlReport.size(), jsonReport.get_child( "header" ).size() );
+
+		std::vector< std::string >  xmlIds;
+		std::vector< std::string > jsonIds;
+
+		fillVectorXml( xmlReport, xmlIds, "<xmlattr>.id" );
+		fillVectorJson( jsonReport.get_child( "header" ), jsonIds, "id" );
+
+		BOOST_CHECK_EQUAL( xmlIds.size(), jsonIds.size() );
+		for( size_t i = 0; i < xmlIds.size(); ++i )
+			BOOST_CHECK_EQUAL( xmlIds.at(i), jsonIds.at(i) );
+	}
+}
 
 BOOST_AUTO_TEST_SUITE_END()
