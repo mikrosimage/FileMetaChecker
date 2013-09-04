@@ -238,7 +238,6 @@ std::string Data::getStringFromData()
 		case eDataTypeHexa    : data = getHexa();          break;
 		case eDataTypeRaw     : data = getRawDataString(); break;
 	}
-	LOG_WARNING( "Data::getStringFromData " << data << " / " << _data << " / " << _specValues.at(0) );
 	return data;
 }
 
