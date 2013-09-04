@@ -47,4 +47,41 @@ BOOST_AUTO_TEST_CASE( report_transform_and_export )
 	}
 }
 
+
+BOOST_AUTO_TEST_CASE( report_export_xml_json )
+{
+	LOG_INFO( ">>> report_export_xml_json <<<" );
+	std::string jsonString =R"*(
+	{
+		"standard":
+		{
+			"id": "test",
+			"extension": [
+			"ext1",
+			"ext2",
+			"ext3"]
+		},
+		"header": [
+			{
+				"id": "test1",
+				"label": "Test 1",
+				"type": "unknown"
+			}
+		]
+	})*";
+
+	bpt::ptree tree;
+	std::istringstream isstream( jsonString );
+	bpt::read_json( isstream, tree );
+	
+	Export exporter( tree );
+	LOG_INFO( exporter.getXmlString() );
+	LOG_INFO( exporter.getXmlString( true ) );
+	LOG_INFO( exporter.getJsonString() );
+	LOG_INFO( exporter.getJsonString( true ) );
+	exporter.writeJsonFile( "report.json" );
+	exporter.writeJsonFile( "report.json", true );
+}
+
+
 BOOST_AUTO_TEST_SUITE_END()

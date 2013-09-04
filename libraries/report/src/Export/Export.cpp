@@ -11,9 +11,9 @@ Export::Export( const bpt::ptree& report )
 {
 }
 
-void Export::writeJsonFile( const std::string& filename )
+void Export::writeJsonFile( const std::string& filename, bool compact )
 {
-	write_json( filename, _report );
+	write_json( filename, _report, std::locale(), compact ? false : true );
 }
 
 
@@ -23,17 +23,18 @@ void Export::writeXmlFile( const std::string& filename, bool compact )
 	write_xml( filename, _report, std::locale(), settings );
 }
 
-std::string Export::getJsonString()		// @ todo : add compacity option
+std::string Export::getJsonString( bool compact )
 {
 	std::ostringstream jsonStream;
-	write_json( jsonStream, _report );
+	write_json( jsonStream, _report, compact ? false : true );
 	return jsonStream.str();
 }
 
-std::string Export::getXmlString()		// @ todo : add compacity option
+std::string Export::getXmlString( bool compact )
 {
 	std::ostringstream xmlStream;
-	write_xml( xmlStream, _report );
+	bpt::xml_writer_settings< char > settings( '\t', compact ? 0 : 1 );
+	write_xml( xmlStream, _report, settings );
 	return xmlStream.str();
 }
 
