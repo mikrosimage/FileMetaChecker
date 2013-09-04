@@ -9,6 +9,7 @@ namespace data_element
 
 Data::Data()
 	: Element( eTypeData )
+	, _displayType( eDataTypeUnknown )
 	, _data( NULL )
 {
 	_subType = eDataTypeRaw;
@@ -17,6 +18,7 @@ Data::Data()
 
 Data::Data( const EDataType& subType )
 	: Element( eTypeData )
+	, _displayType( subType )
 	, _data( NULL )
 {
 	_subType = subType;
@@ -95,7 +97,10 @@ std::vector< unsigned int > Data::toIntVector()
 void Data::setSpecData( const std::string& specValue )
 {
 	_specValue = specValue;
-	_size = _specValue.size();
+	if( getDataSubType() != eDataTypeHexa )
+		_size = _specValue.size();
+	else
+		_size = _specValue.size() / 2;
 }
 
 void Data::setSpecData( const std::vector< std::string >& specValues )
@@ -108,11 +113,17 @@ void Data::setSpecData( const std::vector< std::string >& specValues )
 			throw std::runtime_error( "Specification Error: Multiple values must have the same size" );
 		size = value.size();
 	}
-	_size = size;
+	if( getDataSubType() != eDataTypeHexa )
+		_size = size;
+	else
+		_size = size / 2;
 }
 
 Element::EStatus Data::checkData()
 {
+	if( _size == 0 )
+		LOG_WARNING( getId() << ": Null data size !" );
+
 	if( _specValue.empty() && _specValues.empty() )
 	{
 		setStatus( eStatusPassOver );
@@ -164,6 +175,19 @@ Element::EStatus Data::checkData()
 	return status;
 }
 
+void Data::setDisplayType( const std::string& displayType )
+{
+	if( displayType == "ascii" )
+		_displayType = eDataTypeAscii;
+	else if( displayType == "hexa" )
+		_displayType = eDataTypeHexa;
+	else if( displayType == "raw" )
+		_displayType = eDataTypeRaw;
+	else if( displayType != "" )
+		LOG_WARNING( getId() << ": Unknown display type!" );
+}
+
+
 std::vector< std::pair< std::string, std::string > > Data::getElementInfo()
 {
 	std::vector< std::pair< std::string, std::string > > elemInfo;
@@ -172,7 +196,13 @@ std::vector< std::pair< std::string, std::string > > Data::getElementInfo()
 	elemInfo.insert( elemInfo.end(), commonInfo.begin(), commonInfo.end() );
 
 	elemInfo.push_back( std::make_pair( "type", getStringFromType() ) );
-	elemInfo.push_back( std::make_pair( "data", getStringFromData() ) );
+	switch( _displayType )
+	{
+		case eDataTypeUnknown : return elemInfo; break;
+		case eDataTypeAscii   :	elemInfo.push_back( std::make_pair( "data", getAscii()         ) ); break;
+		case eDataTypeHexa    :	elemInfo.push_back( std::make_pair( "data", getHexa()          ) ); break;
+		case eDataTypeRaw     :	elemInfo.push_back( std::make_pair( "data", getRawDataString() ) ); break;	// @todo _data from 0 to size
+	}
 	return elemInfo;
 }
 
@@ -190,10 +220,10 @@ std::string Data::getStringFromType()
 	std::string type;
 	switch( getDataSubType() )
 	{
-		case eStatusUnknown : type = "unknown"; break;
-		case eDataTypeAscii : type = "ascii";   break;
-		case eDataTypeHexa  : type = "hexa";    break;
-		case eDataTypeRaw   : type = "raw";     break;
+		case eDataTypeUnknown : type = "unknown"; break;
+		case eDataTypeAscii   : type = "ascii";   break;
+		case eDataTypeHexa    : type = "hexa";    break;
+		case eDataTypeRaw     : type = "raw";     break;
 	}
 	return type;
 }
@@ -203,11 +233,20 @@ std::string Data::getStringFromData()
 	std::string data;
 	switch( getDataSubType() )
 	{
-		case eStatusUnknown : data = "";         break;
-		case eDataTypeAscii : data = getAscii(); break;
-		case eDataTypeHexa  : data = getHexa();  break;
-		case eDataTypeRaw   : data = "";         break;
+		case eDataTypeUnknown : data = "";                 break;
+		case eDataTypeAscii   : data = getAscii();         break;
+		case eDataTypeHexa    : data = getHexa();          break;
+		case eDataTypeRaw     : data = getRawDataString(); break;
 	}
+	LOG_WARNING( "Data::getStringFromData " << data << " / " << _data << " / " << _specValues.at(0) );
+	return data;
+}
+
+std::string Data::getRawDataString()
+{
+	std::string data;
+	for( size_t i = 0; i < _size; i++ )
+		data.push_back( _data[i] );
 	return data;
 }
 

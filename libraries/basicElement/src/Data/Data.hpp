@@ -26,6 +26,8 @@ public:
 	void setSpecData( const std::vector< std::string >& specValues );
 
 	Element::EStatus checkData();
+
+	void setDisplayType( const std::string& displayType );
 	std::vector< std::pair< std::string, std::string > > getElementInfo();
 
 	Data& operator=( const Data& other );
@@ -33,11 +35,13 @@ public:
 protected:
 	std::string getStringFromType();
 	std::string getStringFromData();
+	std::string getRawDataString();
 	char* getDataPtr (  ) const;
 	
 private:
 	std::string                _specValue;
 	std::vector< std::string > _specValues;
+	EDataType                  _displayType;
 	char*                      _data;
 };
 
