@@ -126,4 +126,42 @@ BOOST_AUTO_TEST_CASE( basic_element_expression_parser_get_expression_result )
 	}
 }
 
+
+BOOST_AUTO_TEST_CASE( basic_element_expression_parser_shared_ptr )
+{
+	LOG_WARNING( ">>> basic_element_expression_parser_shared_ptr <<<" );
+	{
+		std::shared_ptr< be::number_element::Number< int   > > num1( new be::number_element::Number< int   > );
+		std::shared_ptr< be::number_element::Number< short > > num2( new be::number_element::Number< short > );
+		std::shared_ptr< be::number_element::Number< float > > num3( new be::number_element::Number< float > );
+
+		char buffer1[] = { 0x00, 0x00, 0x00, 0x01 };
+		char buffer2[] = { 0x00, 0x02 };
+		char buffer3[] = { 0x3f, 0x7f, 0x00, 0x00 };
+		
+		num1->setData( buffer1, 4 );
+		num2->setData( buffer2, 2 );
+		num3->setData( buffer3, 4 );
+
+		BOOST_CHECK_EQUAL( num1->toString(), "1"        );
+		BOOST_CHECK_EQUAL( num2->toString(), "2"        );
+		BOOST_CHECK_EQUAL( num3->toString(), "0.996094" );
+
+		std::map< std::string, std::shared_ptr< be::Element > > elementList;
+		elementList.insert( std::make_pair( "num1", num1 ) );
+		elementList.insert( std::make_pair( "num2", num2 ) );
+		elementList.insert( std::make_pair( "num3", num3 ) );
+
+		bep::ExpressionParser expParser = bep::ExpressionParser( elementList );
+		BOOST_CHECK_EQUAL( expParser.getExpressionResult< int   >( "num1" ), 1 );
+		BOOST_CHECK_EQUAL( expParser.getExpressionResult< int   >( "num2" ), 2 );
+		BOOST_CHECK_EQUAL( expParser.getExpressionResult< short >( "num1 + num2" ),  3 );
+		BOOST_CHECK_EQUAL( expParser.getExpressionResult< int   >( "num2 - num1" ),  1 );
+		BOOST_CHECK_EQUAL( expParser.getExpressionResult< float >( "num1 - num2" ), -1 );
+		BOOST_CHECK_EQUAL( expParser.getExpressionResult< int   >( "num1 * num2" ),  2 );
+		BOOST_CHECK_CLOSE( expParser.getExpressionResult< float >( "num1 * num3" ),  0.996094, 0.001 );
+		BOOST_CHECK_CLOSE( expParser.getExpressionResult< float >( "num3 / num2" ),  0.498047, 0.001 );
+	}
+}
+
 BOOST_AUTO_TEST_SUITE_END()
