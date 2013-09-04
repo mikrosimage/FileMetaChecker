@@ -88,6 +88,9 @@ std::shared_ptr< be::data_element::Data > Comparator::getElement< be::data_eleme
 		size = sizeParser.getExpressionResult< size_t >( node.getCount() );
 	}
 
+	if( size == 0 && node.getCount().empty() )
+		throw std::runtime_error( node.getId() + " element size cannot be found" );
+
 	char buffer[ size ];
 	_file->readData( buffer, size );
 	element->setData( buffer, size );

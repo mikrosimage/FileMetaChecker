@@ -104,6 +104,40 @@ BOOST_AUTO_TEST_CASE( comparator_comparator )
 		rg::Report report;
 		BOOST_CHECK_THROW( comp.compare( "test", report ), std::runtime_error );
 	}
+	{
+		std::string jsonString =R"*(
+		{
+			"standard":
+			{
+				"id": "test",
+				"extension": [
+				"ext1",
+				"ext2",
+				"ext3"]
+			},
+			"header": [
+				{
+					"id": "test1",
+					"label": "Test 1",
+					"type": "ascii"
+				}
+			]
+		})*";
+		sr::Specification spec;
+		sr::SpecList specList;
+
+		spec.setFromString( jsonString );
+		specList.addSpecification( spec );
+
+		std::stringbuf buffer;
+		buffer.str( "FILE reader" );
+		fr::FileReader file( &buffer );
+
+		Comparator comp( &file, specList );
+		
+		rg::Report report;
+		BOOST_CHECK_THROW( comp.compare( "test", report ), std::runtime_error );
+	}
 }
 
 BOOST_AUTO_TEST_CASE( comparator_comparator_only_root )
@@ -124,17 +158,20 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_only_root )
 				{
 					"id": "test1",
 					"label": "Test 1",
-					"type": "hexa"
+					"type": "hexa",
+					"count": "0"
 				},
 				{
 					"id": "test2",
 					"label": "Test 2",
-					"type": "ascii"
+					"type": "ascii",
+					"count": "0"
 				},
 				{
 					"id": "test3",
 					"label": "Test 3",
-					"type": "raw"
+					"type": "raw",
+					"count": "0"
 				}
 			]
 		}
@@ -201,12 +238,14 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_one_child )
 				{
 					"id": "test1",
 					"label": "Test 1",
-					"type": "hexa"
+					"type": "hexa",
+					"count": "0"
 				},
 				{
 					"id": "test2",
 					"label": "Test 2",
 					"type": "ascii",
+					"count": "0",
 					"group": [
 						{
 							"id": "child1",
@@ -219,7 +258,8 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_one_child )
 				{
 					"id": "test3",
 					"label": "Test 3",
-					"type": "raw"
+					"type": "raw",
+					"count": "0"
 				}
 			]
 		}
@@ -287,12 +327,14 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_children )
 				{
 					"id": "test1",
 					"label": "Test 1",
-					"type": "hexa"
+					"type": "hexa",
+					"count": "0"
 				},
 				{
 					"id": "test2",
 					"label": "Test 2",
 					"type": "ascii",
+					"count": "0",
 					"group": [
 						{
 							"id": "child1",
@@ -329,7 +371,8 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_children )
 				{
 					"id": "test3",
 					"label": "Test 3",
-					"type": "raw"
+					"type": "raw",
+					"count": "0"
 				}
 			]
 		}
@@ -397,12 +440,14 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_one_subchild )
 				{
 					"id": "test1",
 					"label": "Test 1",
-					"type": "hexa"
+					"type": "hexa",
+					"count": "0"
 				},
 				{
 					"id": "test2",
 					"label": "Test 2",
 					"type": "ascii",
+					"count": "0",
 					"group": [
 						{
 							"id": "child1",
@@ -429,7 +474,8 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_one_subchild )
 				{
 					"id": "test3",
 					"label": "Test 3",
-					"type": "raw"
+					"type": "raw",
+					"count": "0"
 				}
 			]
 		}
@@ -496,12 +542,14 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_subchildren )
 				{
 					"id": "test1",
 					"label": "Test 1",
-					"type": "hexa"
+					"type": "hexa",
+					"count": "0"
 				},
 				{
 					"id": "test2",
 					"label": "Test 2",
 					"type": "ascii",
+					"count": "0",
 					"group": [
 						{
 							"id": "child1",
@@ -534,7 +582,8 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_subchildren )
 				{
 					"id": "test3",
 					"label": "Test 3",
-					"type": "raw"
+					"type": "raw",
+					"count": "0"
 				}
 			]
 		}
@@ -601,12 +650,14 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_levels )
 				{
 					"id": "test1",
 					"label": "Test 1",
-					"type": "hexa"
+					"type": "hexa",
+					"count": "0"
 				},
 				{
 					"id": "test2",
 					"label": "Test 2",
 					"type": "ascii",
+					"count": "0",
 					"group": [
 						{
 							"id": "child1",
@@ -676,6 +727,7 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_levels )
 					"id": "test3",
 					"label": "Test 3",
 					"type": "raw",
+					"count": "0",
 					"group": [
 						{
 							"id": "child31",
@@ -772,6 +824,7 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_levels_2 )
 					"id": "test2",
 					"label": "Test 2",
 					"type": "ascii",
+					"count": "0",
 					"group": [
 						{
 							"id": "child1",
@@ -1114,5 +1167,6 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_2 )
 			BOOST_CHECK_EQUAL( xmlIds.at(i), jsonIds.at(i) );
 	}
 }
+
 
 BOOST_AUTO_TEST_SUITE_END()
