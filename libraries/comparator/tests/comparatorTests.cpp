@@ -1169,4 +1169,87 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_2 )
 }
 
 
+BOOST_AUTO_TEST_CASE( comparator_comparator_validation_3 )
+{
+	LOG_WARNING( ">>> comparator_comparator_validation_3 <<<" );
+	{
+		std::string jsonString = R"*(
+		{
+			"standard":
+			{
+				"id": "test",
+				"extension": [
+				"ext1"
+				]
+			},
+			"header": [
+				{
+					"id": "length",
+					"label": "Sixteen times length of FILE",
+					"type": "uint8"
+				},
+				{
+					"id": "file",
+					"label": "FILE",
+					"type": "ascii",
+					"count": "length / 16"
+				},
+				{
+					"id": "size",
+					"label": "Eleven times size HEY",
+					"type": "uint8"
+				},
+				{
+					"id": "hey",
+					"label": "HEY",
+					"type": "ascii",
+					"count": "size / 11"
+				}
+			]
+		}
+		)*";
+
+		sr::Specification spec;
+		sr::SpecList specList;
+
+		spec.setFromString( jsonString );
+		specList.addSpecification( spec );
+
+		std::stringbuf buffer;
+		buffer.str( "@FILE!HEY" );
+		fr::FileReader file( &buffer );
+
+		Comparator comp( &file, specList );
+		
+		rg::Report report;
+		comp.compare( "test", report );
+
+		rg::Transform tr( report );
+		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
+		
+		LOG_INFO( "\n==== REPORT ====" );
+		// exporter.writeXmlFile( "test_validation_2.xml" );
+		LOG_INFO( exporter.getXmlString() );
+
+		std::istringstream  xmlStream( exporter.getXmlString() );
+		std::istringstream jsonStream( jsonString );
+		bpt::ptree  xmlReport;
+		bpt::ptree jsonReport;
+		bpt::read_xml (  xmlStream,  xmlReport );
+		bpt::read_json( jsonStream, jsonReport );
+
+		BOOST_CHECK_EQUAL( xmlReport.size(), jsonReport.get_child( "header" ).size() );
+
+		std::vector< std::string >  xmlIds;
+		std::vector< std::string > jsonIds;
+
+		fillVectorXml( xmlReport, xmlIds, "<xmlattr>.id" );
+		fillVectorJson( jsonReport.get_child( "header" ), jsonIds, "id" );
+
+		BOOST_CHECK_EQUAL( xmlIds.size(), jsonIds.size() );
+		for( size_t i = 0; i < xmlIds.size(); ++i )
+			BOOST_CHECK_EQUAL( xmlIds.at(i), jsonIds.at(i) );
+	}
+}
+
 BOOST_AUTO_TEST_SUITE_END()

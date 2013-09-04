@@ -13,6 +13,8 @@ namespace filereader
 namespace comparator
 {
 
+typedef std::map< std::string, std::shared_ptr< be::Element > > ElementMap;
+
 class Comparator
 {
 public:
@@ -32,9 +34,10 @@ protected:
 	std::shared_ptr< be::Element > getElementFromNode( const spec_reader::SpecNode& node );
 		
 private:
-	filereader::FileReader*       _file;
-	spec_reader::SpecList         _specs;
-	report_generator::Report*     _report;
+	filereader::FileReader*   _file;
+	spec_reader::SpecList     _specs;
+	report_generator::Report* _report;
+	ElementMap                _elementList;
 };
 
 }

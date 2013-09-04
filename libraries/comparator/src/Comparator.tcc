@@ -65,6 +65,9 @@ std::shared_ptr< ElementType > Comparator::getElement( const sr::SpecNode& node 
 	element->setMap( node.getMap() );
 
 	element->checkData();
+
+	_elementList.insert( std::make_pair( node.getId(), element ) );
+
 	return element;
 }
 
@@ -81,10 +84,9 @@ std::shared_ptr< be::data_element::Data > Comparator::getElement< be::data_eleme
 	element->setDisplayType( node.getDisplayType() );
 
 	size_t size = element->getSize();
-	if( size == 0 && ! node.getCount().empty() )		// @todo: create a map of variables for expression parser!
+	if( size == 0 && ! node.getCount().empty() )
 	{
-		std::map < std::string, size_t > varMap;				// @todelete: when variables map is got!
-		be::expression_parser::ExpressionParser sizeParser( varMap );
+		be::expression_parser::ExpressionParser sizeParser( _elementList );
 		size = sizeParser.getExpressionResult< size_t >( node.getCount() );
 	}
 
