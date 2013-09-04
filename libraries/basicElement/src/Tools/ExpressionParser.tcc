@@ -42,17 +42,17 @@ void ExpressionParser::setVariables( const std::map < std::string, NumberType >&
 	}
 }
 
-template< typename Type >
-Type ExpressionParser::getExpressionResult( const std::string& expression )
+template< typename ResultType >
+ResultType ExpressionParser::getExpressionResult( const std::string& expression )
 {
-	Type result = 0;
+	ResultType result = 0;
 	try
 	{
 		LOG_TRACE( _contextString.c_str() );
 		LOG_TRACE( expression );
 		bpy::exec( _contextString.c_str(), _mainNamespace );
 		bpy::object returnText = bpy::eval( expression.c_str(), _mainNamespace );
-		result = bpy::extract< Type >( returnText );
+		result = bpy::extract< ResultType >( returnText );
 	}
 	catch( const bpy::error_already_set& error )
 	{

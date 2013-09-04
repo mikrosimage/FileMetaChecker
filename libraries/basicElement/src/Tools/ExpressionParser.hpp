@@ -26,8 +26,8 @@ public:
 	template< typename NumberType >
 	void setVariables( const std::map < std::string, NumberType >& varMap );
 
-	template< typename Type >
-	Type getExpressionResult( const std::string& expression );
+	template< typename ResultType >
+	ResultType getExpressionResult( const std::string& expression );
 
 	void addPythonHeader( const std::string& pythonString );
 	
