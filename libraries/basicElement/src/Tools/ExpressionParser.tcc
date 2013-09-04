@@ -34,7 +34,7 @@ template< typename NumberType >
 void ExpressionParser::setVariables( const std::map < std::string, NumberType >& varMap )
 {
 	typedef std::pair< std::string, NumberType > VarType;
-	BOOST_FOREACH( VarType var, varMap )
+	for( VarType var : varMap )
 	{
 		std::ostringstream oss;
 		oss << var.first << " = " << var.second << std::endl;
