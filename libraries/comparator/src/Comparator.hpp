@@ -15,6 +15,19 @@ namespace comparator
 
 typedef std::map< std::string, std::shared_ptr< be::Element > > ElementMap;
 
+template< typename Type >
+struct Vector
+{
+	typedef std::vector< std::pair< Type, Type > > Pair;
+};
+
+struct ElementIter
+{
+	size_t iter;
+	std::string parentId;
+	std::vector< std::string > childrenId;
+};
+
 class Comparator
 {
 public:
@@ -32,12 +45,15 @@ protected:
 
 	void checkNode( const spec_reader::SpecNode& node, report_generator::ReportNode& reportNode, const bool& isFirstChild = false );
 	std::shared_ptr< be::Element > getElementFromNode( const spec_reader::SpecNode& node );
-		
+	
+	void extractRepetition( size_t& repetNumber, Vector< size_t >::Pair& repetRange, const Vector< std::string >::Pair& nodeRepetitions );
+
 private:
 	filereader::FileReader*   _file;
 	spec_reader::SpecList     _specs;
 	report_generator::Report* _report;
 	ElementMap                _elementList;
+	std::map< std::string, ElementIter > _elementIter;
 };
 
 }
