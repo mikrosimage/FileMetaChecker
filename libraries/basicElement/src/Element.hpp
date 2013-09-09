@@ -57,6 +57,7 @@ public:
 	virtual void getData( char* buffer ) const = 0;
 	virtual EStatus checkData() = 0;
 	virtual std::vector< std::pair< std::string, std::string > > getElementInfo() = 0;
+	virtual size_t getSize() const = 0;
 
 private:
 	std::string   _id;
