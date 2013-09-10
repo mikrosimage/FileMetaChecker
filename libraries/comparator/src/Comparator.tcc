@@ -150,13 +150,24 @@ void Comparator::checkNode( const sr::SpecNode& node, report_generator::ReportNo
 	LOG_TRACE( "nextNode: " << nextNode.getId() << " | nodeId: " << nodeId );
 	rg::ReportNode* nextReportNode;
 	
+	// check if optional
+	bool sentToReport = true;
+
+	if( node.isOptional() && element->getStatus() != 1 )
+	{
+		LOG_TRACE( "Optional & Not Valid -> Go back: " << element->getSize() );
+		sentToReport = false;
+		_file->goBack( element->getSize() );
+		// element->setData( NULL, 0 );
+	}
+
 	// node to report
-	if( isFirstChild )
+	if( isFirstChild && sentToReport )
 	{
 		rg::ReportNode newReportNode = reportNode.appendChild( element );
 		nextReportNode = &newReportNode;
 	}
-	else
+	else if( sentToReport )
 	{
 		if( node.parent() == NULL )
 			reportNode = _report->addRootElement( element );
@@ -164,9 +175,14 @@ void Comparator::checkNode( const sr::SpecNode& node, report_generator::ReportNo
 			reportNode = reportNode.appendNext( element );
 		nextReportNode = &reportNode;
 	}
+	else
+	{
+		nextReportNode = &reportNode;
+	}
+
 
 	// children nodes check
-	if( node.hasGroup() )
+	if( node.hasGroup() && sentToReport )
 		checkNode( node.firstChild(), *nextReportNode, true );
 
 	// check repetitions
@@ -211,11 +227,11 @@ void Comparator::checkNode( const sr::SpecNode& node, report_generator::ReportNo
 
 	// next node check
 	if( ! node.isLastNode() )
-		checkNode( nextNode, *nextReportNode );
+		checkNode( nextNode, *nextReportNode, ( isFirstChild && ! sentToReport ) );
 	else if( nextNode.getId() == nodeId && ! _file->isEndOfFile() && inRange )
-		checkNode( nextNode, *nextReportNode );
+		checkNode( nextNode, *nextReportNode, ( isFirstChild && ! sentToReport ) );
 	else if( _elementIter.at( nodeId ).iter < repetNumber )
-		checkNode( node, *nextReportNode );
+		checkNode( node, *nextReportNode, ( isFirstChild && ! sentToReport ) );
 	else
 		LOG_TRACE( "\t IS LAST NODE !" );
 
@@ -275,10 +291,6 @@ void Comparator::extractRepetition( size_t& repetNumber, Vector< size_t >::Pair&
 					repetRange.push_back( std::make_pair( repetMin, repetMax ) );
 			}
 		}
-
-		// LOG_INFO( "REP NUMBER: " << repetNumber );
-		// for( std::pair< size_t, size_t > range : repetRange )
-		// 	LOG_INFO( "REP RANGE: [" << range.first << ", " << range.second << "]" );
 	}
 }
 
