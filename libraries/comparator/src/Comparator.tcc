@@ -65,6 +65,7 @@ std::shared_ptr< ElementType > Comparator::getElement( const sr::SpecNode& node 
 	element->checkData();
 
 	_elementList.insert( std::make_pair( node.getId(), element ) );
+	LOG_INFO( "_elementList: " << _elementList.size() );
 
 	return element;
 }
@@ -112,11 +113,18 @@ void Comparator::compare( const std::string& specId, rg::Report& report )
 
 void Comparator::checkNode( const sr::SpecNode& node, report_generator::ReportNode& reportNode, const bool& isFirstChild )
 {
+	if( _file->isEndOfFile() )
+	{
+		LOG_ERROR( "End Of File !" );
+		return;
+	}
+
 	std::string nodeId = node.getId();
-	LOG_TRACE( "CHECK NODE " << nodeId );
 	
+	// check node
 	std::shared_ptr< be::Element > element( getElementFromNode( node ) );
 
+	// iterate node
 	if( _elementIter.count( nodeId ) == 0 )
 	{
 		ElementIter iteration;
@@ -131,16 +139,18 @@ void Comparator::checkNode( const sr::SpecNode& node, report_generator::ReportNo
 	else
 		_elementIter.at( nodeId ).iter++;
 
+	LOG_TRACE( ">> CHECK NODE " << nodeId << " | " << _elementIter.at( nodeId ).iter );
+	
+	// get repetition
 	size_t repetNumber = 1;
 	Vector< size_t >::Pair repetRange;
 	extractRepetition( repetNumber, repetRange, node.getRepetition() );
 
 	sr::SpecNode nextNode = node.next();
+	LOG_TRACE( "nextNode: " << nextNode.getId() << " | nodeId: " << nodeId );
 	rg::ReportNode* nextReportNode;
 	
-	if( _elementIter.at( nodeId ).iter < repetNumber )
-		nextNode = node;
-	
+	// node to report
 	if( isFirstChild )
 	{
 		rg::ReportNode newReportNode = reportNode.appendChild( element );
@@ -155,21 +165,61 @@ void Comparator::checkNode( const sr::SpecNode& node, report_generator::ReportNo
 		nextReportNode = &reportNode;
 	}
 
+	// children nodes check
 	if( node.hasGroup() )
 		checkNode( node.firstChild(), *nextReportNode, true );
 
+	// check repetitions
+	if( _elementIter.at( nodeId ).iter < repetNumber )
+		nextNode = node;
+	
+	bool inRange = false;
+	if( repetRange.size() > 0 )
+	{
+		size_t min = repetRange.at(0).first;
+		size_t max = repetRange.at(0).second;
+		for( std::pair< size_t, size_t > range : repetRange )
+		{
+			min = std::min( range.first,  min );	
+			max = std::max( range.second, max );	
+		}
+		LOG_TRACE( "\tmin : " << min );
+		LOG_TRACE( "\tmax : " << max );
+
+		if( _elementIter.at( nodeId ).iter < max || max == 0 )
+		{
+			inRange = true;
+			if( _elementIter.at( nodeId ).iter < min )
+				nextNode = node;
+			else
+			{
+				size_t initPos = _file->getPosition();
+				std::shared_ptr< be::Element > nextElement( getElementFromNode( node ) );
+
+				if( _file->getLength() - initPos < nextElement->getSize() )
+					_file->goBack( _file->getLength() - initPos );
+				else
+					_file->goBack( nextElement->getSize() );
+
+				if( nextElement->getStatus() == 1 )
+					nextNode = node;
+				else
+					inRange = false;
+			}
+		}
+	}
+
+	// next node check
 	if( ! node.isLastNode() )
+		checkNode( nextNode, *nextReportNode );
+	else if( nextNode.getId() == nodeId && ! _file->isEndOfFile() && inRange )
 		checkNode( nextNode, *nextReportNode );
 	else if( _elementIter.at( nodeId ).iter < repetNumber )
 		checkNode( node, *nextReportNode );
 	else
 		LOG_TRACE( "\t IS LAST NODE !" );
 
-	// LOG_TRACE( nodeId << " iter  : " << _elementIter.at( nodeId ).iter );
-	// LOG_TRACE( nodeId << " parent): " << _elementIter.at( nodeId ).parentId );
-	// for( std::string child : _elementIter.at( nodeId ).childrenId )
-	// 	LOG_TRACE( nodeId << " child : " << child << " | " << _elementIter.at( child ).iter );
-
+	// remove iteration (?)
 	_elementIter.at( nodeId ).iter = 0;
 }
 
@@ -211,10 +261,15 @@ void Comparator::extractRepetition( size_t& repetNumber, Vector< size_t >::Pair&
 			{
 				// LOG_TRACE( "REP RANGE: [" << repetPair.first << ", " << repetPair.second << "]" );
 				be::expression_parser::ExpressionParser repetParser( _elementList );
-				size_t repetMin = repetParser.getExpressionResult< size_t >( repetPair.first );
-				size_t repetMax = repetParser.getExpressionResult< size_t >( repetPair.second );
+				size_t repetMin = 0;
+				size_t repetMax = 0;
 
-				if( repetMin > repetMax )
+				if( ! repetPair.first.empty() )
+					repetMin = repetParser.getExpressionResult< size_t >( repetPair.first );
+				if( ! repetPair.second.empty() )
+					repetMax = repetParser.getExpressionResult< size_t >( repetPair.second );
+
+				if( repetMax != 0 && repetMin > repetMax )
 					repetRange.push_back( std::make_pair( repetMax, repetMin ) );
 				else
 					repetRange.push_back( std::make_pair( repetMin, repetMax ) );

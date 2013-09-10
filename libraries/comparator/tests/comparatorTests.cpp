@@ -663,49 +663,49 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_levels )
 							"id": "child1",
 							"label": "Child 1",
 							"type": "hexa",
-							"values": "ff00"
+							"values": "4649"
 						},
 						{
 							"id": "child2",
 							"label": "Child 2",
 							"type": "hexa",
-							"values": "00ff",
+							"values": "4c45",
 							"group": [
 								{
 									"id": "child21",
 									"label": "Child 21",
 									"type": "hexa",
-									"values": "00ff",
+									"values": "2072",
 									"group": [
 										{
 											"id": "child211",
 											"label": "Child 211",
 											"type": "hexa",
-											"values": "ff00"
+											"values": "6561"
 										},
 										{
 											"id": "child212",
 											"label": "Child 212",
 											"type": "hexa",
-											"values": "ff00",
+											"values": "6465",
 											"group": [
 												{
 													"id": "child2121",
 													"label": "Child 2121",
 													"type": "hexa",
-													"values": "ff00"
+													"values": "7220"
 												},
 												{
 													"id": "child2122",
 													"label": "Child 2122",
 													"type": "hexa",
-													"values": "ff00",
+													"values": "2020",
 													"group": [
 														{
 															"id": "child21221",
 															"label": "Child 21221",
 															"type": "hexa",
-															"values": "ff00"
+															"values": "2020"
 														}
 													]
 												}
@@ -717,7 +717,7 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_levels )
 									"id": "child22",
 									"label": "Child 22",
 									"type": "hexa",
-									"values": "00ff"
+									"values": "7265"
 								}
 							]
 						}						
@@ -733,19 +733,19 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_levels )
 							"id": "child31",
 							"label": "Child 31",
 							"type": "hexa",
-							"values": "ff00",
+							"values": "6461",
 							"group": [
 								{
 									"id": "child311",
 									"label": "Child 311",
 									"type": "hexa",
-									"values": "ff00",
+									"values": "6572",
 									"group": [
 										{
 											"id": "child3111",
 											"label": "Child 3111",
 											"type": "hexa",
-											"values": "ff00"
+											"values": "2045"
 										}
 									]
 								}
@@ -764,7 +764,7 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_levels )
 		specList.addSpecification( spec );
 
 		std::stringbuf buffer;
-		buffer.str( "FILE reader" );
+		buffer.str( "FILE reader     redaer ELIF" );
 		fr::FileReader file( &buffer );
 
 		Comparator comp( &file, specList );
@@ -893,7 +893,7 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_levels_2 )
 		specList.addSpecification( spec );
 
 		std::stringbuf buffer;
-		buffer.str( "FILE reader" );
+		buffer.str( "FILE reader    1.0 vs. 0.1    redaer ELIF ? " );
 		fr::FileReader file( &buffer );
 
 		Comparator comp( &file, specList );
@@ -1435,6 +1435,359 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_expr_group )
 		str += "end";
 		str += "end1end1";
 		str += "end";
+		buffer.str( str );
+		fr::FileReader file( &buffer );
+
+		Comparator comp( &file, specList );
+		
+		rg::Report report;
+		comp.compare( "test", report );
+
+		rg::Transform tr( report );
+		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
+		
+		LOG_INFO( "\n==== REPORT ====" );
+		LOG_INFO( exporter.getXmlString() );
+
+		std::istringstream  xmlStream( exporter.getXmlString() );
+		std::istringstream jsonStream( jsonString );
+		bpt::ptree  xmlReport;
+		bpt::ptree jsonReport;
+		bpt::read_xml (  xmlStream,  xmlReport );
+		bpt::read_json( jsonStream, jsonReport );
+
+		BOOST_CHECK_EQUAL( xmlReport.size(), jsonReport.get_child( "header" ).size() );
+
+		std::vector< std::string >  xmlIds;
+		std::vector< std::string > jsonIds;
+
+		fillVectorXml( xmlReport, xmlIds, "<xmlattr>.id" );
+		fillVectorJson( jsonReport.get_child( "header" ), jsonIds, "id" );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_range_simple )
+{
+	LOG_WARNING( ">>> comparator_comparator_validation_repetition_range_simple <<<" );
+	{
+		std::string jsonString = R"*(
+		{
+			"standard":
+			{
+				"id": "test",
+				"extension": [
+				"ext1"
+				]
+			},
+			"header": [
+				{
+					"id": "file",
+					"label": "FILE",
+					"type": "ascii",
+					"values": "group",
+					"group": [
+						{
+							"id": "repetition",
+							"label": "Repetition",
+							"type": "uint8"
+						},
+						{
+							"id": "element1",
+							"label": "Element 1",
+							"type": "ascii",
+							"values": "n",
+							"repeated": [
+								{ "min": "2", "max": "4" }
+							]
+						},
+						{
+							"id": "element2",
+							"label": "Element 2",
+							"type": "ascii",
+							"values": "?",
+							"repeated": [
+								{ "min": "2", "max": "repetition / 8" }
+							]
+						},
+						{
+							"id": "element3",
+							"label": "Element 3",
+							"type": "ascii",
+							"values": "digit",
+							"repeated": [
+								{ "min": "2" }
+							]
+						},
+						{
+							"id": "element4",
+							"label": "Element 4",
+							"type": "ascii",
+							"values": "max",
+							"repeated": [
+								{ "max": "4" }
+							]
+						},
+						{
+							"id": "elementEnd",
+							"label": "Element End",
+							"type": "ascii",
+							"values": "end",
+							"repeated": [
+								{ "min": "2" }
+							]
+						}
+					]
+				}
+			]
+		}
+		)*";
+
+		sr::Specification spec;
+		sr::SpecList specList;
+
+		spec.setFromString( jsonString );
+		specList.addSpecification( spec );
+
+		std::stringbuf buffer;
+		std::string str = "group";
+		str += " ";
+		str += "nnn";
+		str += "????";
+		str += "digit";
+		str += "digit";
+		str += "digit";
+		str += "max";
+		str += "max";
+		str += "endendend";
+		buffer.str( str );
+		fr::FileReader file( &buffer );
+
+		Comparator comp( &file, specList );
+		
+		rg::Report report;
+		comp.compare( "test", report );
+
+		rg::Transform tr( report );
+		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
+		
+		LOG_INFO( "\n==== REPORT ====" );
+		LOG_INFO( exporter.getXmlString() );
+
+		std::istringstream  xmlStream( exporter.getXmlString() );
+		std::istringstream jsonStream( jsonString );
+		bpt::ptree  xmlReport;
+		bpt::ptree jsonReport;
+		bpt::read_xml (  xmlStream,  xmlReport );
+		bpt::read_json( jsonStream, jsonReport );
+
+		BOOST_CHECK_EQUAL( xmlReport.size(), jsonReport.get_child( "header" ).size() );
+
+		std::vector< std::string >  xmlIds;
+		std::vector< std::string > jsonIds;
+
+		fillVectorXml( xmlReport, xmlIds, "<xmlattr>.id" );
+		fillVectorJson( jsonReport.get_child( "header" ), jsonIds, "id" );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_range_group )
+{
+	LOG_WARNING( ">>> comparator_comparator_validation_repetition_range_group <<<" );
+	{
+		std::string jsonString = R"*(
+		{
+			"standard":
+			{
+				"id": "test",
+				"extension": [
+				"ext1"
+				]
+			},
+			"header": [
+				{
+					"id": "file",
+					"label": "FILE",
+					"type": "ascii",
+					"values": "group",
+					"group": [
+						{
+							"id": "repetition",
+							"label": "Repetition",
+							"type": "uint8"
+						},
+						{
+							"id": "element1",
+							"label": "Element 1",
+							"type": "ascii",
+							"values": "n",
+							"repeated": [
+								{ "min": "2", "max": "4" }
+							],
+							"group": [
+								{
+									"id": "element2",
+									"label": "Element 2",
+									"type": "ascii",
+									"values": "?",
+									"repeated": [
+										{ "min": "2", "max": "4" }
+									],
+									"group": [
+										{
+											"id": "element2.1",
+											"label": "Element 2.1",
+											"type": "ascii",
+											"values": "!",
+											"repeated": [
+												{ "min": "2", "max": "4" }
+											],
+											"group": [
+												{
+													"id": "element2.1.1",
+													"label": "Element 2.1.1",
+													"type": "ascii",
+													"values": "*",
+													"repeated": [
+														{ "min": "1", "max": "3" }
+													]
+												}
+											]
+										}
+									]
+								},
+								{
+									"id": "element3",
+									"label": "Element 3",
+									"type": "ascii",
+									"values": "digit",
+									"repeated": [
+										{ "min": "1", "max": "3" }
+									],
+									"group": [
+										{
+											"id": "element3.1",
+											"label": "Element 3.1",
+											"type": "ascii",
+											"values": "°"
+										},
+										{
+											"id": "element3.2",
+											"label": "Element 3.2",
+											"type": "ascii",
+											"values": "+",
+											"repeated": [
+												{ "min": "2", "max": "4" }
+											],
+											"group": [
+												{
+													"id": "element3.2.1",
+													"label": "Element 3.2.1",
+													"type": "ascii",
+													"values": "-",
+													"repeated": [
+														{ "min": "1", "max": "3" }
+													]
+												}
+											]
+										},
+										{
+											"id": "element3.3",
+											"label": "Element 3.3",
+											"type": "ascii",
+											"values": "/"
+										}
+									]
+								},
+								{
+									"id": "element4",
+									"label": "Element 4",
+									"type": "ascii",
+									"values": "max",
+									"repeated": [
+										{ "min": "1", "max": "5" }
+									],
+									"group": [
+										{
+											"id": "element4.1",
+											"label": "Element 4.1",
+											"type": "ascii",
+											"values": "$",
+											"repeated": [
+												{ "min": "2", "max": "4" }
+											],
+											"group": [
+												{
+													"id": "element2.1.1",
+													"label": "Element 2.1.1",
+													"type": "ascii",
+													"values": "£",
+													"repeated": [
+														{ "min": "1", "max": "3" }
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"id": "elementEnd",
+							"label": "Element End",
+							"type": "ascii",
+							"values": "end",
+							"repeated": [
+								{ "min": "2" }
+							]
+						}
+					]
+				}
+			]
+		}
+		)*";
+
+		sr::Specification spec;
+		sr::SpecList specList;
+
+		spec.setFromString( jsonString );
+		specList.addSpecification( spec );
+
+		std::stringbuf buffer;
+		std::string str = "group";
+		str += " ";
+		str += "n";
+		str += "?!*!*";
+		str += "?!*!*!**";
+		str += "?!*!**!**!*";
+		str += "digit°+-+--+-+--/";
+		str += "digit°+-+---/";
+		str += "max$£$£££";
+		str += "max$£$£££$££";
+		str += "max$$££$£$£";
+		str += "max$£$£££$££";
+		str += "max$£$£££";
+		str += "n";
+		str += "?!**!*!**!*";
+		str += "?!*!***";
+		str += "digit°+--+-+--/";
+		str += "max$£££$£$££$£";
+		str += "n";
+		str += "?!*!**!*";
+		str += "?!*!**";
+		str += "?!**!*!*";
+		str += "?!***!**";
+		str += "digit°+--+---/";
+		str += "max$££$£$££";
+		str += "n";
+		str += "?!*!***!**!*";
+		str += "?!***!*!**!*";
+		str += "digit°+-+---/";
+		str += "digit°+--+-+--/";
+		str += "digit°+--+-+-+-/";
+		str += "max$££$£$££";
+		str += "max$£$£££";
+		str += "max$£$££$£$£";
+		str += "endendend";
 		buffer.str( str );
 		fr::FileReader file( &buffer );
 
