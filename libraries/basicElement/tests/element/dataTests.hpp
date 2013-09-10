@@ -258,4 +258,37 @@ BOOST_AUTO_TEST_CASE( basic_element_data_subType )
 	}
 }
 
+BOOST_AUTO_TEST_CASE( basic_element_data_error_warning )
+{
+	LOG_INFO( "\n>>> basic_element_data_error_warning <<<" );
+	{
+		dbe::Data data( eDataTypeUnknown );
+		std::string error = "error";
+		data.addErrorLabel( error );
+		BOOST_CHECK_EQUAL( data.getErrorLabel(), error );
+		BOOST_CHECK_EQUAL( data.getStatus(), be::Element::eStatusInvalid );
+	}
+	{
+		dbe::Data data( eDataTypeUnknown );
+		std::string error = "error";
+		data.addErrorLabel( error );
+		data.addErrorLabel( error );
+		BOOST_CHECK_EQUAL( data.getErrorLabel(), "errorerror" );
+		BOOST_CHECK_EQUAL( data.getStatus(), be::Element::eStatusInvalid );
+	}
+	{
+		dbe::Data data( eDataTypeUnknown );
+		std::string warning = "warning";
+		data.addWarningLabel( warning );
+		BOOST_CHECK_EQUAL( data.getWarningLabel(), warning );
+	}
+	{
+		dbe::Data data( eDataTypeUnknown );
+		std::string warning = "warning";
+		data.addWarningLabel( warning );
+		data.addWarningLabel( warning );
+		BOOST_CHECK_EQUAL( data.getWarningLabel(), "warningwarning" );
+	}
+}
+
 BOOST_AUTO_TEST_SUITE_END()

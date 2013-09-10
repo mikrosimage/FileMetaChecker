@@ -47,9 +47,15 @@ public:
 	void getEndianOrderedData( char* buffer, const char* data ) const;
 	void reverseEndianness   ( char* buffer, const char* data ) const;
 
+	void addErrorLabel( const std::string& error );
+	void addWarningLabel( const std::string& warning );
+	std::string getErrorLabel();
+	std::string getWarningLabel();
+
 protected:
 	std::vector< std::pair< std::string, std::string > > getCommonElementInfo();
 	std::string getStatusString();
+
 
 public:
 	
@@ -70,6 +76,8 @@ protected:
 	EStatus       _status;
 	int           _subType;
 	size_t        _size;
+	std::string   _error;
+	std::string   _warning;
 	bool          _bigEndianData;
 };
 

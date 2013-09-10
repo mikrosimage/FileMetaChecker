@@ -11,6 +11,8 @@ Element::Element( EType type )
 	, _uniqueId      ( _lastUniqueId++ )
 	, _status        ( eStatusUnknown )
 	, _subType       ( 0 )
+	, _error         ( "" )
+	, _warning       ( "" )
 	, _bigEndianData ( true )
 {
 }
@@ -73,12 +75,40 @@ void Element::reverseEndianness( char* buffer, const char* data ) const
 	std::reverse_copy( data, data + _size, buffer );
 }
 
+
+void Element::addErrorLabel( const std::string& error )
+{
+	_status = Element::eStatusInvalid;
+	_error += error;
+}
+
+void Element::addWarningLabel( const std::string& warning )
+{
+	_warning += warning;
+}
+
+std::string Element::getErrorLabel()
+{
+	return _error;
+}
+
+std::string Element::getWarningLabel()
+{
+	return _warning;
+}
+
 std::vector< std::pair< std::string, std::string > > Element::getCommonElementInfo()
 {
 	std::vector< std::pair< std::string, std::string > > commonInfo;
 	commonInfo.push_back( std::make_pair( "id",     getId()             ) );
 	commonInfo.push_back( std::make_pair( "label",  getLabel()          ) );
 	commonInfo.push_back( std::make_pair( "status", getStatusString()   ) );
+	
+	if( ! _error.empty() )
+		commonInfo.push_back( std::make_pair( "error", _error ) );
+	if( ! _warning.empty() )
+		commonInfo.push_back( std::make_pair( "warning", _warning ) );
+
 	return commonInfo;
 }
 
@@ -94,5 +124,6 @@ std::string Element::getStatusString()
 	}
 	return status;
 }
+
 
 }
