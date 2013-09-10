@@ -467,8 +467,8 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_range_group )
 											],
 											"group": [
 												{
-													"id": "element2.1.1",
-													"label": "Element 2.1.1",
+													"id": "element4.1.1",
+													"label": "Element 4.1.1",
 													"type": "ascii",
 													"values": "£",
 													"repeated": [
@@ -513,7 +513,7 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_range_group )
 		str += "digit°+-+---/";
 		str += "max$£$£££";
 		str += "max$£$£££$££";
-		str += "max$$££$£$£";
+		str += "max$££$£$£";
 		str += "max$£$£££$££";
 		str += "max$£$£££";
 		str += "n";
@@ -538,6 +538,151 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_range_group )
 		str += "max$£$£££";
 		str += "max$£$££$£$£";
 		str += "endendend";
+		buffer.str( str );
+		fr::FileReader file( &buffer );
+
+		Comparator comp( &file, specList );
+		
+		rg::Report report;
+		comp.compare( "test", report );
+
+		rg::Transform tr( report );
+		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
+		
+		LOG_INFO( "\n==== REPORT ====" );
+		LOG_INFO( exporter.getXmlString() );
+
+		std::istringstream  xmlStream( exporter.getXmlString() );
+		std::istringstream jsonStream( jsonString );
+		bpt::ptree  xmlReport;
+		bpt::ptree jsonReport;
+		bpt::read_xml (  xmlStream,  xmlReport );
+		bpt::read_json( jsonStream, jsonReport );
+
+		BOOST_CHECK_EQUAL( xmlReport.size(), jsonReport.get_child( "header" ).size() );
+
+		std::vector< std::string >  xmlIds;
+		std::vector< std::string > jsonIds;
+
+		fillVectorXml( xmlReport, xmlIds, "<xmlattr>.id" );
+		fillVectorJson( jsonReport.get_child( "header" ), jsonIds, "id" );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_range_group_complex )
+{
+	LOG_WARNING( ">>> comparator_comparator_validation_repetition_range_group_complex <<<" );
+	{
+		std::string jsonString = R"*(
+		{
+			"standard":
+			{
+				"id": "test",
+				"extension": [
+				"ext1"
+				]
+			},
+			"header": [
+				{
+					"id": "file",
+					"label": "FILE",
+					"type": "ascii",
+					"values": "group",
+					"group": [
+						{
+							"id": "repetition",
+							"label": "Repetition",
+							"type": "uint8"
+						},
+						{
+							"id": "elementMinOut",
+							"label": "Element Min Out",
+							"type": "ascii",
+							"values": "n",
+							"repeated": [
+								{ "min": "2", "max": "4" }
+							]
+						},
+						{
+							"id": "elementMaxOut",
+							"label": "Element Max Out",
+							"type": "ascii",
+							"values": "p",
+							"repeated": [
+								{ "min": "2", "max": "4" }
+							]
+						},
+						{
+							"id": "elementMulti",
+							"label": "Element Multi",
+							"type": "ascii",
+							"values": "m",
+							"repeated": [
+								{ "min": "4" },
+								{ "max": "2" }
+							]
+						},
+						{
+							"id": "elementMultiOut",
+							"label": "Element Multi Out",
+							"type": "ascii",
+							"values": "o",
+							"repeated": [
+								{ "min": "4" },
+								{ "max": "2" }
+							]
+						},
+						{
+							"id": "elementDoubleMulti",
+							"label": "Element Double Multi",
+							"type": "ascii",
+							"values": "d",
+							"repeated": [
+								{ "min": 5, "max": 6 },
+								{ "min": 2, "max": 3 }
+							]
+						},
+						{
+							"id": "elementDoubleMultiOut",
+							"label": "Element Double Multi Out",
+							"type": "ascii",
+							"values": "u",
+							"repeated": [
+								{ "min": 5, "max": 6 },
+								{ "min": 2, "max": 3 }
+							]
+						},
+						{
+							"id": "elementEnd",
+							"label": "Element End",
+							"type": "ascii",
+							"values": "end",
+							"repeated": [
+								{ "min": "2" }
+							]
+						}
+					]
+				}
+			]
+		}
+		)*";
+
+		sr::Specification spec;
+		sr::SpecList specList;
+
+		spec.setFromString( jsonString );
+		specList.addSpecification( spec );
+
+		std::stringbuf buffer;
+		std::string str = "group";
+		str += " ";
+		str += "n";
+		str += "ppppp";
+		str += "mmmm";
+		str += "ooo";
+		str += "dddddd";
+		str += "uuuu";
+		str += "end";
 		buffer.str( str );
 		fr::FileReader file( &buffer );
 
