@@ -43,12 +43,12 @@ std::string SpecNode::getCount() const
 	return getProperty( kCount, "" );
 }
 
-std::string SpecNode::getRequired()
+std::string SpecNode::getRequired() const
 {
 	return getProperty( kRequired, "" );
 }
 
-std::string SpecNode::getGroupSize()
+std::string SpecNode::getGroupSize() const
 {
 	return getProperty( kGroupSize, "" );
 }

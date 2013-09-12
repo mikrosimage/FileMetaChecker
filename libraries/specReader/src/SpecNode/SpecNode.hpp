@@ -23,7 +23,7 @@ public:
 	std::string getDisplayType() const;
 
 	std::string getCount() const;
-	std::string getRequired();
+	std::string getRequired() const;
 
 	std::vector< std::string > getValues() const;
 
@@ -37,7 +37,7 @@ public:
 	bool isOrdered() const;
 
 	bool hasGroup() const;
-	std::string getGroupSize();
+	std::string getGroupSize() const;
 
 	SpecNode next() const;
 	SpecNode firstChild() const;
