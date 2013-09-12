@@ -248,6 +248,22 @@ void Comparator::checkNode( const sr::SpecNode& node, report_generator::ReportNo
 	// children nodes check
 	if( node.hasGroup() && sentToReport )
 		checkNode( node.firstChild(), *nextReportNode, true );
+	
+	// check group size
+	if( node.hasGroup() && ! node.getGroupSize().empty() )
+	{
+		int sizeDiff = extractGroupSize( node.getGroupSize() ) - ( _file->getPosition() - ( initPos + element->getSize() ) );
+		std::stringstream warning;
+		if( sizeDiff > 0 )
+			warning << "Group size difference: " << sizeDiff << " missing bytes ";
+		if( sizeDiff < 0 )
+			warning << "Group size difference: " << abs( sizeDiff ) << " unexpected bytes ";
+		if( ! warning.str().empty() )
+		{
+			nextReportNode->getSecond()->begin()->second.data()->addWarningLabel( warning.str() );
+			LOG_WARNING( warning.str() );
+		}
+	}
 
 	// next node check
 	if( ! node.isLastNode() )
@@ -315,6 +331,12 @@ void Comparator::extractRepetition( size_t& repetNumber, Vector< size_t >::Pair&
 			}
 		}
 	}
+}
+
+size_t Comparator::extractGroupSize( const std::string& groupSizeExpr )
+{
+	be::expression_parser::ExpressionParser repetParser( _elementList );
+	return repetParser.getExpressionResult< size_t >( groupSizeExpr );
 }
 
 }

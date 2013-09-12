@@ -47,6 +47,7 @@ protected:
 	std::shared_ptr< be::Element > getElementFromNode( const spec_reader::SpecNode& node );
 	
 	void extractRepetition( size_t& repetNumber, Vector< size_t >::Pair& repetRange, const Vector< std::string >::Pair& nodeRepetitions );
+	size_t extractGroupSize( const std::string& groupSizeExpr );
 
 private:
 	filereader::FileReader*              _file;
