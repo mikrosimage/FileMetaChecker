@@ -74,19 +74,6 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_expr_simple )
 		
 		LOG_INFO( "\n==== REPORT ====" );
 		LOG_INFO( exporter.getXmlString() );
-
-		std::istringstream  xmlStream( exporter.getXmlString() );
-		std::istringstream jsonStream( jsonString );
-		bpt::ptree  xmlReport;
-		bpt::ptree jsonReport;
-		bpt::read_xml (  xmlStream,  xmlReport );
-		bpt::read_json( jsonStream, jsonReport );
-
-		std::vector< std::string >  xmlIds;
-		std::vector< std::string > jsonIds;
-
-		fillVectorXml( xmlReport, xmlIds, "<xmlattr>.id" );
-		fillVectorJson( jsonReport.get_child( "header" ), jsonIds, "id" );
 	}
 }
 
@@ -207,12 +194,6 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_expr_group )
 		bpt::read_json( jsonStream, jsonReport );
 
 		BOOST_CHECK_EQUAL( xmlReport.size(), jsonReport.get_child( "header" ).size() );
-
-		std::vector< std::string >  xmlIds;
-		std::vector< std::string > jsonIds;
-
-		fillVectorXml( xmlReport, xmlIds, "<xmlattr>.id" );
-		fillVectorJson( jsonReport.get_child( "header" ), jsonIds, "id" );
 	}
 }
 
@@ -331,12 +312,6 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_range_simple )
 		bpt::read_json( jsonStream, jsonReport );
 
 		BOOST_CHECK_EQUAL( xmlReport.size(), jsonReport.get_child( "header" ).size() );
-
-		std::vector< std::string >  xmlIds;
-		std::vector< std::string > jsonIds;
-
-		fillVectorXml( xmlReport, xmlIds, "<xmlattr>.id" );
-		fillVectorJson( jsonReport.get_child( "header" ), jsonIds, "id" );
 	}
 }
 
@@ -560,12 +535,6 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_range_group )
 		bpt::read_json( jsonStream, jsonReport );
 
 		BOOST_CHECK_EQUAL( xmlReport.size(), jsonReport.get_child( "header" ).size() );
-
-		std::vector< std::string >  xmlIds;
-		std::vector< std::string > jsonIds;
-
-		fillVectorXml( xmlReport, xmlIds, "<xmlattr>.id" );
-		fillVectorJson( jsonReport.get_child( "header" ), jsonIds, "id" );
 	}
 }
 
@@ -705,12 +674,6 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_range_group_co
 		bpt::read_json( jsonStream, jsonReport );
 
 		BOOST_CHECK_EQUAL( xmlReport.size(), jsonReport.get_child( "header" ).size() );
-
-		std::vector< std::string >  xmlIds;
-		std::vector< std::string > jsonIds;
-
-		fillVectorXml( xmlReport, xmlIds, "<xmlattr>.id" );
-		fillVectorJson( jsonReport.get_child( "header" ), jsonIds, "id" );
 	}
 }
 
