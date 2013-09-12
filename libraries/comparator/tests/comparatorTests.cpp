@@ -55,4 +55,4 @@ BOOST_AUTO_TEST_SUITE_END()
 
 #include "comparatorTestsFeatures.hpp"
 #include "comparatorTestsRepetitions.hpp"
-// #include "comparatorTestsOptional.hpp"
+#include "comparatorTestsOptional.hpp"

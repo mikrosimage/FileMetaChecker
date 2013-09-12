@@ -49,10 +49,10 @@ protected:
 	void extractRepetition( size_t& repetNumber, Vector< size_t >::Pair& repetRange, const Vector< std::string >::Pair& nodeRepetitions );
 
 private:
-	filereader::FileReader*   _file;
-	spec_reader::SpecList     _specs;
-	report_generator::Report* _report;
-	ElementMap                _elementList;
+	filereader::FileReader*              _file;
+	spec_reader::SpecList                _specs;
+	report_generator::Report*            _report;
+	ElementMap                           _elementList;
 	std::map< std::string, ElementIter > _elementIter;
 };
 
