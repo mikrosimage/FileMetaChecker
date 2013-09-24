@@ -49,20 +49,23 @@ void ExpressionParser::setVariables( const std::map < std::string, std::shared_p
 	{
 		std::ostringstream oss;
 		std::string value;
-		switch( elem.second->getNumberSubType() )
+		switch( elem.second->getSubType() )
 		{
-			case eNumberTypeUnknown      : throw std::runtime_error( "Invalid element subtype!"); break;
-			case eNumberTypeInt8         : value = std::static_pointer_cast< be::number_element::Number< be::number_element::int8         > >( elem.second )->toString(); break;
-			case eNumberTypeUInt8        : value = std::static_pointer_cast< be::number_element::Number< be::number_element::uint8        > >( elem.second )->toString(); break;
-			case eNumberTypeInt16        : value = std::static_pointer_cast< be::number_element::Number< be::number_element::int16        > >( elem.second )->toString(); break;
-			case eNumberTypeUInt16       : value = std::static_pointer_cast< be::number_element::Number< be::number_element::uint16       > >( elem.second )->toString(); break;
-			case eNumberTypeInt32        : value = std::static_pointer_cast< be::number_element::Number< be::number_element::int32        > >( elem.second )->toString(); break;
-			case eNumberTypeUInt32       : value = std::static_pointer_cast< be::number_element::Number< be::number_element::uint32       > >( elem.second )->toString(); break;
-			case eNumberTypeInt64        : value = std::static_pointer_cast< be::number_element::Number< be::number_element::int64        > >( elem.second )->toString(); break;
-			case eNumberTypeUInt64       : value = std::static_pointer_cast< be::number_element::Number< be::number_element::uint64       > >( elem.second )->toString(); break;
-			case eNumberTypeFloat        : value = std::static_pointer_cast< be::number_element::Number< float                            > >( elem.second )->toString(); break;
-			case eNumberTypeDouble       : value = std::static_pointer_cast< be::number_element::Number< double                           > >( elem.second )->toString(); break;
-			case eNumberTypeIeeeExtended : value = std::static_pointer_cast< be::number_element::Number< be::number_element::ieeeExtended > >( elem.second )->toString(); break;
+			case eSubTypeInt8         : value = std::static_pointer_cast< be::number_element::Number< be::number_element::int8         > >( elem.second )->toString(); break;
+			case eSubTypeUInt8        : value = std::static_pointer_cast< be::number_element::Number< be::number_element::uint8        > >( elem.second )->toString(); break;
+			case eSubTypeInt16        : value = std::static_pointer_cast< be::number_element::Number< be::number_element::int16        > >( elem.second )->toString(); break;
+			case eSubTypeUInt16       : value = std::static_pointer_cast< be::number_element::Number< be::number_element::uint16       > >( elem.second )->toString(); break;
+			case eSubTypeInt32        : value = std::static_pointer_cast< be::number_element::Number< be::number_element::int32        > >( elem.second )->toString(); break;
+			case eSubTypeUInt32       : value = std::static_pointer_cast< be::number_element::Number< be::number_element::uint32       > >( elem.second )->toString(); break;
+			case eSubTypeInt64        : value = std::static_pointer_cast< be::number_element::Number< be::number_element::int64        > >( elem.second )->toString(); break;
+			case eSubTypeUInt64       : value = std::static_pointer_cast< be::number_element::Number< be::number_element::uint64       > >( elem.second )->toString(); break;
+			case eSubTypeFloat        : value = std::static_pointer_cast< be::number_element::Number< float                            > >( elem.second )->toString(); break;
+			case eSubTypeDouble       : value = std::static_pointer_cast< be::number_element::Number< double                           > >( elem.second )->toString(); break;
+			case eSubTypeIeeeExtended : value = std::static_pointer_cast< be::number_element::Number< be::number_element::ieeeExtended > >( elem.second )->toString(); break;
+			case eSubTypeUnknown      :
+			case eSubTypeAscii        :
+			case eSubTypeHexa         :
+			case eSubTypeRaw          : throw std::runtime_error( "Invalid element subtype."); break;
 		}
 		oss << elem.first << " = " << value << std::endl;
 		_contextString += oss.str();

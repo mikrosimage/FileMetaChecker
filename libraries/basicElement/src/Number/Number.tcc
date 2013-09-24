@@ -6,11 +6,12 @@ namespace number_element
 {
 
 template< typename NumberType >
-Number< NumberType >::Number()
-	: Element( eTypeNumber )
+Number< NumberType >::Number( const std::string& id, const ESubType& subType, const EDisplayType& dispType  )
+	: Element( id, eTypeNumber, subType, dispType )
 {
 	setSubType();
 	setSize();
+	LOG_ERROR( _size );
 }
 
 template< typename NumberType >
@@ -230,11 +231,11 @@ std::vector< std::pair< std::string, std::string > > Number< NumberType >::getEl
 	
 	elemInfo.insert( elemInfo.end(), commonInfo.begin(), commonInfo.end() );
 
-	elemInfo.push_back( std::make_pair( "type",   getStringFromType() ) );
+	elemInfo.push_back( std::make_pair( kType, getStringFromType() ) );
 
 	if( _map.getSize() == 0 )
 	{
-		elemInfo.push_back( std::make_pair( "value", toString() ) );
+		elemInfo.push_back( std::make_pair( kValue, toString() ) );
 	}
 	else
 	{
@@ -245,78 +246,78 @@ std::vector< std::pair< std::string, std::string > > Number< NumberType >::getEl
 		else
 			value = "- unknown - (" + toString() + ")";
 		
-		elemInfo.push_back( std::make_pair( "value", value ) );
+		elemInfo.push_back( std::make_pair( kValue, value ) );
 	}
 
 	return elemInfo;
 }
 
 template< >
-std::string Number< int8 >::getStringFromType() { return "int8"; }
+std::string Number< int8   >::getStringFromType() { return kInt8; }
 
 template< >
-std::string Number< uint8 >::getStringFromType() { return "uint8"; }
+std::string Number< uint8  >::getStringFromType() { return kUInt8; }
 
 template< >
-std::string Number< int16 >::getStringFromType() { return "int16"; }
+std::string Number< int16  >::getStringFromType() { return kInt16; }
 
 template< >
-std::string Number< uint16 >::getStringFromType() { return "uint16"; }
+std::string Number< uint16 >::getStringFromType() { return kUInt16; }
 
 template< >
-std::string Number< int32 >::getStringFromType() { return "int32"; }
+std::string Number< int32  >::getStringFromType() { return kInt32; }
 
 template< >
-std::string Number< uint32 >::getStringFromType() { return "uint32"; }
+std::string Number< uint32 >::getStringFromType() { return kUInt32; }
 
 template< >
-std::string Number< int64 >::getStringFromType() { return "int64"; }
+std::string Number< int64  >::getStringFromType() { return kInt64; }
 
 template< >
-std::string Number< uint64 >::getStringFromType() { return "uint64"; }
+std::string Number< uint64 >::getStringFromType() { return kUInt64; }
 
 template< >
-std::string Number< float >::getStringFromType() { return "float"; }
+std::string Number< float  >::getStringFromType() { return kFloat; }
 
 template< >
-std::string Number< double >::getStringFromType() { return "double"; }
+std::string Number< double >::getStringFromType() { return kDouble; }
 
 template< >
-std::string Number< ieeeExtended >::getStringFromType() { return "ieeeExtended"; }
+std::string Number< ieeeExtended >::getStringFromType() { return kIeeeExtended; }
 
 
 template< >
-void Number<  int8  >::setSubType() { _subType = eNumberTypeInt8; }
+void Number<  int8  >::setSubType() { _subType = eSubTypeInt8; }
 
 template< >
-void Number< uint8  >::setSubType() { _subType = eNumberTypeUInt8; }
+void Number< uint8  >::setSubType() { _subType = eSubTypeUInt8; }
 
 template< >
-void Number<  int16 >::setSubType() { _subType = eNumberTypeInt16; }
+void Number<  int16 >::setSubType() { _subType = eSubTypeInt16; }
 
 template< >
-void Number< uint16 >::setSubType() { _subType = eNumberTypeUInt16; }
+void Number< uint16 >::setSubType() { _subType = eSubTypeUInt16; }
 
 template< >
-void Number<  int32 >::setSubType() { _subType = eNumberTypeInt32; }
+void Number<  int32 >::setSubType() { _subType = eSubTypeInt32; }
 
 template< >
-void Number< uint32 >::setSubType() { _subType = eNumberTypeUInt32; }
+void Number< uint32 >::setSubType() { _subType = eSubTypeUInt32; }
 
 template< >
-void Number<  int64 >::setSubType() { _subType = eNumberTypeInt64; }
+void Number<  int64 >::setSubType() { _subType = eSubTypeInt64; }
 
 template< >
-void Number< uint64 >::setSubType() { _subType = eNumberTypeUInt64; }
+void Number< uint64 >::setSubType() { _subType = eSubTypeUInt64; }
 
 template< >
-void Number<  float >::setSubType() { _subType = eNumberTypeFloat; }
+void Number<  float >::setSubType() { _subType = eSubTypeFloat; }
 
 template< >
-void Number< double >::setSubType() { _subType = eNumberTypeDouble; }
+void Number< double >::setSubType() { _subType = eSubTypeDouble; }
 
 template< >
-void Number< ieeeExtended >::setSubType() { _subType = eNumberTypeIeeeExtended; }
+void Number< ieeeExtended >::setSubType() { _subType = eSubTypeIeeeExtended; }
 
 }
 }

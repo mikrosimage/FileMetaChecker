@@ -27,7 +27,6 @@ static const std::string kRequired      = "required";
 static const std::string kEndian        = "endian";
 static const std::string kOptional      = "optional";
 static const std::string kOrdered       = "ordered";
-// static const std::string kData          = "data";
 static const std::string kDisplayType   = "displayType";
 
 // node values (right)
@@ -57,7 +56,23 @@ static const std::string kIeeeExtended  = "ieeeExtended";
 static const std::string kExif = "exif";
 static const std::string kKlv  = "klv";
 
+// report definitions
 
+static const std::string kValidator      = "fileValidator";
+static const std::string kSpecification  = "specification";
+static const std::string kElement        = "element";
+
+static const std::string kValue  = "value";
+static const std::string kData   = "data";
+static const std::string kStatus = "status";
+
+static const std::string kUnknown  = "unknown";
+static const std::string kValid    = "valid";
+static const std::string kInvalid  = "invalid";
+static const std::string kPassOver = "pass over";
+
+static const std::string kError    = "error";
+static const std::string kWarning  = "warning";
 
 enum EType
 {
@@ -68,28 +83,30 @@ enum EType
 	eTypeKlv
 };
 
-enum ENumberType
+enum ESubType
 {
-	eNumberTypeUnknown = 0,
-	eNumberTypeInt8,
-	eNumberTypeUInt8,
-	eNumberTypeInt16,
-	eNumberTypeUInt16,
-	eNumberTypeInt32,
-	eNumberTypeUInt32,
-	eNumberTypeInt64,
-	eNumberTypeUInt64,
-	eNumberTypeFloat,
-	eNumberTypeDouble,
-	eNumberTypeIeeeExtended
+	eSubTypeUnknown = 0,
+	eSubTypeInt8,
+	eSubTypeUInt8,
+	eSubTypeInt16,
+	eSubTypeUInt16,
+	eSubTypeInt32,
+	eSubTypeUInt32,
+	eSubTypeInt64,
+	eSubTypeUInt64,
+	eSubTypeFloat,
+	eSubTypeDouble,
+	eSubTypeIeeeExtended,
+	eSubTypeAscii,
+	eSubTypeHexa,
+	eSubTypeRaw
 };
 
-enum EDataType
+enum EDisplayType
 {
-	eDataTypeUnknown = 0,
-	eDataTypeAscii,
-	eDataTypeHexa,
-	eDataTypeRaw
+	eDisplayTypeDefault = 0,
+	eDisplayTypeAscii,
+	eDisplayTypeHexa
 };
 
 #endif

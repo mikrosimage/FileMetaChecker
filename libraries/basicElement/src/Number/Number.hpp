@@ -30,9 +30,9 @@ class Number : public Element
 		NumberType value;
 	};
 public:
-	Number();
+	Number( const std::string& id, const ESubType& subType = eSubTypeInt8, const EDisplayType& dispType = eDisplayTypeDefault );
 	~Number();
-
+	
 	void                 setData ( const char* data, const size_t& size );
 	void                 getData ( char* buffer ) const;
 	size_t               getSize () const;

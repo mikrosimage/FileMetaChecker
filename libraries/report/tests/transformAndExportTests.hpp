@@ -6,9 +6,9 @@ BOOST_AUTO_TEST_CASE( report_transform_and_export )
 	LOG_INFO( ">>> report_transform_and_export <<<" );
 	Report elementReport;
 
-	std::shared_ptr< ben::Number< int >   > numPtr1( new ben::Number< int > );
-	std::shared_ptr< ben::Number< short > > numPtr2( new ben::Number< short > );
-	std::shared_ptr< bed::Data            > dataPtr( new bed::Data );
+	std::shared_ptr< ben::Number< int >   > numPtr1( new ben::Number< int >( id ) );
+	std::shared_ptr< ben::Number< short > > numPtr2( new ben::Number< short >( id ) );
+	std::shared_ptr< bed::Data            > dataPtr( new bed::Data( id ) );
 
 	numPtr1->setId(   "intElem" );
 	numPtr2->setId( "shortElem" );

@@ -63,16 +63,13 @@ const char dataIeeeExtendedMaxLittleEndian[]    = { max_char, max_char, max_char
 const char dataIeeeExtendedNegMaxLittleEndian[] = { max_char, max_char, max_char, max_char, max_char, max_char, max_char, max_char, hFE_char, max_char };	// min value supported by the IEEE Extended type :  -1.18973149535723176502e+4932
 const char dataIeeeExtendedMinLittleEndian[]    = { min_char, min_char, min_char, min_char, min_char, min_char, min_char, h80_char, min_char, min_char };	// min positive value supported by the double type : 3.36210314311209350626e-4932
 
-
 BOOST_AUTO_TEST_SUITE( basic_element_test_number )
 
 BOOST_AUTO_TEST_CASE( basic_element_number )
 {
 	LOG_INFO( "\n>>> basic_element_number <<<" );
-	std::string id    = "id";
-	std::string label = "label";
 
-	nbe::Number< nbe::uint8 > num;
+	nbe::Number< nbe::uint8 > num( id );
 
 	{
 		nbe::uint8 min = 0;
@@ -86,7 +83,6 @@ BOOST_AUTO_TEST_CASE( basic_element_number )
 		BOOST_CHECK_EQUAL( num.getType(),   eTypeNumber  );
 		BOOST_CHECK_EQUAL( num.getStatus(), be::Element::eStatusUnknown );
 
-		num.setId( id );
 		BOOST_CHECK_EQUAL( num.getId(), id );
 
 		num.setLabel( label );
@@ -136,7 +132,7 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 	LOG_INFO( "\n>>> basic_element_number_translate <<<" );
 	{
 		LOG_INFO( "\n ====  int8  ==== " );
-		nbe::Number< nbe::int8 > num;
+		nbe::Number< nbe::int8 > num( id );
 
 		num.setData( dataInt8Low, 1 );
 		BOOST_CHECK_EQUAL( num.getValue(), 0 );
@@ -146,7 +142,7 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 	}
 	{
 		LOG_INFO( "\n ==== uint8  ==== " );
-		nbe::Number< nbe::uint8 > num;
+		nbe::Number< nbe::uint8 > num( id );
 
 		num.setData( dataInt8Low, 1 );
 		BOOST_CHECK_EQUAL( num.getValue(), 0 );
@@ -157,7 +153,7 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 
 	{
 		LOG_INFO( "\n ====  int16 ====>> big endian " );
-		nbe::Number< nbe::int16 > num;
+		nbe::Number< nbe::int16 > num( id );
 
 		LOG_INFO( "___ dataInt16Low ___");
 		num.setData( dataInt16Low, 2 );
@@ -173,7 +169,7 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 	}
 	{
 		LOG_INFO( "\n ==== uint16 ====>> big endian " );
-		nbe::Number< nbe::uint16 > num;
+		nbe::Number< nbe::uint16 > num( id );
 
 		LOG_INFO( "___ dataInt16Low ___");
 		num.setData( dataInt16Low, 2 );
@@ -189,7 +185,7 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 	}
 	{
 		LOG_INFO( "\n ====  int16 ====>> little endian " );
-		nbe::Number< nbe::int16 > num;
+		nbe::Number< nbe::int16 > num( id );
 		num.setBigEndianness( false );
 
 		LOG_INFO( "___ dataInt16Low ___");
@@ -206,7 +202,7 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 	}
 	{
 		LOG_INFO( "\n ==== uint16 ====>> little endian " );
-		nbe::Number< nbe::uint16 > num;
+		nbe::Number< nbe::uint16 > num( id );
 		num.setBigEndianness( false );
 
 		LOG_INFO( "___ dataInt16Low ___");
@@ -224,7 +220,7 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 
 	{
 		LOG_INFO( "\n ====  int32 ====>> big endian " );
-		nbe::Number< nbe::int32 > num;
+		nbe::Number< nbe::int32 > num( id );
 
 		num.setData( dataInt32Low, 4 );
 		BOOST_CHECK_EQUAL( num.getValue(), 255 );
@@ -237,7 +233,7 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 	}
 	{
 		LOG_INFO( "\n ==== uint32 ====>> big endian " );
-		nbe::Number< nbe::uint32 > num;
+		nbe::Number< nbe::uint32 > num( id );
 
 		num.setData( dataInt32Low, 4 );
 		BOOST_CHECK_EQUAL( num.getValue(), 255 );
@@ -250,7 +246,7 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 	}
 	{
 		LOG_INFO( "\n ====  int32 ====>> little endian " );
-		nbe::Number< nbe::int32 > num;
+		nbe::Number< nbe::int32 > num( id );
 		num.setBigEndianness( false );
 
 		num.setData( dataInt32Low, 4 );
@@ -264,7 +260,7 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 	}
 	{
 		LOG_INFO( "\n ==== uint32 ====>> little endian " );
-		nbe::Number< nbe::uint32 > num;
+		nbe::Number< nbe::uint32 > num( id );
 		num.setBigEndianness( false );
 
 		num.setData( dataInt32Low, 4 );
@@ -279,7 +275,7 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 
 	{
 		LOG_INFO( "\n ====  int64 ====>> big endian " );
-		nbe::Number< nbe::int64 > num;
+		nbe::Number< nbe::int64 > num( id );
 
 		num.setData( dataInt64Low, 8 );
 		BOOST_CHECK_EQUAL( num.getValue(), 255 );
@@ -292,7 +288,7 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 	}
 	{
 		LOG_INFO( "\n ==== uint64 ====>> big endian " );
-		nbe::Number< nbe::uint64 > num;
+		nbe::Number< nbe::uint64 > num( id );
 
 		num.setData( dataInt64Low, 8 );
 		BOOST_CHECK_EQUAL( num.getValue(), 255 );
@@ -305,7 +301,7 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 	}
 	{
 		LOG_INFO( "\n ====  int64 ====>> little endian " );
-		nbe::Number< nbe::int64 > num;
+		nbe::Number< nbe::int64 > num( id );
 		num.setBigEndianness( false );
 
 		num.setData( dataInt64Low, 8 );
@@ -319,7 +315,7 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 	}
 	{
 		LOG_INFO( "\n ==== uint64 ====>> little endian " );
-		nbe::Number< nbe::uint64 > num;
+		nbe::Number< nbe::uint64 > num( id );
 		num.setBigEndianness( false );
 
 		num.setData( dataInt64Low, 8 );
@@ -334,7 +330,7 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 
 	{
 		LOG_INFO( "\n ==== float ====>> big endian " );
-		nbe::Number< float > num;
+		nbe::Number< float > num( id );
 
 		num.setData( dataFloatZero, 4 );
 		BOOST_CHECK_CLOSE( num.getValue(), 0, 0.001 );
@@ -353,7 +349,7 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 	}
 	{
 		LOG_INFO( "\n ==== float ====>> little endian " );
-		nbe::Number< float > num;
+		nbe::Number< float > num( id );
 		num.setBigEndianness( false );
 		
 		num.setData( dataFloatZero, 4 );
@@ -374,7 +370,7 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 
 	{
 		LOG_INFO( "\n ==== double ====>> big endian " );
-		nbe::Number< double > num;
+		nbe::Number< double > num( id );
 
 		num.setData( dataDoubleZero, 8 );
 		BOOST_CHECK_CLOSE( num.getValue(), 0, 0.001 );
@@ -393,7 +389,7 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 	}
 	{
 		LOG_INFO( "\n ==== double ====>> little endian " );
-		nbe::Number< double > num;
+		nbe::Number< double > num( id );
 		num.setBigEndianness( false );
 		
 		num.setData( dataDoubleZero, 8 );
@@ -414,7 +410,7 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 
 	{
 		LOG_INFO( "\n ==== ieeeExtended ====>> big endian " );
-		nbe::Number< nbe::ieeeExtended > num;
+		nbe::Number< nbe::ieeeExtended > num( id );
 
 		num.setData( dataIeeeExtendedZero, 10 );
 		BOOST_CHECK_CLOSE( num.getValue(), 0, 0.001 );
@@ -434,7 +430,7 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 
 	{
 		LOG_INFO( "\n ==== ieeeExtended ====>> little endian " );
-		nbe::Number< nbe::ieeeExtended > num;
+		nbe::Number< nbe::ieeeExtended > num( id );
 		num.setBigEndianness( false );
 
 		num.setData( dataIeeeExtendedZero, 10 );
@@ -458,72 +454,72 @@ BOOST_AUTO_TEST_CASE( basic_element_number_toString )
 {
 	LOG_INFO( "\n>>> basic_element_number_toString <<<" );
 	{
-		nbe::Number< nbe::int8 > num;
+		nbe::Number< nbe::int8 > num( id );
 		num.setData( dataInt8High, 1 );
 		BOOST_CHECK_EQUAL( num.toString(), "-1" );
 	}
 	{
-		nbe::Number< nbe::uint8 > num;
+		nbe::Number< nbe::uint8 > num( id );
 		num.setData( dataInt8High, 1 );
 		BOOST_CHECK_EQUAL( num.toString(), "255" );
 	}
 	{
-		nbe::Number< nbe::int16 > num;
+		nbe::Number< nbe::int16 > num( id );
 		num.setData( dataInt16Full, 2 );
 		BOOST_CHECK_EQUAL( num.toString(), "-1" );
 	}
 	{
-		nbe::Number< nbe::uint16 > num;
+		nbe::Number< nbe::uint16 > num( id );
 		num.setData( dataInt16Full, 2 );
 		BOOST_CHECK_EQUAL( num.toString(), "65535" );
 	}
 	{
-		nbe::Number< nbe::int32 > num;
+		nbe::Number< nbe::int32 > num( id );
 		num.setData( dataInt32Full, 4 );
 		BOOST_CHECK_EQUAL( num.toString(), "-1" );
 	}
 	{
-		nbe::Number< nbe::uint32 > num;
+		nbe::Number< nbe::uint32 > num( id );
 		num.setData( dataInt32Full, 4 );
 		BOOST_CHECK_EQUAL( num.toString(), "4294967295" );
 	}
 	{
-		nbe::Number< nbe::int64 > num;
+		nbe::Number< nbe::int64 > num( id );
 		num.setData( dataInt64Full, 8 );
 		BOOST_CHECK_EQUAL( num.toString(), "-1" );
 	}
 	{
-		nbe::Number< nbe::uint64 > num;
+		nbe::Number< nbe::uint64 > num( id );
 		num.setData( dataInt64Full, 8 );
 		BOOST_CHECK_EQUAL( num.toString(), "18446744073709551615" );
 	}
 	{
-		nbe::Number< float > num;
+		nbe::Number< float > num( id );
 		num.setData( dataFloatOneBigEndian, 4 );
 		BOOST_CHECK_EQUAL( num.toString(), "1" );
 	}
 	{
-		nbe::Number< float > num;
+		nbe::Number< float > num( id );
 		num.setData( dataFloatMaxBigEndian, 4 );
 		BOOST_CHECK_EQUAL( num.toString(), "3.40282e+38" );
 	}
 	{
-		nbe::Number< double > num;
+		nbe::Number< double > num( id );
 		num.setData( dataDoubleOneBigEndian, 8 );
 		BOOST_CHECK_EQUAL( num.toString(), "1" );
 	}
 	{
-		nbe::Number< double > num;
+		nbe::Number< double > num( id );
 		num.setData( dataDoubleMaxBigEndian, 8 );
 		BOOST_CHECK_EQUAL( num.toString(), "1.79769e+308" );
 	}
 	{
-		nbe::Number< nbe::ieeeExtended > num;
+		nbe::Number< nbe::ieeeExtended > num( id );
 		num.setData( dataIeeeExtendedOneBigEndian, 10 );
 		BOOST_CHECK_EQUAL( num.toString(), "1" );
 	}
 	{
-		nbe::Number< nbe::ieeeExtended > num;
+		nbe::Number< nbe::ieeeExtended > num( id );
 		num.setData( dataIeeeExtendedMaxBigEndian, 10 );
 		BOOST_CHECK_EQUAL( num.toString(), "1.18973e+4932" );
 	}
@@ -533,47 +529,47 @@ BOOST_AUTO_TEST_CASE( basic_element_number_getStringFromType )
 {
 	LOG_INFO( "\n>>> basic_element_number_getStringFromType <<<" );
 	{
-		nbe::Number< nbe::int8 > num;
+		nbe::Number< nbe::int8 > num( id );
 		BOOST_CHECK_EQUAL( num.getStringFromType(), "int8" );
 	}
 	{
-		nbe::Number< nbe::uint8 > num;
+		nbe::Number< nbe::uint8 > num( id );
 		BOOST_CHECK_EQUAL( num.getStringFromType(), "uint8" );
 	}
 	{
-		nbe::Number< nbe::int16 > num;
+		nbe::Number< nbe::int16 > num( id );
 		BOOST_CHECK_EQUAL( num.getStringFromType(), "int16" );
 	}
 	{
-		nbe::Number< nbe::uint16 > num;
+		nbe::Number< nbe::uint16 > num( id );
 		BOOST_CHECK_EQUAL( num.getStringFromType(), "uint16" );
 	}
 	{
-		nbe::Number< nbe::int32 > num;
+		nbe::Number< nbe::int32 > num( id );
 		BOOST_CHECK_EQUAL( num.getStringFromType(), "int32" );
 	}
 	{
-		nbe::Number< nbe::uint32 > num;
+		nbe::Number< nbe::uint32 > num( id );
 		BOOST_CHECK_EQUAL( num.getStringFromType(), "uint32" );
 	}
 	{
-		nbe::Number< nbe::int64 > num;
+		nbe::Number< nbe::int64 > num( id );
 		BOOST_CHECK_EQUAL( num.getStringFromType(), "int64" );
 	}
 	{
-		nbe::Number< nbe::uint64 > num;
+		nbe::Number< nbe::uint64 > num( id );
 		BOOST_CHECK_EQUAL( num.getStringFromType(), "uint64" );
 	}
 	{
-		nbe::Number< float > num;
+		nbe::Number< float > num( id );
 		BOOST_CHECK_EQUAL( num.getStringFromType(), "float" );
 	}
 	{
-		nbe::Number< double > num;
+		nbe::Number< double > num( id );
 		BOOST_CHECK_EQUAL( num.getStringFromType(), "double" );
 	}
 	{
-		nbe::Number< nbe::ieeeExtended > num;
+		nbe::Number< nbe::ieeeExtended > num( id );
 		BOOST_CHECK_EQUAL( num.getStringFromType(), "ieeeExtended" );
 	}
 }
@@ -582,59 +578,59 @@ BOOST_AUTO_TEST_CASE( basic_element_number_checkData )
 {
 	LOG_INFO( "\n>>> basic_element_number_checkData <<<" );
 	{
-		nbe::Number< nbe::int32 > num;
+		nbe::Number< nbe::int32 > num( id );
 		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusPassOver );
 	}
 	{
-		nbe::Number< nbe::uint32 > num;
+		nbe::Number< nbe::uint32 > num( id );
 		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusPassOver );
 	}
 	{
-		nbe::Number< float > num;
+		nbe::Number< float > num( id );
 		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusPassOver );
 	}
 	{
-		nbe::Number< double > num;
+		nbe::Number< double > num( id );
 		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusPassOver );
 	}
 	{
-		nbe::Number< nbe::ieeeExtended > num;
+		nbe::Number< nbe::ieeeExtended > num( id );
 		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusPassOver );
 	}
 	
 	{
-		nbe::Number< nbe::uint32 > num;
+		nbe::Number< nbe::uint32 > num( id );
 		num.setData( dataInt32Low, sizeof( dataInt32High ) );
 		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusPassOver );
 	}
 	{
-		nbe::Number< nbe::uint32 > num;
+		nbe::Number< nbe::uint32 > num( id );
 		num.addRange( 254, 256 );
 		num.setData( dataInt32Low, sizeof( dataInt32High ) );
 		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusValid );
 	}
 	{
-		nbe::Number< nbe::uint32 > num;
+		nbe::Number< nbe::uint32 > num( id );
 		num.addRange( 256, 256 );
 		num.setData( dataInt32Low, sizeof( dataInt32High ) );
 		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusInvalid );
 	}
 	{
-		nbe::Number< nbe::uint32 > num;
+		nbe::Number< nbe::uint32 > num( id );
 		num.addRange( 254, 256 );
 		num.addRange( 0, 1 );
 		num.setData( dataInt32Low, sizeof( dataInt32High ) );
 		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusValid );
 	}
 	{
-		nbe::Number< nbe::uint32 > num;
+		nbe::Number< nbe::uint32 > num( id );
 		num.addRange( 245, 254 );
 		num.addRange( 0, 1 );
 		num.setData( dataInt32Low, sizeof( dataInt32High ) );
 		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusInvalid );
 	}
 	{
-		nbe::Number< nbe::uint32 > num;
+		nbe::Number< nbe::uint32 > num( id );
 		num.addRange( 245, 256 );
 		num.addRange( 254, 1000 );
 		num.setData( dataInt32Low, sizeof( dataInt32High ) );
@@ -642,18 +638,18 @@ BOOST_AUTO_TEST_CASE( basic_element_number_checkData )
 	}
 	
 	{
-		nbe::Number< nbe::ieeeExtended > num;
+		nbe::Number< nbe::ieeeExtended > num( id );
 		num.setData( dataIeeeExtendedOneLittleEndian, sizeof( dataIeeeExtendedOneLittleEndian ) );
 		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusPassOver );
 	}
 	{
-		nbe::Number< nbe::ieeeExtended > num;
+		nbe::Number< nbe::ieeeExtended > num( id );
 		num.addRange( 0, 2 );
 		num.setData( dataIeeeExtendedOneLittleEndian, sizeof( dataIeeeExtendedOneLittleEndian ) );
 		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusValid );
 	}
 	{
-		nbe::Number< nbe::ieeeExtended > num;
+		nbe::Number< nbe::ieeeExtended > num( id );
 		num.addRange( 1.5, 3.2 );
 		num.setData( dataIeeeExtendedOneLittleEndian, sizeof( dataIeeeExtendedOneLittleEndian ) );
 		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusInvalid );
@@ -665,7 +661,7 @@ BOOST_AUTO_TEST_CASE( basic_element_number_ranges_fromString )
 	LOG_INFO( "\n>>> basic_element_number_ranges_fromString <<<" );
 	{
 		std::vector< std::pair< std::string, std::string > > ranges { {"245", "256"}, {"254", "1000"} };
-		nbe::Number< nbe::uint32 > num;
+		nbe::Number< nbe::uint32 > num( id );
 		num.setRanges( ranges );
 		num.setData( dataInt32Low, sizeof( dataInt32High ) );
 		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusValid );
@@ -673,21 +669,21 @@ BOOST_AUTO_TEST_CASE( basic_element_number_ranges_fromString )
 
 	{
 		std::vector< std::pair< std::string, std::string > > ranges { {"-1", "1"} };
-		nbe::Number< nbe::int8 > num;
+		nbe::Number< nbe::int8 > num( id );
 		num.setRanges( ranges );
 		num.setData( dataInt8Low, sizeof( dataInt8Low ) );
 		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusValid );
 	}
 	{
 		std::vector< std::pair< std::string, std::string > > ranges { { "0", "1" } };
-		nbe::Number< nbe::uint8 > num;
+		nbe::Number< nbe::uint8 > num( id );
 		num.setRanges( ranges );
 		num.setData( dataInt8Low, sizeof( dataInt8Low ) );
 		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusValid );
 	}
 	{
 		std::vector< std::pair< std::string, std::string > > ranges { { "10", "111" } };
-		nbe::Number< nbe::uint8 > num;
+		nbe::Number< nbe::uint8 > num( id );
 		num.setRanges( ranges );
 		num.setData( dataInt8Low, sizeof( dataInt8Low ) );
 		BOOST_CHECK_EQUAL( num.checkData(), be::Element::eStatusInvalid );
@@ -695,23 +691,23 @@ BOOST_AUTO_TEST_CASE( basic_element_number_ranges_fromString )
 
 	{
 		std::vector< std::pair< std::string, std::string > > ranges { { "0", "128" } };
-		nbe::Number< nbe::int8 > num;
+		nbe::Number< nbe::int8 > num( id );
 		BOOST_CHECK_THROW( num.setRanges( ranges ), std::range_error );
 	}
 	{
 		std::vector< std::pair< std::string, std::string > > ranges { { "-129", "0" } };
-		nbe::Number< nbe::int8 > num;
+		nbe::Number< nbe::int8 > num( id );
 		BOOST_CHECK_THROW( num.setRanges( ranges ), std::range_error );
 	}
 
 	{
 		std::vector< std::pair< std::string, std::string > > ranges { { "-1", "0" } };
-		nbe::Number< nbe::uint8 > num;
+		nbe::Number< nbe::uint8 > num( id );
 		BOOST_CHECK_THROW( num.setRanges( ranges ), std::range_error );
 	}
 	{
 		std::vector< std::pair< std::string, std::string > > ranges { { "0", "256" } };
-		nbe::Number< nbe::uint8 > num;
+		nbe::Number< nbe::uint8 > num( id );
 		BOOST_CHECK_THROW( num.setRanges( ranges ), std::range_error );
 	}
 }
@@ -720,53 +716,48 @@ BOOST_AUTO_TEST_CASE( basic_element_number_subType )
 {
 	LOG_INFO( "\n>>> basic_element_number_subType <<<" );
 	{
-		nbe::Number< nbe::int8 > num;
-		BOOST_CHECK_EQUAL( num.getNumberSubType(), eNumberTypeInt8 );
+		nbe::Number< nbe::int8 > num( id );
+		BOOST_CHECK_EQUAL( num.getSubType(), eSubTypeInt8 );
 	}
 	{
-		nbe::Number< nbe::uint8 > num;
-		BOOST_CHECK_EQUAL( num.getNumberSubType(), eNumberTypeUInt8 );
+		nbe::Number< nbe::uint8 > num( id );
+		BOOST_CHECK_EQUAL( num.getSubType(), eSubTypeUInt8 );
 	}
 	{
-		nbe::Number< nbe::int16 > num;
-		BOOST_CHECK_EQUAL( num.getNumberSubType(), eNumberTypeInt16 );
+		nbe::Number< nbe::int16 > num( id );
+		BOOST_CHECK_EQUAL( num.getSubType(), eSubTypeInt16 );
 	}
 	{
-		nbe::Number< nbe::uint16 > num;
-		BOOST_CHECK_EQUAL( num.getNumberSubType(), eNumberTypeUInt16 );
+		nbe::Number< nbe::uint16 > num( id );
+		BOOST_CHECK_EQUAL( num.getSubType(), eSubTypeUInt16 );
 	}
 	{
-		nbe::Number< nbe::int32 > num;
-		BOOST_CHECK_EQUAL( num.getNumberSubType(), eNumberTypeInt32 );
+		nbe::Number< nbe::int32 > num( id );
+		BOOST_CHECK_EQUAL( num.getSubType(), eSubTypeInt32 );
 	}
 	{
-		nbe::Number< nbe::uint32 > num;
-		BOOST_CHECK_EQUAL( num.getNumberSubType(), eNumberTypeUInt32 );
+		nbe::Number< nbe::uint32 > num( id );
+		BOOST_CHECK_EQUAL( num.getSubType(), eSubTypeUInt32 );
 	}
 	{
-		nbe::Number< nbe::int64 > num;
-		BOOST_CHECK_EQUAL( num.getNumberSubType(), eNumberTypeInt64 );
+		nbe::Number< nbe::int64 > num( id );
+		BOOST_CHECK_EQUAL( num.getSubType(), eSubTypeInt64 );
 	}
 	{
-		nbe::Number< nbe::uint64 > num;
-		BOOST_CHECK_EQUAL( num.getNumberSubType(), eNumberTypeUInt64 );
+		nbe::Number< nbe::uint64 > num( id );
+		BOOST_CHECK_EQUAL( num.getSubType(), eSubTypeUInt64 );
 	}
 	{
-		nbe::Number< float > num;
-		BOOST_CHECK_EQUAL( num.getNumberSubType(), eNumberTypeFloat );
+		nbe::Number< float > num( id );
+		BOOST_CHECK_EQUAL( num.getSubType(), eSubTypeFloat );
 	}
 	{
-		nbe::Number< double > num;
-		BOOST_CHECK_EQUAL( num.getNumberSubType(), eNumberTypeDouble );
+		nbe::Number< double > num( id );
+		BOOST_CHECK_EQUAL( num.getSubType(), eSubTypeDouble );
 	}
 	{
-		nbe::Number< nbe::ieeeExtended > num;
-		BOOST_CHECK_EQUAL( num.getNumberSubType(), eNumberTypeIeeeExtended );
-	}
-
-	{
-		nbe::Number< nbe::int8 > num;
-		BOOST_CHECK_EQUAL( num.getDataSubType(), eDataTypeUnknown );
+		nbe::Number< nbe::ieeeExtended > num( id );
+		BOOST_CHECK_EQUAL( num.getSubType(), eSubTypeIeeeExtended );
 	}
 }
 

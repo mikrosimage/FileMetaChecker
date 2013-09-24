@@ -4,16 +4,15 @@ BOOST_AUTO_TEST_CASE( basic_element_data )
 {
 	LOG_INFO( "\n>>> basic_element_data <<<" );
 	{
-		dbe::Data data;
+		dbe::Data data( id );
 
-		data.setId( id );
 		BOOST_CHECK_EQUAL( data.getId(), id );
 
 		data.setLabel( label );
 		BOOST_CHECK_EQUAL( data.getLabel(), label );
 	}
 	{
-		dbe::Data data( eDataTypeHexa );
+		dbe::Data data( id, eSubTypeHexa );
 		char buffer[] = { 0x7f, 0x05, 0x32 };
 		
 		data.setData( buffer, 3 );
@@ -27,14 +26,14 @@ BOOST_AUTO_TEST_CASE( basic_element_data )
 		BOOST_CHECK_EQUAL( data.getHexa(), "7f0532" );
 	}
 	{
-		dbe::Data data( eDataTypeAscii );
+		dbe::Data data( id, eSubTypeAscii );
 		char buffer[] = { 0x48, 0x65, 0x6c, 0x6c, 0x6f };
 		
 		data.setData( buffer, 5 );
 		BOOST_CHECK_EQUAL( data.getAscii(), "Hello" );
 	}
 	{
-		dbe::Data data( eDataTypeRaw );
+		dbe::Data data( id, eSubTypeRaw );
 		char buffer[] = {'d','a','t','a'};
 
 		data.setData( buffer, 4 );
@@ -57,7 +56,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data )
 		ref.push_back(  32 );
 		ref.push_back( 255 );
 
-		dbe::Data data( eDataTypeRaw );
+		dbe::Data data( id, eSubTypeRaw );
 		char buffer[ ref.size() ];
 		for( size_t i = 0; i < ref.size(); i++ )
 			buffer[i] = ref.at(i);
@@ -74,30 +73,30 @@ BOOST_AUTO_TEST_CASE( basic_element_data_hexa )
 {
 	LOG_INFO( "\n>>> basic_element_data_hexa <<<" );
 	{
-		dbe::Data data( eDataTypeHexa );
+		dbe::Data data( id, eSubTypeHexa );
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusPassOver );
 	}
 	{
-		dbe::Data data( eDataTypeHexa );
+		dbe::Data data( id, eSubTypeHexa );
 		data.setSpecData( "ff00" );
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusInvalid );
 	}
 	{
-		dbe::Data data( eDataTypeHexa );
+		dbe::Data data( id, eSubTypeHexa );
 		data.setSpecData( "ff00" );
 		char buffer[] = { static_cast< char >( 0xff ), 0x00 };
 		data.setData( buffer, sizeof( buffer ) );
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusValid );
 	}
 	{
-		dbe::Data data( eDataTypeHexa );
+		dbe::Data data( id, eSubTypeHexa );
 		data.setSpecData( "ff00" );
 		char buffer[] = { 0x00, static_cast< char >( 0xff ) };
 		data.setData( buffer, sizeof( buffer ) );
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusInvalid );
 	}
 	{
-		dbe::Data data( eDataTypeHexa );
+		dbe::Data data( id, eSubTypeHexa );
 		data.setSpecData( "ff00" );
 		data.setBigEndianness( false );
 		char buffer[] = { 0x00, static_cast< char >( 0xff ) };
@@ -105,7 +104,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data_hexa )
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusValid );
 	}
 	{
-		dbe::Data data( eDataTypeHexa );
+		dbe::Data data( id, eSubTypeHexa );
 		std::vector< std::string > values;
 		values.push_back( "00ff" );
 		data.setSpecData( values );
@@ -114,7 +113,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data_hexa )
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusValid );
 	}
 	{
-		dbe::Data data( eDataTypeHexa );
+		dbe::Data data( id, eSubTypeHexa );
 		std::vector< std::string > values;
 		values.push_back( "f00f" );
 		values.push_back( "ff00" );
@@ -125,7 +124,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data_hexa )
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusValid );
 	}
 	{
-		dbe::Data data( eDataTypeHexa );
+		dbe::Data data( id, eSubTypeHexa );
 		std::vector< std::string > values;
 		values.push_back( "f00f" );
 		values.push_back( "0ff0" );
@@ -135,7 +134,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data_hexa )
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusInvalid );
 	}
 	{
-		dbe::Data data( eDataTypeHexa );
+		dbe::Data data( id, eSubTypeHexa );
 		std::vector< std::string > values;
 		values.push_back( "000000" );
 		values.push_back( "ffffffff" );
@@ -147,30 +146,30 @@ BOOST_AUTO_TEST_CASE( basic_element_data_ascii )
 {
 	LOG_INFO( "\n>>> basic_element_data_ascii <<<" );
 	{
-		dbe::Data data( eDataTypeAscii );
+		dbe::Data data( id, eSubTypeAscii );
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusPassOver );
 	}
 	{
-		dbe::Data data( eDataTypeAscii );
+		dbe::Data data( id, eSubTypeAscii );
 		data.setSpecData( "data" );
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusInvalid );
 	}
 	{
-		dbe::Data data( eDataTypeAscii );
+		dbe::Data data( id, eSubTypeAscii );
 		data.setSpecData( "data" );
 		char buffer[] = {'d','a','t','a'};
 		data.setData( buffer, sizeof( buffer ) );
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusValid );
 	}
 	{
-		dbe::Data data( eDataTypeAscii );
+		dbe::Data data( id, eSubTypeAscii );
 		data.setSpecData( "atad" );
 		char buffer[] = {'d','a','t','a'};
 		data.setData( buffer, sizeof( buffer ) );
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusInvalid );
 	}
 	{
-		dbe::Data data( eDataTypeAscii );
+		dbe::Data data( id, eSubTypeAscii );
 		data.setSpecData( "atad" );
 		data.setBigEndianness( false );
 		char buffer[] = {'d','a','t','a'};
@@ -178,7 +177,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data_ascii )
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusValid );
 	}
 	{
-		dbe::Data data( eDataTypeAscii );
+		dbe::Data data( id, eSubTypeAscii );
 		std::vector< std::string > values;
 		values.push_back( "atad" );
 		data.setSpecData( values );
@@ -188,7 +187,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data_ascii )
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusValid );
 	}
 	{
-		dbe::Data data( eDataTypeAscii );
+		dbe::Data data( id, eSubTypeAscii );
 		std::vector< std::string > values;
 		values.push_back( "atad" );
 		values.push_back( "taad" );
@@ -199,7 +198,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data_ascii )
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusValid );
 	}
 	{
-		dbe::Data data( eDataTypeAscii );
+		dbe::Data data( id, eSubTypeAscii );
 		std::vector< std::string > values;
 		values.push_back( "atad" );
 		values.push_back( "taad" );
@@ -209,7 +208,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data_ascii )
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusInvalid );
 	}
 	{
-		dbe::Data data( eDataTypeAscii );
+		dbe::Data data( id, eSubTypeAscii );
 		std::vector< std::string > values;
 		values.push_back( "long" );
 		values.push_back( "toolong" );
@@ -221,12 +220,12 @@ BOOST_AUTO_TEST_CASE( basic_element_data_other )
 {
 	LOG_INFO( "\n>>> basic_element_data_other <<<" );
 	{
-		dbe::Data data( eDataTypeUnknown );
+		dbe::Data data( id, eSubTypeUnknown );
 		data.setSpecData( "anything" );
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusUnknown );
 	}
 	{
-		dbe::Data data( eDataTypeRaw );
+		dbe::Data data( id, eSubTypeRaw );
 		data.setSpecData( "lotOfThings" );
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusPassOver );
 	}
@@ -236,25 +235,20 @@ BOOST_AUTO_TEST_CASE( basic_element_data_subType )
 {
 	LOG_INFO( "\n>>> basic_element_data_subType <<<" );
 	{
-		dbe::Data data( eDataTypeUnknown );
-		BOOST_CHECK_EQUAL( data.getDataSubType(), eDataTypeUnknown );
+		dbe::Data data( id, eSubTypeUnknown );
+		BOOST_CHECK_EQUAL( data.getSubType(), eSubTypeUnknown );
 	}
 	{
-		dbe::Data data( eDataTypeHexa );
-		BOOST_CHECK_EQUAL( data.getDataSubType(), eDataTypeHexa );
+		dbe::Data data( id, eSubTypeHexa );
+		BOOST_CHECK_EQUAL( data.getSubType(), eSubTypeHexa );
 	}
 	{
-		dbe::Data data( eDataTypeAscii );
-		BOOST_CHECK_EQUAL( data.getDataSubType(), eDataTypeAscii );
+		dbe::Data data( id, eSubTypeAscii );
+		BOOST_CHECK_EQUAL( data.getSubType(), eSubTypeAscii );
 	}
 	{
-		dbe::Data data( eDataTypeRaw );
-		BOOST_CHECK_EQUAL( data.getDataSubType(), eDataTypeRaw );
-	}
-
-	{
-		dbe::Data data( eDataTypeRaw );
-		BOOST_CHECK_EQUAL( data.getNumberSubType(), eNumberTypeUnknown );
+		dbe::Data data( id, eSubTypeRaw );
+		BOOST_CHECK_EQUAL( data.getSubType(), eSubTypeRaw );
 	}
 }
 
@@ -262,32 +256,28 @@ BOOST_AUTO_TEST_CASE( basic_element_data_error_warning )
 {
 	LOG_INFO( "\n>>> basic_element_data_error_warning <<<" );
 	{
-		dbe::Data data( eDataTypeUnknown );
-		std::string error = "error";
-		data.addErrorLabel( error );
-		BOOST_CHECK_EQUAL( data.getErrorLabel(), error );
+		dbe::Data data( id, eSubTypeUnknown );
+		data.addErrorLabel( kError );
+		BOOST_CHECK_EQUAL( data.getErrorLabel(), kError );
 		BOOST_CHECK_EQUAL( data.getStatus(), be::Element::eStatusInvalid );
 	}
 	{
-		dbe::Data data( eDataTypeUnknown );
-		std::string error = "error";
-		data.addErrorLabel( error );
-		data.addErrorLabel( error );
-		BOOST_CHECK_EQUAL( data.getErrorLabel(), "errorerror" );
+		dbe::Data data( id, eSubTypeUnknown );
+		data.addErrorLabel( kError );
+		data.addErrorLabel( kError );
+		BOOST_CHECK_EQUAL( data.getErrorLabel(), kError + kError );
 		BOOST_CHECK_EQUAL( data.getStatus(), be::Element::eStatusInvalid );
 	}
 	{
-		dbe::Data data( eDataTypeUnknown );
-		std::string warning = "warning";
-		data.addWarningLabel( warning );
-		BOOST_CHECK_EQUAL( data.getWarningLabel(), warning );
+		dbe::Data data( id, eSubTypeUnknown );
+		data.addWarningLabel( kWarning );
+		BOOST_CHECK_EQUAL( data.getWarningLabel(), kWarning );
 	}
 	{
-		dbe::Data data( eDataTypeUnknown );
-		std::string warning = "warning";
-		data.addWarningLabel( warning );
-		data.addWarningLabel( warning );
-		BOOST_CHECK_EQUAL( data.getWarningLabel(), "warningwarning" );
+		dbe::Data data( id, eSubTypeUnknown );
+		data.addWarningLabel( kWarning );
+		data.addWarningLabel( kWarning );
+		BOOST_CHECK_EQUAL( data.getWarningLabel(), kWarning + kWarning );
 	}
 }
 

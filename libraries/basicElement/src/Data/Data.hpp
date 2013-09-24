@@ -11,8 +11,7 @@ namespace data_element
 class Data : public Element
 {
 public:
-	Data();
-	Data( const EDataType& subType );
+	Data( const std::string& id, const ESubType& subType = eSubTypeRaw, const EDisplayType& dispType = eDisplayTypeDefault );
 	~Data();
 
 	void        setData ( const char* data, const size_t& size );
@@ -26,8 +25,8 @@ public:
 	void setSpecData( const std::vector< std::string >& specValues );
 
 	Element::EStatus checkData();
-
-	void setDisplayType( const std::string& displayType );
+	
+//	void setDisplayType( const std::string& displayType );
 	std::vector< std::pair< std::string, std::string > > getElementInfo();
 
 	Data& operator=( const Data& other );
@@ -41,7 +40,6 @@ protected:
 private:
 	std::string                _specValue;
 	std::vector< std::string > _specValues;
-	EDataType                  _displayType;
 	char*                      _data;
 };
 

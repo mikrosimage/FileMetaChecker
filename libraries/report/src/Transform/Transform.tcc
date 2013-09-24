@@ -2,12 +2,6 @@
 #include <Number/Number.hpp>
 #include <Data/Data.hpp>
 
-static const std::string kValidator      = "fileValidator";
-static const std::string kSpecification  = "specification";
-static const std::string kElement        = "element";
-static const std::string kData  = "data";		// cf. basic_element, Data.cpp,   getElementInfo()
-static const std::string kValue = "value";		// cf. basic_element, Number.tcc, getElementInfo()
-
 namespace be  = basic_element;
 namespace ben = be::number_element;
 namespace bed = be::data_element;
@@ -70,20 +64,23 @@ bpt::ptree Transform::extractElement( std::shared_ptr< be::Element > element )
 		case eTypeUnknown : LOG_WARNING( "Element " << element->getUniqueId() << ": unknown type." ); break;
 		case eTypeNumber  : 
 		{
-			switch( element->getNumberSubType() )
+			switch( element->getSubType() )
 			{
-				case eNumberTypeUnknown      : LOG_WARNING( "Number " << element->getUniqueId()  << ": unknown type." ); break;
-				case eNumberTypeInt8         : elemInfo = translateElement< ben::Number< ben::int8         > >( element )->getElementInfo(); break;
-				case eNumberTypeUInt8        : elemInfo = translateElement< ben::Number< ben::uint8        > >( element )->getElementInfo(); break;
-				case eNumberTypeInt16        : elemInfo = translateElement< ben::Number< ben::int16        > >( element )->getElementInfo(); break;
-				case eNumberTypeUInt16       : elemInfo = translateElement< ben::Number< ben::uint16       > >( element )->getElementInfo(); break;
-				case eNumberTypeInt32        : elemInfo = translateElement< ben::Number< ben::int32        > >( element )->getElementInfo(); break;
-				case eNumberTypeUInt32       : elemInfo = translateElement< ben::Number< ben::uint32       > >( element )->getElementInfo(); break;
-				case eNumberTypeInt64        : elemInfo = translateElement< ben::Number< ben::int64        > >( element )->getElementInfo(); break;
-				case eNumberTypeUInt64       : elemInfo = translateElement< ben::Number< ben::uint64       > >( element )->getElementInfo(); break;
-				case eNumberTypeFloat        : elemInfo = translateElement< ben::Number< float             > >( element )->getElementInfo(); break;
-				case eNumberTypeDouble       : elemInfo = translateElement< ben::Number< double            > >( element )->getElementInfo(); break;
-				case eNumberTypeIeeeExtended : elemInfo = translateElement< ben::Number< ben::ieeeExtended > >( element )->getElementInfo(); break;
+				case eSubTypeUnknown      : LOG_WARNING( "Number " << element->getUniqueId()  << ": unknown type." ); break;
+				case eSubTypeInt8         : elemInfo = translateElement< ben::Number< ben::int8         > >( element )->getElementInfo(); break;
+				case eSubTypeUInt8        : elemInfo = translateElement< ben::Number< ben::uint8        > >( element )->getElementInfo(); break;
+				case eSubTypeInt16        : elemInfo = translateElement< ben::Number< ben::int16        > >( element )->getElementInfo(); break;
+				case eSubTypeUInt16       : elemInfo = translateElement< ben::Number< ben::uint16       > >( element )->getElementInfo(); break;
+				case eSubTypeInt32        : elemInfo = translateElement< ben::Number< ben::int32        > >( element )->getElementInfo(); break;
+				case eSubTypeUInt32       : elemInfo = translateElement< ben::Number< ben::uint32       > >( element )->getElementInfo(); break;
+				case eSubTypeInt64        : elemInfo = translateElement< ben::Number< ben::int64        > >( element )->getElementInfo(); break;
+				case eSubTypeUInt64       : elemInfo = translateElement< ben::Number< ben::uint64       > >( element )->getElementInfo(); break;
+				case eSubTypeFloat        : elemInfo = translateElement< ben::Number< float             > >( element )->getElementInfo(); break;
+				case eSubTypeDouble       : elemInfo = translateElement< ben::Number< double            > >( element )->getElementInfo(); break;
+				case eSubTypeIeeeExtended : elemInfo = translateElement< ben::Number< ben::ieeeExtended > >( element )->getElementInfo(); break;
+				case eSubTypeAscii        :
+				case eSubTypeHexa         :
+				case eSubTypeRaw          : LOG_WARNING( "Number " << element->getUniqueId()  << ": invalid type." );  break;
 			}
 		} break;
 		case eTypeExif    : LOG_INFO( "Exif !");                      break;

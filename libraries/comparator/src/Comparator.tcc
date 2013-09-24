@@ -24,37 +24,30 @@ Comparator::~Comparator()
 }
 
 template< >
-EDataType Comparator::getNodeSubType< EDataType >( const std::string& nodeType )
+ESubType Comparator::getNodeSubType< ESubType >( const std::string& nodeType )
 {
-	if( nodeType == kAscii  ) return eDataTypeAscii;
-	if( nodeType == kHexa   ) return eDataTypeHexa;
-	if( nodeType == kRaw    ) return eDataTypeRaw;
-	return eDataTypeUnknown;
-}
-
-template< >
-ENumberType Comparator::getNodeSubType< ENumberType >( const std::string& nodeType )
-{
-	if( nodeType == kInt8         ) return eNumberTypeInt8;
-	if( nodeType == kUInt8        ) return eNumberTypeUInt8;
-	if( nodeType == kInt16        ) return eNumberTypeInt16;
-	if( nodeType == kUInt16       ) return eNumberTypeUInt16;
-	if( nodeType == kInt32        ) return eNumberTypeInt32;
-	if( nodeType == kUInt32       ) return eNumberTypeUInt32;
-	if( nodeType == kInt64        ) return eNumberTypeInt64;
-	if( nodeType == kUInt64       ) return eNumberTypeUInt64;
-	if( nodeType == kFloat        ) return eNumberTypeFloat;
-	if( nodeType == kDouble       ) return eNumberTypeDouble;
-	if( nodeType == kIeeeExtended ) return eNumberTypeIeeeExtended;
-	return eNumberTypeUnknown;
+	if( nodeType == kAscii        ) return eSubTypeAscii;
+	if( nodeType == kHexa         ) return eSubTypeHexa;
+	if( nodeType == kRaw          ) return eSubTypeRaw;
+	if( nodeType == kInt8         ) return eSubTypeInt8;
+	if( nodeType == kUInt8        ) return eSubTypeUInt8;
+	if( nodeType == kInt16        ) return eSubTypeInt16;
+	if( nodeType == kUInt16       ) return eSubTypeUInt16;
+	if( nodeType == kInt32        ) return eSubTypeInt32;
+	if( nodeType == kUInt32       ) return eSubTypeUInt32;
+	if( nodeType == kInt64        ) return eSubTypeInt64;
+	if( nodeType == kUInt64       ) return eSubTypeUInt64;
+	if( nodeType == kFloat        ) return eSubTypeFloat;
+	if( nodeType == kDouble       ) return eSubTypeDouble;
+	if( nodeType == kIeeeExtended ) return eSubTypeIeeeExtended;
+	return eSubTypeUnknown;
 }
 
 template< typename ElementType >
 std::shared_ptr< ElementType > Comparator::getElement( const sr::SpecNode& node )
 {
-	std::shared_ptr< ElementType > element( new ElementType() );
+	std::shared_ptr< ElementType > element = std::make_shared< ElementType >( node.getId() );
 
-	element->setId( node.getId() );
 	element->setLabel( node.getLabel() );
 	element->setBigEndianness( node.isBigEndian() );
 	element->setMap( node.getMap() );
@@ -75,10 +68,9 @@ std::shared_ptr< ElementType > Comparator::getElement( const sr::SpecNode& node 
 template< >
 std::shared_ptr< be::data_element::Data > Comparator::getElement< be::data_element::Data >( const sr::SpecNode& node )
 {
-	EDataType subtype = getNodeSubType< EDataType >( node.getType() );
-	std::shared_ptr< be::data_element::Data > element( new be::data_element::Data( subtype ) );
+	ESubType subtype = getNodeSubType< ESubType >( node.getType() );
+	std::shared_ptr< be::data_element::Data > element( new be::data_element::Data( node.getId(), subtype ) );
 	
-	element->setId( node.getId() );
 	element->setLabel( node.getLabel() );
 	element->setBigEndianness( node.isBigEndian() );
 	element->setSpecData( node.getValues() );
@@ -319,23 +311,23 @@ void Comparator::checkGroupSize( const std::string& nodeGroupSize,
 
 std::shared_ptr< be::Element > Comparator::getElementFromNode( const sr::SpecNode& node )
 {
-	if( getNodeSubType< EDataType >( node.getType() ) != eDataTypeUnknown )
-		return getElement< be::data_element::Data >( node );
-
-	switch( getNodeSubType< ENumberType >( node.getType() ) )
+	switch( getNodeSubType< ESubType >( node.getType() ) )
 	{
-		case eNumberTypeUnknown      : break;
-		case eNumberTypeInt8         : return getElement< be::number_element::Number< be::number_element::int8         > >( node ); break;
-		case eNumberTypeUInt8        : return getElement< be::number_element::Number< be::number_element::uint8        > >( node ); break;
-		case eNumberTypeInt16        : return getElement< be::number_element::Number< be::number_element::int16        > >( node ); break;
-		case eNumberTypeUInt16       : return getElement< be::number_element::Number< be::number_element::uint16       > >( node ); break;
-		case eNumberTypeInt32        : return getElement< be::number_element::Number< be::number_element::int32        > >( node ); break;
-		case eNumberTypeUInt32       : return getElement< be::number_element::Number< be::number_element::uint32       > >( node ); break;
-		case eNumberTypeInt64        : return getElement< be::number_element::Number< be::number_element::int64        > >( node ); break;
-		case eNumberTypeUInt64       : return getElement< be::number_element::Number< be::number_element::uint64       > >( node ); break;
-		case eNumberTypeFloat        : return getElement< be::number_element::Number< float                            > >( node ); break;
-		case eNumberTypeDouble       : return getElement< be::number_element::Number< double                           > >( node ); break;
-		case eNumberTypeIeeeExtended : return getElement< be::number_element::Number< be::number_element::ieeeExtended > >( node ); break;
+		case eSubTypeInt8         : return getElement< be::number_element::Number< be::number_element::int8         > >( node ); break;
+		case eSubTypeUInt8        : return getElement< be::number_element::Number< be::number_element::uint8        > >( node ); break;
+		case eSubTypeInt16        : return getElement< be::number_element::Number< be::number_element::int16        > >( node ); break;
+		case eSubTypeUInt16       : return getElement< be::number_element::Number< be::number_element::uint16       > >( node ); break;
+		case eSubTypeInt32        : return getElement< be::number_element::Number< be::number_element::int32        > >( node ); break;
+		case eSubTypeUInt32       : return getElement< be::number_element::Number< be::number_element::uint32       > >( node ); break;
+		case eSubTypeInt64        : return getElement< be::number_element::Number< be::number_element::int64        > >( node ); break;
+		case eSubTypeUInt64       : return getElement< be::number_element::Number< be::number_element::uint64       > >( node ); break;
+		case eSubTypeFloat        : return getElement< be::number_element::Number< float                            > >( node ); break;
+		case eSubTypeDouble       : return getElement< be::number_element::Number< double                           > >( node ); break;
+		case eSubTypeIeeeExtended : return getElement< be::number_element::Number< be::number_element::ieeeExtended > >( node ); break;
+		case eSubTypeAscii        :
+		case eSubTypeHexa         :
+		case eSubTypeRaw          : return getElement< be::data_element::Data >( node ); break;
+		case eSubTypeUnknown      : break;
 	}
 	throw std::runtime_error( "getElementFromNode: Unknown type" );
 }

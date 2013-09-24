@@ -8,10 +8,10 @@ BOOST_AUTO_TEST_CASE( report_report_node )
 	{
 		ReportTree tree;
 		ReportTree node1, node2;
-		std::shared_ptr< ben::Number< int > >  numPtr( new ben::Number< int > );
-		std::shared_ptr< bed::Data >          dataPtr( new bed::Data );
+		std::shared_ptr< ben::Number< int > >  numPtr( new ben::Number< int >( id ) );
+		std::shared_ptr< bed::Data >          dataPtr( new bed::Data( id ) );
 
-		node1.add( "0", ( std::shared_ptr< be::Element > )  numPtr );
+		node1.add( "0", ( std::shared_ptr< be::Element > ) numPtr );
 		tree.add_child( "report.", node1 );
 
 		ReportNode rptNode1( tree.get_child( "report" ).begin(), 0, &tree );
@@ -42,10 +42,10 @@ BOOST_AUTO_TEST_CASE( report_report_node )
 	{
 		ReportTree tree;
 		ReportTree node1, node2;
-		std::shared_ptr< ben::Number< int > >  numPtr( new ben::Number< int > );
-		std::shared_ptr< bed::Data >          dataPtr( new bed::Data );
+		std::shared_ptr< ben::Number< int > >  numPtr( new ben::Number< int >( id ) );
+		std::shared_ptr< bed::Data >          dataPtr( new bed::Data( id ) );
 
-		node1.add( "0", ( std::shared_ptr< be::Element > )  numPtr );
+		node1.add( "0", ( std::shared_ptr< be::Element > ) numPtr );
 		tree.add_child( "report.", node1 );
 
 		ReportNode node( tree.get_child( "report" ).begin(), 0, &tree );

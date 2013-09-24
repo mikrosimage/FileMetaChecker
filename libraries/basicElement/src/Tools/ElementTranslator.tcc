@@ -7,7 +7,7 @@ namespace translator_tool
 template< typename InputType, typename OutputType >
 OutputType ElementTranslator< InputType, OutputType >::translate( const InputType& element )
 {
-	OutputType translation;
+	OutputType translation( element.getId() );
 
 	char* buffer = new char [ element.getSize() ];
 	element.getData( buffer );

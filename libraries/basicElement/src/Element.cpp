@@ -6,13 +6,17 @@ namespace basic_element
 
 size_t Element::_lastUniqueId = 0;
 
-Element::Element( EType type )
-	: _type          ( type )
-	, _uniqueId      ( _lastUniqueId++ )
-	, _status        ( eStatusUnknown )
-	, _subType       ( 0 )
+Element::Element( const std::string& id, EType type, ESubType subType, EDisplayType dispType )
+	: _id            ( id )
+	, _label         ( "" )
 	, _error         ( "" )
 	, _warning       ( "" )
+	, _uniqueId      ( _lastUniqueId++ )
+	, _size          ( 0 )
+	, _type          ( type )
+	, _subType       ( subType )
+	, _displayType   ( dispType )
+	, _status        ( eStatusUnknown )
 	, _bigEndianData ( true )
 {
 }
@@ -27,18 +31,16 @@ void Element::setLabel( const std::string& label )
 	_label = label;
 }
 
-ENumberType Element::getNumberSubType()
+void Element::setDisplayType( const std::string& displayType )
 {
-	if( _type != eTypeNumber )
-		return eNumberTypeUnknown;
-	return ( ENumberType ) _subType;
-}
-
-EDataType Element::getDataSubType()
-{
-	if( _type != eTypeData )
-		return eDataTypeUnknown;
-	return ( EDataType ) _subType;
+	_displayType = eDisplayTypeDefault;
+	
+	if( displayType == kAscii )
+		_displayType = eDisplayTypeAscii;
+	else if( displayType == kHexa )
+		_displayType = eDisplayTypeHexa;
+	else if( displayType != "" )
+		LOG_WARNING( _id << ": Unknown display type!" );
 }
 
 void Element::setStatus( const EStatus status )
@@ -100,29 +102,28 @@ std::string Element::getWarningLabel()
 std::vector< std::pair< std::string, std::string > > Element::getCommonElementInfo()
 {
 	std::vector< std::pair< std::string, std::string > > commonInfo;
-	commonInfo.push_back( std::make_pair( "id",     getId()             ) );
-	commonInfo.push_back( std::make_pair( "label",  getLabel()          ) );
-	commonInfo.push_back( std::make_pair( "status", getStatusString()   ) );
+	commonInfo.push_back( std::make_pair( kId,     getId()           ) );
+	commonInfo.push_back( std::make_pair( kLabel,  getLabel()        ) );
+	commonInfo.push_back( std::make_pair( kStatus, getStatusString() ) );
 	
 	if( ! _error.empty() )
-		commonInfo.push_back( std::make_pair( "error", _error ) );
+		commonInfo.push_back( std::make_pair( kError,   _error ) );
 	if( ! _warning.empty() )
-		commonInfo.push_back( std::make_pair( "warning", _warning ) );
+		commonInfo.push_back( std::make_pair( kWarning, _warning ) );
 
 	return commonInfo;
 }
 
 std::string Element::getStatusString()
 {
-	std::string status;
 	switch( getStatus() )
 	{
-		case Element::eStatusUnknown  : status = "Unknown";   break;
-		case Element::eStatusValid    : status = "Valid";     break;
-		case Element::eStatusInvalid  : status = "Invalid";   break;
-		case Element::eStatusPassOver : status = "Pass over"; break;
+		case Element::eStatusUnknown  : return kUnknown;
+		case Element::eStatusValid    : return kValid;
+		case Element::eStatusInvalid  : return kInvalid;
+		case Element::eStatusPassOver : return kPassOver;
 	}
-	return status;
+	return kUnknown;
 }
 
 

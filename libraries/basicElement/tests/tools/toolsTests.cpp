@@ -12,6 +12,8 @@ namespace bep = basic_element::expression_parser;
 boost::shared_ptr<common::formatters::Formatter> formatter( common::formatters::Formatter::get() );
 boost::shared_ptr<common::Color>                 color( common::Color::get() );
 
+static const std::string id = "id";
+
 BOOST_AUTO_TEST_SUITE( basic_element_test_suite02 )
 
 BOOST_AUTO_TEST_CASE( basic_element_init )

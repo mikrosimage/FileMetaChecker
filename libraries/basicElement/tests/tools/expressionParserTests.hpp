@@ -131,9 +131,9 @@ BOOST_AUTO_TEST_CASE( basic_element_expression_parser_shared_ptr )
 {
 	LOG_WARNING( ">>> basic_element_expression_parser_shared_ptr <<<" );
 	{
-		std::shared_ptr< be::number_element::Number< int   > > num1( new be::number_element::Number< int   > );
-		std::shared_ptr< be::number_element::Number< short > > num2( new be::number_element::Number< short > );
-		std::shared_ptr< be::number_element::Number< float > > num3( new be::number_element::Number< float > );
+		std::shared_ptr< be::number_element::Number< int   > > num1( new be::number_element::Number< int   >( id ) );
+		std::shared_ptr< be::number_element::Number< short > > num2( new be::number_element::Number< short >( id ) );
+		std::shared_ptr< be::number_element::Number< float > > num3( new be::number_element::Number< float >( id ) );
 
 		char buffer1[] = { 0x00, 0x00, 0x00, 0x01 };
 		char buffer2[] = { 0x00, 0x02 };

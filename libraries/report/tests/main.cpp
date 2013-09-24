@@ -18,6 +18,8 @@ namespace bpt = boost::property_tree;
 boost::shared_ptr<common::formatters::Formatter> formatter( common::formatters::Formatter::get() );
 boost::shared_ptr<common::Color>                 color( common::Color::get() );
 
+static const std::string id = "id";
+
 BOOST_AUTO_TEST_SUITE( report_test_suite01 )
 
 BOOST_AUTO_TEST_CASE( report_init )
