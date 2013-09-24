@@ -36,8 +36,8 @@ BOOST_AUTO_TEST_CASE( report_transform_and_export )
 		LOG_INFO( ">>> report_transform_and_export <<<" );
 		Transform tr( elementReport );
 		Export exporter( tr.transformTree( Transform::eReportTypeXml ) );
-		exporter.writeXmlFile( "report.xml" );
-		exporter.writeXmlFile( "report.xml", true );
+		//exporter.writeXmlFile( "report.xml" );
+		//exporter.writeXmlFile( "report.xml", true );
 	}
 	{
 		LOG_INFO( ">>> report_transform_and_export <<<" );
@@ -79,8 +79,8 @@ BOOST_AUTO_TEST_CASE( report_export_xml_json )
 	LOG_INFO( exporter.getXmlString( true ) );
 	LOG_INFO( exporter.getJsonString() );
 	LOG_INFO( exporter.getJsonString( true ) );
-	exporter.writeJsonFile( "report.json" );
-	exporter.writeJsonFile( "report.json", true );
+	//exporter.writeJsonFile( "report.json" );
+	//exporter.writeJsonFile( "report.json", true );
 }
 
 

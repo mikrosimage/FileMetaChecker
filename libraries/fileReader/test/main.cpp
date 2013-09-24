@@ -136,6 +136,7 @@ BOOST_AUTO_TEST_CASE( fileReader_test_streambuffer )
 	}
 }
 
+/*
 BOOST_AUTO_TEST_CASE( fileReader_test_filebuffer )
 {
 	LOG_INFO( " >>> fileReader_test_filebuffer <<< " );
@@ -143,7 +144,7 @@ BOOST_AUTO_TEST_CASE( fileReader_test_filebuffer )
 	std::string content = "FILE reader";
 
 	ofstream myfile;
-	myfile.open ("test.txt");
+	myfile.open( "test.txt" );
 	myfile << content;
 	myfile.close();
 
@@ -181,6 +182,6 @@ BOOST_AUTO_TEST_CASE( fileReader_test_filebuffer )
 	BOOST_CHECK_EQUAL( fr.isEndOfFile(), false );
 
 	fb->close();
-}
+}*/
 
 BOOST_AUTO_TEST_SUITE_END()
