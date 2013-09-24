@@ -145,11 +145,13 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_only_root )
 		comp.compare( "test", report );
 
 		rg::Transform tr( report );
-		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
+		bpt::ptree xmlTransReport = tr.transformTree( rg::Transform::eReportTypeXml );
+		rg::Export exporter( xmlTransReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
-		// exporter.writeXmlFile( "test.xml" );
 		LOG_INFO( exporter.getXmlString() );
+
+		BOOST_CHECK_EQUAL( xmlTransReport.end()->second.data(), "test3" );
 
 		std::istringstream  xmlStream( exporter.getXmlString() );
 		std::istringstream jsonStream( jsonString );
@@ -233,11 +235,13 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_one_child )
 		comp.compare( "test", report );
 
 		rg::Transform tr( report );
-		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
+		bpt::ptree xmlTransReport = tr.transformTree( rg::Transform::eReportTypeXml );
+		rg::Export exporter( xmlTransReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
-		// exporter.writeXmlFile( "test_one_child.xml" );
 		LOG_INFO( exporter.getXmlString() );
+
+		BOOST_CHECK_EQUAL( xmlTransReport.end()->second.data(), "test3" );
 
 		std::istringstream  xmlStream( exporter.getXmlString() );
 		std::istringstream jsonStream( jsonString );
@@ -346,11 +350,13 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_children )
 		comp.compare( "test", report );
 
 		rg::Transform tr( report );
-		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
+		bpt::ptree xmlTransReport = tr.transformTree( rg::Transform::eReportTypeXml );
+		rg::Export exporter( xmlTransReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
-		// exporter.writeXmlFile( "test_n_child.xml" );
 		LOG_INFO( exporter.getXmlString() );
+
+		BOOST_CHECK_EQUAL( xmlTransReport.end()->second.data(), "test3" );
 
 		std::istringstream  xmlStream( exporter.getXmlString() );
 		std::istringstream jsonStream( jsonString );
@@ -449,11 +455,13 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_one_subchild )
 		comp.compare( "test", report );
 
 		rg::Transform tr( report );
-		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
+		bpt::ptree xmlTransReport = tr.transformTree( rg::Transform::eReportTypeXml );
+		rg::Export exporter( xmlTransReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
-		// exporter.writeXmlFile( "test_one_subchild.xml" );
 		LOG_INFO( exporter.getXmlString() );
+
+		BOOST_CHECK_EQUAL( xmlTransReport.end()->second.data(), "test3" );
 
 		std::istringstream  xmlStream( exporter.getXmlString() );
 		std::istringstream jsonStream( jsonString );
@@ -557,11 +565,13 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_subchildren )
 		comp.compare( "test", report );
 
 		rg::Transform tr( report );
-		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
+		bpt::ptree xmlTransReport = tr.transformTree( rg::Transform::eReportTypeXml );
+		rg::Export exporter( xmlTransReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
-		// exporter.writeXmlFile( "test_n_subchildren.xml" );
 		LOG_INFO( exporter.getXmlString() );
+
+		BOOST_CHECK_EQUAL( xmlTransReport.end()->second.data(), "test3" );
 
 		std::istringstream  xmlStream( exporter.getXmlString() );
 		std::istringstream jsonStream( jsonString );
@@ -704,6 +714,12 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_levels )
 							]
 						}
 					]
+				},
+				{
+					"id": "end",
+					"label": "End",
+					"type": "ascii",
+					"values": "end"
 				}
 			]
 		}
@@ -716,7 +732,7 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_levels )
 		specList.addSpecification( spec );
 
 		std::stringbuf buffer;
-		buffer.str( "FILE reader     redaer ELIF" );
+		buffer.str( "FILE reader     redaer Eend" );
 		fr::FileReader file( &buffer );
 
 		Comparator comp( &file, specList );
@@ -725,11 +741,13 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_levels )
 		comp.compare( "test", report );
 
 		rg::Transform tr( report );
-		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
+		bpt::ptree xmlTransReport = tr.transformTree( rg::Transform::eReportTypeXml );
+		rg::Export exporter( xmlTransReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
-		// exporter.writeXmlFile( "test_n_levels.xml" );
 		LOG_INFO( exporter.getXmlString() );
+
+		BOOST_CHECK_EQUAL( xmlTransReport.end()->second.data(), "end" );
 
 		std::istringstream  xmlStream( exporter.getXmlString() );
 		std::istringstream jsonStream( jsonString );
@@ -833,6 +851,12 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_levels_2 )
 							]
 						}						
 					]
+				},
+				{
+					"id": "end",
+					"label": "End",
+					"type": "ascii",
+					"values": "end"
 				}
 			]
 		}
@@ -845,7 +869,7 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_levels_2 )
 		specList.addSpecification( spec );
 
 		std::stringbuf buffer;
-		buffer.str( "FILE reader    1.0 vs. 0.1    redaer ELIF ? " );
+		buffer.str( "FILE reader    1.0 vs. 0.1    redaer ELIF ? end" );
 		fr::FileReader file( &buffer );
 
 		Comparator comp( &file, specList );
@@ -854,11 +878,13 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_levels_2 )
 		comp.compare( "test", report );
 
 		rg::Transform tr( report );
-		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
+		bpt::ptree xmlTransReport = tr.transformTree( rg::Transform::eReportTypeXml );
+		rg::Export exporter( xmlTransReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
-		// exporter.writeXmlFile( "test_n_levels_2.xml" );
 		LOG_INFO( exporter.getXmlString() );
+
+		BOOST_CHECK_EQUAL( xmlTransReport.end()->second.data(), "end" );
 
 		std::istringstream  xmlStream( exporter.getXmlString() );
 		std::istringstream jsonStream( jsonString );
@@ -933,6 +959,12 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_1 )
 					"range" : [
 						{ "min": 31, "max": 33 }
 					]
+				},
+				{
+					"id": "end",
+					"label": "End",
+					"type": "ascii",
+					"values": "end"
 				}
 			]
 		}
@@ -945,7 +977,7 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_1 )
 		specList.addSpecification( spec );
 
 		std::stringbuf buffer;
-		buffer.str( "FILE reader  " );
+		buffer.str( "FILE reader  end" );
 		fr::FileReader file( &buffer );
 
 		Comparator comp( &file, specList );
@@ -954,11 +986,13 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_1 )
 		comp.compare( "test", report );
 
 		rg::Transform tr( report );
-		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
+		bpt::ptree xmlTransReport = tr.transformTree( rg::Transform::eReportTypeXml );
+		rg::Export exporter( xmlTransReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
-		// exporter.writeXmlFile( "test_validation_1.xml" );
 		LOG_INFO( exporter.getXmlString() );
+
+		BOOST_CHECK_EQUAL( xmlTransReport.end()->second.data(), "end" );
 
 		std::istringstream  xmlStream( exporter.getXmlString() );
 		std::istringstream jsonStream( jsonString );
@@ -1071,6 +1105,12 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_2 )
 					"type": "ascii",
 					"count": "8",
 					"displayType": "raw"
+				},
+				{
+					"id": "end",
+					"label": "End",
+					"type": "ascii",
+					"values": "end"
 				}
 			]
 		}
@@ -1083,7 +1123,7 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_2 )
 		specList.addSpecification( spec );
 
 		std::stringbuf buffer;
-		buffer.str( "FILE reader  nothing@ ./,+0031560?12!3#4" );
+		buffer.str( "FILE reader  nothing@ ./,+0031560?12!3#4end" );
 		fr::FileReader file( &buffer );
 
 		Comparator comp( &file, specList );
@@ -1092,11 +1132,13 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_2 )
 		comp.compare( "test", report );
 
 		rg::Transform tr( report );
-		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
+		bpt::ptree xmlTransReport = tr.transformTree( rg::Transform::eReportTypeXml );
+		rg::Export exporter( xmlTransReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
-		// exporter.writeXmlFile( "test_validation_2.xml" );
 		LOG_INFO( exporter.getXmlString() );
+
+		BOOST_CHECK_EQUAL( xmlTransReport.end()->second.data(), "end" );
 
 		std::istringstream  xmlStream( exporter.getXmlString() );
 		std::istringstream jsonStream( jsonString );
@@ -1155,6 +1197,12 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_count_expression )
 					"label": "HEY",
 					"type": "ascii",
 					"count": "size / 11"
+				},
+				{
+					"id": "end",
+					"label": "End",
+					"type": "ascii",
+					"values": "end"
 				}
 			]
 		}
@@ -1167,7 +1215,7 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_count_expression )
 		specList.addSpecification( spec );
 
 		std::stringbuf buffer;
-		buffer.str( "@FILE!HEY" );
+		buffer.str( "@FILE!HEYend" );
 		fr::FileReader file( &buffer );
 
 		Comparator comp( &file, specList );
@@ -1176,10 +1224,13 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_count_expression )
 		comp.compare( "test", report );
 
 		rg::Transform tr( report );
-		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
+		bpt::ptree xmlTransReport = tr.transformTree( rg::Transform::eReportTypeXml );
+		rg::Export exporter( xmlTransReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
 		LOG_INFO( exporter.getXmlString() );
+
+		BOOST_CHECK_EQUAL( xmlTransReport.end()->second.data(), "end" );
 
 		std::istringstream  xmlStream( exporter.getXmlString() );
 		std::istringstream jsonStream( jsonString );

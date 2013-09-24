@@ -70,10 +70,13 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_expr_simple )
 		comp.compare( "test", report );
 
 		rg::Transform tr( report );
-		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
+		bpt::ptree xmlReport = tr.transformTree( rg::Transform::eReportTypeXml );
+		rg::Export exporter( xmlReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
 		LOG_INFO( exporter.getXmlString() );
+
+		BOOST_CHECK_EQUAL( xmlReport.end()->second.data(), "end" );
 	}
 }
 
@@ -144,9 +147,15 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_expr_group )
 							"id": "elementEnd",
 							"label": "Element End",
 							"type": "ascii",
-							"values": "end"
+							"values": "endelem"
 						}
 					]
+				},
+				{
+					"id": "end",
+					"label": "End",
+					"type": "ascii",
+					"values": "end"
 				}
 			]
 		}
@@ -171,6 +180,7 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_expr_group )
 		str += "thingthing";
 		str += "end";
 		str += "end1end1";
+		str += "endelem";
 		str += "end";
 		buffer.str( str );
 		fr::FileReader file( &buffer );
@@ -181,19 +191,22 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_expr_group )
 		comp.compare( "test", report );
 
 		rg::Transform tr( report );
-		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
+		bpt::ptree xmlReport = tr.transformTree( rg::Transform::eReportTypeXml );
+		rg::Export exporter( xmlReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
 		LOG_INFO( exporter.getXmlString() );
 
+		BOOST_CHECK_EQUAL( xmlReport.end()->second.data(), "end" );
+
 		std::istringstream  xmlStream( exporter.getXmlString() );
 		std::istringstream jsonStream( jsonString );
-		bpt::ptree  xmlReport;
-		bpt::ptree jsonReport;
-		bpt::read_xml (  xmlStream,  xmlReport );
-		bpt::read_json( jsonStream, jsonReport );
+		bpt::ptree  xmlTestReport;
+		bpt::ptree jsonTestReport;
+		bpt::read_xml (  xmlStream,  xmlTestReport );
+		bpt::read_json( jsonStream, jsonTestReport );
 
-		BOOST_CHECK_EQUAL( xmlReport.size(), jsonReport.get_child( "header" ).size() );
+		BOOST_CHECK_EQUAL( xmlTestReport.size(), jsonTestReport.get_child( "header" ).size() );
 	}
 }
 
@@ -262,12 +275,18 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_range_simple )
 							"id": "elementEnd",
 							"label": "Element End",
 							"type": "ascii",
-							"values": "end",
+							"values": "endelem",
 							"repeated": [
 								{ "min": "2" }
 							]
 						}
 					]
+				},
+				{
+					"id": "end",
+					"label": "End",
+					"type": "ascii",
+					"values": "end"
 				}
 			]
 		}
@@ -289,7 +308,8 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_range_simple )
 		str += "digit";
 		str += "max";
 		str += "max";
-		str += "endendend";
+		str += "endelemendelemendelem";
+		str += "end";
 		buffer.str( str );
 		fr::FileReader file( &buffer );
 
@@ -299,19 +319,22 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_range_simple )
 		comp.compare( "test", report );
 
 		rg::Transform tr( report );
-		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
+		bpt::ptree xmlReport = tr.transformTree( rg::Transform::eReportTypeXml );
+		rg::Export exporter( xmlReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
 		LOG_INFO( exporter.getXmlString() );
 
+		BOOST_CHECK_EQUAL( xmlReport.end()->second.data(), "end" );
+
 		std::istringstream  xmlStream( exporter.getXmlString() );
 		std::istringstream jsonStream( jsonString );
-		bpt::ptree  xmlReport;
-		bpt::ptree jsonReport;
-		bpt::read_xml (  xmlStream,  xmlReport );
-		bpt::read_json( jsonStream, jsonReport );
+		bpt::ptree  xmlTestReport;
+		bpt::ptree jsonTestReport;
+		bpt::read_xml (  xmlStream,  xmlTestReport );
+		bpt::read_json( jsonStream, jsonTestReport );
 
-		BOOST_CHECK_EQUAL( xmlReport.size(), jsonReport.get_child( "header" ).size() );
+		BOOST_CHECK_EQUAL( xmlTestReport.size(), jsonTestReport.get_child( "header" ).size() );
 	}
 }
 
@@ -460,12 +483,18 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_range_group )
 							"id": "elementEnd",
 							"label": "Element End",
 							"type": "ascii",
-							"values": "end",
+							"values": "endelem",
 							"repeated": [
 								{ "min": "2" }
 							]
 						}
 					]
+				},
+				{
+					"id": "end",
+					"label": "End",
+					"type": "ascii",
+					"values": "end"
 				}
 			]
 		}
@@ -512,7 +541,8 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_range_group )
 		str += "max$££$£$££";
 		str += "max$£$£££";
 		str += "max$£$££$£$£";
-		str += "endendend";
+		str += "endelemendelemendelem";
+		str += "end";
 		buffer.str( str );
 		fr::FileReader file( &buffer );
 
@@ -522,19 +552,22 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_range_group )
 		comp.compare( "test", report );
 
 		rg::Transform tr( report );
-		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
+		bpt::ptree xmlReport = tr.transformTree( rg::Transform::eReportTypeXml );
+		rg::Export exporter( xmlReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
 		LOG_INFO( exporter.getXmlString() );
 
+		BOOST_CHECK_EQUAL( xmlReport.end()->second.data(), "end" );;
+
 		std::istringstream  xmlStream( exporter.getXmlString() );
 		std::istringstream jsonStream( jsonString );
-		bpt::ptree  xmlReport;
-		bpt::ptree jsonReport;
-		bpt::read_xml (  xmlStream,  xmlReport );
-		bpt::read_json( jsonStream, jsonReport );
+		bpt::ptree  xmlTestReport;
+		bpt::ptree jsonTestReport;
+		bpt::read_xml (  xmlStream,  xmlTestReport );
+		bpt::read_json( jsonStream, jsonTestReport );
 
-		BOOST_CHECK_EQUAL( xmlReport.size(), jsonReport.get_child( "header" ).size() );
+		BOOST_CHECK_EQUAL( xmlTestReport.size(), jsonTestReport.get_child( "header" ).size() );
 	}
 }
 
@@ -625,12 +658,18 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_range_group_co
 							"id": "elementEnd",
 							"label": "Element End",
 							"type": "ascii",
-							"values": "end",
+							"values": "endelem",
 							"repeated": [
 								{ "min": "2" }
 							]
 						}
 					]
+				},
+				{
+					"id": "end",
+					"label": "End",
+					"type": "ascii",
+					"values": "end"
 				}
 			]
 		}
@@ -651,6 +690,7 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_range_group_co
 		str += "ooo";
 		str += "dddddd";
 		str += "uuuu";
+		str += "endelem";
 		str += "end";
 		buffer.str( str );
 		fr::FileReader file( &buffer );
@@ -661,19 +701,22 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_repetition_range_group_co
 		comp.compare( "test", report );
 
 		rg::Transform tr( report );
-		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
+		bpt::ptree xmlReport = tr.transformTree( rg::Transform::eReportTypeXml );
+		rg::Export exporter( xmlReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
 		LOG_INFO( exporter.getXmlString() );
 
+		BOOST_CHECK_EQUAL( xmlReport.end()->second.data(), "end" );
+
 		std::istringstream  xmlStream( exporter.getXmlString() );
 		std::istringstream jsonStream( jsonString );
-		bpt::ptree  xmlReport;
-		bpt::ptree jsonReport;
-		bpt::read_xml (  xmlStream,  xmlReport );
-		bpt::read_json( jsonStream, jsonReport );
+		bpt::ptree  xmlTestReport;
+		bpt::ptree jsonTestReport;
+		bpt::read_xml (  xmlStream,  xmlTestReport );
+		bpt::read_json( jsonStream, jsonTestReport );
 
-		BOOST_CHECK_EQUAL( xmlReport.size(), jsonReport.get_child( "header" ).size() );
+		BOOST_CHECK_EQUAL( xmlTestReport.size(), jsonTestReport.get_child( "header" ).size() );
 	}
 }
 

@@ -113,21 +113,80 @@ void Comparator::compare( const std::string& specId, rg::Report& report )
 	checkNode( node, reportNode );
 }
 
-void Comparator::checkNode( const sr::SpecNode& node, report_generator::ReportNode& reportNode, const bool& isFirstChild )
+void Comparator::checkNode( const sr::SpecNode& node, rg::ReportNode& reportNode, const bool& isFirstChild )
 {
-	size_t initPos = _file->getPosition();
 	if( _file->isEndOfFile() )
 	{
 		LOG_ERROR( "End Of File !" );
 		return;
 	}
 
-	std::string nodeId = node.getId();
-
+	CurrentElement currentNode;
+	currentNode.nodeId       = node.getId();
+	currentNode.nodeIter     = iterateNode( node );
+	currentNode.repetNumber  = 1;
+	currentNode.initPos      = _file->getPosition();
+	currentNode.sentToReport = true;
+	currentNode.inRangeCheck = false;
+	
 	// check node
+	LOG_TRACE( ">> CHECK NODE " << currentNode.nodeId << " | " << currentNode.nodeIter << " @ " << currentNode.initPos );
 	std::shared_ptr< be::Element > element( getElementFromNode( node ) );
 
-	// iterate node
+	sr::SpecNode nextNode = node.next();
+
+	// get repetition
+	Vector< size_t >::Pair repetRange;
+	extractRepetition( currentNode.repetNumber, repetRange, node.getRepetition() );
+	checkRepetition( node, element, nextNode, reportNode, currentNode );
+
+	// node to report
+	rg::ReportNode* nextReportNode;
+
+	if( isFirstChild && currentNode.sentToReport )
+	{
+		rg::ReportNode newReportNode = reportNode.appendChild( element );
+		nextReportNode = &newReportNode;
+	}
+	else if( currentNode.sentToReport )
+	{
+		if( node.parent() == NULL )
+			reportNode = _report->addRootElement( element );
+		else
+			reportNode = reportNode.appendNext( element );
+		nextReportNode = &reportNode;
+	}
+	else
+	{
+		nextReportNode = &reportNode;
+	}
+
+	// check children nodes
+	if( node.hasGroup() && currentNode.sentToReport )
+		checkNode( node.firstChild(), *nextReportNode, true );
+	
+	// check group size
+	if( node.hasGroup() && ! node.getGroupSize().empty() )
+		checkGroupSize( node.getGroupSize(), _file->getPosition(), currentNode.initPos, element->getSize(), nextReportNode );
+
+	// next node check
+	if( ! node.isLastNode() )
+		checkNode( nextNode, *nextReportNode, ( isFirstChild && ! currentNode.sentToReport ) );
+	else if( nextNode.getId() == currentNode.nodeId && ! _file->isEndOfFile() && currentNode.inRangeCheck )
+		checkNode( nextNode, *nextReportNode, ( isFirstChild && ! currentNode.sentToReport ) );
+	else if( _elementIter.at( currentNode.nodeId ).iter < currentNode.repetNumber && currentNode.sentToReport )
+		checkNode( node, *nextReportNode, ( isFirstChild && ! currentNode.sentToReport ) );
+	else
+		LOG_TRACE( "\t IS LAST NODE !" );
+
+	// remove iteration
+	resetIteration( currentNode.nodeId );
+}
+
+size_t Comparator::iterateNode( const sr::SpecNode& node )
+{
+	std::string nodeId = node.getId();
+
 	if( _elementIter.count( nodeId ) == 0 )
 	{
 		ElementIter iteration;
@@ -142,44 +201,56 @@ void Comparator::checkNode( const sr::SpecNode& node, report_generator::ReportNo
 	else
 		_elementIter.at( nodeId ).iter++;
 
-	LOG_TRACE( ">> CHECK NODE " << nodeId << " | " << _elementIter.at( nodeId ).iter );
-	
-	// get repetition
-	size_t repetNumber = 1;
-	size_t elemIter = _elementIter.at( nodeId ).iter;
-	Vector< size_t >::Pair repetRange;
-	extractRepetition( repetNumber, repetRange, node.getRepetition() );
+	return _elementIter.at( nodeId ).iter;
+}
 
-	sr::SpecNode nextNode = node.next();
-	
-	bool sentToReport = true;
+void Comparator::resetIteration( const std::string& nodeId )
+{
+	_elementIter.at( nodeId ).iter = 0;
+}
 
-	// check repetitions
-	if( elemIter < repetNumber )
-	{
-		nextNode = node;
-	}
-
-	if( repetRange.size() == 0 && ( elemIter > 1 && elemIter <= repetNumber ) && element->getStatus() == be::Element::eStatusInvalid ) 
-	{
-		std::stringstream error;
-		error << "Out of repetition range (" << --_elementIter.at( nodeId ).iter << "/" << repetNumber << ")";
-		reportNode.getSecond()->begin()->second.data()->addErrorLabel( error.str() );
-		LOG_ERROR( error.str() );
-		sentToReport = false;
-		_file->goBack( element->getSize() );
-	}
-
-	// check if optional
-	if( node.isOptional() && element->getStatus() != be::Element::eStatusValid && elemIter == 1 )
+void Comparator::checkOptional( const sr::SpecNode&                             node,
+	                            const std::shared_ptr< basic_element::Element > element,
+	                            sr::SpecNode&                                   nextNode,
+	                            bool&                                           sentToReport )
+{
+	if( node.isOptional() && element->getStatus() != be::Element::eStatusValid && _elementIter.at( node.getId() ).iter == 1 )
 	{
 		LOG_TRACE( "Optional & Not Valid -> Go back: " << element->getSize() );
 		sentToReport = false;
 		_file->goBack( element->getSize() );
 		nextNode = node.next();
 	}
+}
 
-	bool inRangeCheck = false;
+void Comparator::checkRepetition( const sr::SpecNode&                             node,
+	                              const std::shared_ptr< basic_element::Element > element,
+	                              sr::SpecNode&                                   nextNode,
+	                              rg::ReportNode&                                 reportNode,
+	                              CurrentElement&                                 currentNode )
+{
+	Vector< size_t >::Pair repetRange;
+	extractRepetition( currentNode.repetNumber, repetRange, node.getRepetition() );
+
+	// check repetitions
+	if( currentNode.nodeIter < currentNode.repetNumber )
+	{
+		nextNode = node;
+	}
+
+	if( repetRange.size() == 0 && ( currentNode.nodeIter > 1 && currentNode.nodeIter <= currentNode.repetNumber ) && element->getStatus() == be::Element::eStatusInvalid ) 
+	{
+		std::stringstream error;
+		error << "Out of repetition range (" << --_elementIter.at( currentNode.nodeId ).iter << "/" << currentNode.repetNumber << ")";
+		reportNode.getSecond()->begin()->second.data()->addErrorLabel( error.str() );
+		LOG_ERROR( error.str() );
+		currentNode.sentToReport = false;
+		_file->goBack( element->getSize() );
+	}
+
+	// check if optional
+	checkOptional( node, element, nextNode, currentNode.sentToReport );
+
 	if( repetRange.size() > 0 )
 	{
 		size_t min = repetRange.at(0).first;
@@ -193,91 +264,58 @@ void Comparator::checkNode( const sr::SpecNode& node, report_generator::ReportNo
 
 		if( element->getStatus() == be::Element::eStatusValid )
 		{
-			inRangeCheck = true;
+			currentNode.inRangeCheck = true;
 			nextNode = node;
 		}
-		else if( ! node.isOptional() || elemIter > 1 )
+		else if( ! node.isOptional() || currentNode.nodeIter > 1 )
 		{
-			if( _file->getLength() - initPos > 0 && _file->getLength() - initPos < element->getSize() )
-				_file->goBack( _file->getLength() - initPos );
+			if( _file->getLength() - currentNode.initPos > 0 && _file->getLength() - currentNode.initPos < element->getSize() )
+				_file->goBack( _file->getLength() - currentNode.initPos );
 			else
 				_file->goBack( element->getSize() );
 
-			sentToReport = false;
+			currentNode.sentToReport = false;
 
-			elemIter = --_elementIter.at( nodeId ).iter;
+			currentNode.nodeIter = --_elementIter.at( currentNode.nodeId ).iter;
 			
 			bool isInRange = false;
 			for( std::pair< size_t, size_t > range : repetRange )
 			{
-				if( elemIter >= range.first && range.second == 0 )
+				if( currentNode.nodeIter >= range.first && range.second == 0 )
 					isInRange = true;
-				else if( elemIter >= range.first && elemIter <= range.second )
+				else if( currentNode.nodeIter >= range.first && currentNode.nodeIter <= range.second )
 					isInRange = true;
 			}
 			if( ! isInRange )
 			{
 				std::stringstream error;
-				error << "Out of repetition range (" << elemIter << " iterations) ";
+				error << "Out of repetition range (" << currentNode.nodeIter << " iterations) ";
 				reportNode.getSecond()->begin()->second.data()->addErrorLabel( error.str() );
 				LOG_ERROR( error.str() );
 			}
 		}
 	}
-
-	// node to report
-	rg::ReportNode* nextReportNode;
-	if( isFirstChild && sentToReport )
-	{
-		rg::ReportNode newReportNode = reportNode.appendChild( element );
-		nextReportNode = &newReportNode;
-	}
-	else if( sentToReport )
-	{
-		if( node.parent() == NULL )
-			reportNode = _report->addRootElement( element );
-		else
-			reportNode = reportNode.appendNext( element );
-		nextReportNode = &reportNode;
-	}
-	else
-	{
-		nextReportNode = &reportNode;
-	}
-
-	// children nodes check
-	if( node.hasGroup() && sentToReport )
-		checkNode( node.firstChild(), *nextReportNode, true );
-	
-	// check group size
-	if( node.hasGroup() && ! node.getGroupSize().empty() )
-	{
-		int sizeDiff = extractGroupSize( node.getGroupSize() ) - ( _file->getPosition() - ( initPos + element->getSize() ) );
-		std::stringstream warning;
-		if( sizeDiff > 0 )
-			warning << "Group size difference: " << sizeDiff << " missing bytes ";
-		if( sizeDiff < 0 )
-			warning << "Group size difference: " << abs( sizeDiff ) << " unexpected bytes ";
-		if( ! warning.str().empty() )
-		{
-			nextReportNode->getSecond()->begin()->second.data()->addWarningLabel( warning.str() );
-			LOG_WARNING( warning.str() );
-		}
-	}
-
-	// next node check
-	if( ! node.isLastNode() )
-		checkNode( nextNode, *nextReportNode, ( isFirstChild && ! sentToReport ) );
-	else if( nextNode.getId() == nodeId && ! _file->isEndOfFile() && inRangeCheck )
-		checkNode( nextNode, *nextReportNode, ( isFirstChild && ! sentToReport ) );
-	else if( _elementIter.at( nodeId ).iter < repetNumber && sentToReport )
-		checkNode( node, *nextReportNode, ( isFirstChild && ! sentToReport ) );
-	else
-		LOG_TRACE( "\t IS LAST NODE !" );
-
-	// remove iteration
-	_elementIter.at( nodeId ).iter = 0;
 }
+
+void Comparator::checkGroupSize( const std::string& nodeGroupSize,
+                                 const size_t&      filePosition,
+                                 const size_t&      initPosition,
+                                 const size_t&      elementSize,
+                                 rg::ReportNode*    nextReportNode )
+{
+	int sizeDiff = extractGroupSize( nodeGroupSize ) - ( filePosition - ( initPosition + elementSize ) );
+	std::stringstream warning;
+	if( sizeDiff > 0 )
+		warning << "Group size difference: " << sizeDiff << " missing bytes ";
+	if( sizeDiff < 0 )
+		warning << "Group size difference: " << abs( sizeDiff ) << " unexpected bytes ";
+	if( ! warning.str().empty() )
+	{
+		nextReportNode->getSecond()->begin()->second.data()->addWarningLabel( warning.str() );
+		LOG_WARNING( warning.str() );
+	}
+}
+
 
 std::shared_ptr< be::Element > Comparator::getElementFromNode( const sr::SpecNode& node )
 {

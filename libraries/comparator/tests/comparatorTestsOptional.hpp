@@ -162,8 +162,8 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_optional )
 		std::string str = "root";
 		str += " ";
 		str += "1";
-		str += "2 bbbb**c";
-		str += "dfffddfdffc";
+		str += "2  bbbb**c";
+		str += "dfffddfffdfffc";
 		str += "end";
 		str += "again";
 		str += "again";
@@ -183,10 +183,13 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_optional )
 		comp.compare( "test", report );
 
 		rg::Transform tr( report );
-		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
+		bpt::ptree xmlTransReport = tr.transformTree( rg::Transform::eReportTypeXml );
+		rg::Export exporter( xmlTransReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
 		LOG_INFO( exporter.getXmlString() );
+
+		BOOST_CHECK_EQUAL( xmlTransReport.end()->second.data(), "root3" );
 
 		std::istringstream  xmlStream( exporter.getXmlString() );
 		std::istringstream jsonStream( jsonString );
@@ -277,10 +280,13 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_optional_empty )
 		comp.compare( "test", report );
 	
 		rg::Transform tr( report );
-		rg::Export exporter( tr.transformTree( rg::Transform::eReportTypeXml ) );
-
+		bpt::ptree xmlTransReport = tr.transformTree( rg::Transform::eReportTypeXml );
+		rg::Export exporter( xmlTransReport );
+		
 		LOG_INFO( "\n==== REPORT ====" );
 		LOG_INFO( exporter.getXmlString() );
+
+		BOOST_CHECK_EQUAL( xmlTransReport.size(), 1 );
 
 		std::istringstream  xmlStream( exporter.getXmlString() );
 		std::istringstream jsonStream( jsonString );
