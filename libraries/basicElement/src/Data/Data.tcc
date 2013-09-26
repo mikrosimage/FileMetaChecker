@@ -96,7 +96,7 @@ std::vector< NumberType > Data::convertToVector() const
 	{
 		number_element::Number<NumberType> tmpNumber( "" );
 		tmpNumber.setData( &_data[i], sizeof( NumberType ) );
-		vector.push_back( tmpNumber.getValue() );
+		vector.push_back( tmpNumber.get< eDisplayTypeDefault, NumberType >() );
 		//BE_LOG_TRACE( " Data: \tTO INT VECTOR : " << vector.at( i ) );
 	}
 	return vector;

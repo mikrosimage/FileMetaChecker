@@ -35,11 +35,10 @@ public:
 	
 	void                 setData ( const char* data, const size_t& size );
 	
-	template< EDisplayType DisplayType, typename OutputType >
+	template< EDisplayType DisplayType = eDisplayTypeDefault, typename OutputType = NumberType >
 	OutputType get() const;
 	
 	size_t               getSize () const;
-	NumberType           getValue() const;
 	Map  < NumberType >& getMap  ();
 
 	void setMap( const std::map< std::string, std::string >& map );
@@ -47,8 +46,6 @@ public:
 	void addRange( const NumberType& min, const NumberType& max );
 	void setRanges( const std::vector< std::pair< std::string, std::string > >& ranges );
 	std::vector< Range< NumberType > >& getRange();
-
-	std::string toString() const;
 
 	EStatus     checkData();
 	std::vector< std::pair< std::string, std::string > > getElementInfo();

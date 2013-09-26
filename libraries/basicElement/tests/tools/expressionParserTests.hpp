@@ -143,9 +143,13 @@ BOOST_AUTO_TEST_CASE( basic_element_expression_parser_shared_ptr )
 		num2->setData( buffer2, 2 );
 		num3->setData( buffer3, 4 );
 
-		BOOST_CHECK_EQUAL( num1->toString(), "1"        );
-		BOOST_CHECK_EQUAL( num2->toString(), "2"        );
-		BOOST_CHECK_EQUAL( num3->toString(), "0.996094" );
+		std::string res1 = num1->get< eDisplayTypeAscii, std::string >();
+		std::string res2 = num2->get< eDisplayTypeAscii, std::string >();
+		std::string res3 = num3->get< eDisplayTypeAscii, std::string >();
+		
+		BOOST_CHECK_EQUAL( res1, "1"        );
+		BOOST_CHECK_EQUAL( res2, "2"        );
+		BOOST_CHECK_EQUAL( res3, "0.996094" );
 
 		std::map< std::string, std::shared_ptr< be::Element > > elementList;
 		elementList.insert( std::make_pair( "num1", num1 ) );

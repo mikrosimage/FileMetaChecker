@@ -135,20 +135,20 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 		nbe::Number< nbe::int8 > num( id );
 
 		num.setData( dataInt8Low, 1 );
-		BOOST_CHECK_EQUAL( num.getValue(), 0 );
+		BOOST_CHECK_EQUAL( num.get(), 0 );
 
 		num.setData( dataInt8High, 1 );
-		BOOST_CHECK_EQUAL( num.getValue(), -1 );
+		BOOST_CHECK_EQUAL( num.get(), -1 );
 	}
 	{
 		LOG_INFO( "\n ==== uint8  ==== " );
 		nbe::Number< nbe::uint8 > num( id );
 
 		num.setData( dataInt8Low, 1 );
-		BOOST_CHECK_EQUAL( num.getValue(), 0 );
+		BOOST_CHECK_EQUAL( num.get(), 0 );
 
 		num.setData( dataInt8High, 1 );
-		BOOST_CHECK_EQUAL( num.getValue(), 255 );
+		BOOST_CHECK_EQUAL( num.get(), 255 );
 	}
 
 	{
@@ -157,15 +157,15 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 
 		LOG_INFO( "___ dataInt16Low ___");
 		num.setData( dataInt16Low, 2 );
-		BOOST_CHECK_EQUAL( num.getValue(), 255 );
+		BOOST_CHECK_EQUAL( num.get(), 255 );
 
 		LOG_INFO( "___ dataInt16High ___");
 		num.setData( dataInt16High, 2 );
-		BOOST_CHECK_EQUAL( num.getValue(), -256 );
+		BOOST_CHECK_EQUAL( num.get(), -256 );
 
 		LOG_INFO( "___ dataInt16Full ___");
 		num.setData( dataInt16Full, 2 );
-		BOOST_CHECK_EQUAL( num.getValue(), -1 );
+		BOOST_CHECK_EQUAL( num.get(), -1 );
 	}
 	{
 		LOG_INFO( "\n ==== uint16 ====>> big endian " );
@@ -173,15 +173,15 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 
 		LOG_INFO( "___ dataInt16Low ___");
 		num.setData( dataInt16Low, 2 );
-		BOOST_CHECK_EQUAL( num.getValue(), 0x00ff );
+		BOOST_CHECK_EQUAL( num.get(), 0x00ff );
 
 		LOG_INFO( "___ dataInt16High ___");
 		num.setData( dataInt16High, 2 );
-		BOOST_CHECK_EQUAL( num.getValue(), 65280 );
+		BOOST_CHECK_EQUAL( num.get(), 65280 );
 
 		LOG_INFO( "___ dataInt16Full ___");
 		num.setData( dataInt16Full, 2 );
-		BOOST_CHECK_EQUAL( num.getValue(), 0xffff );
+		BOOST_CHECK_EQUAL( num.get(), 0xffff );
 	}
 	{
 		LOG_INFO( "\n ====  int16 ====>> little endian " );
@@ -190,15 +190,15 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 
 		LOG_INFO( "___ dataInt16Low ___");
 		num.setData( dataInt16Low, 2 );
-		BOOST_CHECK_EQUAL( num.getValue(), -256 );
+		BOOST_CHECK_EQUAL( num.get(), -256 );
 
 		LOG_INFO( "___ dataInt16High ___");
 		num.setData( dataInt16High, 2 );
-		BOOST_CHECK_EQUAL( num.getValue(), 255 );
+		BOOST_CHECK_EQUAL( num.get(), 255 );
 
 		LOG_INFO( "___ dataInt16Full ___");
 		num.setData( dataInt16Full, 2 );
-		BOOST_CHECK_EQUAL( num.getValue(), -1 );
+		BOOST_CHECK_EQUAL( num.get(), -1 );
 	}
 	{
 		LOG_INFO( "\n ==== uint16 ====>> little endian " );
@@ -207,15 +207,15 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 
 		LOG_INFO( "___ dataInt16Low ___");
 		num.setData( dataInt16Low, 2 );
-		BOOST_CHECK_EQUAL( num.getValue(), 65280 );
+		BOOST_CHECK_EQUAL( num.get(), 65280 );
 
 		LOG_INFO( "___ dataInt16High ___");
 		num.setData( dataInt16High, 2 );
-		BOOST_CHECK_EQUAL( num.getValue(), 255 );
+		BOOST_CHECK_EQUAL( num.get(), 255 );
 
 		LOG_INFO( "___ dataInt16Full ___");
 		num.setData( dataInt16Full, 2 );
-		BOOST_CHECK_EQUAL( num.getValue(), 0xffff );
+		BOOST_CHECK_EQUAL( num.get(), 0xffff );
 	}
 
 	{
@@ -223,26 +223,26 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 		nbe::Number< nbe::int32 > num( id );
 
 		num.setData( dataInt32Low, 4 );
-		BOOST_CHECK_EQUAL( num.getValue(), 255 );
+		BOOST_CHECK_EQUAL( num.get(), 255 );
 
 		num.setData( dataInt32High, 4 );
-		BOOST_CHECK_EQUAL( num.getValue(), -16777216 );
+		BOOST_CHECK_EQUAL( num.get(), -16777216 );
 
 		num.setData( dataInt32Full, 4 );
-		BOOST_CHECK_EQUAL( num.getValue(), -1 );
+		BOOST_CHECK_EQUAL( num.get(), -1 );
 	}
 	{
 		LOG_INFO( "\n ==== uint32 ====>> big endian " );
 		nbe::Number< nbe::uint32 > num( id );
 
 		num.setData( dataInt32Low, 4 );
-		BOOST_CHECK_EQUAL( num.getValue(), 255 );
+		BOOST_CHECK_EQUAL( num.get(), 255 );
 
 		num.setData( dataInt32High, 4 );
-		BOOST_CHECK_EQUAL( num.getValue(), 4278190080 );
+		BOOST_CHECK_EQUAL( num.get(), 4278190080 );
 
 		num.setData( dataInt32Full, 4 );
-		BOOST_CHECK_EQUAL( num.getValue(), std::numeric_limits<unsigned int>::max() );
+		BOOST_CHECK_EQUAL( num.get(), std::numeric_limits<unsigned int>::max() );
 	}
 	{
 		LOG_INFO( "\n ====  int32 ====>> little endian " );
@@ -250,13 +250,13 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 		num.setBigEndianness( false );
 
 		num.setData( dataInt32Low, 4 );
-		BOOST_CHECK_EQUAL( num.getValue(), -16777216 );
+		BOOST_CHECK_EQUAL( num.get(), -16777216 );
 
 		num.setData( dataInt32High, 4 );
-		BOOST_CHECK_EQUAL( num.getValue(), 255 );
+		BOOST_CHECK_EQUAL( num.get(), 255 );
 
 		num.setData( dataInt32Full, 4 );
-		BOOST_CHECK_EQUAL( num.getValue(), -1 );
+		BOOST_CHECK_EQUAL( num.get(), -1 );
 	}
 	{
 		LOG_INFO( "\n ==== uint32 ====>> little endian " );
@@ -264,13 +264,13 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 		num.setBigEndianness( false );
 
 		num.setData( dataInt32Low, 4 );
-		BOOST_CHECK_EQUAL( num.getValue(), 4278190080 );
+		BOOST_CHECK_EQUAL( num.get(), 4278190080 );
 
 		num.setData( dataInt32High, 4 );
-		BOOST_CHECK_EQUAL( num.getValue(), 255 );
+		BOOST_CHECK_EQUAL( num.get(), 255 );
 
 		num.setData( dataInt32Full, 4 );
-		BOOST_CHECK_EQUAL( num.getValue(), std::numeric_limits<unsigned int>::max() );
+		BOOST_CHECK_EQUAL( num.get(), std::numeric_limits<unsigned int>::max() );
 	}
 
 	{
@@ -278,26 +278,26 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 		nbe::Number< nbe::int64 > num( id );
 
 		num.setData( dataInt64Low, 8 );
-		BOOST_CHECK_EQUAL( num.getValue(), 255 );
+		BOOST_CHECK_EQUAL( num.get(), 255 );
 
 		num.setData( dataInt64High, 8 );
-		BOOST_CHECK_EQUAL( num.getValue(), -72057594037927936 );
+		BOOST_CHECK_EQUAL( num.get(), -72057594037927936 );
 
 		num.setData( dataInt64Full, 8 );
-		BOOST_CHECK_EQUAL( num.getValue(), -1 );
+		BOOST_CHECK_EQUAL( num.get(), -1 );
 	}
 	{
 		LOG_INFO( "\n ==== uint64 ====>> big endian " );
 		nbe::Number< nbe::uint64 > num( id );
 
 		num.setData( dataInt64Low, 8 );
-		BOOST_CHECK_EQUAL( num.getValue(), 255 );
+		BOOST_CHECK_EQUAL( num.get(), 255 );
 
 		num.setData( dataInt64High, 8 );
-		BOOST_CHECK_EQUAL( num.getValue(), 0xff00000000000000 );
+		BOOST_CHECK_EQUAL( num.get(), 0xff00000000000000 );
 
 		num.setData( dataInt64Full, 8 );
-		BOOST_CHECK_EQUAL( num.getValue(), std::numeric_limits<unsigned long long>::max() );
+		BOOST_CHECK_EQUAL( num.get(), std::numeric_limits<unsigned long long>::max() );
 	}
 	{
 		LOG_INFO( "\n ====  int64 ====>> little endian " );
@@ -305,13 +305,13 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 		num.setBigEndianness( false );
 
 		num.setData( dataInt64Low, 8 );
-		BOOST_CHECK_EQUAL( num.getValue(), -72057594037927936 );
+		BOOST_CHECK_EQUAL( num.get(), -72057594037927936 );
 
 		num.setData( dataInt64High, 8 );
-		BOOST_CHECK_EQUAL( num.getValue(), 255 );
+		BOOST_CHECK_EQUAL( num.get(), 255 );
 
 		num.setData( dataInt64Full, 8 );
-		BOOST_CHECK_EQUAL( num.getValue(), -1 );
+		BOOST_CHECK_EQUAL( num.get(), -1 );
 	}
 	{
 		LOG_INFO( "\n ==== uint64 ====>> little endian " );
@@ -319,13 +319,13 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 		num.setBigEndianness( false );
 
 		num.setData( dataInt64Low, 8 );
-		BOOST_CHECK_EQUAL( num.getValue(), 0xff00000000000000 );
+		BOOST_CHECK_EQUAL( num.get(), 0xff00000000000000 );
 
 		num.setData( dataInt64High, 8 );
-		BOOST_CHECK_EQUAL( num.getValue(), 255 );
+		BOOST_CHECK_EQUAL( num.get(), 255 );
 
 		num.setData( dataInt64Full, 8 );
-		BOOST_CHECK_EQUAL( num.getValue(), std::numeric_limits<unsigned long long>::max() );
+		BOOST_CHECK_EQUAL( num.get(), std::numeric_limits<unsigned long long>::max() );
 	}
 
 	{
@@ -333,19 +333,19 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 		nbe::Number< float > num( id );
 
 		num.setData( dataFloatZero, 4 );
-		BOOST_CHECK_CLOSE( num.getValue(), 0, 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), 0, 0.001 );
 
 		num.setData( dataFloatOneBigEndian, 4 );
-		BOOST_CHECK_CLOSE( num.getValue(), 1, 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), 1, 0.001 );
 
 		num.setData( dataFloatMaxBigEndian, 4 );
-		BOOST_CHECK_CLOSE( num.getValue(), std::numeric_limits< float >::max(), 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), std::numeric_limits< float >::max(), 0.001 );
 
 		num.setData( dataFloatNegMaxBigEndian, 4 );
-		BOOST_CHECK_CLOSE( num.getValue(), -std::numeric_limits< float >::max(), 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), -std::numeric_limits< float >::max(), 0.001 );
 
 		num.setData( dataFloatMinBigEndian, 4 );
-		BOOST_CHECK_CLOSE( num.getValue(), std::numeric_limits< float >::min(), 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), std::numeric_limits< float >::min(), 0.001 );
 	}
 	{
 		LOG_INFO( "\n ==== float ====>> little endian " );
@@ -353,19 +353,19 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 		num.setBigEndianness( false );
 		
 		num.setData( dataFloatZero, 4 );
-		BOOST_CHECK_CLOSE( num.getValue(), 0, 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), 0, 0.001 );
 
 		num.setData( dataFloatOneLittleEndian, 4 );
-		BOOST_CHECK_CLOSE( num.getValue(), 1, 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), 1, 0.001 );
 
 		num.setData( dataFloatMaxLittleEndian, 4 );
-		BOOST_CHECK_CLOSE( num.getValue(), std::numeric_limits< float >::max(), 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), std::numeric_limits< float >::max(), 0.001 );
 
 		num.setData( dataFloatNegMaxLittleEndian, 4 );
-		BOOST_CHECK_CLOSE( num.getValue(), -std::numeric_limits< float >::max(), 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), -std::numeric_limits< float >::max(), 0.001 );
 
 		num.setData( dataFloatMinLittleEndian, 4 );
-		BOOST_CHECK_CLOSE( num.getValue(), std::numeric_limits< float >::min(), 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), std::numeric_limits< float >::min(), 0.001 );
 	}
 
 	{
@@ -373,19 +373,19 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 		nbe::Number< double > num( id );
 
 		num.setData( dataDoubleZero, 8 );
-		BOOST_CHECK_CLOSE( num.getValue(), 0, 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), 0, 0.001 );
 
 		num.setData( dataDoubleOneBigEndian, 8 );
-		BOOST_CHECK_CLOSE( num.getValue(), 1, 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), 1, 0.001 );
 
 		num.setData( dataDoubleMaxBigEndian, 8 );
-		BOOST_CHECK_CLOSE( num.getValue(), std::numeric_limits< double >::max(), 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), std::numeric_limits< double >::max(), 0.001 );
 
 		num.setData( dataDoubleNegMaxBigEndian, 8 );
-		BOOST_CHECK_CLOSE( num.getValue(), -std::numeric_limits< double >::max(), 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), -std::numeric_limits< double >::max(), 0.001 );
 
 		num.setData( dataDoubleMinBigEndian, 8 );
-		BOOST_CHECK_CLOSE( num.getValue(), std::numeric_limits< double >::min(), 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), std::numeric_limits< double >::min(), 0.001 );
 	}
 	{
 		LOG_INFO( "\n ==== double ====>> little endian " );
@@ -393,19 +393,19 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 		num.setBigEndianness( false );
 		
 		num.setData( dataDoubleZero, 8 );
-		BOOST_CHECK_CLOSE( num.getValue(), 0, 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), 0, 0.001 );
 
 		num.setData( dataDoubleOneLittleEndian, 8 );
-		BOOST_CHECK_CLOSE( num.getValue(), 1, 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), 1, 0.001 );
 
 		num.setData( dataDoubleMaxLittleEndian, 8 );
-		BOOST_CHECK_CLOSE( num.getValue(), std::numeric_limits< double >::max(), 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), std::numeric_limits< double >::max(), 0.001 );
 
 		num.setData( dataDoubleNegMaxLittleEndian, 8 );
-		BOOST_CHECK_CLOSE( num.getValue(), -std::numeric_limits< double >::max(), 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), -std::numeric_limits< double >::max(), 0.001 );
 
 		num.setData( dataDoubleMinLittleEndian, 8 );
-		BOOST_CHECK_CLOSE( num.getValue(), std::numeric_limits< double >::min(), 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), std::numeric_limits< double >::min(), 0.001 );
 	}
 
 	{
@@ -413,19 +413,19 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 		nbe::Number< nbe::ieeeExtended > num( id );
 
 		num.setData( dataIeeeExtendedZero, 10 );
-		BOOST_CHECK_CLOSE( num.getValue(), 0, 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), 0, 0.001 );
 
 		num.setData( dataIeeeExtendedOneBigEndian, 10 );
-		BOOST_CHECK_CLOSE( num.getValue(), 1, 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), 1, 0.001 );
 
 		num.setData( dataIeeeExtendedMaxBigEndian, 10 );
-		BOOST_CHECK_CLOSE( num.getValue(), std::numeric_limits< nbe::ieeeExtended >::max(), 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), std::numeric_limits< nbe::ieeeExtended >::max(), 0.001 );
 
 		num.setData( dataIeeeExtendedNegMaxBigEndian, 10 );
-		BOOST_CHECK_CLOSE( num.getValue(), -std::numeric_limits< nbe::ieeeExtended >::max(), 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), -std::numeric_limits< nbe::ieeeExtended >::max(), 0.001 );
 
 		num.setData( dataIeeeExtendedMinBigEndian, 10 );
-		BOOST_CHECK_CLOSE( num.getValue(), std::numeric_limits< nbe::ieeeExtended >::min(), 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), std::numeric_limits< nbe::ieeeExtended >::min(), 0.001 );
 	}
 
 	{
@@ -434,94 +434,108 @@ BOOST_AUTO_TEST_CASE( basic_element_number_translate )
 		num.setBigEndianness( false );
 
 		num.setData( dataIeeeExtendedZero, 10 );
-		BOOST_CHECK_CLOSE( num.getValue(), 0, 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), 0, 0.001 );
 
 		num.setData( dataIeeeExtendedOneLittleEndian, 10 );
-		BOOST_CHECK_CLOSE( num.getValue(), 1, 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), 1, 0.001 );
 
 		num.setData( dataIeeeExtendedMaxLittleEndian, 10 );
-		BOOST_CHECK_CLOSE( num.getValue(), std::numeric_limits< nbe::ieeeExtended >::max(), 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), std::numeric_limits< nbe::ieeeExtended >::max(), 0.001 );
 
 		num.setData( dataIeeeExtendedNegMaxLittleEndian, 10 );
-		BOOST_CHECK_CLOSE( num.getValue(), -std::numeric_limits< nbe::ieeeExtended >::max(), 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), -std::numeric_limits< nbe::ieeeExtended >::max(), 0.001 );
 
 		num.setData( dataIeeeExtendedMinLittleEndian, 10 );
-		BOOST_CHECK_CLOSE( num.getValue(), std::numeric_limits< nbe::ieeeExtended >::min(), 0.001 );
+		BOOST_CHECK_CLOSE( num.get(), std::numeric_limits< nbe::ieeeExtended >::min(), 0.001 );
 	}
 }
 
-BOOST_AUTO_TEST_CASE( basic_element_number_toString )
+BOOST_AUTO_TEST_CASE( basic_element_number_get_string )
 {
-	LOG_INFO( "\n>>> basic_element_number_toString <<<" );
+	LOG_INFO( "\n>>> basic_element_number_get_string <<<" );
 	{
 		nbe::Number< nbe::int8 > num( id );
 		num.setData( dataInt8High, 1 );
-		BOOST_CHECK_EQUAL( num.toString(), "-1" );
+		std::string res = num.get< eDisplayTypeAscii, std::string >();
+		BOOST_CHECK_EQUAL( res, "-1" );
 	}
 	{
 		nbe::Number< nbe::uint8 > num( id );
 		num.setData( dataInt8High, 1 );
-		BOOST_CHECK_EQUAL( num.toString(), "255" );
+		std::string res = num.get< eDisplayTypeAscii, std::string >();
+		BOOST_CHECK_EQUAL( res, "255" );
 	}
 	{
 		nbe::Number< nbe::int16 > num( id );
 		num.setData( dataInt16Full, 2 );
-		BOOST_CHECK_EQUAL( num.toString(), "-1" );
+		std::string res = num.get< eDisplayTypeAscii, std::string >();
+		BOOST_CHECK_EQUAL( res, "-1" );
 	}
 	{
 		nbe::Number< nbe::uint16 > num( id );
 		num.setData( dataInt16Full, 2 );
-		BOOST_CHECK_EQUAL( num.toString(), "65535" );
+		std::string res = num.get< eDisplayTypeAscii, std::string >();
+		BOOST_CHECK_EQUAL( res, "65535" );
 	}
 	{
 		nbe::Number< nbe::int32 > num( id );
 		num.setData( dataInt32Full, 4 );
-		BOOST_CHECK_EQUAL( num.toString(), "-1" );
+		std::string res = num.get< eDisplayTypeAscii, std::string >();
+		BOOST_CHECK_EQUAL( res, "-1" );
 	}
 	{
 		nbe::Number< nbe::uint32 > num( id );
 		num.setData( dataInt32Full, 4 );
-		BOOST_CHECK_EQUAL( num.toString(), "4294967295" );
+		std::string res = num.get< eDisplayTypeAscii, std::string >();
+		BOOST_CHECK_EQUAL( res, "4294967295" );
 	}
 	{
 		nbe::Number< nbe::int64 > num( id );
 		num.setData( dataInt64Full, 8 );
-		BOOST_CHECK_EQUAL( num.toString(), "-1" );
+		std::string res = num.get< eDisplayTypeAscii, std::string >();
+		BOOST_CHECK_EQUAL( res, "-1" );
 	}
 	{
 		nbe::Number< nbe::uint64 > num( id );
 		num.setData( dataInt64Full, 8 );
-		BOOST_CHECK_EQUAL( num.toString(), "18446744073709551615" );
+		std::string res = num.get< eDisplayTypeAscii, std::string >();
+		BOOST_CHECK_EQUAL( res, "18446744073709551615" );
 	}
 	{
 		nbe::Number< float > num( id );
 		num.setData( dataFloatOneBigEndian, 4 );
-		BOOST_CHECK_EQUAL( num.toString(), "1" );
+		std::string res = num.get< eDisplayTypeAscii, std::string >();
+		BOOST_CHECK_EQUAL( res, "1" );
 	}
 	{
 		nbe::Number< float > num( id );
 		num.setData( dataFloatMaxBigEndian, 4 );
-		BOOST_CHECK_EQUAL( num.toString(), "3.40282e+38" );
+		std::string res = num.get< eDisplayTypeAscii, std::string >();
+		BOOST_CHECK_EQUAL( res, "3.40282e+38" );
 	}
 	{
 		nbe::Number< double > num( id );
 		num.setData( dataDoubleOneBigEndian, 8 );
-		BOOST_CHECK_EQUAL( num.toString(), "1" );
+		std::string res = num.get< eDisplayTypeAscii, std::string >();
+		BOOST_CHECK_EQUAL( res, "1" );
 	}
 	{
 		nbe::Number< double > num( id );
 		num.setData( dataDoubleMaxBigEndian, 8 );
-		BOOST_CHECK_EQUAL( num.toString(), "1.79769e+308" );
+		std::string res = num.get< eDisplayTypeAscii, std::string >();
+		BOOST_CHECK_EQUAL( res, "1.79769e+308" );
 	}
 	{
 		nbe::Number< nbe::ieeeExtended > num( id );
 		num.setData( dataIeeeExtendedOneBigEndian, 10 );
-		BOOST_CHECK_EQUAL( num.toString(), "1" );
+		std::string res = num.get< eDisplayTypeAscii, std::string >();
+		BOOST_CHECK_EQUAL( res, "1" );
 	}
 	{
 		nbe::Number< nbe::ieeeExtended > num( id );
 		num.setData( dataIeeeExtendedMaxBigEndian, 10 );
-		BOOST_CHECK_EQUAL( num.toString(), "1.18973e+4932" );
+		std::string res = num.get< eDisplayTypeAscii, std::string >();
+		BOOST_CHECK_EQUAL( res, "1.18973e+4932" );
 	}
 }
 

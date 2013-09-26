@@ -49,32 +49,6 @@ void Number< uint8 >::translate( const char* data )
 	//BE_LOG_TRACE( " Number: \t_numData.value: " << (int) _numData.value );
 }
 
-
-
-template< typename NumberType >
-std::string Number< NumberType >::toString() const
-{
-	std::stringstream sstr;
-	sstr << _numData.value;
-	return sstr.str();
-}
-
-template< >
-std::string Number< int8 >::toString( ) const
-{
-	std::stringstream sstr;
-	sstr << (int) _numData.value;
-	return sstr.str();
-}
-
-template< >
-std::string Number< uint8 >::toString( ) const
-{
-	std::stringstream sstr;
-	sstr << (int) _numData.value;
-	return sstr.str();
-}
-
 template< typename NumberType >
 NumberType Number< NumberType >::fromString( const std::string& value )
 {
@@ -143,29 +117,50 @@ void Number< NumberType >::setData( const char* data, const size_t& size )
 	translate( data );
 }
 
-/*
-template< typename NumberType >
-void Number< NumberType >::getData( char* buffer ) const
-{
-	//BE_LOG_TRACE( " Number: \tGET DATA from @ " << &_numData.data << " to @ " << &buffer << " | size: " << _size );
-	std::reverse_copy( _numData.data, _numData.data + _size, buffer );
-	//BE_LOG_TRACE( " Number: \tdata  : " << (int) _numData.data[0] << "\t\t\t@ " << &_numData.data );
-	//BE_LOG_TRACE( " Number: \tbuffer: " << (int)(unsigned char) buffer[0] << "\t\t\t@ " << &buffer );
-}*/
-
 template< typename NumberType >
 template< EDisplayType DisplayType, typename OutputType >
 OutputType Number< NumberType >::get() const
 {
-	return &_numData.data;
-}
-
-template< typename NumberType >
-NumberType Number< NumberType >::getValue() const
-{
 	return _numData.value;
 }
 
+template< >
+template< >
+std::string Number< int8 >::get< eDisplayTypeAscii, std::string >() const
+{
+	std::stringstream sstr;
+	sstr << (int) _numData.value;
+	return sstr.str();
+}
+
+template< >
+template< >
+std::string Number< uint8 >::get< eDisplayTypeAscii, std::string >() const
+{
+	std::stringstream sstr;
+	sstr << (int) _numData.value;
+	return sstr.str();
+}
+
+#define GET_NUMBER( x ) \
+template< > \
+template< > \
+std::string Number< x >::get< eDisplayTypeAscii, std::string >() const \
+{ \
+	std::stringstream sstr; \
+	sstr << _numData.value; \
+	return sstr.str(); \
+}
+
+GET_NUMBER( int16  )
+GET_NUMBER( uint16 )
+GET_NUMBER( int32  )
+GET_NUMBER( uint32 )
+GET_NUMBER( int64  )
+GET_NUMBER( uint64 )
+GET_NUMBER( float  )
+GET_NUMBER( double )
+GET_NUMBER( ieeeExtended )
 
 template< typename NumberType >
 void Number< NumberType >::addRange( const NumberType& min, const NumberType& max )
@@ -249,16 +244,16 @@ std::vector< std::pair< std::string, std::string > > Number< NumberType >::getEl
 
 	if( _map.getSize() == 0 )
 	{
-		elemInfo.push_back( std::make_pair( kValue, toString() ) );
+		elemInfo.push_back( std::make_pair( kValue, get< eDisplayTypeAscii, std::string >() ) );
 	}
 	else
 	{
 		std::string value = _map.getLabel( _numData.value );
 		
 		if( ! value.empty() )
-			value.append( " (" + toString() + ")" );
+			value.append( " (" + get< eDisplayTypeAscii, std::string >() + ")" );
 		else
-			value = "----- (" + toString() + ")";
+			value = "----- (" + get< eDisplayTypeAscii, std::string >() + ")";
 		
 		elemInfo.push_back( std::make_pair( kValue, value ) );
 	}
@@ -266,72 +261,37 @@ std::vector< std::pair< std::string, std::string > > Number< NumberType >::getEl
 	return elemInfo;
 }
 
-template< >
-std::string Number< int8   >::getStringFromType() { return kInt8; }
+#define GET_STRING_FROM_TYPE( x, y ) \
+template< > \
+std::string Number< x >::getStringFromType() { return y; }
 
-template< >
-std::string Number< uint8  >::getStringFromType() { return kUInt8; }
+GET_STRING_FROM_TYPE( int8,   kInt8   )
+GET_STRING_FROM_TYPE( uint8,  kUInt8  )
+GET_STRING_FROM_TYPE( int16,  kInt16  )
+GET_STRING_FROM_TYPE( uint16, kUInt16 )
+GET_STRING_FROM_TYPE( int32,  kInt32  )
+GET_STRING_FROM_TYPE( uint32, kUInt32 )
+GET_STRING_FROM_TYPE( int64,  kInt64  )
+GET_STRING_FROM_TYPE( uint64, kUInt64 )
+GET_STRING_FROM_TYPE( float,  kFloat  )
+GET_STRING_FROM_TYPE( double, kDouble )
+GET_STRING_FROM_TYPE( ieeeExtended, kIeeeExtended )
 
-template< >
-std::string Number< int16  >::getStringFromType() { return kInt16; }
+#define SET_SUB_TYPE( x, y ) \
+template< > \
+void Number< x >::setSubType() { _subType = y; }
 
-template< >
-std::string Number< uint16 >::getStringFromType() { return kUInt16; }
-
-template< >
-std::string Number< int32  >::getStringFromType() { return kInt32; }
-
-template< >
-std::string Number< uint32 >::getStringFromType() { return kUInt32; }
-
-template< >
-std::string Number< int64  >::getStringFromType() { return kInt64; }
-
-template< >
-std::string Number< uint64 >::getStringFromType() { return kUInt64; }
-
-template< >
-std::string Number< float  >::getStringFromType() { return kFloat; }
-
-template< >
-std::string Number< double >::getStringFromType() { return kDouble; }
-
-template< >
-std::string Number< ieeeExtended >::getStringFromType() { return kIeeeExtended; }
-
-
-template< >
-void Number<  int8  >::setSubType() { _subType = eSubTypeInt8; }
-
-template< >
-void Number< uint8  >::setSubType() { _subType = eSubTypeUInt8; }
-
-template< >
-void Number<  int16 >::setSubType() { _subType = eSubTypeInt16; }
-
-template< >
-void Number< uint16 >::setSubType() { _subType = eSubTypeUInt16; }
-
-template< >
-void Number<  int32 >::setSubType() { _subType = eSubTypeInt32; }
-
-template< >
-void Number< uint32 >::setSubType() { _subType = eSubTypeUInt32; }
-
-template< >
-void Number<  int64 >::setSubType() { _subType = eSubTypeInt64; }
-
-template< >
-void Number< uint64 >::setSubType() { _subType = eSubTypeUInt64; }
-
-template< >
-void Number<  float >::setSubType() { _subType = eSubTypeFloat; }
-
-template< >
-void Number< double >::setSubType() { _subType = eSubTypeDouble; }
-
-template< >
-void Number< ieeeExtended >::setSubType() { _subType = eSubTypeIeeeExtended; }
+SET_SUB_TYPE( int8,   eSubTypeInt8   )
+SET_SUB_TYPE( uint8,  eSubTypeUInt8  )
+SET_SUB_TYPE( int16,  eSubTypeInt16  )
+SET_SUB_TYPE( uint16, eSubTypeUInt16 )
+SET_SUB_TYPE( int32,  eSubTypeInt32  )
+SET_SUB_TYPE( uint32, eSubTypeUInt32 )
+SET_SUB_TYPE( int64,  eSubTypeInt64  )
+SET_SUB_TYPE( uint64, eSubTypeUInt64 )
+SET_SUB_TYPE( float,  eSubTypeFloat  )
+SET_SUB_TYPE( double, eSubTypeDouble )
+SET_SUB_TYPE( ieeeExtended, eSubTypeIeeeExtended )
 
 }
 }
