@@ -56,7 +56,7 @@ std::shared_ptr< ElementType > Comparator::getElement( const sr::SpecNode& node 
 	size_t size = element->getSize();
 	char buffer[ size ];
 	_file->readData( buffer, size );
-	element->setData( buffer, size );
+	element->set( buffer, size );
 	element->checkData();
 
 	_elementList.insert( std::make_pair( node.getId(), element ) );
@@ -88,7 +88,7 @@ std::shared_ptr< be::data_element::Data > Comparator::getElement< be::data_eleme
 
 	char buffer[ size ];
 	_file->readData( buffer, size );
-	element->setData( buffer, size );
+	element->set( buffer, size );
 	element->checkData();
 	return element;
 }

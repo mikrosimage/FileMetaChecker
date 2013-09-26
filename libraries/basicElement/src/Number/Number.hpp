@@ -33,7 +33,7 @@ public:
 	Number( const std::string& id, const ESubType& subType = eSubTypeInt8, const EDisplayType& dispType = eDisplayTypeDefault );
 	~Number();
 	
-	void                 setData ( const char* data, const size_t& size );
+	void                 set ( const char* data, const size_t& size );
 	
 	template< EDisplayType DisplayType = eDisplayTypeDefault, typename OutputType = NumberType >
 	OutputType get() const;

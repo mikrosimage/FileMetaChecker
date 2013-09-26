@@ -24,7 +24,7 @@ Data::~Data()
 	}
 }
 
-void Data::setData( const char* data, const size_t& size )
+void Data::set( const char* data, const size_t& size )
 {
 	_data = new char [size];
 	_size = size;
@@ -95,78 +95,31 @@ std::vector< NumberType > Data::convertToVector() const
 	for( size_t i = 0; i < _size; i += sizeof( NumberType ) )
 	{
 		number_element::Number<NumberType> tmpNumber( "" );
-		tmpNumber.setData( &_data[i], sizeof( NumberType ) );
+		tmpNumber.set( &_data[i], sizeof( NumberType ) );
 		vector.push_back( tmpNumber.get< eDisplayTypeDefault, NumberType >() );
 		//BE_LOG_TRACE( " Data: \tTO INT VECTOR : " << vector.at( i ) );
 	}
 	return vector;
 }
 
-template< >
-std::vector< number_element::uint8 > Data::get< eDisplayTypeNumbers, std::vector< number_element::uint8 > >() const
-{
-	return convertToVector< number_element::uint8 >();
+#define DATA_GET( x ) \
+template< > \
+std::vector< x > Data::get< eDisplayTypeNumbers, std::vector< x > >() const \
+{ \
+	return convertToVector< x >(); \
 }
 
-template< >
-std::vector< number_element::int8 > Data::get< eDisplayTypeNumbers, std::vector< number_element::int8 > >() const
-{
-	return convertToVector< number_element::int8 >();
-}
-
-template< >
-std::vector< number_element::uint16 > Data::get< eDisplayTypeNumbers, std::vector< number_element::uint16 > >() const
-{
-	return convertToVector< number_element::uint16 >();
-}
-
-template< >
-std::vector< number_element::int16 > Data::get< eDisplayTypeNumbers, std::vector< number_element::int16 > >() const
-{
-	return convertToVector< number_element::int16 >();
-}
-
-template< >
-std::vector< number_element::uint32 > Data::get< eDisplayTypeNumbers, std::vector< number_element::uint32 > >() const
-{
-	return convertToVector< number_element::uint32 >();
-}
-
-template< >
-std::vector< number_element::int32 > Data::get< eDisplayTypeNumbers, std::vector< number_element::int32 > >() const
-{
-	return convertToVector< number_element::int32 >();
-}
-
-template< >
-std::vector< number_element::uint64 > Data::get< eDisplayTypeNumbers, std::vector< number_element::uint64 > >() const
-{
-	return convertToVector< number_element::uint64 >();
-}
-
-template< >
-std::vector< number_element::int64 > Data::get< eDisplayTypeNumbers, std::vector< number_element::int64 > >() const
-{
-	return convertToVector< number_element::int64 >();
-}
-
-template< >
-std::vector< float > Data::get< eDisplayTypeNumbers, std::vector< float > >() const
-{
-	return convertToVector< float >();
-}
-
-template< >
-std::vector< double > Data::get< eDisplayTypeNumbers, std::vector< double > >() const
-{
-	return convertToVector< double >();
-}
-
-template< >
-std::vector< number_element::ieeeExtended > Data::get< eDisplayTypeNumbers, std::vector< number_element::ieeeExtended > >() const
-{
-	return convertToVector< number_element::ieeeExtended >();
-}
+DATA_GET( number_element::int8   )
+DATA_GET( number_element::uint8  )
+DATA_GET( number_element::int16  )
+DATA_GET( number_element::uint16 )
+DATA_GET( number_element::int32  )
+DATA_GET( number_element::uint32 )
+DATA_GET( number_element::int64  )
+DATA_GET( number_element::uint64 )
+DATA_GET( float  )
+DATA_GET( double )
+DATA_GET( number_element::ieeeExtended )
 
 void Data::setSpecData( const std::string& specValue )
 {
@@ -282,7 +235,7 @@ Data& Data::operator=( const Data& other )
 {
 	if( this != &other )
 	{
-		this->setData( other.get<eDisplayTypeRaw, char*>(), other.getSize() );
+		this->set( other.get<eDisplayTypeRaw, char*>(), other.getSize() );
 	}
 	return *this;
 }

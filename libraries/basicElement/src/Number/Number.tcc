@@ -109,7 +109,7 @@ uint8 Number< uint8 >::fromString( const std::string& value )
 
 
 template< typename NumberType >
-void Number< NumberType >::setData( const char* data, const size_t& size )
+void Number< NumberType >::set( const char* data, const size_t& size )
 {
 	//BE_LOG_TRACE( " Number: \tSET DATA " << " @ " << &data << " to @ " << &_numData.data );
 	if( size != _size )

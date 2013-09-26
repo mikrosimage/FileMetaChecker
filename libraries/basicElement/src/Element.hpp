@@ -64,7 +64,7 @@ public:
 	//template< EDisplayType DisplayType, typename OutputType >
 	//virtual OutputType get() const = 0;
 	
-	virtual void setData( const char* data, const size_t& size ) = 0;
+	virtual void set( const char* data, const size_t& size ) = 0;
 	//virtual void getData( char* buffer ) const = 0;
 	virtual EStatus checkData() = 0;
 	virtual std::vector< std::pair< std::string, std::string > > getElementInfo() = 0;

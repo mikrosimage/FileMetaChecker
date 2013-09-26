@@ -14,7 +14,7 @@ public:
 	Data( const std::string& id, const ESubType& subType = eSubTypeRaw, const EDisplayType& dispType = eDisplayTypeDefault );
 	~Data();
 
-	void        setData ( const char* data, const size_t& size );
+	void        set ( const char* data, const size_t& size );
 	size_t      getSize () const;
 	
 	template< EDisplayType DisplayType, typename OutputType >

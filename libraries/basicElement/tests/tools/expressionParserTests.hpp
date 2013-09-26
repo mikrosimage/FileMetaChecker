@@ -139,9 +139,9 @@ BOOST_AUTO_TEST_CASE( basic_element_expression_parser_shared_ptr )
 		char buffer2[] = { 0x00, 0x02 };
 		char buffer3[] = { 0x3f, 0x7f, 0x00, 0x00 };
 		
-		num1->setData( buffer1, 4 );
-		num2->setData( buffer2, 2 );
-		num3->setData( buffer3, 4 );
+		num1->set( buffer1, 4 );
+		num2->set( buffer2, 2 );
+		num3->set( buffer3, 4 );
 
 		std::string res1 = num1->get< eDisplayTypeAscii, std::string >();
 		std::string res2 = num2->get< eDisplayTypeAscii, std::string >();

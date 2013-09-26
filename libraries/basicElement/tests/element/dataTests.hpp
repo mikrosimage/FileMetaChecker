@@ -15,7 +15,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data )
 		dbe::Data data( id, eSubTypeHexa );
 		char buffer[] = { 0x7f, 0x05, 0x32 };
 		
-		data.setData( buffer, 3 );
+		data.set( buffer, 3 );
 		char* buff = data.get< eDisplayTypeRaw, char* >( );
 		BOOST_CHECK_EQUAL( buff[0], 127 );
 		BOOST_CHECK_EQUAL( buff[1], 5 );
@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data )
 		dbe::Data data( id, eSubTypeAscii );
 		char buffer[] = { 0x48, 0x65, 0x6c, 0x6c, 0x6f };
 		
-		data.setData( buffer, 5 );
+		data.set( buffer, 5 );
 		std::string res = data.get< eDisplayTypeAscii, std::string >();
 		BOOST_CHECK_EQUAL( res, "Hello" );
 	}
@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data )
 		dbe::Data data( id, eSubTypeRaw );
 		char buffer[] = {'d','a','t','a'};
 
-		data.setData( buffer, 4 );
+		data.set( buffer, 4 );
 		char* buff = data.get< eDisplayTypeRaw, char*>( );
 		BOOST_CHECK_EQUAL( buff[0], 'd' );
 		BOOST_CHECK_EQUAL( buff[1], 'a' );
@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data )
 		for( size_t i = 0; i < ref.size(); i++ )
 			buffer[i] = ref.at(i);
 
-		data.setData( buffer, 5 );
+		data.set( buffer, 5 );
 		std::vector< nbe::uint8 > vector1 = data.get< eDisplayTypeNumbers, std::vector< nbe::uint8 > >();
 
 		for( size_t i = 0; i < 5; ++i )
@@ -85,14 +85,14 @@ BOOST_AUTO_TEST_CASE( basic_element_data_hexa )
 		dbe::Data data( id, eSubTypeHexa );
 		data.setSpecData( "ff00" );
 		char buffer[] = { static_cast< char >( 0xff ), 0x00 };
-		data.setData( buffer, sizeof( buffer ) );
+		data.set( buffer, sizeof( buffer ) );
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusValid );
 	}
 	{
 		dbe::Data data( id, eSubTypeHexa );
 		data.setSpecData( "ff00" );
 		char buffer[] = { 0x00, static_cast< char >( 0xff ) };
-		data.setData( buffer, sizeof( buffer ) );
+		data.set( buffer, sizeof( buffer ) );
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusInvalid );
 	}
 	{
@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data_hexa )
 		data.setSpecData( "ff00" );
 		data.setBigEndianness( false );
 		char buffer[] = { 0x00, static_cast< char >( 0xff ) };
-		data.setData( buffer, sizeof( buffer ) );
+		data.set( buffer, sizeof( buffer ) );
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusValid );
 	}
 	{
@@ -109,7 +109,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data_hexa )
 		values.push_back( "00ff" );
 		data.setSpecData( values );
 		char buffer[] = { 0x00, static_cast< char >( 0xff ) };
-		data.setData( buffer, sizeof( buffer ) );
+		data.set( buffer, sizeof( buffer ) );
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusValid );
 	}
 	{
@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data_hexa )
 		data.setSpecData( values );
 		data.setBigEndianness( false );
 		char buffer[] = { 0x00, static_cast< char >( 0xff ) };
-		data.setData( buffer, sizeof( buffer ) );
+		data.set( buffer, sizeof( buffer ) );
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusValid );
 	}
 	{
@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data_hexa )
 		values.push_back( "0ff0" );
 		data.setSpecData( values );
 		char buffer[] = { 0x00, static_cast< char >( 0xff ) };
-		data.setData( buffer, sizeof( buffer ) );
+		data.set( buffer, sizeof( buffer ) );
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusInvalid );
 	}
 	{
@@ -158,14 +158,14 @@ BOOST_AUTO_TEST_CASE( basic_element_data_ascii )
 		dbe::Data data( id, eSubTypeAscii );
 		data.setSpecData( "data" );
 		char buffer[] = {'d','a','t','a'};
-		data.setData( buffer, sizeof( buffer ) );
+		data.set( buffer, sizeof( buffer ) );
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusValid );
 	}
 	{
 		dbe::Data data( id, eSubTypeAscii );
 		data.setSpecData( "atad" );
 		char buffer[] = {'d','a','t','a'};
-		data.setData( buffer, sizeof( buffer ) );
+		data.set( buffer, sizeof( buffer ) );
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusInvalid );
 	}
 	{
@@ -173,7 +173,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data_ascii )
 		data.setSpecData( "atad" );
 		data.setBigEndianness( false );
 		char buffer[] = {'d','a','t','a'};
-		data.setData( buffer, sizeof( buffer ) );
+		data.set( buffer, sizeof( buffer ) );
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusValid );
 	}
 	{
@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data_ascii )
 		data.setSpecData( values );
 		data.setBigEndianness( false );
 		char buffer[] = {'d','a','t','a'};
-		data.setData( buffer, sizeof( buffer ) );
+		data.set( buffer, sizeof( buffer ) );
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusValid );
 	}
 	{
@@ -194,7 +194,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data_ascii )
 		data.setSpecData( values );
 		data.setBigEndianness( false );
 		char buffer[] = {'d','a','t','a'};
-		data.setData( buffer, sizeof( buffer ) );
+		data.set( buffer, sizeof( buffer ) );
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusValid );
 	}
 	{
@@ -204,7 +204,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data_ascii )
 		values.push_back( "taad" );
 		data.setSpecData( values );
 		char buffer[] = {'d','a','t','a'};
-		data.setData( buffer, sizeof( buffer ) );
+		data.set( buffer, sizeof( buffer ) );
 		BOOST_CHECK_EQUAL( data.checkData(), be::Element::eStatusInvalid );
 	}
 	{
