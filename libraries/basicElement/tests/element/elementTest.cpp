@@ -2,9 +2,9 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include <Element.hpp>
-#include <Data/Data.hpp>
-#include <Number/Number.hpp>
+#include <basicElement/Element.hpp>
+#include <basicElement/Data/Data.hpp>
+#include <basicElement/Number/Number.hpp>
 
 using namespace boost::unit_test;
 namespace be = basic_element;

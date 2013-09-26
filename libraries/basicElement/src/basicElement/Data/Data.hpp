@@ -1,7 +1,7 @@
 #ifndef _BASIC_ELEMENT_DATA_DATA_HPP_
 #define _BASIC_ELEMENT_DATA_DATA_HPP_
 
-#include "Element.hpp"
+#include <basicElement/Element.hpp>
 
 namespace basic_element
 {
@@ -15,7 +15,6 @@ public:
 	~Data();
 
 	void        set ( const char* data, const size_t& size );
-	size_t      getSize () const;
 	
 	template< EDisplayType DisplayType, typename OutputType >
 	OutputType get() const;

@@ -1,8 +1,8 @@
 #ifndef _REPORT_TRANSFORM_HPP_
 #define _REPORT_TRANSFORM_HPP_
 
-#include "Report/Report.hpp"
-#include <Element.hpp>
+#include <Report/Report.hpp>
+#include <basicElement/Element.hpp>
 
 namespace bpt = boost::property_tree;
 

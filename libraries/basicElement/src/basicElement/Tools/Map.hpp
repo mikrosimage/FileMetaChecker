@@ -1,8 +1,7 @@
 #ifndef _BASIC_ELEMENT_TOOLS_MAP_HPP_
 #define _BASIC_ELEMENT_TOOLS_MAP_HPP_
 
-#include <common.hpp>
-
+#include <common/global.hpp>
 
 namespace basic_element
 {

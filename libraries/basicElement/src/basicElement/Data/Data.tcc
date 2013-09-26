@@ -1,6 +1,6 @@
 #include "Data.hpp"
 
-#include <Number/Number.hpp>
+#include <basicElement/Number/Number.hpp>
 
 #include <iostream>
 
@@ -32,11 +32,6 @@ void Data::set( const char* data, const size_t& size )
 	getEndianOrderedData( _data, data );
 }
 
-size_t Data::getSize() const
-{
-	return _size;
-}
-
 template< EDisplayType DisplayType, typename OutputType >
 OutputType Data::get() const
 {
@@ -66,7 +61,7 @@ std::string Data::get< eDisplayTypeAscii, std::string >() const
 	std::stringstream sstr;
 	for (size_t i = 0; i < _size; ++i)
 		sstr << _data[i];
-	//BE_LOG_TRACE( " Data: \tTO STRING (Ascii): " << sstr.str() );
+	//LOG_TRACE( " Data: \tTO STRING (Ascii): " << sstr.str() );
 	return sstr.str();
 }
 
@@ -84,7 +79,7 @@ std::string Data::get< eDisplayTypeHexa, std::string >() const
 		sstr << std::hex << std::setfill('0') << std::setw(2) << (int)(unsigned char)buffer[i];
 	}
 	delete[] buffer;
-	//BE_LOG_TRACE( " Data: \tTO STRING (Hexa): " << sstr.str() );
+	//LOG_TRACE( " Data: \tTO STRING (Hexa): " << sstr.str() );
 	return sstr.str();
 }
 
@@ -97,7 +92,7 @@ std::vector< NumberType > Data::convertToVector() const
 		number_element::Number<NumberType> tmpNumber( "" );
 		tmpNumber.set( &_data[i], sizeof( NumberType ) );
 		vector.push_back( tmpNumber.get< eDisplayTypeDefault, NumberType >() );
-		//BE_LOG_TRACE( " Data: \tTO INT VECTOR : " << vector.at( i ) );
+		//LOG_TRACE( " Data: \tTO INT VECTOR : " << vector.at( i ) );
 	}
 	return vector;
 }

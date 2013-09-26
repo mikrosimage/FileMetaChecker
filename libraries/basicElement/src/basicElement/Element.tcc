@@ -1,5 +1,3 @@
-#include "Element.hpp"
-#include "common.hpp"
 
 namespace basic_element
 {
@@ -48,6 +46,11 @@ void Element::setStatus( const EStatus status )
 	_status = status;
 }
 
+void Element::setBigEndianness( bool isBigEndian )
+{
+	_bigEndianData = isBigEndian;
+}
+
 template< >
 ESubType Element::getSubType< ESubType >() const
 {
@@ -78,26 +81,16 @@ std::string Element::getSubType< std::string >() const
 	return "";
 }
 
-void Element::setBigEndianness( bool isBigEndian )
-{
-	_bigEndianData = isBigEndian;
-}
-
-bool Element::getBigEndianness() const
-{
-	return _bigEndianData;
-}
-
 void Element::getEndianOrderedData( char* buffer, const char* data ) const
 {
 	if( !_bigEndianData )
 	{
-		//BE_LOG_TRACE( " EndianessConverter: case 1 ( little ) " );
+		//LOG_TRACE( " EndianessConverter: case 1 ( little ) " );
 		std::reverse_copy( data, data + _size, buffer );
 	}
 	else
 	{
-		//BE_LOG_TRACE( " EndianessConverter: case 2 ( big ) " );
+		//LOG_TRACE( " EndianessConverter: case 2 ( big ) " );
 		std::memcpy( buffer, data, _size );
 	}
 }

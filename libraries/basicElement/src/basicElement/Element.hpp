@@ -1,8 +1,9 @@
 #ifndef _BASIC_ELEMENT_ELEMENT_HPP_
 #define _BASIC_ELEMENT_ELEMENT_HPP_
 
+#include <common/global.hpp>
+
 #include <string>
-#include "common.hpp"
 #include <specDefinition.hpp>
 
 namespace basic_element
@@ -31,9 +32,11 @@ protected:
 	void setStatus( const EStatus status );
 	
 public:
-	std::string getId()      const { return _id; }
-	std::string getLabel()   const { return _label; }
-	EType       getType()    const { return _type; }
+	std::string getId()       const { return _id; }
+	std::string getLabel()    const { return _label; }
+	EType       getType()     const { return _type; }
+	size_t      getSize()     const { return _size; }
+	bool        isBigEndian() const { return _bigEndianData; }
 	
 	template< typename OutputType = ESubType >
 	OutputType getSubType() const;
@@ -44,7 +47,6 @@ public:
 	size_t      getUniqueId() { return _uniqueId; }
 
 	void setBigEndianness( bool isBigEndian );
-	bool getBigEndianness() const;
 
 	void getEndianOrderedData( char* buffer, const char* data ) const;
 	void reverseEndianness   ( char* buffer, const char* data ) const;
@@ -60,15 +62,9 @@ protected:
 
 
 public:
-	
-	//template< EDisplayType DisplayType, typename OutputType >
-	//virtual OutputType get() const = 0;
-	
 	virtual void set( const char* data, const size_t& size ) = 0;
-	//virtual void getData( char* buffer ) const = 0;
 	virtual EStatus checkData() = 0;
 	virtual std::vector< std::pair< std::string, std::string > > getElementInfo() = 0;
-	virtual size_t getSize() const = 0;
 
 protected:
 	static size_t _lastUniqueId;

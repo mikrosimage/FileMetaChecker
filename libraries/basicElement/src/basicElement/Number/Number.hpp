@@ -1,9 +1,9 @@
 #ifndef _BASIC_ELEMENT_NUMBER_NUMBER_HPP_
 #define _BASIC_ELEMENT_NUMBER_NUMBER_HPP_
 
-#include "Tools/Map.hpp"
-#include "Tools/Range.hpp"
-#include "Element.hpp"
+#include <basicElement/Tools/Map.hpp>
+#include <basicElement/Tools/Range.hpp>
+#include <basicElement/Element.hpp>
 
 namespace basic_element
 {
@@ -33,12 +33,11 @@ public:
 	Number( const std::string& id, const ESubType& subType = eSubTypeInt8, const EDisplayType& dispType = eDisplayTypeDefault );
 	~Number();
 	
-	void                 set ( const char* data, const size_t& size );
+	void set ( const char* data, const size_t& size );
 	
 	template< EDisplayType DisplayType = eDisplayTypeDefault, typename OutputType = NumberType >
 	OutputType get() const;
 	
-	size_t               getSize () const;
 	Map  < NumberType >& getMap  ();
 
 	void setMap( const std::map< std::string, std::string >& map );

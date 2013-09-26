@@ -32,21 +32,21 @@ void Number< NumberType >::translate( const char* data )
 	reverseEndianness( _numData.data, buffer ); // @todo swap system if big endian (little endian here)
 	
 	delete[] buffer;
-	//BE_LOG_TRACE( " Number: \t_numData.value: " << _numData.value );
+	//LOG_TRACE( " Number: \t_numData.value: " << _numData.value );
 }
 
 template<>
 void Number< int8 >::translate( const char* data )
 {
 	std::memcpy( _numData.data, data, _size );
-	//BE_LOG_TRACE( " Number: \t_numData.value: " << (int) _numData.value );
+	//LOG_TRACE( " Number: \t_numData.value: " << (int) _numData.value );
 }
 
 template<>
 void Number< uint8 >::translate( const char* data )
 {
 	std::memcpy( _numData.data, data, _size );
-	//BE_LOG_TRACE( " Number: \t_numData.value: " << (int) _numData.value );
+	//LOG_TRACE( " Number: \t_numData.value: " << (int) _numData.value );
 }
 
 template< typename NumberType >
@@ -111,7 +111,7 @@ uint8 Number< uint8 >::fromString( const std::string& value )
 template< typename NumberType >
 void Number< NumberType >::set( const char* data, const size_t& size )
 {
-	//BE_LOG_TRACE( " Number: \tSET DATA " << " @ " << &data << " to @ " << &_numData.data );
+	//LOG_TRACE( " Number: \tSET DATA " << " @ " << &data << " to @ " << &_numData.data );
 	if( size != _size )
 		throw std::runtime_error( "Invalid data size." );
 	translate( data );
@@ -204,12 +204,6 @@ template< >
 void Number< ieeeExtended >::setSize()
 {
 	_size = 10;
-}
-
-template< typename NumberType >
-size_t Number< NumberType >::getSize() const
-{
-	return _size;
 }
 
 template< typename NumberType >

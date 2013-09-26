@@ -1,10 +1,10 @@
 #define BOOST_TEST_MODULE qc_basic_element_tools
 
 #include <boost/test/unit_test.hpp>
-#include <Tools/ExpressionParser.hpp>
+#include <basicElement/Tools/ExpressionParser.hpp>
 
-#include <Data/Data.hpp>
-#include <Number/Number.hpp>
+#include <basicElement/Data/Data.hpp>
+#include <basicElement/Number/Number.hpp>
 
 using namespace boost::unit_test;
 namespace be = basic_element;

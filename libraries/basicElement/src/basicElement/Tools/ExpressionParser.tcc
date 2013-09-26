@@ -1,6 +1,6 @@
 
-#include <common.hpp>
-#include <Number/Number.hpp>
+#include <basicElement/Number/Number.hpp>
+#include <basicElement/Number/Number.hpp>
 
 #include <boost/foreach.hpp>
 #include <cstdlib>

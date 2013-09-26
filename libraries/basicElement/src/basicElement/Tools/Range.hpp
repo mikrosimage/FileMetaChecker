@@ -1,7 +1,7 @@
 #ifndef _BASIC_ELEMENT_TOOLS_RANGE_HPP_
 #define _BASIC_ELEMENT_TOOLS_RANGE_HPP_
 
-#include <common.hpp>
+#include <common/global.hpp>
 
 namespace basic_element
 {
@@ -93,7 +93,7 @@ private:
 		size_t value;
 		std::stringstream sstr( hexa );
 		sstr >> std::hex >> value;
-		//BE_LOG_TRACE( " \t hexa   : " << hexa << " ==> value: " << value );
+		//LOG_TRACE( " \t hexa   : " << hexa << " ==> value: " << value );
 		return value;
 	}
 
