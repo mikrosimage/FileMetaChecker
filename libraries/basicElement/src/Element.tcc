@@ -48,6 +48,36 @@ void Element::setStatus( const EStatus status )
 	_status = status;
 }
 
+template< >
+ESubType Element::getSubType< ESubType >() const
+{
+	return _subType;
+}
+
+template< >
+std::string Element::getSubType< std::string >() const
+{
+	switch( _subType )
+	{
+		case eSubTypeUnknown: return "";
+		case eSubTypeInt8:    return kInt8;
+		case eSubTypeUInt8:   return kUInt8;
+		case eSubTypeInt16:   return kInt16;
+		case eSubTypeUInt16:  return kUInt16;
+		case eSubTypeInt32:   return kInt32;
+		case eSubTypeUInt32:  return kUInt32;
+		case eSubTypeInt64:   return kInt64;
+		case eSubTypeUInt64:  return kUInt64;
+		case eSubTypeFloat:   return kFloat; 
+		case eSubTypeDouble:  return kDouble;
+		case eSubTypeIeeeExtended: return kIeeeExtended;
+		case eSubTypeAscii:   return kAscii;
+		case eSubTypeHexa:    return kHexa;
+		case eSubTypeRaw :    return kRaw;
+	}
+	return "";
+}
+
 void Element::setBigEndianness( bool isBigEndian )
 {
 	_bigEndianData = isBigEndian;

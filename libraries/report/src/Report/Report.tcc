@@ -1,7 +1,9 @@
-#include "Report.hpp"
+#include <Element.hpp>
 
 #include <common/global.hpp>
 #include <boost/foreach.hpp>
+
+namespace be = basic_element;
 
 namespace report_generator
 {

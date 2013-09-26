@@ -1,13 +1,11 @@
 Import( 'project', 'libs' )
 
-project.StaticLibrary(
+project.ObjectLibrary(
 		'basicelement',
-		dirs      = ['src'],
-		includes  = ['src'],
+		includes=[project.getRealAbsoluteCwd('src')],
 		libraries = [
 			libs.common,
 			libs.boost_python,
 			libs.specReader,
 			],
-		shared = True
 	)

@@ -34,7 +34,10 @@ public:
 	~Number();
 	
 	void                 setData ( const char* data, const size_t& size );
-	void                 getData ( char* buffer ) const;
+	
+	template< EDisplayType DisplayType, typename OutputType >
+	OutputType get() const;
+	
 	size_t               getSize () const;
 	NumberType           getValue() const;
 	Map  < NumberType >& getMap  ();

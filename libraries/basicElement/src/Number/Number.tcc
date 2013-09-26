@@ -22,9 +22,15 @@ Number< NumberType >::~Number()
 template< typename NumberType >
 void Number< NumberType >::translate( const char* data )
 {
-	char* buffer = new char [_size];
+	/*
+	char buffer[_size];
+	getEndianOrderedData( &buffer, data );
+	reverseEndianness( _numData.data, &buffer ); // @todo swap system if big endian (little endian here)
+	*/
+	char* buffer = new char[_size];
 	getEndianOrderedData( buffer, data );
 	reverseEndianness( _numData.data, buffer ); // @todo swap system if big endian (little endian here)
+	
 	delete[] buffer;
 	//BE_LOG_TRACE( " Number: \t_numData.value: " << _numData.value );
 }
@@ -77,7 +83,7 @@ NumberType Number< NumberType >::fromString( const std::string& value )
 		NumberType ret;
 		std::stringstream sstr( value );
 		sstr >> ret;
-		LOG_TRACE( "fromString: " << ret );
+		//LOG_TRACE( "fromString: " << ret );
 		return ret;
 	}
 	catch( const std::range_error& e )
@@ -95,7 +101,7 @@ int8 Number< int8 >::fromString( const std::string& value )
 		short ret;
 		std::stringstream sstr( value );
 		sstr >> ret;
-		LOG_TRACE( "fromString: " << ret );
+		//LOG_TRACE( "fromString: " << ret );
 		if( ret > 127 || ret < -128 )
 			throw std::range_error( "fromString: string cannot be converted to int8" );
 		return (int8) ret;
@@ -137,6 +143,7 @@ void Number< NumberType >::setData( const char* data, const size_t& size )
 	translate( data );
 }
 
+/*
 template< typename NumberType >
 void Number< NumberType >::getData( char* buffer ) const
 {
@@ -144,6 +151,13 @@ void Number< NumberType >::getData( char* buffer ) const
 	std::reverse_copy( _numData.data, _numData.data + _size, buffer );
 	//BE_LOG_TRACE( " Number: \tdata  : " << (int) _numData.data[0] << "\t\t\t@ " << &_numData.data );
 	//BE_LOG_TRACE( " Number: \tbuffer: " << (int)(unsigned char) buffer[0] << "\t\t\t@ " << &buffer );
+}*/
+
+template< typename NumberType >
+template< EDisplayType DisplayType, typename OutputType >
+OutputType Number< NumberType >::get() const
+{
+	return &_numData.data;
 }
 
 template< typename NumberType >
@@ -182,7 +196,7 @@ template< typename NumberType >
 void Number< NumberType >::setMap( const std::map< std::string, std::string >& map )
 {
 	for( const std::pair< std::string, std::string > mapPair : map )
-		_map.addPair( fromString( mapPair.first ), mapPair.second );	
+		_map.addPair( fromString( mapPair.first ), mapPair.second );
 }
 
 template< typename NumberType >
@@ -244,7 +258,7 @@ std::vector< std::pair< std::string, std::string > > Number< NumberType >::getEl
 		if( ! value.empty() )
 			value.append( " (" + toString() + ")" );
 		else
-			value = "- unknown - (" + toString() + ")";
+			value = "----- (" + toString() + ")";
 		
 		elemInfo.push_back( std::make_pair( kValue, value ) );
 	}

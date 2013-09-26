@@ -1,6 +1,11 @@
 
+#include <common.hpp>
+#include <Number/Number.hpp>
+
 #include <boost/foreach.hpp>
 #include <cstdlib>
+
+namespace ben = basic_element::number_element;
 
 namespace basic_element
 {
@@ -51,17 +56,17 @@ void ExpressionParser::setVariables( const std::map < std::string, std::shared_p
 		std::string value;
 		switch( elem.second->getSubType() )
 		{
-			case eSubTypeInt8         : value = std::static_pointer_cast< be::number_element::Number< be::number_element::int8         > >( elem.second )->toString(); break;
-			case eSubTypeUInt8        : value = std::static_pointer_cast< be::number_element::Number< be::number_element::uint8        > >( elem.second )->toString(); break;
-			case eSubTypeInt16        : value = std::static_pointer_cast< be::number_element::Number< be::number_element::int16        > >( elem.second )->toString(); break;
-			case eSubTypeUInt16       : value = std::static_pointer_cast< be::number_element::Number< be::number_element::uint16       > >( elem.second )->toString(); break;
-			case eSubTypeInt32        : value = std::static_pointer_cast< be::number_element::Number< be::number_element::int32        > >( elem.second )->toString(); break;
-			case eSubTypeUInt32       : value = std::static_pointer_cast< be::number_element::Number< be::number_element::uint32       > >( elem.second )->toString(); break;
-			case eSubTypeInt64        : value = std::static_pointer_cast< be::number_element::Number< be::number_element::int64        > >( elem.second )->toString(); break;
-			case eSubTypeUInt64       : value = std::static_pointer_cast< be::number_element::Number< be::number_element::uint64       > >( elem.second )->toString(); break;
-			case eSubTypeFloat        : value = std::static_pointer_cast< be::number_element::Number< float                            > >( elem.second )->toString(); break;
-			case eSubTypeDouble       : value = std::static_pointer_cast< be::number_element::Number< double                           > >( elem.second )->toString(); break;
-			case eSubTypeIeeeExtended : value = std::static_pointer_cast< be::number_element::Number< be::number_element::ieeeExtended > >( elem.second )->toString(); break;
+			case eSubTypeInt8         : value = std::static_pointer_cast< ben::Number< ben::int8   > >( elem.second )->toString(); break;
+			case eSubTypeUInt8        : value = std::static_pointer_cast< ben::Number< ben::uint8  > >( elem.second )->toString(); break;
+			case eSubTypeInt16        : value = std::static_pointer_cast< ben::Number< ben::int16  > >( elem.second )->toString(); break;
+			case eSubTypeUInt16       : value = std::static_pointer_cast< ben::Number< ben::uint16 > >( elem.second )->toString(); break;
+			case eSubTypeInt32        : value = std::static_pointer_cast< ben::Number< ben::int32  > >( elem.second )->toString(); break;
+			case eSubTypeUInt32       : value = std::static_pointer_cast< ben::Number< ben::uint32 > >( elem.second )->toString(); break;
+			case eSubTypeInt64        : value = std::static_pointer_cast< ben::Number< ben::int64  > >( elem.second )->toString(); break;
+			case eSubTypeUInt64       : value = std::static_pointer_cast< ben::Number< ben::uint64 > >( elem.second )->toString(); break;
+			case eSubTypeFloat        : value = std::static_pointer_cast< ben::Number< float       > >( elem.second )->toString(); break;
+			case eSubTypeDouble       : value = std::static_pointer_cast< ben::Number< double      > >( elem.second )->toString(); break;
+			case eSubTypeIeeeExtended : value = std::static_pointer_cast< ben::Number< ben::ieeeExtended > >( elem.second )->toString(); break;
 			case eSubTypeUnknown      :
 			case eSubTypeAscii        :
 			case eSubTypeHexa         :

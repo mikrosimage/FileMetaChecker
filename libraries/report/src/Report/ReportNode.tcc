@@ -1,5 +1,8 @@
-#include "ReportNode.hpp"
+#include <Element.hpp>
+
 #include <typeinfo>
+
+namespace be = basic_element;
 
 namespace report_generator
 {

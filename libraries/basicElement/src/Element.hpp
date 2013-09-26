@@ -34,7 +34,9 @@ public:
 	std::string getId()      const { return _id; }
 	std::string getLabel()   const { return _label; }
 	EType       getType()    const { return _type; }
-	ESubType    getSubType() const { return _subType; }
+	
+	template< typename OutputType = ESubType >
+	OutputType getSubType() const;
 	
 	void setDisplayType( const std::string& displayType );
 	
@@ -59,8 +61,11 @@ protected:
 
 public:
 	
+	//template< EDisplayType DisplayType, typename OutputType >
+	//virtual OutputType get() const = 0;
+	
 	virtual void setData( const char* data, const size_t& size ) = 0;
-	virtual void getData( char* buffer ) const = 0;
+	//virtual void getData( char* buffer ) const = 0;
 	virtual EStatus checkData() = 0;
 	virtual std::vector< std::pair< std::string, std::string > > getElementInfo() = 0;
 	virtual size_t getSize() const = 0;
@@ -86,5 +91,6 @@ protected:
 };
 
 }
+#include "Element.tcc"
 
 #endif

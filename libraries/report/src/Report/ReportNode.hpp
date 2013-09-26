@@ -3,18 +3,19 @@
 
 #include <boost/property_tree/ptree.hpp>
 
-#include <Element.hpp>
-
 static const std::string kReport    = "report";
 
-namespace be  = basic_element;
 namespace bpt = boost::property_tree;
+
+namespace basic_element{
+	class Element;
+}
 
 namespace report_generator
 {
 
-typedef bpt::basic_ptree< std::string, std::shared_ptr< be::Element > >                 ReportTree;
-typedef bpt::basic_ptree< std::string, std::shared_ptr< be::Element > >::const_iterator ReportIterator;
+typedef bpt::basic_ptree< std::string, std::shared_ptr< basic_element::Element > >                 ReportTree;
+typedef bpt::basic_ptree< std::string, std::shared_ptr< basic_element::Element > >::const_iterator ReportIterator;
 
 class ReportNode
 {
@@ -23,8 +24,8 @@ public:
 	ReportNode( const ReportIterator node, const size_t& index, ReportTree* tree, ReportNode* parent = NULL );
 	~ReportNode();
 
-	ReportNode appendNext ( std::shared_ptr< be::Element > element );
-	ReportNode appendChild( std::shared_ptr< be::Element > element );
+	ReportNode appendNext ( std::shared_ptr< basic_element::Element > element );
+	ReportNode appendChild( std::shared_ptr< basic_element::Element > element );
 	ReportNode* parent();
 	ReportTree* getSecond();
 	size_t getIndex();
@@ -46,5 +47,7 @@ private:
 };
 
 }
+
+#include "ReportNode.tcc"
 
 #endif

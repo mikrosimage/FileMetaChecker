@@ -2,12 +2,14 @@
 #define _REPORT_REPORT_HPP_
 
 #include <boost/property_tree/ptree.hpp>
-#include <Element.hpp>
 
 #include "ReportNode.hpp"
 
 namespace bpt = boost::property_tree;
-namespace be  = basic_element;
+
+namespace basic_element{
+	class Element;
+}
 
 namespace report_generator
 {
@@ -18,7 +20,7 @@ public:
 	Report();
 	~Report();
 
-	ReportNode addRootElement( std::shared_ptr< be::Element > element );
+	ReportNode addRootElement( std::shared_ptr< basic_element::Element > element );
 	size_t getSize();
 
 	ReportTree getReportTree() const;
@@ -31,5 +33,7 @@ private:
 };
 
 }
+
+#include "Report.tcc"
 
 #endif

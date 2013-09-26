@@ -24,4 +24,6 @@ private:
 
 }
 
+#include "Export.tcc"
+
 #endif

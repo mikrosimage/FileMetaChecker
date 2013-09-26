@@ -105,8 +105,10 @@ enum ESubType
 enum EDisplayType
 {
 	eDisplayTypeDefault = 0,
+	eDisplayTypeRaw,
 	eDisplayTypeAscii,
-	eDisplayTypeHexa
+	eDisplayTypeHexa,
+	eDisplayTypeNumbers
 };
 
 #endif

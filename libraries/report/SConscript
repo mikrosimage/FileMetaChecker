@@ -1,13 +1,11 @@
 Import( 'project', 'libs' )
 
-project.StaticLibrary(
+project.ObjectLibrary(
 		'report',
-		dirs      = ['src'],
-		includes  = ['src'],
+		includes=[project.getRealAbsoluteCwd('src')],
 		libraries = [
-			libs.boost,
 			libs.common,
+			libs.boost,
 			libs.basicelement,
 			],
-		shared = True
 	)

@@ -93,7 +93,7 @@ private:
 		size_t value;
 		std::stringstream sstr( hexa );
 		sstr >> std::hex >> value;
-		BE_LOG_TRACE( " \t hexa   : " << hexa << " ==> value: " << value );
+		//BE_LOG_TRACE( " \t hexa   : " << hexa << " ==> value: " << value );
 		return value;
 	}
 
