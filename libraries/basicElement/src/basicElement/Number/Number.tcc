@@ -22,11 +22,6 @@ Number< NumberType >::~Number()
 template< typename NumberType >
 void Number< NumberType >::translate( const char* data )
 {
-	/*
-	char buffer[_size];
-	getEndianOrderedData( &buffer, data );
-	reverseEndianness( _numData.data, &buffer ); // @todo swap system if big endian (little endian here)
-	*/
 	char* buffer = new char[_size];
 	getEndianOrderedData( buffer, data );
 	reverseEndianness( _numData.data, buffer ); // @todo swap system if big endian (little endian here)
@@ -165,7 +160,9 @@ GET_NUMBER( ieeeExtended )
 template< typename NumberType >
 void Number< NumberType >::addRange( const NumberType& min, const NumberType& max )
 {
-	_ranges.push_back( Range< NumberType >( min, max ) );
+	Range< NumberType > range;
+	range.setRange( min, max );
+	_ranges.addRange( range );
 }
 
 template< typename NumberType >
@@ -176,7 +173,7 @@ void Number< NumberType >::setRanges( const std::vector< std::pair< std::string,
 }
 
 template< typename NumberType >
-std::vector< Range< NumberType > >& Number< NumberType >::getRange()
+Ranges< NumberType >& Number< NumberType >::getRanges()
 {
 	return _ranges;
 }
@@ -217,11 +214,8 @@ Element::EStatus Number< NumberType >::checkData()
 		return eStatusPassOver;
 	}
 	
-	for( Range< NumberType > range : _ranges )
-	{
-		if( range.isInRange( _numData.value ) )
-			_status = eStatusValid;
-	}
+	if( _ranges.isInRanges( _numData.value ) )
+		_status = eStatusValid;
 	
 	return _status;
 }

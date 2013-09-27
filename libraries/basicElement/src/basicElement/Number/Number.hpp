@@ -2,7 +2,7 @@
 #define _BASIC_ELEMENT_NUMBER_NUMBER_HPP_
 
 #include <basicElement/Tools/Map.hpp>
-#include <basicElement/Tools/Range.hpp>
+#include <basicElement/Tools/Ranges.hpp>
 #include <basicElement/Element.hpp>
 
 namespace basic_element
@@ -44,7 +44,7 @@ public:
 
 	void addRange( const NumberType& min, const NumberType& max );
 	void setRanges( const std::vector< std::pair< std::string, std::string > >& ranges );
-	std::vector< Range< NumberType > >& getRange();
+	Ranges< NumberType >& getRanges();
 
 	EStatus     checkData();
 	std::vector< std::pair< std::string, std::string > > getElementInfo();
@@ -61,9 +61,9 @@ protected:
 	void setSubType();
 
 private:
-	std::vector< Range< NumberType > > _ranges;
-	Map  < NumberType >                _map;
-	NumberData                         _numData;
+	Ranges< NumberType >  _ranges;
+	Map   < NumberType >  _map;
+	NumberData            _numData;
 };
 
 
