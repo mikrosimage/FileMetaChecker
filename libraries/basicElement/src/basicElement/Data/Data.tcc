@@ -32,7 +32,7 @@ void Data::set( const char* data, const size_t& size )
 	getEndianOrderedData( _data, data );
 }
 
-template< EDisplayType DisplayType, typename OutputType >
+template< typename OutputType, EDisplayType DisplayType >
 OutputType Data::get() const
 {
 	if( _data == NULL )
@@ -41,7 +41,7 @@ OutputType Data::get() const
 }
 
 template< >
-std::string Data::get< eDisplayTypeRaw, std::string >() const
+std::string Data::get< std::string, eDisplayTypeRaw >() const
 {
 	if( _data == NULL )
 		return "";
@@ -53,7 +53,7 @@ std::string Data::get< eDisplayTypeRaw, std::string >() const
 }
 
 template< >
-std::string Data::get< eDisplayTypeAscii, std::string >() const
+std::string Data::get< std::string, eDisplayTypeAscii >() const
 {
 	if( _data == NULL )
 		return "";
@@ -66,7 +66,7 @@ std::string Data::get< eDisplayTypeAscii, std::string >() const
 }
 
 template< >
-std::string Data::get< eDisplayTypeHexa, std::string >() const
+std::string Data::get< std::string, eDisplayTypeHexa >() const
 {
 	if( _data == NULL )
 		return "";
@@ -89,9 +89,9 @@ std::vector< NumberType > Data::convertToVector() const
 	std::vector< NumberType > vector;
 	for( size_t i = 0; i < _size; i += sizeof( NumberType ) )
 	{
-		number_element::Number<NumberType> tmpNumber( "" );
+		number_element::Number tmpNumber( "" );
 		tmpNumber.set( &_data[i], sizeof( NumberType ) );
-		vector.push_back( tmpNumber.get< eDisplayTypeDefault, NumberType >() );
+		vector.push_back( tmpNumber.get< NumberType, eDisplayTypeDefault >() );
 		//LOG_TRACE( " Data: \tTO INT VECTOR : " << vector.at( i ) );
 	}
 	return vector;
@@ -99,7 +99,7 @@ std::vector< NumberType > Data::convertToVector() const
 
 #define DATA_GET( x ) \
 template< > \
-std::vector< x > Data::get< eDisplayTypeNumbers, std::vector< x > >() const \
+std::vector< x > Data::get< std::vector< x >, eDisplayTypeNumbers >() const \
 { \
 	return convertToVector< x >(); \
 }
@@ -151,12 +151,12 @@ Element::EStatus Data::checkData()
 	{
 		case eSubTypeAscii :
 		{
-			if( ! _specValue.empty() && _specValue == get<eDisplayTypeAscii, std::string>() )
+			if( ! _specValue.empty() && _specValue == get< std::string, eDisplayTypeAscii >() )
 				_status = eStatusValid;
 			if( ! _specValues.empty() )
 			{
 				for( std::string value : _specValues )
-					if( value == get<eDisplayTypeAscii, std::string>() )
+					if( value == get< std::string, eDisplayTypeAscii >() )
 						_status = eStatusValid;
 			}
 			return _status;
@@ -164,12 +164,12 @@ Element::EStatus Data::checkData()
 
 		case eSubTypeHexa :
 		{
-			if( ! _specValue.empty() && _specValue == get<eDisplayTypeHexa,  std::string>()  )
+			if( ! _specValue.empty() && _specValue == get< std::string, eDisplayTypeHexa >()  )
 				_status = eStatusValid;
 			if( ! _specValues.empty() )
 			{
 				for( std::string value : _specValues )
-					if( value == get<eDisplayTypeHexa,  std::string>() )
+					if( value == get< std::string, eDisplayTypeHexa >() )
 						_status = eStatusValid;
 			}
 			return _status;
@@ -201,15 +201,15 @@ std::vector< std::pair< std::string, std::string > > Data::getElementInfo()
 	elemInfo.push_back( std::make_pair( kType, getSubType<std::string>() ) );
 	switch( _displayType )
 	{
-		case eDisplayTypeDefault : elemInfo.push_back( std::make_pair( kData, get<eDisplayTypeRaw,     std::string>() ) ); break;
-		case eDisplayTypeAscii   : elemInfo.push_back( std::make_pair( kData, get<eDisplayTypeAscii,   std::string>() ) ); break;
-		case eDisplayTypeHexa    : elemInfo.push_back( std::make_pair( kData, get<eDisplayTypeHexa,    std::string>() ) ); break;
-		case eDisplayTypeRaw     : elemInfo.push_back( std::make_pair( kData, get<eDisplayTypeRaw,     std::string>() ) ); break;
+		case eDisplayTypeDefault : elemInfo.push_back( std::make_pair( kData, get< std::string, eDisplayTypeRaw   >() ) ); break;
+		case eDisplayTypeAscii   : elemInfo.push_back( std::make_pair( kData, get< std::string, eDisplayTypeAscii >() ) ); break;
+		case eDisplayTypeHexa    : elemInfo.push_back( std::make_pair( kData, get< std::string, eDisplayTypeHexa  >() ) ); break;
+		case eDisplayTypeRaw     : elemInfo.push_back( std::make_pair( kData, get< std::string, eDisplayTypeRaw   >() ) ); break;
 		case eDisplayTypeNumbers :
 		{
 			std::stringstream out;
 			
-			std::vector<number_element::uint8> numbers = get< eDisplayTypeNumbers, std::vector<number_element::uint8> >();
+			std::vector< number_element::uint8 > numbers = get< std::vector< number_element::uint8 >, eDisplayTypeNumbers >();
 
 			for( auto number : numbers )
 			{
@@ -230,7 +230,7 @@ Data& Data::operator=( const Data& other )
 {
 	if( this != &other )
 	{
-		this->set( other.get<eDisplayTypeRaw, char*>(), other.getSize() );
+		this->set( other.get< char*, eDisplayTypeRaw >(), other.getSize() );
 	}
 	return *this;
 }

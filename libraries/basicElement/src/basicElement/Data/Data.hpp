@@ -16,7 +16,7 @@ public:
 
 	void        set ( const char* data, const size_t& size );
 	
-	template< EDisplayType DisplayType, typename OutputType >
+	template< typename OutputType, EDisplayType DisplayType = eDisplayTypeDefault >
 	OutputType get() const;
 	
 	void setSpecData( const std::string& specValue );

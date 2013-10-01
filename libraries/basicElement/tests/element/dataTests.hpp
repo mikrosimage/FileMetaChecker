@@ -16,12 +16,12 @@ BOOST_AUTO_TEST_CASE( basic_element_data )
 		char buffer[] = { 0x7f, 0x05, 0x32 };
 		
 		data.set( buffer, 3 );
-		char* buff = data.get< eDisplayTypeRaw, char* >( );
+		char* buff = data.get< char*, eDisplayTypeRaw >( );
 		BOOST_CHECK_EQUAL( buff[0], 127 );
 		BOOST_CHECK_EQUAL( buff[1], 5 );
 		BOOST_CHECK_EQUAL( buff[2], 50 );
 
-		std::string res = data.get< eDisplayTypeHexa, std::string >();
+		std::string res = data.get< std::string, eDisplayTypeHexa >();
 		BOOST_CHECK_EQUAL( res, "7f0532" );
 	}
 	{
@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data )
 		char buffer[] = { 0x48, 0x65, 0x6c, 0x6c, 0x6f };
 		
 		data.set( buffer, 5 );
-		std::string res = data.get< eDisplayTypeAscii, std::string >();
+		std::string res = data.get< std::string, eDisplayTypeAscii >();
 		BOOST_CHECK_EQUAL( res, "Hello" );
 	}
 	{
@@ -37,15 +37,15 @@ BOOST_AUTO_TEST_CASE( basic_element_data )
 		char buffer[] = {'d','a','t','a'};
 
 		data.set( buffer, 4 );
-		char* buff = data.get< eDisplayTypeRaw, char*>( );
+		char* buff = data.get< char*, eDisplayTypeRaw >( );
 		BOOST_CHECK_EQUAL( buff[0], 'd' );
 		BOOST_CHECK_EQUAL( buff[1], 'a' );
 		BOOST_CHECK_EQUAL( buff[2], 't' );
 		BOOST_CHECK_EQUAL( buff[3], 'a' );
 
-		std::string res = data.get< eDisplayTypeAscii, std::string >();
+		std::string res = data.get< std::string, eDisplayTypeAscii >();
 		BOOST_CHECK_EQUAL( res, "data" );
-		res = data.get< eDisplayTypeHexa, std::string >();
+		res = data.get< std::string, eDisplayTypeHexa >();
 		BOOST_CHECK_EQUAL( res, "64617461" );
 	}
 	{
@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data )
 			buffer[i] = ref.at(i);
 
 		data.set( buffer, 5 );
-		std::vector< nbe::uint8 > vector1 = data.get< eDisplayTypeNumbers, std::vector< nbe::uint8 > >();
+		std::vector< nbe::uint8 > vector1 = data.get< std::vector< nbe::uint8 >, eDisplayTypeNumbers >();
 
 		for( size_t i = 0; i < 5; ++i )
 			BOOST_CHECK_EQUAL( vector1.at(i), ref.at(i) );
