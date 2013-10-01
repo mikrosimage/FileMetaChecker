@@ -34,7 +34,9 @@ bpt::ptree Transform::transformTree( const EReportType& type )
 {
 	_type = type;
 	for( ReportTree::value_type& rootNode : _basicElementTree.get_child( kReport ) )
+	{
 		_report.push_back( bpt::ptree::value_type( kSpecification, translate( rootNode ) ) );
+	}
 	return _report;
 }
 
@@ -69,21 +71,22 @@ bpt::ptree Transform::extractElement( std::shared_ptr< be::Element > element )
 			switch( element->getSubType() )
 			{
 				case eSubTypeUnknown      : LOG_WARNING( "Number " << element->getUniqueId()  << ": unknown type." ); break;
-				case eSubTypeInt8         : elemInfo = translateElement< ben::Number< ben::int8         > >( element )->getElementInfo(); break;
-				case eSubTypeUInt8        : elemInfo = translateElement< ben::Number< ben::uint8        > >( element )->getElementInfo(); break;
-				case eSubTypeInt16        : elemInfo = translateElement< ben::Number< ben::int16        > >( element )->getElementInfo(); break;
-				case eSubTypeUInt16       : elemInfo = translateElement< ben::Number< ben::uint16       > >( element )->getElementInfo(); break;
-				case eSubTypeInt32        : elemInfo = translateElement< ben::Number< ben::int32        > >( element )->getElementInfo(); break;
-				case eSubTypeUInt32       : elemInfo = translateElement< ben::Number< ben::uint32       > >( element )->getElementInfo(); break;
-				case eSubTypeInt64        : elemInfo = translateElement< ben::Number< ben::int64        > >( element )->getElementInfo(); break;
-				case eSubTypeUInt64       : elemInfo = translateElement< ben::Number< ben::uint64       > >( element )->getElementInfo(); break;
-				case eSubTypeFloat        : elemInfo = translateElement< ben::Number< float             > >( element )->getElementInfo(); break;
-				case eSubTypeDouble       : elemInfo = translateElement< ben::Number< double            > >( element )->getElementInfo(); break;
-				case eSubTypeIeeeExtended : elemInfo = translateElement< ben::Number< ben::ieeeExtended > >( element )->getElementInfo(); break;
+				case eSubTypeInt8         : 
+				case eSubTypeUInt8        : 
+				case eSubTypeInt16        : 
+				case eSubTypeUInt16       : 
+				case eSubTypeInt32        : 
+				case eSubTypeUInt32       : 
+				case eSubTypeInt64        : 
+				case eSubTypeUInt64       : 
+				case eSubTypeFloat        : 
+				case eSubTypeDouble       : 
+				case eSubTypeIeeeExtended : elemInfo = translateElement< ben::Number >( element )->getElementInfo(); break;
 				case eSubTypeAscii        :
 				case eSubTypeHexa         :
 				case eSubTypeRaw          : LOG_WARNING( "Number " << element->getUniqueId()  << ": invalid type." );  break;
 			}
+			LOG_WARNING( "Number " << element->getUniqueId()  << ": not supported !!" ); // @todelete !!
 		} break;
 		case eTypeExif    : LOG_INFO( "Exif !");                      break;
 		case eTypeData    : elemInfo = translateElement< bed::Data >( element )->getElementInfo(); break;

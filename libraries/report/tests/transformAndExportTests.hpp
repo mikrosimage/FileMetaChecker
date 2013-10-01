@@ -6,13 +6,17 @@ BOOST_AUTO_TEST_CASE( report_transform_and_export )
 	LOG_INFO( ">>> report_transform_and_export <<<" );
 	Report elementReport;
 
-	std::shared_ptr< ben::Number< int >   > numPtr1( new ben::Number< int >( id ) );
-	std::shared_ptr< ben::Number< short > > numPtr2( new ben::Number< short >( id ) );
-	std::shared_ptr< bed::Data            > dataPtr( new bed::Data( id ) );
+	std::shared_ptr< ben::Number > numPtr1( new ben::Number( "intElem",   eSubTypeInt32 ) );
+	std::shared_ptr< ben::Number > numPtr2( new ben::Number( "shortElem", eSubTypeInt16 ) );
+	std::shared_ptr< bed::Data   > dataPtr( new bed::Data( "dataElem" ) );
 
-	numPtr1->setId(   "intElem" );
-	numPtr2->setId( "shortElem" );
-	dataPtr->setId(  "dataElem" );
+	char buff1[] = { 0x00, 0x00, 0x00, 0x00 };
+	char buff2[] = { 0x00, 0x00 };
+	char buff3[] = { 0x00 };
+
+	numPtr1->set( buff1, 4 );
+	numPtr2->set( buff2, 2 );
+	dataPtr->set( buff3, 1 );
 
 	ReportNode node1 = elementReport.addRootElement( numPtr1 );
 	node1 = node1.appendNext( dataPtr );

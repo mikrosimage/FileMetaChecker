@@ -5,54 +5,46 @@ namespace basic_element
 namespace number_element
 {
 
-template< typename NumberType >
-Number< NumberType >::Number( const std::string& id, const ESubType& subType, const EDisplayType& dispType  )
+
+Number::Number( const std::string& id, const ESubType& subType, const EDisplayType& dispType  )
 	: Element( id, eTypeNumber, subType, dispType )
+	, _data( NULL )
 {
-	setSubType();
 	setSize();
-	LOG_ERROR( _size );
+	if( _subType == eSubTypeAscii || _subType == eSubTypeHexa || _subType == eSubTypeRaw )
+		throw std::runtime_error( "Invalid sub-type." );
+}
+
+Number::~Number()
+{
+}
+
+/********************************
+ **      NumberTranslator      **
+ ********************************/
+
+template< typename NumberType >
+Number::NumberTranslator< NumberType >::NumberTranslator( const Number* parent, const char* data )
+	: _parent( parent )
+{
+	setData( data );
 }
 
 template< typename NumberType >
-Number< NumberType >::~Number()
+NumberType Number::NumberTranslator< NumberType >::getValue()
 {
+	return _numData.value;
 }
 
 template< typename NumberType >
-void Number< NumberType >::translate( const char* data )
-{
-	char* buffer = new char[_size];
-	getEndianOrderedData( buffer, data );
-	reverseEndianness( _numData.data, buffer ); // @todo swap system if big endian (little endian here)
-	
-	delete[] buffer;
-	//LOG_TRACE( " Number: \t_numData.value: " << _numData.value );
-}
-
-template<>
-void Number< int8 >::translate( const char* data )
-{
-	std::memcpy( _numData.data, data, _size );
-	//LOG_TRACE( " Number: \t_numData.value: " << (int) _numData.value );
-}
-
-template<>
-void Number< uint8 >::translate( const char* data )
-{
-	std::memcpy( _numData.data, data, _size );
-	//LOG_TRACE( " Number: \t_numData.value: " << (int) _numData.value );
-}
-
-template< typename NumberType >
-NumberType Number< NumberType >::fromString( const std::string& value )
+NumberType Number::NumberTranslator< NumberType >::fromString( const std::string& value )
 {
 	try
 	{
 		NumberType ret;
 		std::stringstream sstr( value );
 		sstr >> ret;
-		//LOG_TRACE( "fromString: " << ret );
+		// LOG_TRACE( "NumberTranslator::fromString: " << ret );
 		return ret;
 	}
 	catch( const std::range_error& e )
@@ -63,14 +55,14 @@ NumberType Number< NumberType >::fromString( const std::string& value )
 }
 
 template< >
-int8 Number< int8 >::fromString( const std::string& value )
+int8 Number::NumberTranslator< int8 >::fromString( const std::string& value )
 {
 	try
 	{
 		short ret;
 		std::stringstream sstr( value );
 		sstr >> ret;
-		//LOG_TRACE( "fromString: " << ret );
+		// LOG_TRACE( "NumberTranslator::fromString: " << ret );
 		if( ret > 127 || ret < -128 )
 			throw std::range_error( "fromString: string cannot be converted to int8" );
 		return (int8) ret;
@@ -83,14 +75,14 @@ int8 Number< int8 >::fromString( const std::string& value )
 }
 
 template< >
-uint8 Number< uint8 >::fromString( const std::string& value )
+uint8 Number::NumberTranslator< uint8 >::fromString( const std::string& value )
 {
 	try
 	{
 		unsigned short ret;
 		std::stringstream sstr( value );
 		sstr >> ret;
-		LOG_TRACE( "fromString: " << ret );
+		// LOG_TRACE( "NumberTranslator::fromString: " << ret );
 		if( ret > 255 || ret < 0 )
 			throw std::range_error( "fromString: string cannot be converted to uint8" );
 		return (uint8) ret;
@@ -102,146 +94,162 @@ uint8 Number< uint8 >::fromString( const std::string& value )
 	}
 }
 
-
 template< typename NumberType >
-void Number< NumberType >::set( const char* data, const size_t& size )
+void Number::NumberTranslator< NumberType >::setData( const char* data )
 {
-	//LOG_TRACE( " Number: \tSET DATA " << " @ " << &data << " to @ " << &_numData.data );
-	if( size != _size )
-		throw std::runtime_error( "Invalid data size." );
-	translate( data );
+	char* buffer = new char [ _parent->_size ];
+	_parent->getEndianOrderedData( buffer, data );
+	_parent->reverseEndianness( _numData.data, buffer ); // @todo swap system if big endian (little endian here)
+	delete[] buffer;
+	// LOG_TRACE( "setData: " << _numData.value );
 }
 
-template< typename NumberType >
-template< EDisplayType DisplayType, typename OutputType >
-OutputType Number< NumberType >::get() const
+template<>
+void Number::NumberTranslator< int8 >::setData( const char* data )
 {
-	return _numData.value;
+	std::memcpy( _numData.data, data, _parent->_size );
 }
 
-template< >
-template< >
-std::string Number< int8 >::get< eDisplayTypeAscii, std::string >() const
+template<>
+void Number::NumberTranslator< uint8 >::setData( const char* data )
 {
-	std::stringstream sstr;
-	sstr << (int) _numData.value;
-	return sstr.str();
-}
-
-template< >
-template< >
-std::string Number< uint8 >::get< eDisplayTypeAscii, std::string >() const
-{
-	std::stringstream sstr;
-	sstr << (int) _numData.value;
-	return sstr.str();
-}
-
-#define GET_NUMBER( x ) \
-template< > \
-template< > \
-std::string Number< x >::get< eDisplayTypeAscii, std::string >() const \
-{ \
-	std::stringstream sstr; \
-	sstr << _numData.value; \
-	return sstr.str(); \
-}
-
-GET_NUMBER( int16  )
-GET_NUMBER( uint16 )
-GET_NUMBER( int32  )
-GET_NUMBER( uint32 )
-GET_NUMBER( int64  )
-GET_NUMBER( uint64 )
-GET_NUMBER( float  )
-GET_NUMBER( double )
-GET_NUMBER( ieeeExtended )
-
-template< typename NumberType >
-void Number< NumberType >::addRange( const NumberType& min, const NumberType& max )
-{
-	Range< NumberType > range;
-	range.setRange( min, max );
-	_ranges.addRange( range );
+	std::memcpy( _numData.data, data, _parent->_size );
 }
 
 template< typename NumberType >
-void Number< NumberType >::setRanges( const std::vector< std::pair< std::string, std::string > >& ranges )
+bool Number::NumberTranslator< NumberType >::isValueInRanges( const std::vector< std::pair< std::string, std::string > >& rawRanges )
 {
-	for( std::pair< std::string, std::string > range : ranges )
-		addRange( fromString( range.first ), fromString( range.second ) );
+	for( std::pair< std::string, std::string > rawRange : rawRanges )
+	{
+		Range< NumberType > range;
+		range.setRange( fromString( rawRange.first ), fromString( rawRange.second ) );
+		_ranges.addRange( range );
+	}
+	// LOG_TRACE( "isValueInRanges: " << _numData.value );
+	return _ranges.isInRanges( _numData.value );
 }
 
 template< typename NumberType >
-Ranges< NumberType >& Number< NumberType >::getRanges()
-{
-	return _ranges;
-}
-
-template< typename NumberType >
-Map< NumberType >& Number< NumberType >::getMap()
-{
-	return _map;
-}
-
-template< typename NumberType >
-void Number< NumberType >::setMap( const std::map< std::string, std::string >& map )
+std::string Number::NumberTranslator< NumberType >::getMapLabel( const std::map< std::string, std::string >& map )
 {
 	for( const std::pair< std::string, std::string > mapPair : map )
 		_map.addPair( fromString( mapPair.first ), mapPair.second );
+
+	return _map.getLabel( _numData.value );
 }
 
-template< typename NumberType >
-void Number< NumberType >::setSize()
+/********************************
+ ********************************/
+
+
+void Number::set( const char* data, const size_t& size )
 {
-	_size = sizeof( NumberType );
+	// LOG_TRACE( "Number: \tSET: " << &data << " - " << size );
+	if( ! isSizeValid( size ) )
+		throw std::runtime_error( "Invalid data size." );
+	_size = size;
+	_data = const_cast< char* >( data );
+}
+
+template< typename OutputType, EDisplayType DisplayType >
+OutputType Number::get() const
+{
+	if( _data == NULL )
+		throw std::runtime_error( "No data." );
+
+	NumberTranslator< OutputType > numTrans( this, _data );
+	// LOG_TRACE( "Number::get< >: " << numTrans.getValue() );
+	return numTrans.getValue();
 }
 
 template< >
-void Number< ieeeExtended >::setSize()
+std::string Number::get< std::string, eDisplayTypeAscii >() const
 {
-	_size = 10;
+	if( _data == NULL )
+		throw std::runtime_error( "No data." );
+
+	std::stringstream sstr;
+	switch( _subType )
+	{
+		case eSubTypeInt8         : sstr << (int) NumberTranslator<  int8  >( this, _data ).getValue(); break;
+		case eSubTypeUInt8        : sstr << (int) NumberTranslator< uint8  >( this, _data ).getValue(); break;
+		case eSubTypeInt16        : sstr << NumberTranslator<  int16       >( this, _data ).getValue(); break;
+		case eSubTypeUInt16       : sstr << NumberTranslator< uint16       >( this, _data ).getValue(); break;
+		case eSubTypeInt32        : sstr << NumberTranslator<  int32       >( this, _data ).getValue(); break;
+		case eSubTypeUInt32       : sstr << NumberTranslator< uint32       >( this, _data ).getValue(); break;
+		case eSubTypeInt64        : sstr << NumberTranslator<  int64       >( this, _data ).getValue(); break;
+		case eSubTypeUInt64       : sstr << NumberTranslator< uint64       >( this, _data ).getValue(); break;
+		case eSubTypeFloat        : sstr << NumberTranslator< float        >( this, _data ).getValue(); break;
+		case eSubTypeDouble       : sstr << NumberTranslator< double       >( this, _data ).getValue(); break;
+		case eSubTypeIeeeExtended : sstr << NumberTranslator< ieeeExtended >( this, _data ).getValue(); break;
+		default                   : sstr << ""; break;
+	}
+	// LOG_TRACE( "Number::get< std::string, ascii >: " << sstr.str() );
+	return sstr.str();
 }
 
-template< typename NumberType >
-Element::EStatus Number< NumberType >::checkData()
+void Number::setRanges( const std::vector< std::pair< std::string, std::string > >& ranges )
+{
+	_rawRanges = ranges;
+}
+
+void Number::setMap( const std::map< std::string, std::string >& map )
+{
+	_rawMap = map;
+}
+
+Element::EStatus Number::checkData()
 {
 	_status = eStatusInvalid;
 
-	if( _ranges.empty() )
+	if( _rawRanges.empty() )
 	{
 		_status = eStatusPassOver;
 		return eStatusPassOver;
 	}
 	
-	if( _ranges.isInRanges( _numData.value ) )
+	if( isNumberInRange() )
 		_status = eStatusValid;
-	
+	// LOG_TRACE( "status: " << _status );
 	return _status;
 }
 
-template< typename NumberType >
-std::vector< std::pair< std::string, std::string > > Number< NumberType >::getElementInfo()
+std::vector< std::pair< std::string, std::string > > Number::getElementInfo()
 {
 	std::vector< std::pair< std::string, std::string > > elemInfo;
 	std::vector< std::pair< std::string, std::string > > commonInfo = getCommonElementInfo();
 	
 	elemInfo.insert( elemInfo.end(), commonInfo.begin(), commonInfo.end() );
 
-	elemInfo.push_back( std::make_pair( kType, getStringFromType() ) );
+	elemInfo.push_back( std::make_pair( kType, getSubType< std::string >() ) );
 
-	if( _map.getSize() == 0 )
+	if( _rawMap.size() == 0 )
 	{
-		elemInfo.push_back( std::make_pair( kValue, get< eDisplayTypeAscii, std::string >() ) );
+		elemInfo.push_back( std::make_pair( kValue, get< std::string, eDisplayTypeAscii >() ) );
 	}
 	else
 	{
-		std::string value = _map.getLabel( _numData.value );
+		std::string value;
+		switch( _subType )
+		{
+			case eSubTypeInt8         : value = NumberTranslator<  int8        >( this, _data ).getMapLabel( _rawMap ); break;
+			case eSubTypeUInt8        : value = NumberTranslator< uint8        >( this, _data ).getMapLabel( _rawMap ); break;
+			case eSubTypeInt16        : value = NumberTranslator<  int16       >( this, _data ).getMapLabel( _rawMap ); break;
+			case eSubTypeUInt16       : value = NumberTranslator< uint16       >( this, _data ).getMapLabel( _rawMap ); break;
+			case eSubTypeInt32        : value = NumberTranslator<  int32       >( this, _data ).getMapLabel( _rawMap ); break;
+			case eSubTypeUInt32       : value = NumberTranslator< uint32       >( this, _data ).getMapLabel( _rawMap ); break;
+			case eSubTypeInt64        : value = NumberTranslator<  int64       >( this, _data ).getMapLabel( _rawMap ); break;
+			case eSubTypeUInt64       : value = NumberTranslator< uint64       >( this, _data ).getMapLabel( _rawMap ); break;
+			case eSubTypeFloat        : value = NumberTranslator< float        >( this, _data ).getMapLabel( _rawMap ); break;
+			case eSubTypeDouble       : value = NumberTranslator< double       >( this, _data ).getMapLabel( _rawMap ); break;
+			case eSubTypeIeeeExtended : value = NumberTranslator< ieeeExtended >( this, _data ).getMapLabel( _rawMap ); break;
+			default                   : value = "";
+		}
 		
 		if( ! value.empty() )
-			value.append( " (" + get< eDisplayTypeAscii, std::string >() + ")" );
+			value.append( " (" + get< std::string, eDisplayTypeAscii >() + ")" );
 		else
-			value = "----- (" + get< eDisplayTypeAscii, std::string >() + ")";
+			value = "----- (" + get< std::string, eDisplayTypeAscii >() + ")";
 		
 		elemInfo.push_back( std::make_pair( kValue, value ) );
 	}
@@ -249,37 +257,61 @@ std::vector< std::pair< std::string, std::string > > Number< NumberType >::getEl
 	return elemInfo;
 }
 
-#define GET_STRING_FROM_TYPE( x, y ) \
-template< > \
-std::string Number< x >::getStringFromType() { return y; }
+bool Number::isNumberInRange()
+{
+	if( _rawRanges.empty() )
+		return false;
 
-GET_STRING_FROM_TYPE( int8,   kInt8   )
-GET_STRING_FROM_TYPE( uint8,  kUInt8  )
-GET_STRING_FROM_TYPE( int16,  kInt16  )
-GET_STRING_FROM_TYPE( uint16, kUInt16 )
-GET_STRING_FROM_TYPE( int32,  kInt32  )
-GET_STRING_FROM_TYPE( uint32, kUInt32 )
-GET_STRING_FROM_TYPE( int64,  kInt64  )
-GET_STRING_FROM_TYPE( uint64, kUInt64 )
-GET_STRING_FROM_TYPE( float,  kFloat  )
-GET_STRING_FROM_TYPE( double, kDouble )
-GET_STRING_FROM_TYPE( ieeeExtended, kIeeeExtended )
+	switch( _subType )
+	{
+		case eSubTypeInt8         : return NumberTranslator<  int8        >( this, _data ).isValueInRanges( _rawRanges ); break;
+		case eSubTypeUInt8        : return NumberTranslator< uint8        >( this, _data ).isValueInRanges( _rawRanges ); break;
+		case eSubTypeInt16        : return NumberTranslator<  int16       >( this, _data ).isValueInRanges( _rawRanges ); break;
+		case eSubTypeUInt16       : return NumberTranslator< uint16       >( this, _data ).isValueInRanges( _rawRanges ); break;
+		case eSubTypeInt32        : return NumberTranslator<  int32       >( this, _data ).isValueInRanges( _rawRanges ); break;
+		case eSubTypeUInt32       : return NumberTranslator< uint32       >( this, _data ).isValueInRanges( _rawRanges ); break;
+		case eSubTypeInt64        : return NumberTranslator<  int64       >( this, _data ).isValueInRanges( _rawRanges ); break;
+		case eSubTypeUInt64       : return NumberTranslator< uint64       >( this, _data ).isValueInRanges( _rawRanges ); break;
+		case eSubTypeFloat        : return NumberTranslator< float        >( this, _data ).isValueInRanges( _rawRanges ); break;
+		case eSubTypeDouble       : return NumberTranslator< double       >( this, _data ).isValueInRanges( _rawRanges ); break;
+		case eSubTypeIeeeExtended : return NumberTranslator< ieeeExtended >( this, _data ).isValueInRanges( _rawRanges ); break;
+		default                   : return false;
+	}
+	return false;
+}
 
-#define SET_SUB_TYPE( x, y ) \
-template< > \
-void Number< x >::setSubType() { _subType = y; }
+void Number::setSize()
+{
+	switch( _subType )
+	{
+		case eSubTypeInt8         : _size =  1; break;
+		case eSubTypeUInt8        : _size =  1; break;
+		case eSubTypeInt16        : _size =  2; break;
+		case eSubTypeUInt16       : _size =  2; break;
+		case eSubTypeInt32        : _size =  4; break;
+		case eSubTypeUInt32       : _size =  4; break;
+		case eSubTypeInt64        : _size =  8; break;
+		case eSubTypeUInt64       : _size =  8; break;
+		case eSubTypeFloat        : _size =  4; break;
+		case eSubTypeDouble       : _size =  8; break;
+		case eSubTypeIeeeExtended : _size = 10; break;
+		default : _size = 0;
+	}
+}
 
-SET_SUB_TYPE( int8,   eSubTypeInt8   )
-SET_SUB_TYPE( uint8,  eSubTypeUInt8  )
-SET_SUB_TYPE( int16,  eSubTypeInt16  )
-SET_SUB_TYPE( uint16, eSubTypeUInt16 )
-SET_SUB_TYPE( int32,  eSubTypeInt32  )
-SET_SUB_TYPE( uint32, eSubTypeUInt32 )
-SET_SUB_TYPE( int64,  eSubTypeInt64  )
-SET_SUB_TYPE( uint64, eSubTypeUInt64 )
-SET_SUB_TYPE( float,  eSubTypeFloat  )
-SET_SUB_TYPE( double, eSubTypeDouble )
-SET_SUB_TYPE( ieeeExtended, eSubTypeIeeeExtended )
+bool Number::isSizeValid( const size_t& size )
+{
+	switch( size )
+	{
+		case  1 : return true;
+		case  2 : return true;
+		case  4 : return true;
+		case  8 : return true;
+		case 10 : return true;
+		default : return false;
+	}
+	return false;
+}
 
 }
 }

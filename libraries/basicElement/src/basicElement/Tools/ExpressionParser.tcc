@@ -56,17 +56,17 @@ void ExpressionParser::setVariables( const std::map < std::string, std::shared_p
 		std::string value;
 		switch( elem.second->getSubType() )
 		{
-			case eSubTypeInt8         : value = std::static_pointer_cast< ben::Number< ben::int8   > >( elem.second )->get< eDisplayTypeAscii, std::string >(); break;
-			case eSubTypeUInt8        : value = std::static_pointer_cast< ben::Number< ben::uint8  > >( elem.second )->get< eDisplayTypeAscii, std::string >(); break;
-			case eSubTypeInt16        : value = std::static_pointer_cast< ben::Number< ben::int16  > >( elem.second )->get< eDisplayTypeAscii, std::string >(); break;
-			case eSubTypeUInt16       : value = std::static_pointer_cast< ben::Number< ben::uint16 > >( elem.second )->get< eDisplayTypeAscii, std::string >(); break;
-			case eSubTypeInt32        : value = std::static_pointer_cast< ben::Number< ben::int32  > >( elem.second )->get< eDisplayTypeAscii, std::string >(); break;
-			case eSubTypeUInt32       : value = std::static_pointer_cast< ben::Number< ben::uint32 > >( elem.second )->get< eDisplayTypeAscii, std::string >(); break;
-			case eSubTypeInt64        : value = std::static_pointer_cast< ben::Number< ben::int64  > >( elem.second )->get< eDisplayTypeAscii, std::string >(); break;
-			case eSubTypeUInt64       : value = std::static_pointer_cast< ben::Number< ben::uint64 > >( elem.second )->get< eDisplayTypeAscii, std::string >(); break;
-			case eSubTypeFloat        : value = std::static_pointer_cast< ben::Number< float       > >( elem.second )->get< eDisplayTypeAscii, std::string >(); break;
-			case eSubTypeDouble       : value = std::static_pointer_cast< ben::Number< double      > >( elem.second )->get< eDisplayTypeAscii, std::string >(); break;
-			case eSubTypeIeeeExtended : value = std::static_pointer_cast< ben::Number< ben::ieeeExtended > >( elem.second )->get< eDisplayTypeAscii, std::string >(); break;
+			case eSubTypeInt8         : value = std::static_pointer_cast< ben::Number >( elem.second )->get< std::string, eDisplayTypeAscii >(); break;
+			case eSubTypeUInt8        : value = std::static_pointer_cast< ben::Number >( elem.second )->get< std::string, eDisplayTypeAscii >(); break;
+			case eSubTypeInt16        : value = std::static_pointer_cast< ben::Number >( elem.second )->get< std::string, eDisplayTypeAscii >(); break;
+			case eSubTypeUInt16       : value = std::static_pointer_cast< ben::Number >( elem.second )->get< std::string, eDisplayTypeAscii >(); break;
+			case eSubTypeInt32        : value = std::static_pointer_cast< ben::Number >( elem.second )->get< std::string, eDisplayTypeAscii >(); break;
+			case eSubTypeUInt32       : value = std::static_pointer_cast< ben::Number >( elem.second )->get< std::string, eDisplayTypeAscii >(); break;
+			case eSubTypeInt64        : value = std::static_pointer_cast< ben::Number >( elem.second )->get< std::string, eDisplayTypeAscii >(); break;
+			case eSubTypeUInt64       : value = std::static_pointer_cast< ben::Number >( elem.second )->get< std::string, eDisplayTypeAscii >(); break;
+			case eSubTypeFloat        : value = std::static_pointer_cast< ben::Number >( elem.second )->get< std::string, eDisplayTypeAscii >(); break;
+			case eSubTypeDouble       : value = std::static_pointer_cast< ben::Number >( elem.second )->get< std::string, eDisplayTypeAscii >(); break;
+			case eSubTypeIeeeExtended : value = std::static_pointer_cast< ben::Number >( elem.second )->get< std::string, eDisplayTypeAscii >(); break;
 			case eSubTypeUnknown      :
 			case eSubTypeAscii        :
 			case eSubTypeHexa         :

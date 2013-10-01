@@ -21,51 +21,59 @@ typedef unsigned long long uint64;
 
 typedef long double  ieeeExtended;     // 80 bit IEEE Standard 754 floating point
 
-template< typename NumberType >
 class Number : public Element
 {
-	union NumberData
+	
+	template< typename NumberType >
+	class NumberTranslator
 	{
-		char       data[0];
-		NumberType value;
+		union NumberData
+		{
+			char       data[0];
+			NumberType value;
+		};
+
+	public:
+		NumberTranslator( const Number* parent, const char* data );
+
+		NumberType getValue();
+		NumberType fromString( const std::string& value );
+		void setData( const char* data );
+		bool isValueInRanges( const std::vector< std::pair< std::string, std::string > >& rawRanges );
+		std::string getMapLabel( const std::map< std::string, std::string >& map );
+
+	private:
+		const Number*         _parent;
+		NumberData            _numData;
+		Ranges< NumberType >  _ranges;
+		Map   < NumberType >  _map;
+		size_t                _size;
 	};
+
 public:
 	Number( const std::string& id, const ESubType& subType = eSubTypeInt8, const EDisplayType& dispType = eDisplayTypeDefault );
 	~Number();
 	
 	void set ( const char* data, const size_t& size );
 	
-	template< EDisplayType DisplayType = eDisplayTypeDefault, typename OutputType = NumberType >
+	template< typename OutputType, EDisplayType DisplayType = eDisplayTypeNumbers >
 	OutputType get() const;
 	
-	Map  < NumberType >& getMap  ();
-
+	void setRanges( const std::vector< std::pair< std::string, std::string > >& ranges );
 	void setMap( const std::map< std::string, std::string >& map );
 
-	void addRange( const NumberType& min, const NumberType& max );
-	void setRanges( const std::vector< std::pair< std::string, std::string > >& ranges );
-	Ranges< NumberType >& getRanges();
-
-	EStatus     checkData();
+	EStatus checkData();
 	std::vector< std::pair< std::string, std::string > > getElementInfo();
 
 protected:
-	NumberType fromString( const std::string& value );
-	void setSize   ();
-	void translate ( const char* data );
-
-public:
-	std::string getStringFromType();
-
-protected:
-	void setSubType();
-
+	bool isNumberInRange();
+	void setSize();
+	bool isSizeValid( const size_t& size );
 private:
-	Ranges< NumberType >  _ranges;
-	Map   < NumberType >  _map;
-	NumberData            _numData;
+	char* _data;
+	std::map< std::string, std::string >                 _rawMap;
+	std::vector< std::pair< std::string, std::string > > _rawRanges;
 };
-
 
 }
 }

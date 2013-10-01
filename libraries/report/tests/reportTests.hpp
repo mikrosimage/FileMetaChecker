@@ -7,8 +7,8 @@ BOOST_AUTO_TEST_CASE( report_report )
 	{
 		Report report;
 
-		std::shared_ptr< ben::Number< int > > numPtr( new ben::Number< int >( id ) );
-		std::shared_ptr< bed::Data >          dataPtr( new bed::Data( id ) );
+		std::shared_ptr< ben::Number >  numPtr( new ben::Number( id, eSubTypeInt32 ) );
+		std::shared_ptr< bed::Data   > dataPtr( new bed::Data( id ) );
 
 		BOOST_CHECK_EQUAL( report.getSize(), 0 );
 		
@@ -28,9 +28,9 @@ BOOST_AUTO_TEST_CASE( report_report_and_node_report )
 	{
 		Report report;
 
-		std::shared_ptr< ben::Number< int >   > numPtr1( new ben::Number< int >( id ) );
-		std::shared_ptr< bed::Data            > dataPtr( new bed::Data( id ) );
-		std::shared_ptr< ben::Number< short > > numPtr2( new ben::Number< short >( id ) );
+		std::shared_ptr< ben::Number > numPtr1( new ben::Number( id, eSubTypeInt32 ) );
+		std::shared_ptr< ben::Number > numPtr2( new ben::Number( id, eSubTypeInt16 ) );
+		std::shared_ptr< bed::Data   > dataPtr( new bed::Data( id ) );
 
 		BOOST_CHECK_EQUAL( report.getSize(), 0 );
 		
