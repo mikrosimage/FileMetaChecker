@@ -5,6 +5,7 @@
 
 #include <string>
 #include <specDefinition.hpp>
+#include <SpecNode/SpecNode.hpp>
 
 namespace basic_element
 {
@@ -26,7 +27,6 @@ public:
 	{
 	}
 
-	void setId   ( const std::string& id );
 	void setLabel( const std::string& label );
 protected:
 	void setStatus( const EStatus status );
@@ -65,6 +65,7 @@ public:
 	virtual void set( const char* data, const size_t& size ) = 0;
 	virtual EStatus checkData() = 0;
 	virtual std::vector< std::pair< std::string, std::string > > getElementInfo() = 0;
+	// virtual void setFromNode( const SpecNode& node ) = 0;	// @todo 
 
 protected:
 	static size_t _lastUniqueId;
