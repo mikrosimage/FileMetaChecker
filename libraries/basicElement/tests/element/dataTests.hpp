@@ -281,4 +281,37 @@ BOOST_AUTO_TEST_CASE( basic_element_data_error_warning )
 	}
 }
 
+BOOST_AUTO_TEST_CASE( basic_element_data_set_from_node )
+{
+LOG_INFO( "\n>>> basic_element_data_set_from_node <<<" );
+	{
+		std::string jsonString = R"*(
+			{ "header": [
+				{
+					"id": "id",
+					"label": "label",
+					"type": "ascii",
+					"displayType": "raw"
+				}
+			  ]
+			}
+		)*";
+
+		std::istringstream isstream( jsonString );
+		boost::property_tree::ptree tree;
+		boost::property_tree::json_parser::read_json( isstream, tree );
+
+		spec_reader::SpecNode node( tree.get_child( "header" ).begin(), 0, 1 );
+		BOOST_CHECK_EQUAL( node.getId(),          "id"    );
+		BOOST_CHECK_EQUAL( node.getLabel(),       "label" );
+		BOOST_CHECK_EQUAL( node.getType(),        "ascii" );
+		BOOST_CHECK_EQUAL( node.getDisplayType(), "raw"   );
+
+		dbe::Data data( node );
+		BOOST_CHECK_EQUAL( data.getId(),    "id"    );
+		BOOST_CHECK_EQUAL( data.getLabel(), "label" );
+		BOOST_CHECK_EQUAL( data.getType(),  eTypeData );
+	}
+}
+
 BOOST_AUTO_TEST_SUITE_END()

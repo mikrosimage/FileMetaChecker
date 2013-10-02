@@ -19,6 +19,22 @@ Element::Element( const std::string& id, EType type, ESubType subType, EDisplayT
 {
 }
 
+Element::Element( const spec_reader::SpecNode& node )
+	: _id            ( node.getId() )
+	, _label         ( node.getLabel() )
+	, _error         ( "" )
+	, _warning       ( "" )
+	, _uniqueId      ( _lastUniqueId++ )
+	, _size          ( 0 )
+	, _status        ( eStatusUnknown )
+	, _bigEndianData ( node.isBigEndian() )
+{
+	setType( node.getType() );
+	setSubType( node.getType() );
+	setDisplayType( node.getDisplayType() );
+}
+
+
 void Element::setLabel( const std::string& label )
 {
 	_label = label;
@@ -36,14 +52,55 @@ void Element::setDisplayType( const std::string& displayType )
 		LOG_WARNING( _id << ": Unknown display type!" );
 }
 
-void Element::setStatus( const EStatus status )
-{
-	_status = status;
-}
-
 void Element::setBigEndianness( bool isBigEndian )
 {
 	_bigEndianData = isBigEndian;
+}
+
+void Element::setType( const std::string& type )
+{
+	if( type == kInt8         ) { _type = eTypeNumber;  return; }
+	if( type == kUInt8        ) { _type = eTypeNumber;  return; }
+	if( type == kInt16        ) { _type = eTypeNumber;  return; }
+	if( type == kUInt16       ) { _type = eTypeNumber;  return; }
+	if( type == kInt32        ) { _type = eTypeNumber;  return; }
+	if( type == kUInt32       ) { _type = eTypeNumber;  return; }
+	if( type == kInt64        ) { _type = eTypeNumber;  return; }
+	if( type == kUInt64       ) { _type = eTypeNumber;  return; }
+	if( type == kFloat        ) { _type = eTypeNumber;  return; }
+	if( type == kDouble       ) { _type = eTypeNumber;  return; }
+	if( type == kIeeeExtended ) { _type = eTypeNumber;  return; }
+	if( type == kAscii        ) { _type = eTypeData;    return; }
+	if( type == kHexa         ) { _type = eTypeData;    return; }
+	if( type == kRaw          ) { _type = eTypeData;    return; }
+	if( type == kExif         ) { _type = eTypeExif;    return; }
+	if( type == kKlv          ) { _type = eTypeKlv;     return; }
+	_type = eTypeUnknown;
+}
+
+void Element::setSubType( const std::string& subType )
+{
+	if( subType == kInt8         ) { _subType = eSubTypeInt8;        return; }
+	if( subType == kUInt8        ) { _subType = eSubTypeUInt8;       return; }
+	if( subType == kInt16        ) { _subType = eSubTypeInt16;       return; }
+	if( subType == kUInt16       ) { _subType = eSubTypeUInt16;      return; }
+	if( subType == kInt32        ) { _subType = eSubTypeInt32;       return; }
+	if( subType == kUInt32       ) { _subType = eSubTypeUInt32;      return; }
+	if( subType == kInt64        ) { _subType = eSubTypeInt64;       return; }
+	if( subType == kUInt64       ) { _subType = eSubTypeUInt64;      return; }
+	if( subType == kFloat        ) { _subType = eSubTypeFloat;       return; }
+	if( subType == kDouble       ) { _subType = eSubTypeDouble;      return; }
+	if( subType == kIeeeExtended ) { _subType = eSubTypeIeeeExtended;return; }
+	if( subType == kAscii        ) { _subType = eSubTypeAscii;       return; }
+	if( subType == kHexa         ) { _subType = eSubTypeHexa;        return; }
+	if( subType == kRaw          ) { _subType = eSubTypeRaw;         return; }
+	_subType = eSubTypeUnknown;
+}
+
+
+void Element::setStatus( const EStatus status )
+{
+	_status = status;
 }
 
 template< >
@@ -79,22 +136,15 @@ std::string Element::getSubType< std::string >() const
 void Element::getEndianOrderedData( char* buffer, const char* data ) const
 {
 	if( !_bigEndianData )
-	{
-		//LOG_TRACE( " EndianessConverter: case 1 ( little ) " );
 		std::reverse_copy( data, data + _size, buffer );
-	}
 	else
-	{
-		//LOG_TRACE( " EndianessConverter: case 2 ( big ) " );
 		std::memcpy( buffer, data, _size );
-	}
 }
 
 void Element::reverseEndianness( char* buffer, const char* data ) const
 {
 	std::reverse_copy( data, data + _size, buffer );
 }
-
 
 void Element::addErrorLabel( const std::string& error )
 {
@@ -143,6 +193,5 @@ std::string Element::getStatusString()
 	}
 	return kUnknown;
 }
-
 
 }

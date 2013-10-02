@@ -12,20 +12,19 @@ class Data : public Element
 {
 public:
 	Data( const std::string& id, const ESubType& subType = eSubTypeRaw, const EDisplayType& dispType = eDisplayTypeDefault );
+	Data( const spec_reader::SpecNode& node ); 
 	~Data();
 
-	void        set ( const char* data, const size_t& size );
-	
-	template< typename OutputType, EDisplayType DisplayType = eDisplayTypeDefault >
-	OutputType get() const;
-	
+	void set( const char* data, const size_t& size );
 	void setSpecData( const std::string& specValue );
 	void setSpecData( const std::vector< std::string >& specValues );
+	
+	template< typename OutputType, EDisplayType DisplayType = eDisplayTypeDefault >
+	OutputType get() const;	
+	std::vector< std::pair< std::string, std::string > > getElementInfo();
 
 	Element::EStatus checkData();
 	
-	std::vector< std::pair< std::string, std::string > > getElementInfo();
-
 	Data& operator=( const Data& other );
 
 private:

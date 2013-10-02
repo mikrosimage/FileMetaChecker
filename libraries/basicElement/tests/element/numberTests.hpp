@@ -744,4 +744,46 @@ BOOST_AUTO_TEST_CASE( basic_element_number_subType )
 	}
 }
 
+BOOST_AUTO_TEST_CASE( basic_element_number_set_from_node )
+{
+LOG_INFO( "\n>>> basic_element_number_set_from_node <<<" );
+	{
+		std::string jsonString = R"*(
+			{ "header": [
+				{
+					"id": "id",
+					"label": "label",
+					"type": "uint16",
+					"displayType": "raw",
+					"map": [
+						{ "0": "zero" },
+						{ "1": "one" },
+						{ "2": "two" }
+					],
+					"range": [
+						{ "min": 0, "max": 10 }
+					]
+				}
+			  ]
+			}
+		)*";
+
+		std::istringstream isstream( jsonString );
+		boost::property_tree::ptree tree;
+		boost::property_tree::json_parser::read_json( isstream, tree );
+
+		spec_reader::SpecNode node( tree.get_child( "header" ).begin(), 0, 1 );
+		BOOST_CHECK_EQUAL( node.getId(),          "id"    );
+		BOOST_CHECK_EQUAL( node.getLabel(),       "label" );
+		BOOST_CHECK_EQUAL( node.getType(),        "uint16" );
+		BOOST_CHECK_EQUAL( node.getDisplayType(), "raw"   );
+
+		nbe::Number num( node );
+		BOOST_CHECK_EQUAL( num.getId(),      "id"    );
+		BOOST_CHECK_EQUAL( num.getLabel(),   "label" );
+		BOOST_CHECK_EQUAL( num.getType(),    eTypeNumber );
+		BOOST_CHECK_EQUAL( num.getSubType(), eSubTypeUInt16 );
+	}
+}
+
 BOOST_AUTO_TEST_SUITE_END()

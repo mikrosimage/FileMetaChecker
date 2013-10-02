@@ -5,6 +5,7 @@
 #include <basicElement/Element.hpp>
 #include <basicElement/Data/Data.hpp>
 #include <basicElement/Number/Number.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 using namespace boost::unit_test;
 namespace be = basic_element;

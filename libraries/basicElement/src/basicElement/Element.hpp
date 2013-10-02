@@ -22,31 +22,32 @@ public:
 	};
 
 	Element( const std::string& id, EType type, ESubType subType = eSubTypeUnknown, EDisplayType dispType = eDisplayTypeDefault );
+	Element( const spec_reader::SpecNode& node );
 
 	~Element()
 	{
 	}
 
 	void setLabel( const std::string& label );
+	void setDisplayType( const std::string& displayType );
+	void setBigEndianness( bool isBigEndian );
+
 protected:
+	void setType( const std::string& type );
+	void setSubType( const std::string& subType );
 	void setStatus( const EStatus status );
-	
+
 public:
 	std::string getId()       const { return _id; }
 	std::string getLabel()    const { return _label; }
 	EType       getType()     const { return _type; }
 	size_t      getSize()     const { return _size; }
 	bool        isBigEndian() const { return _bigEndianData; }
+	EStatus     getStatus()   const { return _status; }
+	size_t      getUniqueId() const { return _uniqueId; }
 	
 	template< typename OutputType = ESubType >
 	OutputType getSubType() const;
-	
-	void setDisplayType( const std::string& displayType );
-	
-	EStatus     getStatus()   { return _status; }
-	size_t      getUniqueId() { return _uniqueId; }
-
-	void setBigEndianness( bool isBigEndian );
 
 	void getEndianOrderedData( char* buffer, const char* data ) const;
 	void reverseEndianness   ( char* buffer, const char* data ) const;
@@ -60,12 +61,10 @@ protected:
 	std::vector< std::pair< std::string, std::string > > getCommonElementInfo();
 	std::string getStatusString();
 
-
 public:
 	virtual void set( const char* data, const size_t& size ) = 0;
-	virtual EStatus checkData() = 0;
 	virtual std::vector< std::pair< std::string, std::string > > getElementInfo() = 0;
-	// virtual void setFromNode( const SpecNode& node ) = 0;	// @todo 
+	virtual EStatus checkData() = 0;
 
 protected:
 	static size_t _lastUniqueId;

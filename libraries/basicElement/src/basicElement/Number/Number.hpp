@@ -19,7 +19,7 @@ typedef unsigned int       uint32;
 typedef   signed long long  int64;
 typedef unsigned long long uint64;
 
-typedef long double  ieeeExtended;     // 80 bit IEEE Standard 754 floating point
+typedef long double  ieeeExtended;    // 80 bits IEEE Standard 754 floating point
 
 class Number : public Element
 {
@@ -36,11 +36,11 @@ class Number : public Element
 	public:
 		NumberTranslator( const Number* parent, const char* data );
 
+		void setData( const char* data );
 		NumberType getValue();
 		NumberType fromString( const std::string& value );
-		void setData( const char* data );
-		bool isValueInRanges( const std::vector< std::pair< std::string, std::string > >& rawRanges );
 		std::string getMapLabel( const std::map< std::string, std::string >& map );
+		bool isValueInRanges( const std::vector< std::pair< std::string, std::string > >& rawRanges );
 
 	private:
 		const Number*         _parent;
@@ -52,23 +52,24 @@ class Number : public Element
 
 public:
 	Number( const std::string& id, const ESubType& subType = eSubTypeInt8, const EDisplayType& dispType = eDisplayTypeDefault );
+	Number( const spec_reader::SpecNode& node ); 
 	~Number();
 	
-	void set ( const char* data, const size_t& size );
+	void set( const char* data, const size_t& size );
+	void setRanges( const std::vector< std::pair< std::string, std::string > >& ranges );
+	void setMap( const std::map< std::string, std::string >& map );
 	
 	template< typename OutputType, EDisplayType DisplayType = eDisplayTypeNumbers >
 	OutputType get() const;
-	
-	void setRanges( const std::vector< std::pair< std::string, std::string > >& ranges );
-	void setMap( const std::map< std::string, std::string >& map );
-
-	EStatus checkData();
 	std::vector< std::pair< std::string, std::string > > getElementInfo();
+	
+	EStatus checkData();
 
 protected:
-	bool isNumberInRange();
 	void setSize();
+	bool isNumberInRange();
 	bool isSizeValid( const size_t& size );
+
 private:
 	char* _data;
 	std::map< std::string, std::string >                 _rawMap;

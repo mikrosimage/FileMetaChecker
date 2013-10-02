@@ -15,6 +15,13 @@ Data::Data( const std::string& id, const ESubType& subType, const EDisplayType& 
 {
 }
 
+Data::Data( const spec_reader::SpecNode& node )
+	: Element ( node )
+	, _data   ( NULL )
+{
+	setSpecData( node.getValues() );
+}
+
 Data::~Data()
 {
 	if( _data != NULL )
@@ -30,6 +37,25 @@ void Data::set( const char* data, const size_t& size )
 	_size = size;
 	
 	getEndianOrderedData( _data, data );
+}
+
+void Data::setSpecData( const std::string& specValue )
+{
+	_specValue = specValue;
+	_size = ( _subType != eSubTypeHexa ) ? _specValue.size() : 0.5 * _specValue.size() ;
+}
+
+void Data::setSpecData( const std::vector< std::string >& specValues )
+{
+	_specValues = specValues;
+	size_t size = 0;
+	for( std::string value : _specValues )
+	{
+		if( size != 0 && size != value.size() )
+			throw std::runtime_error( "Specification Error: Multiple values must have the same size" );
+		size = value.size();
+	}
+	_size = ( _subType != eSubTypeHexa ) ? size : 0.5 * size;
 }
 
 template< typename OutputType, EDisplayType DisplayType >
@@ -83,20 +109,6 @@ std::string Data::get< std::string, eDisplayTypeHexa >() const
 	return sstr.str();
 }
 
-template< typename NumberType >
-std::vector< NumberType > Data::convertToVector() const
-{
-	std::vector< NumberType > vector;
-	for( size_t i = 0; i < _size; i += sizeof( NumberType ) )
-	{
-		number_element::Number tmpNumber( "" );
-		tmpNumber.set( &_data[i], sizeof( NumberType ) );
-		vector.push_back( tmpNumber.get< NumberType, eDisplayTypeDefault >() );
-		//LOG_TRACE( " Data: \tTO INT VECTOR : " << vector.at( i ) );
-	}
-	return vector;
-}
-
 #define DATA_GET( x ) \
 template< > \
 std::vector< x > Data::get< std::vector< x >, eDisplayTypeNumbers >() const \
@@ -116,23 +128,39 @@ DATA_GET( float  )
 DATA_GET( double )
 DATA_GET( number_element::ieeeExtended )
 
-void Data::setSpecData( const std::string& specValue )
+std::vector< std::pair< std::string, std::string > > Data::getElementInfo()
 {
-	_specValue = specValue;
-	_size = ( _subType != eSubTypeHexa ) ? _specValue.size() : 0.5 * _specValue.size() ;
-}
+	std::vector< std::pair< std::string, std::string > > elemInfo;
+	std::vector< std::pair< std::string, std::string > > commonInfo = getCommonElementInfo();
+	
+	elemInfo.insert( elemInfo.end(), commonInfo.begin(), commonInfo.end() );
 
-void Data::setSpecData( const std::vector< std::string >& specValues )
-{
-	_specValues = specValues;
-	size_t size = 0;
-	for( std::string value : _specValues )
+	elemInfo.push_back( std::make_pair( kType, getSubType<std::string>() ) );
+	switch( _displayType )
 	{
-		if( size != 0 && size != value.size() )
-			throw std::runtime_error( "Specification Error: Multiple values must have the same size" );
-		size = value.size();
+		case eDisplayTypeDefault : elemInfo.push_back( std::make_pair( kData, get< std::string, eDisplayTypeRaw   >() ) ); break;
+		case eDisplayTypeAscii   : elemInfo.push_back( std::make_pair( kData, get< std::string, eDisplayTypeAscii >() ) ); break;
+		case eDisplayTypeHexa    : elemInfo.push_back( std::make_pair( kData, get< std::string, eDisplayTypeHexa  >() ) ); break;
+		case eDisplayTypeRaw     : elemInfo.push_back( std::make_pair( kData, get< std::string, eDisplayTypeRaw   >() ) ); break;
+		case eDisplayTypeNumbers :
+		{
+			std::stringstream out;
+			
+			std::vector< number_element::uint8 > numbers = get< std::vector< number_element::uint8 >, eDisplayTypeNumbers >();
+
+			for( auto number : numbers )
+			{
+				out << number << ", ";
+			}
+			char toDel[2];
+			out >> toDel;
+					
+			//copy( numbers.begin(), numbers.end(), std::ostream_iterator< std::string >( out, ", " ) );
+			elemInfo.push_back( std::make_pair( kData, out.str() ) );
+			break;
+		}
 	}
-	_size = ( _subType != eSubTypeHexa ) ? size : 0.5 * size;
+	return elemInfo;
 }
 
 Element::EStatus Data::checkData()
@@ -191,39 +219,18 @@ Element::EStatus Data::checkData()
 	return _status;
 }
 
-std::vector< std::pair< std::string, std::string > > Data::getElementInfo()
+template< typename NumberType >
+std::vector< NumberType > Data::convertToVector() const
 {
-	std::vector< std::pair< std::string, std::string > > elemInfo;
-	std::vector< std::pair< std::string, std::string > > commonInfo = getCommonElementInfo();
-	
-	elemInfo.insert( elemInfo.end(), commonInfo.begin(), commonInfo.end() );
-
-	elemInfo.push_back( std::make_pair( kType, getSubType<std::string>() ) );
-	switch( _displayType )
+	std::vector< NumberType > vector;
+	for( size_t i = 0; i < _size; i += sizeof( NumberType ) )
 	{
-		case eDisplayTypeDefault : elemInfo.push_back( std::make_pair( kData, get< std::string, eDisplayTypeRaw   >() ) ); break;
-		case eDisplayTypeAscii   : elemInfo.push_back( std::make_pair( kData, get< std::string, eDisplayTypeAscii >() ) ); break;
-		case eDisplayTypeHexa    : elemInfo.push_back( std::make_pair( kData, get< std::string, eDisplayTypeHexa  >() ) ); break;
-		case eDisplayTypeRaw     : elemInfo.push_back( std::make_pair( kData, get< std::string, eDisplayTypeRaw   >() ) ); break;
-		case eDisplayTypeNumbers :
-		{
-			std::stringstream out;
-			
-			std::vector< number_element::uint8 > numbers = get< std::vector< number_element::uint8 >, eDisplayTypeNumbers >();
-
-			for( auto number : numbers )
-			{
-				out << number << ", ";
-			}
-			char toDel[2];
-			out >> toDel;
-					
-			//copy( numbers.begin(), numbers.end(), std::ostream_iterator< std::string >( out, ", " ) );
-			elemInfo.push_back( std::make_pair( kData, out.str() ) );
-			break;
-		}
+		number_element::Number tmpNumber( "" );
+		tmpNumber.set( &_data[i], sizeof( NumberType ) );
+		vector.push_back( tmpNumber.get< NumberType, eDisplayTypeDefault >() );
+		//LOG_TRACE( " Data: \tTO INT VECTOR : " << vector.at( i ) );
 	}
-	return elemInfo;
+	return vector;
 }
 
 Data& Data::operator=( const Data& other )
