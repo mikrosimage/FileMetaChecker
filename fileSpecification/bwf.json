@@ -35,52 +35,6 @@
 			"label": "Specific BWF chunks",
 			"ordered": false,
 			"group": [
-				// {
-				//     "id": "junkSubChunks",
-				//     "label": "JUNK sub-chunk",
-				//     "ascii": "junk",
-				//     "endian": "big",
-				//     "optional": true,
-				//     "required": "chunkId == 'RIFF'",
-				//     "groupSize": "junkSize + 4",
-				//     "group": [
-				//         {
-				//             "id": "junkSize",
-				//             "label": "Sub-chunk size",
-				//             "type": "uint32",
-				//             "endian": "little"
-				//         },
-				//         {
-				//             "id": "dummyBytes",
-				//             "label": "Dummy bytes",
-				//             "type": "data",
-				//             "count": "junkSize"
-				//         }
-				//     ]
-				// },
-				// {
-				//     "id": "ds64SubChunks",
-				//     "label": "Size64 sub-chunk",
-				//     "ascii": "ds64",
-				//     "endian": "big",
-				//     "optional": true,
-				//     "required": "chunkId == 'RIFF'",
-				//     "groupSize": "junkSize + 4",
-				//     "group": [
-				//         {
-				//             "id": "junkSize",
-				//             "label": "Sub-chunk size",
-				//             "type": "uint32",
-				//             "endian": "little"
-				//         },
-				//         {
-				//             "id": "dummyBytes",
-				//             "label": "Dummy bytes",
-				//             "type": "data",
-				//             "count": "junkSize"
-				//         }
-				//     ]
-				// },
 				{
 					"id": "bextSubChunks",
 					"label": "Broadcast Audio Extension sub-chunk",
@@ -159,7 +113,6 @@
 							"endian": "big",
 							"type": "data",
 							"count": "64"
-							// "displayType": "hexa"
 						},
 						{
 							"id": "LoudnessValue",
@@ -272,110 +225,6 @@
 							"endian": "little",
 							"required": "wFormatTag == 1"
 						}
-						// ,
-						// {
-						//     "id": "cbSize",
-						//     "label": "MPEG1 section size",
-						//     "type": "uint16",
-						//     "endian": "little"
-						//     // "hexa": "0016"
-						//     "required": "wFormatTag == 80"
-						// }
-						// ,
-						// {
-						//     "id": "fwHeadLayer",
-						//     "label": "MPEG audio layer",
-						//     "type": "uint16",
-						//     "endian": "little",
-						//     "map" : [
-						//         { "1": "Layer 1" },
-						//         { "2": "Layer 2" },
-						//         { "4": "Layer 3" }
-						//     ],
-						//     "required": "cbSize == 22 and wFormatTag == 80"
-						// },
-						// {
-						//     "id": "dwHeadBitrate",
-						//     "label": "Total bits per second",
-						//     "type": "uint32",
-						//     "endian": "little",
-						//     "required": "cbSize == 22 and wFormatTag == 80"
-						// },
-						// {
-						//     "id": "fwHeadMode",
-						//     "label": "Stream mode",
-						//     "type": "uint16",
-						//     "endian": "little",
-						//     "map" : [
-						//         { "1": "Stereo" },
-						//         { "2": "Joint-stereo" },
-						//         { "4": "Dual-channel" },
-						//         { "8": "Single channel" }
-						//     ],
-						//     "required": "cbSize == 22 and wFormatTag == 80"
-						// },
-						// {
-						//     "id": "fwHeadModeExt",
-						//     "label": "Extra parameters for JS coding",
-						//     "type": "uint16",
-						//     "endian": "little",
-						//     "map" : [
-						//         { "1": "Sub–bands 4–31 in intensity stereo (Layer 1&2) | No intensity or MS–stereo coding (Layer 3)" },
-						//         { "2": "Sub–bands 8–31 in intensity stereo (Layer 1&2) | Intensity stereo (Layer 3)" },
-						//         { "4": "Sub–bands 12–31 in intensity stereo (Layer 1&2) | MS–stereo (Layer 3)" },
-						//         { "8": "Sub–bands 16–31 in intensity stereo (Layer 1&2) | Both intensity and MS–stereo coding (Layer 3)" }
-						//     ],
-						//     "required": "cbSize == 22 and wFormatTag == 80"
-						// },
-						// {
-						//     "id": "wHeadEmphasis",
-						//     "label": "Emphasis",
-						//     "type": "uint16",
-						//     "endian": "little",
-						//     "map" : [
-						//         { "1": "No emphasis" },
-						//         { "2": "50/15 ms emphasis" },
-						//         { "4": "Reserved" },
-						//         { "8": "CCITT J.17" }
-						//     ],
-						//     "required": "cbSize == 22 and wFormatTag == 80"
-						// },
-						// {
-						//     "id": "fwHeadFlags",
-						//     "label": "MPEG flags",
-						//     "type": "uint16",
-						//     "endian": "little",
-						//     "map" : [
-						//         {  "1": "Sets the private bit" },
-						//         {  "2": "Sets the copyright bit" },
-						//         {  "4": "Sets the original/home bit" },
-						//         {  "8": "Sets the protection bit, and inserts a 16-bit error protection code into each frame." }
-						//         { "10": "Sets the ID bit to 1, defining the stream as an MPEG–1 audio stream" }
-						//     ],
-						//     "required": "cbSize == 22 and wFormatTag == 80"
-						// },
-						// {
-						//     "id": "dwPTSLow",
-						//     "label": "Presentation Time Stamp Low",
-						//     "type": "uint32",
-						//     "endian": "little",
-						//     "required": "cbSize == 22 and wFormatTag == 80"
-						// },
-						// {
-						//     "id": "dwPTSHigh",
-						//     "label": "Presentation Time Stamp High",
-						//     "type": "uint32",
-						//     "endian": "little",
-						//     "required": "cbSize == 22 and wFormatTag == 80"
-						// }
-						// ,
-						// {
-						//     "id": "else",
-						//     "label": "If cbSize != 22",
-						//     "type": "data",
-						//     "count": "fmtSize - 18",
-						//     "required": "cbSize != 22 and wFormatTag == 80"
-						// }
 					]
 				},
 				{
@@ -425,7 +274,6 @@
 							"label": "Sound Information",
 							"type": "uint16",
 							"endian": "little",
-							// "bits": ["???"]
 							"map": [
 								{  "0": "Non homogeneous sound data | No free format audio frame" },
 								{  "1": "Homogeneous sound data | Padding bit is used in the file so may alternate between '0' or '1' | No free format audio frame" },
@@ -456,7 +304,6 @@
 							"label": "Ancillary data type",
 							"type": "uint16",
 							"endian": "little",
-							// "bits": ["???"]
 							"map": [
 								{  "1": "Energy of left channel present in ancillary data" },
 								{  "2": "A private byte is free for internal use in ancillary data" },
@@ -583,12 +430,6 @@
 							"type": "uint32",
 							"endian": "little"
 						},
-						// {
-						//     "id": "timestamp",
-						//     "label": "Time stamp of the peak data",
-						//     "type": "data",     // ascii !
-						//     "count": "28"
-						// },
 						{
 							"id": "timestamp",
 							"label": "Time stamp of the peak data",
@@ -692,7 +533,7 @@
 						{
 							"id": "xmlData",
 							"label": "XML data",
-							"type": "data",     // xml !
+							"type": "data",
 							"count": "linkSize",
 							"displayType": "ascii"
 						}
@@ -715,7 +556,7 @@
 						{
 							"id": "xmlData",
 							"label": "XML data",
-							"type": "data",     // xml !
+							"type": "data",
 							"count": "axmlSize",
 							"displayType": "ascii"
 						}
@@ -741,11 +582,6 @@
 							"type": "uint32",
 							"endian": "little"
 						},
-						// {
-						//     "id": "metadataSegments",
-						//     "label": "Metadata Segments",
-						//     "ordered": false,
-						//     "group": [
 						{
 							"id": "metadataSegmentId",
 							"label": "Metadata Segment Id",
@@ -765,22 +601,6 @@
 							"type": "data",
 							"count": "dbmdSize - 5"
 						}
-						//         {
-						//             "id": "padding",
-						//             "label": "Padding",
-						//             "type": "uint8",
-						//             "endian": "little",
-						//             "optional": true
-						//         },
-						//         {
-						//             "id": "metadataSegment",
-						//             "label": "Padding",
-						//             "type": "uint8",
-						//             "endian": "little",
-						//             "optional": true
-						//         }
-						//     ]
-						// }
 					]
 
 				},

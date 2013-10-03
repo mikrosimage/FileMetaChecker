@@ -31,14 +31,16 @@ class XmlParser():
 
 		# get xml sections
 		for node in self.root.childNodes :
-
+			print node.tagName
 			if node.tagName == fileSystemInfo :
 				section = FileSystemInfoSection( outputFormat, node.getAttribute( labelAttr ) )
-				section.status = node.getAttribute( statusAttr )	
+				section.status = node.getAttribute( statusAttr )
 				self.sections.append( section )
 				section.setAvailableFields( node )
 				if node.childNodes is not None :
+					print node.childNodes
 					for element in node.childNodes:
+						print element
 						section.fields.append( element )
 
 			if node.tagName == "stream" :

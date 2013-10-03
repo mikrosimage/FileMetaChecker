@@ -110,7 +110,7 @@ class FileSystemInfoSection( Section ):
 							if self.outputFormat == "tex" :
 								right += "\\color{Gray}" + subChild.tagName
 							elif self.outputFormat == "html" :
-								right += "<a style='color:#333'>" + subChild.tagName + "</a>"
+								right += "" #"<a style='color:#333'>" + subChild.tagName + "</a>"
 						else :
 							right += subChild.tagName
 						rights.append( right )
@@ -124,7 +124,8 @@ class FileSystemInfoSection( Section ):
 			data.append( rootChild.getAttribute( labelAttr ) )
 			self.dataStatus.append( rootChild.getAttribute( statusAttr ) ) 
 			if len( rootChild.childNodes ) == 1 :
-				data.append( checkPathLength( rootChild.childNodes[0].nodeValue, 60 ) )
+				#data.append( checkPathLength( rootChild.childNodes[0].nodeValue, 60 ) )
+				data.append( rootChild.childNodes[0].nodeValue )
 
 		elif rootChild.childNodes == None :
 			return;
