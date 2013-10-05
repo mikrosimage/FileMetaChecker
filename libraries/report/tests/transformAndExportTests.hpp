@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE( report_transform_and_export )
 		LOG_INFO( ">>> report_transform_and_export <<<" );
 		Transform tr( elementReport );
 		Export exporter( tr.transformTree( Transform::eReportTypeXml ) );
-		LOG_INFO( exporter.getXmlString() );
+		LOG_INFO( exporter.get< Export::eExportTypeXml >() );
 	}
 }
 
@@ -79,12 +79,12 @@ BOOST_AUTO_TEST_CASE( report_export_xml_json )
 	bpt::read_json( isstream, tree );
 	
 	Export exporter( tree );
-	LOG_INFO( exporter.getXmlString() );
-	LOG_INFO( exporter.getXmlString( true ) );
-	LOG_INFO( exporter.getJsonString() );
-	LOG_INFO( exporter.getJsonString( true ) );
-	//exporter.writeJsonFile( "report.json" );
-	//exporter.writeJsonFile( "report.json", true );
+	LOG_INFO( exporter.get< Export::eExportTypeXml >() );
+	LOG_INFO( exporter.get< Export::eExportTypeXml >( true ) );
+	LOG_INFO( exporter.get< Export::eExportTypeJson >() );
+	LOG_INFO( exporter.get< Export::eExportTypeJson >( true ) );
+	//exporter.write< Export::eExportTypeJson >( "report.json" );
+	//exporter.write< Export::eExportTypeJson >( "report.json", true );
 }
 
 

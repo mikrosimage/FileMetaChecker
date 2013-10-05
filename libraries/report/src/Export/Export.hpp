@@ -11,12 +11,19 @@ namespace report_generator
 class Export
 {
 public:
+	enum EEXportType
+	{
+		eExportTypeJson = 0,
+		eExportTypeXml
+	};
+
 	Export( const bpt::ptree& report );
 	
-	void writeJsonFile( const std::string& filename, bool compact = false );
-	void writeXmlFile ( const std::string& filename, bool compact = false );
-	std::string getJsonString( bool compact = false );
-	std::string getXmlString( bool compact = false );
+	template< EEXportType >
+	void write( const std::string& filename, bool compact = false );
+
+	template< EEXportType >
+	std::string get( bool compact = false );
 	
 private:
 	bpt::ptree _report;
