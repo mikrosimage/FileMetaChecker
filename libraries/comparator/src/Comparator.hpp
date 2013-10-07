@@ -13,7 +13,7 @@ namespace filereader
 namespace comparator
 {
 
-typedef std::map< std::string, std::shared_ptr< be::Element > > ElementMap;
+typedef std::map< std::string, std::shared_ptr< basic_element::Element > > ElementMap;
 
 template< typename Type >
 struct Vector
@@ -47,8 +47,8 @@ public:
 	void compare( const std::string& specId, report_generator::Report& report );
 
 protected:
-	template < typename SubType >
-	SubType getNodeSubType( const std::string& nodeType );
+	// template < typename SubType >
+	// SubType getNodeSubType( const std::string& nodeType );
 
 	template< typename ElementType >
 	std::shared_ptr< ElementType > getElement( const spec_reader::SpecNode& node );

@@ -11,7 +11,7 @@ Number::Number( const std::string& id, const ESubType& subType, const EDisplayTy
 	, _data( NULL )
 {
 	setSize();
-	if( _subType == eSubTypeAscii || _subType == eSubTypeHexa || _subType == eSubTypeRaw )
+	if( _subType == eSubTypeAscii || _subType == eSubTypeHexa || _subType == eSubTypeRaw )	// @todo: clean ?
 		throw std::runtime_error( "Invalid sub-type." );
 }
 
@@ -19,12 +19,21 @@ Number::Number( const spec_reader::SpecNode& node )
 	: Element ( node )
 	, _data   ( NULL )
 {
+	setSize();
+	if( _subType == eSubTypeAscii || _subType == eSubTypeHexa || _subType == eSubTypeRaw )	// @todo: clean ?
+		throw std::runtime_error( "Invalid sub-type." );
+
 	setMap( node.getMap() );
 	setRanges( node.getRange() );
 }
 
 Number::~Number()
 {
+	if( _data != NULL )
+	{
+		delete[] _data;
+		_data = NULL;
+	}
 }
 
 /********************************
@@ -156,7 +165,8 @@ void Number::set( const char* data, const size_t& size )
 	if( ! isSizeValid( size ) )
 		throw std::runtime_error( "Invalid data size." );
 	_size = size;
-	_data = const_cast< char* >( data );
+	_data = new char[ _size ];
+	std::memcpy( _data, data, _size );
 }
 
 void Number::setRanges( const std::vector< std::pair< std::string, std::string > >& ranges )
@@ -185,7 +195,7 @@ std::string Number::get< std::string, eDisplayTypeAscii >() const
 {
 	if( _data == NULL )
 		throw std::runtime_error( "No data." );
-
+	
 	std::stringstream sstr;
 	switch( _subType )
 	{

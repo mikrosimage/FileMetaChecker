@@ -33,6 +33,9 @@ void Transform::setBasicElementReport( const Report& report )
 bpt::ptree Transform::transformTree( const EReportType& type )
 {
 	_type = type;
+	if( _basicElementTree.size() == 0 )
+		throw std::runtime_error( "Empty element tree, cannot be transformed." );
+	
 	for( ReportTree::value_type& rootNode : _basicElementTree.get_child( kReport ) )
 	{
 		_report.push_back( bpt::ptree::value_type( kSpecification, translate( rootNode ) ) );

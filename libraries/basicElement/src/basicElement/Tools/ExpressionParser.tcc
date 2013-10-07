@@ -56,21 +56,31 @@ void ExpressionParser::setVariables( const std::map < std::string, std::shared_p
 		std::string value;
 		switch( elem.second->getSubType() )
 		{
-			case eSubTypeInt8         : value = std::static_pointer_cast< ben::Number >( elem.second )->get< std::string, eDisplayTypeAscii >(); break;
-			case eSubTypeUInt8        : value = std::static_pointer_cast< ben::Number >( elem.second )->get< std::string, eDisplayTypeAscii >(); break;
-			case eSubTypeInt16        : value = std::static_pointer_cast< ben::Number >( elem.second )->get< std::string, eDisplayTypeAscii >(); break;
-			case eSubTypeUInt16       : value = std::static_pointer_cast< ben::Number >( elem.second )->get< std::string, eDisplayTypeAscii >(); break;
-			case eSubTypeInt32        : value = std::static_pointer_cast< ben::Number >( elem.second )->get< std::string, eDisplayTypeAscii >(); break;
-			case eSubTypeUInt32       : value = std::static_pointer_cast< ben::Number >( elem.second )->get< std::string, eDisplayTypeAscii >(); break;
-			case eSubTypeInt64        : value = std::static_pointer_cast< ben::Number >( elem.second )->get< std::string, eDisplayTypeAscii >(); break;
-			case eSubTypeUInt64       : value = std::static_pointer_cast< ben::Number >( elem.second )->get< std::string, eDisplayTypeAscii >(); break;
-			case eSubTypeFloat        : value = std::static_pointer_cast< ben::Number >( elem.second )->get< std::string, eDisplayTypeAscii >(); break;
-			case eSubTypeDouble       : value = std::static_pointer_cast< ben::Number >( elem.second )->get< std::string, eDisplayTypeAscii >(); break;
-			case eSubTypeIeeeExtended : value = std::static_pointer_cast< ben::Number >( elem.second )->get< std::string, eDisplayTypeAscii >(); break;
+			case eSubTypeInt8         :
+			case eSubTypeUInt8        :
+			case eSubTypeInt16        :
+			case eSubTypeUInt16       :
+			case eSubTypeInt32        :
+			case eSubTypeUInt32       :
+			case eSubTypeInt64        :
+			case eSubTypeUInt64       :
+			case eSubTypeFloat        :
+			case eSubTypeDouble       :
+			case eSubTypeIeeeExtended :
+			{
+				std::shared_ptr< ben::Number > num = std::static_pointer_cast< ben::Number >( elem.second );
+				value = num->get< std::string, eDisplayTypeAscii >();
+				break;
+			}
+			
 			case eSubTypeUnknown      :
 			case eSubTypeAscii        :
 			case eSubTypeHexa         :
-			case eSubTypeRaw          : throw std::runtime_error( "Invalid element subtype."); break;
+			case eSubTypeRaw          :
+			{
+				throw std::runtime_error( "Invalid element subtype.");
+				break;
+			}
 		}
 		oss << elem.first << " = " << value << std::endl;
 		_contextString += oss.str();
@@ -84,8 +94,8 @@ ResultType ExpressionParser::getExpressionResult( const std::string& expression 
 	ResultType result = 0;
 	try
 	{
-		LOG_TRACE( _contextString.c_str() );
 		LOG_TRACE( expression );
+		LOG_TRACE( _contextString.c_str() );
 		bpy::exec( _contextString.c_str(), _mainNamespace );
 		bpy::object returnText = bpy::eval( expression.c_str(), _mainNamespace );
 		result = bpy::extract< ResultType >( returnText );

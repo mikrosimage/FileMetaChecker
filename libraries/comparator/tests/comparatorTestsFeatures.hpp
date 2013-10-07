@@ -149,11 +149,12 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_only_root )
 		rg::Export exporter( xmlTransReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
-		LOG_INFO( exporter.getXmlString() );
+		LOG_INFO( exporter.get< rg::Export::eExportTypeXml >() );
 
 		BOOST_CHECK_EQUAL( xmlTransReport.end()->second.data(), "test3" );
+		BOOST_CHECK_EQUAL( xmlTransReport.back().second.data(), "" );
 
-		std::istringstream  xmlStream( exporter.getXmlString() );
+		std::istringstream  xmlStream( exporter.get< rg::Export::eExportTypeXml >() );
 		std::istringstream jsonStream( jsonString );
 		bpt::ptree  xmlReport;
 		bpt::ptree jsonReport;
@@ -239,11 +240,12 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_one_child )
 		rg::Export exporter( xmlTransReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
-		LOG_INFO( exporter.getXmlString() );
+		LOG_INFO( exporter.get< rg::Export::eExportTypeXml >() );
 
 		BOOST_CHECK_EQUAL( xmlTransReport.end()->second.data(), "test3" );
+		BOOST_CHECK_EQUAL( xmlTransReport.back().second.data(), "" );
 
-		std::istringstream  xmlStream( exporter.getXmlString() );
+		std::istringstream  xmlStream( exporter.get< rg::Export::eExportTypeXml >() );
 		std::istringstream jsonStream( jsonString );
 		bpt::ptree  xmlReport;
 		bpt::ptree jsonReport;
@@ -354,11 +356,12 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_children )
 		rg::Export exporter( xmlTransReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
-		LOG_INFO( exporter.getXmlString() );
+		LOG_INFO( exporter.get< rg::Export::eExportTypeXml >() );
 
 		BOOST_CHECK_EQUAL( xmlTransReport.end()->second.data(), "test3" );
+		BOOST_CHECK_EQUAL( xmlTransReport.back().second.data(), "" );
 
-		std::istringstream  xmlStream( exporter.getXmlString() );
+		std::istringstream  xmlStream( exporter.get< rg::Export::eExportTypeXml >() );
 		std::istringstream jsonStream( jsonString );
 		bpt::ptree  xmlReport;
 		bpt::ptree jsonReport;
@@ -459,11 +462,12 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_one_subchild )
 		rg::Export exporter( xmlTransReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
-		LOG_INFO( exporter.getXmlString() );
+		LOG_INFO( exporter.get< rg::Export::eExportTypeXml >() );
 
 		BOOST_CHECK_EQUAL( xmlTransReport.end()->second.data(), "test3" );
+		BOOST_CHECK_EQUAL( xmlTransReport.back().second.data(), "" );
 
-		std::istringstream  xmlStream( exporter.getXmlString() );
+		std::istringstream  xmlStream( exporter.get< rg::Export::eExportTypeXml >() );
 		std::istringstream jsonStream( jsonString );
 		bpt::ptree  xmlReport;
 		bpt::ptree jsonReport;
@@ -569,11 +573,12 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_subchildren )
 		rg::Export exporter( xmlTransReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
-		LOG_INFO( exporter.getXmlString() );
+		LOG_INFO( exporter.get< rg::Export::eExportTypeXml >() );
 
 		BOOST_CHECK_EQUAL( xmlTransReport.end()->second.data(), "test3" );
+		BOOST_CHECK_EQUAL( xmlTransReport.back().second.data(), "" );
 
-		std::istringstream  xmlStream( exporter.getXmlString() );
+		std::istringstream  xmlStream( exporter.get< rg::Export::eExportTypeXml >() );
 		std::istringstream jsonStream( jsonString );
 		bpt::ptree  xmlReport;
 		bpt::ptree jsonReport;
@@ -745,11 +750,12 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_levels )
 		rg::Export exporter( xmlTransReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
-		LOG_INFO( exporter.getXmlString() );
+		LOG_INFO( exporter.get< rg::Export::eExportTypeXml >() );
 
 		BOOST_CHECK_EQUAL( xmlTransReport.end()->second.data(), "end" );
+		BOOST_CHECK_EQUAL( xmlTransReport.back().second.data(), "end" );
 
-		std::istringstream  xmlStream( exporter.getXmlString() );
+		std::istringstream  xmlStream( exporter.get< rg::Export::eExportTypeXml >() );
 		std::istringstream jsonStream( jsonString );
 		bpt::ptree  xmlReport;
 		bpt::ptree jsonReport;
@@ -882,11 +888,12 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_n_levels_2 )
 		rg::Export exporter( xmlTransReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
-		LOG_INFO( exporter.getXmlString() );
+		LOG_INFO( exporter.get< rg::Export::eExportTypeXml >() );
 
 		BOOST_CHECK_EQUAL( xmlTransReport.end()->second.data(), "end" );
+		BOOST_CHECK_EQUAL( xmlTransReport.back().second.data(), "end" );
 
-		std::istringstream  xmlStream( exporter.getXmlString() );
+		std::istringstream  xmlStream( exporter.get< rg::Export::eExportTypeXml >() );
 		std::istringstream jsonStream( jsonString );
 		bpt::ptree  xmlReport;
 		bpt::ptree jsonReport;
@@ -990,11 +997,12 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_1 )
 		rg::Export exporter( xmlTransReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
-		LOG_INFO( exporter.getXmlString() );
+		LOG_INFO( exporter.get< rg::Export::eExportTypeXml >() );
 
 		BOOST_CHECK_EQUAL( xmlTransReport.end()->second.data(), "end" );
+		BOOST_CHECK_EQUAL( xmlTransReport.back().second.data(), "end" );
 
-		std::istringstream  xmlStream( exporter.getXmlString() );
+		std::istringstream  xmlStream( exporter.get< rg::Export::eExportTypeXml >() );
 		std::istringstream jsonStream( jsonString );
 		bpt::ptree  xmlReport;
 		bpt::ptree jsonReport;
@@ -1136,11 +1144,12 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_2 )
 		rg::Export exporter( xmlTransReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
-		LOG_INFO( exporter.getXmlString() );
+		LOG_INFO( exporter.get< rg::Export::eExportTypeXml >() );
 
 		BOOST_CHECK_EQUAL( xmlTransReport.end()->second.data(), "end" );
+		BOOST_CHECK_EQUAL( xmlTransReport.back().second.data(), "end" );
 
-		std::istringstream  xmlStream( exporter.getXmlString() );
+		std::istringstream  xmlStream( exporter.get< rg::Export::eExportTypeXml >() );
 		std::istringstream jsonStream( jsonString );
 		bpt::ptree  xmlReport;
 		bpt::ptree jsonReport;
@@ -1228,11 +1237,12 @@ BOOST_AUTO_TEST_CASE( comparator_comparator_validation_count_expression )
 		rg::Export exporter( xmlTransReport );
 		
 		LOG_INFO( "\n==== REPORT ====" );
-		LOG_INFO( exporter.getXmlString() );
+		LOG_INFO( exporter.get< rg::Export::eExportTypeXml >() );
 
 		BOOST_CHECK_EQUAL( xmlTransReport.end()->second.data(), "end" );
+		BOOST_CHECK_EQUAL( xmlTransReport.back().second.data(), "end" );
 
-		std::istringstream  xmlStream( exporter.getXmlString() );
+		std::istringstream  xmlStream( exporter.get< rg::Export::eExportTypeXml >() );
 		std::istringstream jsonStream( jsonString );
 		bpt::ptree  xmlReport;
 		bpt::ptree jsonReport;

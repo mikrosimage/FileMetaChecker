@@ -24,77 +24,6 @@ Comparator::~Comparator()
 {
 }
 
-template< >
-ESubType Comparator::getNodeSubType< ESubType >( const std::string& nodeType )
-{
-	if( nodeType == kAscii        ) return eSubTypeAscii;
-	if( nodeType == kHexa         ) return eSubTypeHexa;
-	if( nodeType == kRaw          ) return eSubTypeRaw;
-	if( nodeType == kInt8         ) return eSubTypeInt8;
-	if( nodeType == kUInt8        ) return eSubTypeUInt8;
-	if( nodeType == kInt16        ) return eSubTypeInt16;
-	if( nodeType == kUInt16       ) return eSubTypeUInt16;
-	if( nodeType == kInt32        ) return eSubTypeInt32;
-	if( nodeType == kUInt32       ) return eSubTypeUInt32;
-	if( nodeType == kInt64        ) return eSubTypeInt64;
-	if( nodeType == kUInt64       ) return eSubTypeUInt64;
-	if( nodeType == kFloat        ) return eSubTypeFloat;
-	if( nodeType == kDouble       ) return eSubTypeDouble;
-	if( nodeType == kIeeeExtended ) return eSubTypeIeeeExtended;
-	return eSubTypeUnknown;
-}
-
-template< typename ElementType >
-std::shared_ptr< ElementType > Comparator::getElement( const sr::SpecNode& node )
-{
-	std::shared_ptr< ElementType > element = std::make_shared< ElementType >( node.getId() );
-
-	element->setLabel( node.getLabel() );
-	element->setBigEndianness( node.isBigEndian() );
-	element->setMap( node.getMap() );
-	element->setRanges( node.getRange() );
-
-	size_t size = element->getSize();
-	char buffer[ size ];
-	_file->readData( buffer, size );
-	element->set( buffer, size );
-	element->checkData();
-
-	_elementList.insert( std::make_pair( node.getId(), element ) );
-	LOG_TRACE( "_elementList: " << _elementList.size() );
-
-	return element;
-}
-
-template< >
-std::shared_ptr< be::data_element::Data > Comparator::getElement< be::data_element::Data >( const sr::SpecNode& node )
-{
-	ESubType subtype = getNodeSubType< ESubType >( node.getType() );
-	std::shared_ptr< be::data_element::Data > element( new be::data_element::Data( node.getId(), subtype ) );
-	
-	element->setLabel( node.getLabel() );
-	element->setBigEndianness( node.isBigEndian() );
-	element->setSpecData( node.getValues() );
-	element->setDisplayType( node.getDisplayType() );
-
-	size_t size = element->getSize();
-	if( size == 0 && ! node.getCount().empty() )
-	{
-		be::expression_parser::ExpressionParser sizeParser( _elementList );
-		size = sizeParser.getExpressionResult< size_t >( node.getCount() );
-	}
-
-	if( size == 0 && node.getCount().empty() )
-		throw std::runtime_error( node.getId() + " element size cannot be found" );
-
-	char buffer[ size ];
-	_file->readData( buffer, size );
-	element->set( buffer, size );
-	element->checkData();
-	return element;
-}
-
-
 void Comparator::compare( const std::string& specId, rg::Report& report )
 {
 	LOG_TRACE( "COMPARE !");
@@ -123,12 +52,12 @@ void Comparator::checkNode( const sr::SpecNode& node, rg::ReportNode& reportNode
 	currentNode.inRangeCheck = false;
 	
 	// check node
-	LOG_TRACE( ">> CHECK NODE " << currentNode.nodeId << " | " << currentNode.nodeIter << " @ " << currentNode.initPos );
+	LOG_TRACE( "\n>> CHECK NODE " << currentNode.nodeId << " | " << currentNode.nodeIter << " @ " << currentNode.initPos );
 	std::shared_ptr< be::Element > element( getElementFromNode( node ) );
 
 	sr::SpecNode nextNode = node.next();
 
-	// get repetition
+	// get repetition 										// @todo: put it into SpecNode !!!!!!!!!!!
 	Vector< size_t >::Pair repetRange;
 	extractRepetition( currentNode.repetNumber, repetRange, node.getRepetition() );
 	checkRepetition( node, element, nextNode, reportNode, currentNode );
@@ -312,25 +241,65 @@ void Comparator::checkGroupSize( const std::string& nodeGroupSize,
 
 std::shared_ptr< be::Element > Comparator::getElementFromNode( const sr::SpecNode& node )
 {
-	switch( getNodeSubType< ESubType >( node.getType() ) )
+	if( ( node.getType() == kInt8         )
+	 || ( node.getType() == kUInt8        )
+	 || ( node.getType() == kInt16        )
+	 || ( node.getType() == kUInt16       )
+	 || ( node.getType() == kInt32        )
+	 || ( node.getType() == kUInt32       )
+	 || ( node.getType() == kInt64        )
+	 || ( node.getType() == kUInt64       )
+	 || ( node.getType() == kFloat        )
+	 || ( node.getType() == kDouble       )
+	 || ( node.getType() == kIeeeExtended ) )
 	{
-		case eSubTypeInt8         : return getElement< be::number_element::Number< be::number_element::int8         > >( node ); break;
-		case eSubTypeUInt8        : return getElement< be::number_element::Number< be::number_element::uint8        > >( node ); break;
-		case eSubTypeInt16        : return getElement< be::number_element::Number< be::number_element::int16        > >( node ); break;
-		case eSubTypeUInt16       : return getElement< be::number_element::Number< be::number_element::uint16       > >( node ); break;
-		case eSubTypeInt32        : return getElement< be::number_element::Number< be::number_element::int32        > >( node ); break;
-		case eSubTypeUInt32       : return getElement< be::number_element::Number< be::number_element::uint32       > >( node ); break;
-		case eSubTypeInt64        : return getElement< be::number_element::Number< be::number_element::int64        > >( node ); break;
-		case eSubTypeUInt64       : return getElement< be::number_element::Number< be::number_element::uint64       > >( node ); break;
-		case eSubTypeFloat        : return getElement< be::number_element::Number< float                            > >( node ); break;
-		case eSubTypeDouble       : return getElement< be::number_element::Number< double                           > >( node ); break;
-		case eSubTypeIeeeExtended : return getElement< be::number_element::Number< be::number_element::ieeeExtended > >( node ); break;
-		case eSubTypeAscii        :
-		case eSubTypeHexa         :
-		case eSubTypeRaw          : return getElement< be::data_element::Data >( node ); break;
-		case eSubTypeUnknown      : break;
+		return getElement< be::number_element::Number >( node );
 	}
+
+	if( ( node.getType() == kAscii ) || ( node.getType() == kHexa ) || ( node.getType() == kRaw ) )
+	{
+		return getElement< be::data_element::Data >( node );
+	}
+
 	throw std::runtime_error( "getElementFromNode: Unknown type" );
+}
+
+
+template< typename ElementType >
+std::shared_ptr< ElementType > Comparator::getElement( const sr::SpecNode& node )
+{
+	std::shared_ptr< ElementType > element = std::make_shared< ElementType >( node );
+
+	size_t size = element->getSize();
+	if( size == 0 )
+	{
+		LOG_ERROR( "size == 0" );
+		if( ! node.getCount().empty() )
+		{
+			be::expression_parser::ExpressionParser sizeParser( _elementList );
+			LOG_ERROR( "OK node.getCount()" );
+			size = sizeParser.getExpressionResult< size_t >( node.getCount() );
+		}
+		if( node.getCount().empty() )
+		{
+			LOG_ERROR( "NO node.getCount()" );
+			throw std::runtime_error( node.getId() + " element size cannot be found" );	
+		}
+	}
+	
+	char buffer[ size ];
+	_file->readData( buffer, size );
+	element->set( buffer, size );
+	element->checkData();
+
+	if( element->getType() == eTypeNumber )
+	{
+		// LOG_TRACE( common::details::kColorGreen <<  element->getId() << " : " << element->template get< std::string, eDisplayTypeAscii >() << common::details::kColorStd );
+		_elementList.insert( std::make_pair( node.getId(), element ) );
+		LOG_TRACE( "_elementList: " << _elementList.size() );
+	}
+
+	return element;
 }
 
 void Comparator::extractRepetition( size_t& repetNumber, Vector< size_t >::Pair& repetRange, const Vector< std::string >::Pair& nodeRepetitions )

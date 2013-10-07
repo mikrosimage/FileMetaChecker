@@ -71,9 +71,9 @@ protected:
 	bool isSizeValid( const size_t& size );
 
 private:
-	char* _data;
 	std::map< std::string, std::string >                 _rawMap;
 	std::vector< std::pair< std::string, std::string > > _rawRanges;
+	char* _data;
 };
 
 }
