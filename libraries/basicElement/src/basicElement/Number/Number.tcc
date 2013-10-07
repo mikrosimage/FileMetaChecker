@@ -8,7 +8,6 @@ namespace number_element
 
 Number::Number( const std::string& id, const ESubType& subType, const EDisplayType& dispType  )
 	: Element( id, eTypeNumber, subType, dispType )
-	, _data( NULL )
 {
 	setSize();
 	if( _subType == eSubTypeAscii || _subType == eSubTypeHexa || _subType == eSubTypeRaw )	// @todo: clean ?
@@ -17,7 +16,6 @@ Number::Number( const std::string& id, const ESubType& subType, const EDisplayTy
 
 Number::Number( const spec_reader::SpecNode& node )
 	: Element ( node )
-	, _data   ( NULL )
 {
 	setSize();
 	if( _subType == eSubTypeAscii || _subType == eSubTypeHexa || _subType == eSubTypeRaw )	// @todo: clean ?
@@ -25,15 +23,6 @@ Number::Number( const spec_reader::SpecNode& node )
 
 	setMap( node.getMap() );
 	setRanges( node.getRange() );
-}
-
-Number::~Number()
-{
-	if( _data != NULL )
-	{
-		delete[] _data;
-		_data = NULL;
-	}
 }
 
 /********************************

@@ -11,24 +11,13 @@ namespace data_element
 
 Data::Data( const std::string& id, const ESubType& subType, const EDisplayType& dispType )
 	: Element ( id, eTypeData, subType, dispType )
-	, _data   ( NULL )
 {
 }
 
 Data::Data( const spec_reader::SpecNode& node )
 	: Element ( node )
-	, _data   ( NULL )
 {
 	setSpecData( node.getValues() );
-}
-
-Data::~Data()
-{
-	if( _data != NULL )
-	{
-		delete[] _data;
-		_data = NULL;
-	}
 }
 
 void Data::set( const char* data, const size_t& size )

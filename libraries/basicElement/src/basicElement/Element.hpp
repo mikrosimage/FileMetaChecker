@@ -24,9 +24,7 @@ public:
 	Element( const std::string& id, EType type, ESubType subType = eSubTypeUnknown, EDisplayType dispType = eDisplayTypeDefault );
 	Element( const spec_reader::SpecNode& node );
 
-	~Element()
-	{
-	}
+	~Element();
 
 	void setLabel( const std::string& label );
 	void setDisplayType( const std::string& displayType );
@@ -83,6 +81,7 @@ protected:
 	
 	EStatus       _status;
 	
+	char*         _data;
 	bool          _bigEndianData;
 };
 

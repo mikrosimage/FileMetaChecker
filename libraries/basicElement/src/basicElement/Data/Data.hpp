@@ -13,7 +13,6 @@ class Data : public Element
 public:
 	Data( const std::string& id, const ESubType& subType = eSubTypeRaw, const EDisplayType& dispType = eDisplayTypeDefault );
 	Data( const spec_reader::SpecNode& node ); 
-	~Data();
 
 	void set( const char* data, const size_t& size );
 	void setSpecData( const std::string& specValue );
@@ -34,7 +33,6 @@ private:
 private:
 	std::string                _specValue;
 	std::vector< std::string > _specValues;
-	char*                      _data;
 };
 
 }

@@ -53,7 +53,6 @@ class Number : public Element
 public:
 	Number( const std::string& id, const ESubType& subType = eSubTypeInt8, const EDisplayType& dispType = eDisplayTypeDefault );
 	Number( const spec_reader::SpecNode& node ); 
-	~Number();
 	
 	void set( const char* data, const size_t& size );
 	void setRanges( const std::vector< std::pair< std::string, std::string > >& ranges );
@@ -73,7 +72,6 @@ protected:
 private:
 	std::map< std::string, std::string >                 _rawMap;
 	std::vector< std::pair< std::string, std::string > > _rawRanges;
-	char* _data;
 };
 
 }

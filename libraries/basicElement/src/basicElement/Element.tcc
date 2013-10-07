@@ -15,6 +15,7 @@ Element::Element( const std::string& id, EType type, ESubType subType, EDisplayT
 	, _subType       ( subType )
 	, _displayType   ( dispType )
 	, _status        ( eStatusUnknown )
+	, _data          ( NULL )
 	, _bigEndianData ( true )
 {
 }
@@ -27,6 +28,7 @@ Element::Element( const spec_reader::SpecNode& node )
 	, _uniqueId      ( _lastUniqueId++ )
 	, _size          ( 0 )
 	, _status        ( eStatusUnknown )
+	, _data          ( NULL )
 	, _bigEndianData ( node.isBigEndian() )
 {
 	setType( node.getType() );
@@ -34,6 +36,14 @@ Element::Element( const spec_reader::SpecNode& node )
 	setDisplayType( node.getDisplayType() );
 }
 
+Element::~Element()
+{
+	if( _data != NULL )
+	{
+		delete[] _data;
+		_data = NULL;
+	}
+}
 
 void Element::setLabel( const std::string& label )
 {
