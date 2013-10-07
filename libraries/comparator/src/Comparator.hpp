@@ -47,9 +47,6 @@ public:
 	void compare( const std::string& specId, report_generator::Report& report );
 
 protected:
-	// template < typename SubType >
-	// SubType getNodeSubType( const std::string& nodeType );
-
 	template< typename ElementType >
 	std::shared_ptr< ElementType > getElement( const spec_reader::SpecNode& node );
 
