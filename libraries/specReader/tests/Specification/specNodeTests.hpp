@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode )
 		BOOST_CHECK_EQUAL( node.getType(),        "type"    );
 		BOOST_CHECK_EQUAL( node.getDisplayType(), "display" );
 		BOOST_CHECK_EQUAL( node.getCount(),       "123"     );
-		BOOST_CHECK_EQUAL( node.getRequired(),    "true"    );
+		BOOST_CHECK_EQUAL( node.getRequirement(), "true"    );
 		BOOST_CHECK_EQUAL( node.hasGroup(),       true      );
 		BOOST_CHECK_EQUAL( node.getGroupSize(),   "size"    );
 	}
@@ -197,9 +197,9 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 		bpt::read_json( isstream, tree );
 		
 		SpecNode node( tree.get_child( "header" ).begin(), 0, 1 );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "5" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "5" );
-		BOOST_CHECK_EQUAL( node.getRepetition().size(), 1 );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).first,  "5" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).second, "5" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().size(), 1 );
 	}
 	{
 		std::string jsonString = " { \"header\": [ ";
@@ -212,9 +212,9 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 		bpt::read_json( isstream, tree );
 		
 		SpecNode node( tree.get_child( "header" ).begin(), 0, 1 );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "value" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "value" );
-		BOOST_CHECK_EQUAL( node.getRepetition().size(), 1 );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).first,  "value" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).second, "value" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().size(), 1 );
 	}
 	{
 		std::string jsonString = " { \"header\": [ ";
@@ -229,9 +229,9 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 		bpt::read_json( isstream, tree );
 		
 		SpecNode node( tree.get_child( "header" ).begin(), 0, 1 );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "value1" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "value2" );
-		BOOST_CHECK_EQUAL( node.getRepetition().size(), 1 );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).first,  "value1" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).second, "value2" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().size(), 1 );
 	}
 	{
 		std::string jsonString = " { \"header\": [ ";
@@ -246,9 +246,9 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 		bpt::read_json( isstream, tree );
 		
 		SpecNode node( tree.get_child( "header" ).begin(), 0, 1 );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "value1" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "" );
-		BOOST_CHECK_EQUAL( node.getRepetition().size(), 1 );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).first,  "value1" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).second, "" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().size(), 1 );
 	}
 	{
 		std::string jsonString = " { \"header\": [ ";
@@ -264,11 +264,11 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 		bpt::read_json( isstream, tree );
 		
 		SpecNode node( tree.get_child( "header" ).begin(), 0, 1 );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "value1" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "value2" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(1).first,  "value3" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(1).second, "value4" );
-		BOOST_CHECK_EQUAL( node.getRepetition().size(), 2 );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).first,  "value1" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).second, "value2" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(1).first,  "value3" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(1).second, "value4" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().size(), 2 );
 	}
 	{
 		std::string jsonString = " { \"header\": [ ";
@@ -284,11 +284,11 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 		bpt::read_json( isstream, tree );
 		
 		SpecNode node( tree.get_child( "header" ).begin(), 0, 1 );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "value1" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(1).first,  "value2" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(1).second, "" );
-		BOOST_CHECK_EQUAL( node.getRepetition().size(), 2 );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).first,  "" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).second, "value1" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(1).first,  "value2" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(1).second, "" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().size(), 2 );
 	}
 	{
 		std::string jsonString = " { \"header\": [ ";
@@ -305,13 +305,13 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 		bpt::read_json( isstream, tree );
 		
 		SpecNode node( tree.get_child( "header" ).begin(), 0, 1 );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "value1" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(1).first,  "value2" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(1).second, "value3" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(2).first,  "" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(2).second, "value4" );
-		BOOST_CHECK_EQUAL( node.getRepetition().size(), 3 );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).first,  "value1" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).second, "" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(1).first,  "value2" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(1).second, "value3" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(2).first,  "" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(2).second, "value4" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().size(), 3 );
 	}
 	{
 		std::string jsonString = " { \"header\": [ ";
@@ -328,13 +328,13 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 		bpt::read_json( isstream, tree );
 		
 		SpecNode node( tree.get_child( "header" ).begin(), 0, 1 );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "value1" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(1).first,  "value2" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(1).second, "value3" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(2).first,  "value4" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(2).second, "value4" );
-		BOOST_CHECK_EQUAL( node.getRepetition().size(), 3 );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).first,  "value1" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).second, "" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(1).first,  "value2" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(1).second, "value3" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(2).first,  "value4" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(2).second, "value4" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().size(), 3 );
 	}
 	{
 		std::string jsonString = " { \"header\": [ ";
@@ -352,15 +352,15 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 		bpt::read_json( isstream, tree );
 		
 		SpecNode node( tree.get_child( "header" ).begin(), 0, 1 );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(0).first,  "value1" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(0).second, "" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(1).first,  "value2" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(1).second, "value3" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(2).first,  "value4" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(2).second, "value4" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(3).first,  "23" );
-		BOOST_CHECK_EQUAL( node.getRepetition().at(3).second, "23" );
-		BOOST_CHECK_EQUAL( node.getRepetition().size(), 4 );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).first,  "value1" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).second, "" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(1).first,  "value2" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(1).second, "value3" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(2).first,  "value4" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(2).second, "value4" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(3).first,  "23" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(3).second, "23" );
+		BOOST_CHECK_EQUAL( node.getRepetitions().size(), 4 );
 	}
 }
 

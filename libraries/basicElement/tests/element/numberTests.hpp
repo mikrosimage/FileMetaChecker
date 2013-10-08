@@ -784,6 +784,65 @@ LOG_INFO( "\n>>> basic_element_number_set_from_node <<<" );
 		BOOST_CHECK_EQUAL( num.getType(),    eTypeNumber );
 		BOOST_CHECK_EQUAL( num.getSubType(), eSubTypeUInt16 );
 	}
+	{
+		std::string jsonString = R"*(
+			{ "header": [
+				{
+					"id": "id",
+					"label": "label",
+					"type": "ascii",
+					"displayType": "raw",
+					"count": "23",
+					"groupSize": "number",
+					"required": "hello",
+					"endian": "little",
+					"optional": "true",
+					"ordered": "false",
+					"repeated": [
+						{ "min": "0", "max": "Max" }
+					],
+					"group": [
+					]					
+				}
+			  ]
+			}
+		)*";
+
+		std::istringstream isstream( jsonString );
+		boost::property_tree::ptree tree;
+		boost::property_tree::json_parser::read_json( isstream, tree );
+
+		spec_reader::SpecNode node( tree.get_child( "header" ).begin(), 0, 1 );
+		BOOST_CHECK_EQUAL( node.getId(),          "id"    );
+		BOOST_CHECK_EQUAL( node.getLabel(),       "label" );
+		BOOST_CHECK_EQUAL( node.getType(),        "ascii" );
+		BOOST_CHECK_EQUAL( node.getDisplayType(), "raw"   );
+		BOOST_CHECK_EQUAL( node.getCount(),       "23"    );
+		BOOST_CHECK_EQUAL( node.getGroupSize(),   "number" );
+		BOOST_CHECK_EQUAL( node.getRequirement(), "hello"  );
+		BOOST_CHECK_EQUAL( node.getRepetitions().size(), 1  );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).first,  "0"  );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).second, "Max"  );
+		BOOST_CHECK_EQUAL( node.isBigEndian(), false );
+		BOOST_CHECK_EQUAL( node.isOptional(),  true  );
+		BOOST_CHECK_EQUAL( node.isOrdered(),   false );
+		BOOST_CHECK_EQUAL( node.hasGroup(),    true  );
+
+		dbe::Data num( node );
+		BOOST_CHECK_EQUAL( num.getId(),    "id"    );
+		BOOST_CHECK_EQUAL( num.getLabel(), "label" );
+		BOOST_CHECK_EQUAL( num.getType(),  eTypeData );
+		BOOST_CHECK_EQUAL( num.getCount(),       "23"    );
+		BOOST_CHECK_EQUAL( num.getGroupSize(),   "number" );
+		BOOST_CHECK_EQUAL( num.getRequirement(), "hello"  );
+		BOOST_CHECK_EQUAL( num.getRepetitions().size(), 1  );
+		BOOST_CHECK_EQUAL( num.getRepetitions().at(0).first,  "0"  );
+		BOOST_CHECK_EQUAL( num.getRepetitions().at(0).second, "Max"  );
+		BOOST_CHECK_EQUAL( num.isBigEndian(), false );
+		BOOST_CHECK_EQUAL( num.isOptional(),  true  );
+		BOOST_CHECK_EQUAL( num.isOrdered(),   false );
+		BOOST_CHECK_EQUAL( num.hasGroup(),    true  );
+	}
 }
 
 BOOST_AUTO_TEST_SUITE_END()

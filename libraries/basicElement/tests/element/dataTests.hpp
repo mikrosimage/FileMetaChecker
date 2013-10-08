@@ -291,7 +291,7 @@ LOG_INFO( "\n>>> basic_element_data_set_from_node <<<" );
 					"id": "id",
 					"label": "label",
 					"type": "ascii",
-					"displayType": "raw"
+					"displayType": "raw"			
 				}
 			  ]
 			}
@@ -306,11 +306,79 @@ LOG_INFO( "\n>>> basic_element_data_set_from_node <<<" );
 		BOOST_CHECK_EQUAL( node.getLabel(),       "label" );
 		BOOST_CHECK_EQUAL( node.getType(),        "ascii" );
 		BOOST_CHECK_EQUAL( node.getDisplayType(), "raw"   );
+		BOOST_CHECK_EQUAL( node.getCount(),       ""      );
+		BOOST_CHECK_EQUAL( node.getGroupSize(),   ""      );
+		BOOST_CHECK_EQUAL( node.getRequirement(), ""      );
+
+		BOOST_CHECK_EQUAL( node.getRepetitions().size(), 0 );
+		BOOST_CHECK_EQUAL( node.isBigEndian(), true  );
+		BOOST_CHECK_EQUAL( node.isOptional(),  false );
+		BOOST_CHECK_EQUAL( node.isOrdered(),   true  );
+		BOOST_CHECK_EQUAL( node.hasGroup(),    false );
+	
+		dbe::Data data( node );
+		BOOST_CHECK_EQUAL( data.getId(),    "id"    );
+		BOOST_CHECK_EQUAL( data.getLabel(), "label" );
+		BOOST_CHECK_EQUAL( data.getType(),  eTypeData );
+	}
+	{
+		std::string jsonString = R"*(
+			{ "header": [
+				{
+					"id": "id",
+					"label": "label",
+					"type": "ascii",
+					"displayType": "raw",
+					"count": "23",
+					"groupSize": "number",
+					"required": "hello",
+					"endian": "little",
+					"optional": "true",
+					"ordered": "false",
+					"repeated": [
+						{ "min": "0", "max": "Max" }
+					],
+					"group": [
+					]					
+				}
+			  ]
+			}
+		)*";
+
+		std::istringstream isstream( jsonString );
+		boost::property_tree::ptree tree;
+		boost::property_tree::json_parser::read_json( isstream, tree );
+
+		spec_reader::SpecNode node( tree.get_child( "header" ).begin(), 0, 1 );
+		BOOST_CHECK_EQUAL( node.getId(),          "id"    );
+		BOOST_CHECK_EQUAL( node.getLabel(),       "label" );
+		BOOST_CHECK_EQUAL( node.getType(),        "ascii" );
+		BOOST_CHECK_EQUAL( node.getDisplayType(), "raw"   );
+		BOOST_CHECK_EQUAL( node.getCount(),       "23"    );
+		BOOST_CHECK_EQUAL( node.getGroupSize(),   "number" );
+		BOOST_CHECK_EQUAL( node.getRequirement(), "hello"  );
+		BOOST_CHECK_EQUAL( node.getRepetitions().size(), 1  );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).first,  "0"  );
+		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).second, "Max"  );
+		BOOST_CHECK_EQUAL( node.isBigEndian(), false );
+		BOOST_CHECK_EQUAL( node.isOptional(),  true  );
+		BOOST_CHECK_EQUAL( node.isOrdered(),   false );
+		BOOST_CHECK_EQUAL( node.hasGroup(),    true  );
 
 		dbe::Data data( node );
 		BOOST_CHECK_EQUAL( data.getId(),    "id"    );
 		BOOST_CHECK_EQUAL( data.getLabel(), "label" );
 		BOOST_CHECK_EQUAL( data.getType(),  eTypeData );
+		BOOST_CHECK_EQUAL( data.getCount(),       "23"    );
+		BOOST_CHECK_EQUAL( data.getGroupSize(),   "number" );
+		BOOST_CHECK_EQUAL( data.getRequirement(), "hello"  );
+		BOOST_CHECK_EQUAL( data.getRepetitions().size(), 1  );
+		BOOST_CHECK_EQUAL( data.getRepetitions().at(0).first,  "0"  );
+		BOOST_CHECK_EQUAL( data.getRepetitions().at(0).second, "Max"  );
+		BOOST_CHECK_EQUAL( data.isBigEndian(), false );
+		BOOST_CHECK_EQUAL( data.isOptional(),  true  );
+		BOOST_CHECK_EQUAL( data.isOrdered(),   false );
+		BOOST_CHECK_EQUAL( data.hasGroup(),    true  );
 	}
 }
 

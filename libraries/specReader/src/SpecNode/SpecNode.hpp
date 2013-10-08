@@ -23,12 +23,12 @@ public:
 	std::string getDisplayType() const;
 
 	std::string getCount() const;
-	std::string getRequired() const;
+	std::string getRequirement() const;
 
 	std::vector< std::string > getValues() const;
 
 	std::vector< std::pair< std::string, std::string > > getRange() const;
-	std::vector< std::pair< std::string, std::string > > getRepetition() const;
+	std::vector< std::pair< std::string, std::string > > getRepetitions() const;
 
 	std::map< std::string, std::string > getMap() const;
 

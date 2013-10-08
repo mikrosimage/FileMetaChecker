@@ -43,7 +43,7 @@ std::string SpecNode::getCount() const
 	return getProperty( kCount, "" );
 }
 
-std::string SpecNode::getRequired() const
+std::string SpecNode::getRequirement() const
 {
 	return getProperty( kRequired, "" );
 }
@@ -93,7 +93,7 @@ std::vector< std::pair< std::string, std::string > > SpecNode::getRange() const
 	return ranges;
 }
 
-std::vector< std::pair< std::string, std::string > > SpecNode::getRepetition() const
+std::vector< std::pair< std::string, std::string > > SpecNode::getRepetitions() const
 {
 	std::vector< std::pair< std::string, std::string > > repetitions;
 	if( boost::optional< const bpt::ptree& > repetitionNode = _node->second.get_child_optional( kRepetition ) )
@@ -101,10 +101,12 @@ std::vector< std::pair< std::string, std::string > > SpecNode::getRepetition() c
 		std::string repetitionExpr = _node->second.get< std::string >( kRepetition );
 		if( ! repetitionExpr.empty() )
 		{
-			std::pair< std::string, std::string > repetition;
-			repetition.first  = repetitionExpr;
-			repetition.second = repetitionExpr;
-			repetitions.push_back( repetition );
+			// std::pair< std::string, std::string > repetition;
+			// repetition.first  = repetitionExpr;
+			// repetition.second = repetitionExpr;
+			// repetitions.push_back( repetition );
+
+			repetitions.push_back( std::make_pair( repetitionExpr, repetitionExpr ) );
 		}
 		else
 		{

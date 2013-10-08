@@ -11,12 +11,16 @@ Element::Element( const std::string& id, EType type, ESubType subType, EDisplayT
 	, _warning       ( "" )
 	, _uniqueId      ( _lastUniqueId++ )
 	, _size          ( 0 )
+	, _repetitionId  ( 1 )
 	, _type          ( type )
 	, _subType       ( subType )
 	, _displayType   ( dispType )
 	, _status        ( eStatusUnknown )
 	, _data          ( NULL )
 	, _bigEndianData ( true )
+	, _isOptional    ( false )
+	, _isOrdered     ( true )
+	, _hasGroup      ( false )
 {
 }
 
@@ -27,9 +31,17 @@ Element::Element( const spec_reader::SpecNode& node )
 	, _warning       ( "" )
 	, _uniqueId      ( _lastUniqueId++ )
 	, _size          ( 0 )
+	, _repetitionId  ( 1 )
+	, _countExpr     ( node.getCount() )
+	, _groupSizeExpr ( node.getGroupSize() )
+	, _requiredExpr  ( node.getRequirement() )
+	, _repetExpr     ( node.getRepetitions() )
 	, _status        ( eStatusUnknown )
 	, _data          ( NULL )
 	, _bigEndianData ( node.isBigEndian() )
+	, _isOptional    ( node.isOptional() )
+	, _isOrdered     ( node.isOrdered() )
+	, _hasGroup      ( node.hasGroup() )
 {
 	setType( node.getType() );
 	setSubType( node.getType() );
@@ -62,9 +74,49 @@ void Element::setDisplayType( const std::string& displayType )
 		LOG_WARNING( _id << ": Unknown display type!" );
 }
 
-void Element::setBigEndianness( bool isBigEndian )
+void Element::setBigEndianness( const bool isBigEndian )
 {
 	_bigEndianData = isBigEndian;
+}
+
+void Element::setIsOptional( const bool isOptional )
+{
+	_isOptional = isOptional;
+}
+
+void Element::setIsOrdered( const bool isOrdered )
+{
+	_isOrdered = isOrdered;
+}
+
+void Element::setHasGroup( const bool hasGroup )
+{
+	_hasGroup = hasGroup;
+}
+
+void Element::setCount( const std::string& countExpr )
+{
+	_countExpr = countExpr;
+}
+
+void Element::setGroupSize( const std::string& groupSizeExpr )
+{
+	_groupSizeExpr = groupSizeExpr;
+}
+
+void Element::setRequirement( const std::string& requiredExpr )
+{
+	_requiredExpr = requiredExpr;
+}
+
+void Element::setRepetitions( const std::vector< std::pair< std::string, std::string > >& repetitions )
+{
+	_repetExpr = repetitions;
+}
+
+void Element::setRepetitionId( const size_t& iteration )
+{
+	_repetitionId = iteration;
 }
 
 void Element::setType( const std::string& type )
@@ -165,16 +217,6 @@ void Element::addErrorLabel( const std::string& error )
 void Element::addWarningLabel( const std::string& warning )
 {
 	_warning += warning;
-}
-
-std::string Element::getErrorLabel()
-{
-	return _error;
-}
-
-std::string Element::getWarningLabel()
-{
-	return _warning;
 }
 
 std::vector< std::pair< std::string, std::string > > Element::getCommonElementInfo()

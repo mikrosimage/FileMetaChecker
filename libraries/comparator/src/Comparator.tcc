@@ -57,9 +57,9 @@ void Comparator::checkNode( const sr::SpecNode& node, rg::ReportNode& reportNode
 
 	sr::SpecNode nextNode = node.next();
 
-	// get repetition 										// @todo: put it into SpecNode !!!!!!!!!!!
-	Vector< size_t >::Pair repetRange;
-	extractRepetition( currentNode.repetNumber, repetRange, node.getRepetition() );
+	// get repetition 										// @todo: put it into Element !!!!!!!!!!!
+	// Vector< size_t >::Pair repetRange;
+	// extractRepetition( currentNode.repetNumber, repetRange, node.getRepetition() );
 	checkRepetition( node, element, nextNode, reportNode, currentNode );
 
 	// node to report
@@ -149,10 +149,10 @@ void Comparator::checkRepetition( const sr::SpecNode&                           
 	                              const std::shared_ptr< basic_element::Element > element,
 	                              sr::SpecNode&                                   nextNode,
 	                              rg::ReportNode&                                 reportNode,
-	                              CurrentElement&                                 currentNode )
+	                              CurrentElement&                                 currentNode )	// @todo: put it into Element !!!!!!!!!!!
 {
 	Vector< size_t >::Pair repetRange;
-	extractRepetition( currentNode.repetNumber, repetRange, node.getRepetition() );
+	extractRepetition( currentNode.repetNumber, repetRange, node.getRepetitions() );
 
 	// check repetitions
 	if( currentNode.nodeIter < currentNode.repetNumber )
@@ -302,7 +302,7 @@ std::shared_ptr< ElementType > Comparator::getElement( const sr::SpecNode& node 
 	return element;
 }
 
-void Comparator::extractRepetition( size_t& repetNumber, Vector< size_t >::Pair& repetRange, const Vector< std::string >::Pair& nodeRepetitions )
+void Comparator::extractRepetition( size_t& repetNumber, Vector< size_t >::Pair& repetRange, const Vector< std::string >::Pair& nodeRepetitions )	// @todo: put it into Element !!!!!!!!!!!
 {
 	if( nodeRepetitions.size() > 0 )
 	{
@@ -333,7 +333,7 @@ void Comparator::extractRepetition( size_t& repetNumber, Vector< size_t >::Pair&
 	}
 }
 
-size_t Comparator::extractGroupSize( const std::string& groupSizeExpr )
+size_t Comparator::extractGroupSize( const std::string& groupSizeExpr )	// @todo: put it into Element !!!!!!!!!!!
 {
 	be::expression_parser::ExpressionParser repetParser( _elementList );
 	return repetParser.getExpressionResult< size_t >( groupSizeExpr );
