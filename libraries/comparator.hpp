@@ -36,7 +36,7 @@ private:
 	}
 	
 public:
-	void check( Spec& spec, FileReader& reader, Report& report )
+	void check( Spec& spec, /*filereader::FileReader& reader,*/ Report& report )
 	{
 		std::cout << "check start" << std::endl;
 		
