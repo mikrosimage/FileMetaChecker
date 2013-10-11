@@ -1,0 +1,6 @@
+[BOOST]
+inc=/path/to/boost/root
+libdir=/path/to/boost/libs
+
+[PYTHON]
+inc=/path/to/python
