@@ -5,8 +5,9 @@ env = Environment().Clone()
 config = ConfigParser.RawConfigParser()
 config.read('scons.cfg')
 
-env['CXX'] = 'clang++'  # 'g++'
-# print "CXX is:", env['CXX']
+# env['CXX'] = 'clang++'
+env['CXX'] = 'g++'
+print "CXX is:", env['CXX']
 
 env.Append(
         CPPPATH = [
@@ -20,15 +21,25 @@ env.Append(
                 config.get('PYTHON', 'inc')
                 ]
         )
+if env['CXX'] == 'clang++' :
+        env.Append(
+                CXXFLAGS = [
+                        '-std=c++11',
+                        '-fcolor-diagnostics',
+                        '-fPIC',
+                        #'-Wall', '-small' , '-fcompact', '-O', '-modern'
+                ]
+        )
+else :
+        env.Append(
+                CXXFLAGS = [
+                        '-std=gnu++0x',
+                        # '-fcolor-diagnostics',
+                        # '-fPIC',
+                        #'-Wall', '-small' , '-fcompact', '-O', '-modern'
+                ]
+        )
 
-env.Append(
-        CXXFLAGS = [
-                '-std=c++11',
-                '-fcolor-diagnostics',
-                '-fPIC',
-                #'-Wall', '-small' , '-fcompact', '-O', '-modern'
-        ]
-)
 
 env.SharedLibrary(
         'fileReader',

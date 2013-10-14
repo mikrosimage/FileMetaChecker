@@ -5,6 +5,8 @@
 
 #include <set>
 #include <string>
+#include <vector>
+#include <memory>
 
 namespace spec_reader
 {
@@ -17,7 +19,7 @@ namespace basic_element
 class Element
 {
 public:
-	Element( const spec_reader::SpecNode* node, const Element* prev );
+	Element( const spec_reader::SpecNode* node, const std::shared_ptr< Element > prev );
 	
 	const spec_reader::SpecNode* next( );
 	
@@ -29,7 +31,7 @@ public:
 	
 	std::string getStringStatus() const;
 	
-	Element*    getParent() const { return _parent; }
+	std::weak_ptr< Element > getParent() const { return _parent; }
 	
 	virtual void check() = 0;
 
@@ -44,9 +46,10 @@ protected:
 	size_t      _iteration;
 	EStatus     _status;
 	
-	Element*        _parent;
-	const Element*  _previous;
-	const spec_reader::SpecNode* _specNode;
+	std::weak_ptr< Element >                  _parent;
+	const std::weak_ptr< Element >            _previous;
+	const spec_reader::SpecNode*              _specNode;
+	std::vector< std::shared_ptr< Element > > _children;
 };
 
 }

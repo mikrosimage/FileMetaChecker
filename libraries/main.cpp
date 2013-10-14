@@ -17,6 +17,8 @@ int main( int argc, char** argv )
 	
 	c.check( s, f, r);
 
+	r.print();
+
 	return 0;
 }
 

@@ -8,7 +8,7 @@ namespace sr = spec_reader;
 namespace basic_element
 {
 
-Element::Element( const sr::SpecNode* node, const Element* prev )
+Element::Element( const sr::SpecNode* node, const std::shared_ptr< Element > prev )
 	: _id       ( node->getId() )
 	, _index    ( node->getIndex() )
 	, _type     ( node->getType() )
@@ -19,10 +19,10 @@ Element::Element( const sr::SpecNode* node, const Element* prev )
 	, _iteration   ( 1 )
 	, _previous    ( prev )
 {
-	if( node->isRepeated() > 1 && ( _previous != NULL ) )
+	if( node->isRepeated() > 1 && ( prev.use_count() != 0 ) )
 	{
-		const Element* e = _previous;
-		while( e != NULL )
+		std::shared_ptr< Element > e = _previous.lock();
+		while( e.use_count() != 0 )
 		{
 			if( e->getId() == node->getId() )
 			{
@@ -31,7 +31,9 @@ Element::Element( const sr::SpecNode* node, const Element* prev )
 			}
 			else
 			{
-				e = e->getParent();
+				if( e->getParent().use_count() == 0 )
+					break;
+				e = e->getParent().lock();
 			}
 		}
 	}
@@ -40,30 +42,31 @@ Element::Element( const sr::SpecNode* node, const Element* prev )
 const sr::SpecNode* Element::next( )
 {
 	if( _status == eStatusNotCheck )
-	{
 		return _specNode;
-	}
+
+	std::shared_ptr< Element > p;
+
+	if( _parent.use_count() != 0 )
+		p = _parent.lock();
 	
-	if( _specNode->isOptional() &&
-		_status == eStatusInvalid )
+	if( _specNode->isOptional() && _status == eStatusInvalid )
 	{
-		return _specNode->next( _parent );
+		return _specNode->next( p );
 	}
 	
-	if( _status == eStatusInvalidButSkip &&
-		_parent != NULL &&
-		( ! _parent->_specNode->isOrdered() ) )
+	if( _status == eStatusInvalidButSkip && _parent.use_count() != 0 && ( ! p->_specNode->isOrdered() ) )
 	{
 		std::cout << "Unordered, check one another baby !" << std::endl;
 		_status = eStatusInvalidButSkip;
 		
-		return _parent->_specNode->firstChild( _parent );
+		return p->_specNode->firstChild( p );
 	}
 	
 	if( _specNode->isGroup() && ! _checkedGroup )
 	{
 		_checkedGroup = true;
-		return _specNode->firstChild( this );
+		std::shared_ptr< Element > t( this );
+		return _specNode->firstChild( t );
 	}
 	
 	size_t count = _specNode->isRepeated();
@@ -74,29 +77,32 @@ const sr::SpecNode* Element::next( )
 			return _specNode;
 	}
 	
-	const sr::SpecNode* sn = _specNode->next( _parent );
+	const sr::SpecNode* sn = _specNode->next( p );
 	
-	if( sn == NULL && _parent != NULL )
+	if( sn == NULL && _parent.use_count() != 0 )
 	{
-		if( ! _parent->_specNode->isOrdered() )
+		if( ! p->_specNode->isOrdered() )
 		{
 			std::set< std::string > childIds;
 			
-			childIds = _parent->_specNode->getChildNodes();
+			childIds = p->_specNode->getChildNodes();
 			
-			const Element* p = _previous;
-			while( p->getId() != _parent->getId() )
+			std::shared_ptr< Element > prev;
+			if( _previous.use_count() != 0 )
 			{
-				for( auto id : childIds )
+				prev = _previous.lock();
+				while( prev->getId() != p->getId() )
 				{
-					if( p->getId() == id )
+					for( auto id : childIds )
 					{
-						childIds.erase( id );
+						if( prev->getId() == id )
+						{
+							childIds.erase( id );
+						}
 					}
+					prev = prev->_previous.lock();
 				}
-				p = p->_previous;
-			}
-			
+			}			
 			
 			std::cout << _id << "   " << _index << std::endl;
 			std::cout << "End of check Unordered " << childIds.size() << std::endl;
@@ -105,10 +111,10 @@ const sr::SpecNode* Element::next( )
 			{
 				std::cout << "prout" << std::endl;
 				//status = eStatusInvalid;
-				_parent->_status = eStatusInvalidForUnordered;
+				p->_status = eStatusInvalidForUnordered;
 			}
 		}
-		return _parent->next( );
+		return p->next( );
 	}
 	
 	return sn;
@@ -118,13 +124,14 @@ std::string Element::getStringStatus() const
 {
 	switch( _status )
 	{
+		case eStatusNotCheck           : return "not check";
+		case eStatusSkip               : return "skip";
+		case eStatusPassOverData       : return "pass over data";
 		case eStatusValid              : return "valid";
 		case eStatusInvalid            : return "invalid";
+		case eStatusInvalidButSkip     : return "invalid but skip";
 		case eStatusInvalidButOptional : return "invalid but optional";
 		case eStatusInvalidForUnordered: return "invalid for unordered";
-		case eStatusPassOverData       : return "pass over data";
-		case eStatusSkip               : return "skip";
-		default: break;
 	}
 	return "";
 }

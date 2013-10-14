@@ -1,5 +1,7 @@
 #include "Comparator.hpp"
 
+#include <iostream>
+
 #include <BasicElement/Element.hpp>
 #include <BasicElement/SubElements/Data.hpp>
 #include <BasicElement/SubElements/Number.hpp>
@@ -12,20 +14,20 @@ Comparator::Comparator()
 {
 }
 	
-basic_element::Element* Comparator::getElement( const spec_reader::SpecNode* node, const basic_element::Element* previous )
+std::shared_ptr< basic_element::Element > Comparator::getElement( const spec_reader::SpecNode* node, const std::shared_ptr< basic_element::Element > previous )
 {
 	switch( node->getType() )
 	{
 		case eTypeData:
 		{
-			basic_element::Data* d = new basic_element::Data( node, previous );
-			return static_cast< basic_element::Element* >( d );
+			std::shared_ptr< basic_element::Data > d( new basic_element::Data( node, previous ) );
+			return static_cast< std::shared_ptr< basic_element::Element > >( d );
 			break;
 		}
 		case eTypeNumber:
 		{
-			basic_element::Number* n = new basic_element::Number( node, previous );
-			return static_cast< basic_element::Element* >( n );
+			std::shared_ptr< basic_element::Number > n( new basic_element::Number( node, previous ) );
+			return static_cast< std::shared_ptr< basic_element::Element > >( n );
 			break;
 		}
 	}
@@ -37,22 +39,23 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 	std::cout << "check start" << std::endl;
 	
 	const spec_reader::SpecNode* s = NULL;
-	basic_element::Element* e = getElement( spec.getFirstNode( ), NULL );
-	
+	std::shared_ptr< basic_element::Number > wElem;
+	std::shared_ptr< basic_element::Element > e = getElement( spec.getFirstNode( ), wElem );
+
 	while( ( s = e->next() ) != NULL )
 	{
 		e = getElement( s, e );
 		e->check();
-		
+
 		if( e->getStatus() == eStatusInvalidButOptional ||
 			e->getStatus() == eStatusInvalidButSkip )
 		{
 			std::cout << "go back in raw file" << std::endl;
 			continue;
 		}
-		
+
 		report.addElement( e );
-		
+
 		if( e->getIndex() > 20 )
 			break;
 	}

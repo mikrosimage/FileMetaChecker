@@ -12,7 +12,7 @@ class Data : public Element
 {
 	
 public:
-	Data( const spec_reader::SpecNode* node, const Element* previous );	
+	Data( const spec_reader::SpecNode* node, const std::shared_ptr< Element > previous );	
 	void check();
 };
 

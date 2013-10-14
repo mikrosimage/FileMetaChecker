@@ -10,7 +10,7 @@ class Number : public Element
 {
 	
 public:
-	Number( const spec_reader::SpecNode* node, const Element* previous );
+	Number( const spec_reader::SpecNode* node, const std::shared_ptr< Element > previous );
 	void check();
 };
 

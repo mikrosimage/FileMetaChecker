@@ -4,7 +4,7 @@
 namespace basic_element
 {
 
-Data::Data( const spec_reader::SpecNode* node, const Element* previous )
+Data::Data( const spec_reader::SpecNode* node, const std::shared_ptr< Element > previous )
  : Element( node, previous )
 {
 }

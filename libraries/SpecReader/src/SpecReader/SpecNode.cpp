@@ -1,4 +1,7 @@
 #include "SpecNode.hpp"
+
+#include <sstream>
+
 #include <BasicElement/Element.hpp>
 
 namespace be = basic_element;
@@ -8,13 +11,13 @@ namespace spec_reader
 
 size_t SpecNode::_globalIndex = 0;
 
-SpecNode::SpecNode( be::Element* p )
+SpecNode::SpecNode( std::shared_ptr< be::Element > p )
 	: _index( _globalIndex++ )
 	, _parent( p )
 {
 }
 
-SpecNode* SpecNode::next( be::Element* parent ) const
+SpecNode* SpecNode::next( std::shared_ptr< be::Element > parent ) const
 {
 	if( _index == 8 ||
 		_index == 10 ||
@@ -24,7 +27,9 @@ SpecNode* SpecNode::next( be::Element* parent ) const
 		return NULL;
 	
 	SpecNode* s = new SpecNode( parent );
-	s->setId( "next " + _index );
+	std::ostringstream osstrId;
+	osstrId << "next " << _index; 
+	s->setId( osstrId.str() );
 	s->setType( eTypeData );
 	return s;
 }
@@ -63,10 +68,12 @@ bool SpecNode::isOptional() const
 	return false;
 }
 
-SpecNode* SpecNode::firstChild( be::Element* e ) const
+SpecNode* SpecNode::firstChild( std::shared_ptr< be::Element > e ) const
 {
 	SpecNode* s = new SpecNode( e );
-	s->setId( "child" );
+	std::ostringstream osstrId;
+	osstrId << "child " << _index; 
+	s->setId( osstrId.str() );
 	s->setType( eTypeNumber );
 	return s;
 }
