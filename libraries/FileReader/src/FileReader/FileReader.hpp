@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 
-namespace filereader
+namespace file_reader
 {
 
 class FileReader

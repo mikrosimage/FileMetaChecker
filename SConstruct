@@ -1,28 +1,78 @@
-EnsureSConsVersion( 1, 2 )
-EnsurePythonVersion( 2, 5 )
-
 import os
-import sys
+import ConfigParser
 
-sys.path.append('tools')
-from sconsProject import SConsProject
+env = Environment().Clone()
+config = ConfigParser.RawConfigParser()
+config.read('scons.cfg')
 
+env['CXX'] = 'clang++'  # 'g++'
+# print "CXX is:", env['CXX']
 
-class QualityCheck( SConsProject ):
-	'''
-	The project compilation object.
-	'''
+env.Append(
+        CPPPATH = [
+                '#',
+                '#libraries',
+                '#libraries/SpecReader/src',
+                '#libraries/BasicElement/src',
+                '#libraries/FileReader/src',
+                '#libraries/ReportGenerator/src',
+                '#libraries/Comparator/src',
+                config.get('PYTHON', 'inc')
+                ]
+        )
 
+env.Append(
+        CXXFLAGS = [
+                '-std=c++11',
+                '-fcolor-diagnostics',
+                '-fPIC',
+                #'-Wall', '-small' , '-fcompact', '-O', '-modern'
+        ]
+)
 
+env.SharedLibrary(
+        'fileReader',
+        Glob( 'libraries/FileReader/src/FileReader/*.cpp' ),
+        )
 
-#______________________________________________________________________________#
+env.SharedLibrary(
+        'specReader',
+        Glob( 'libraries/SpecReader/src/SpecReader/*.cpp' ),
+        )
 
-# Create the object available in all SConscripts
-project = QualityCheck()
-Export('project')
-Export({'libs':project.libs})
+env.SharedLibrary(
+        'basicElement',
+        [ Glob( 'libraries/BasicElement/src/BasicElement/*.cpp' ), 
+          Glob( 'libraries/BasicElement/src/BasicElement/SubElements/*.cpp' ),
+        ],
+        LIBPATH='.',
+        LIBS=['specReader'],
+        )
 
-# Load SConscript files
-project.begin()
-project.SConscript()
-project.end()
+env.SharedLibrary(
+        'comparator',
+        Glob( 'libraries/Comparator/src/Comparator/*.cpp' ),
+        LIBPATH='.',
+        LIBS=['basicElement'],
+        )
+
+env.SharedLibrary(
+        'reportGenerator',
+        Glob( 'libraries/ReportGenerator/src/ReportGenerator/*.cpp' ),
+        LIBPATH='.',
+        LIBS=['basicElement'],
+        )
+
+env.Program(
+        'mikqc',
+        # Glob( 'app/*.cpp' ),
+        Glob( 'libraries/main.cpp' ),
+        LIBPATH='.',
+        LIBS=['fileReader',
+              'specReader',
+              'basicElement',
+              'comparator',
+              'reportGenerator'
+             ],
+        )
+

@@ -1,6 +1,6 @@
 #include "FileReader.hpp"
 
-namespace filereader
+namespace file_reader
 {
 
 FileReader::FileReader( std::streambuf* inStream )

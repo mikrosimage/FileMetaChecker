@@ -1,20 +1,22 @@
 #include <iostream>
 
-#include "spec.hpp"
-#include "report.hpp"
-#include "fileReader/src/FileReader/FileReader.hpp"
-#include "comparator.hpp"
+#include <SpecReader/Specification.hpp>
+#include <FileReader/FileReader.hpp>
+#include <ReportGenerator/Report.hpp>
+#include <Comparator/Comparator.hpp>
 
 int main( int argc, char** argv )
 {
 	Comparator c;
 
 	// std::stringbuf buffer;
-	// filereader::FileReader f( NULL );
+	file_reader::FileReader f( NULL );
 
-	Report r;
-	Spec s;
+	report_generator::Report r;
+	spec_reader::Specification s;
 	
-	c.check( s, /*f,*/ r);
+	c.check( s, f, r);
+
+	return 0;
 }
 
