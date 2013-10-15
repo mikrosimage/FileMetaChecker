@@ -4,8 +4,12 @@
 #include <Common/common.hpp>
 
 #include <set>
+#include <vector>
+#include <map>
 #include <string>
 #include <memory>
+
+#include <boost/property_tree/ptree.hpp>
 
 namespace basic_element
 {
@@ -18,32 +22,43 @@ namespace spec_reader
 class SpecNode
 {
 public:
-	SpecNode( std::shared_ptr< basic_element::Element > p = std::shared_ptr< basic_element::Element >() );
-	
-	SpecNode* next( std::shared_ptr< basic_element::Element > parent ) const;
-	
-	void setId  ( const std::string& i ){ _id = i;   }
-	void setType( const EType& t )      { _type = t; }
-	
-	std::string             getId( )    const { return _id; }
-	size_t                  getIndex( ) const { return _index; }
-	EType                   getType( )  const { return _type; }
-	std::shared_ptr< basic_element::Element > getParent() const { return _parent; }
+	SpecNode( const boost::property_tree::ptree::const_iterator node, 
+		      std::shared_ptr< basic_element::Element > p = std::shared_ptr< basic_element::Element >() );
+
+	size_t getIndex( ) const { return _index; }
+
+	std::string  getId()          const;
+	std::string  getLabel()       const;
+	EType        getType()        const;
+	ESubType     getSubType()     const;
+	EDisplayType getDisplayType() const;
+	std::string  getCount()       const;
+	std::string  getRequirement() const;
+	std::string  getGroupSize()   const;
 	
 	bool   isGroup()    const;
 	bool   isOrdered()  const;
 	bool   isOptional() const;
 	size_t isRepeated() const;
-		
-	SpecNode* firstChild( std::shared_ptr< basic_element::Element > e ) const;
+
+	std::vector< std::string >                           getValues()      const;
+	std::vector< std::pair< std::string, std::string > > getRange()       const;
+	std::vector< std::pair< std::string, std::string > > getRepetitions() const;
+	std::map< std::string, std::string >                 getMap()         const;
 	
-	std::set< std::string > getChildNodes() const;
+	std::shared_ptr< basic_element::Element > getParent() const { return _parent; }
+	SpecNode* next      ( std::shared_ptr< basic_element::Element > parent  ) const;
+	SpecNode* firstChild( std::shared_ptr< basic_element::Element > element ) const;
+	std::set< std::string > getChildrenNodes() const;
 	
 private:
-	std::string             _id;
-	size_t                  _index;
-	EType                   _type;
-	std::shared_ptr< basic_element::Element > _parent;
+	std::string getProperty( const std::string& prop ) const;
+	std::string getProperty( const std::string& prop, const std::string& defaultValue ) const;
+
+private:
+	size_t _index;
+	boost::property_tree::ptree::const_iterator _node;
+	std::shared_ptr< basic_element::Element >   _parent;
 	
 	static size_t _globalIndex;
 };

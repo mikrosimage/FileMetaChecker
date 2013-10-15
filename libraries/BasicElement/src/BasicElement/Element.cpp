@@ -85,7 +85,7 @@ const sr::SpecNode* Element::next( )
 		{
 			std::set< std::string > childIds;
 			
-			childIds = p->_specNode->getChildNodes();
+			childIds = p->_specNode->getChildrenNodes();
 			
 			std::shared_ptr< Element > prev;
 			if( _previous.use_count() != 0 )
@@ -109,7 +109,7 @@ const sr::SpecNode* Element::next( )
 			
 			if( childIds.size() != 0 )
 			{
-				std::cout << "prout" << std::endl;
+				std::cout << "prout" << std::endl;		// Error or Warning ?
 				//status = eStatusInvalid;
 				p->_status = eStatusInvalidForUnordered;
 			}
