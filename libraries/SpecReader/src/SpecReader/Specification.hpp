@@ -9,17 +9,22 @@ namespace spec_reader
 class Specification
 {
 public:
-	Specification()
-	{
-	}
-	
-	SpecNode* getFirstNode( )
-	{
-		SpecNode* s = new SpecNode();
-		s->setId( "firstNode" );
-		s->setType( eTypeNumber );
-		return s;
-	}
+	Specification();
+	~Specification();
+
+	void setFromTree  ( const boost::property_tree::ptree&  spec );
+	bool setFromFile  ( const std::string& filepath );
+	void setFromString( const std::string& string );
+
+	std::string getId();
+	std::string getLabel();
+	std::string getType();
+	std::vector< std::string > getSupportedExtensions();
+
+	SpecNode* getFirstNode();
+
+private:
+	boost::property_tree::ptree _specTree;
 };
 
 }
