@@ -1,12 +1,6 @@
-Import( 'project', 'libs' )
 
-project.StaticLibrary(
-		'fileReader',
-		dirs      = ['src'],
-		includes  = ['src'],
-		libraries = [
-			libs.boost,
-			libs.common,
-			],
-		shared = True
-	)
+# env.SharedLibrary(
+#         'fileReader',
+#         sources=Glob( 'src/FileReader/*.cpp' ),
+#         env['CPPPATH'].append('./src')
+#         )

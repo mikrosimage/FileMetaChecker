@@ -5,6 +5,7 @@ env = Environment().Clone()
 config = ConfigParser.RawConfigParser()
 config.read('scons.cfg')
 
+# env['CC'] = 'clang'
 # env['CXX'] = 'clang++'
 env['CXX'] = 'g++'
 print "CXX is:", env['CXX']
@@ -18,7 +19,8 @@ env.Append(
                 '#libraries/FileReader/src',
                 '#libraries/ReportGenerator/src',
                 '#libraries/Comparator/src',
-                config.get('PYTHON', 'inc')
+                config.get('PYTHON', 'inc'),
+                config.get('BOOST', 'inc'),
                 ]
         )
 if env['CXX'] == 'clang++' :
@@ -41,14 +43,16 @@ else :
         )
 
 
-env.SharedLibrary(
-        'fileReader',
-        Glob( 'libraries/FileReader/src/FileReader/*.cpp' ),
-        )
+# env.SharedLibrary(
+#         'fileReader',
+#         Glob( 'libraries/FileReader/src/FileReader/*.cpp' ),
+#         )
 
 env.SharedLibrary(
         'specReader',
         Glob( 'libraries/SpecReader/src/SpecReader/*.cpp' ),
+        LIBPATH=config.get('BOOST', 'libdir'),
+        LIBS=['boost_filesystem'],
         )
 
 env.SharedLibrary(
@@ -78,12 +82,16 @@ env.Program(
         'mikqc',
         # Glob( 'app/*.cpp' ),
         Glob( 'libraries/main.cpp' ),
-        LIBPATH='.',
+        LIBPATH=[ '.', 
+                  config.get('BOOST', 'libdir'), 
+                ],
         LIBS=['fileReader',
               'specReader',
               'basicElement',
               'comparator',
-              'reportGenerator'
+              'reportGenerator',
+              'boost_system',
+              'boost_filesystem',
              ],
         )
 
