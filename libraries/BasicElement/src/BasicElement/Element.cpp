@@ -9,15 +9,15 @@ namespace basic_element
 {
 
 Element::Element( const sr::SpecNode* node, const std::shared_ptr< Element > prev )
-	: _id       ( node->getId() )
-	, _index    ( node->getIndex() )
-	, _type     ( node->getType() )
-	, _specNode ( node )
-	, _status   ( eStatusNotCheck )
-	, _parent   ( node->getParent() )
+	: _id          ( node->getId() )
+	, _type        ( node->getType() )
 	, _checkedGroup( false )
+	, _index       ( node->getIndex() )
 	, _iteration   ( 1 )
+	, _status      ( eStatusNotCheck )
+	, _parent      ( node->getParent() )
 	, _previous    ( prev )
+	, _specNode    ( node )
 {
 	if( node->isRepeated() > 1 && ( prev.use_count() != 0 ) )
 	{
