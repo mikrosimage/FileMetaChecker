@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 
 
 namespace be  = basic_element;
@@ -55,42 +56,28 @@ EType SpecNode::getType() const
 
 ESubType SpecNode::getSubType() const
 {
-	std::string subType = getProperty( kType );
-	if( subType == kInt8         ) { return eSubTypeInt8;         }
-	if( subType == kUInt8        ) { return eSubTypeUInt8;        }
-	if( subType == kInt16        ) { return eSubTypeInt16;        }
-	if( subType == kUInt16       ) { return eSubTypeUInt16;       }
-	if( subType == kInt32        ) { return eSubTypeInt32;        }
-	if( subType == kUInt32       ) { return eSubTypeUInt32;       }
-	if( subType == kInt64        ) { return eSubTypeInt64;        }
-	if( subType == kUInt64       ) { return eSubTypeUInt64;       }
-	if( subType == kFloat        ) { return eSubTypeFloat;        }
-	if( subType == kDouble       ) { return eSubTypeDouble;       }
-	if( subType == kIeeeExtended ) { return eSubTypeIeeeExtended; }
-	if( subType == kAscii        ) { return eSubTypeAscii;        }
-	if( subType == kHexa         ) { return eSubTypeHexa;         }
-	if( subType == kRaw          ) { return eSubTypeRaw;          }
-	return eSubTypeUnknown;
+	try
+	{
+		return subTypeMap.at( getProperty( kType ) );
+	}
+	catch( const std::out_of_range& oor )
+	{
+		std::cout << "Warning : Unknown subtype" << std::endl;
+		return eSubTypeUnknown;
+	}
 }
 
 EDisplayType SpecNode::getDisplayType() const
 {
-	std::string displayType = getProperty( kDisplayType, "" );
-	if( displayType == kInt8         ) { return eDisplayTypeNumbers; }
-	if( displayType == kUInt8        ) { return eDisplayTypeNumbers; }
-	if( displayType == kInt16        ) { return eDisplayTypeNumbers; }
-	if( displayType == kUInt16       ) { return eDisplayTypeNumbers; }
-	if( displayType == kInt32        ) { return eDisplayTypeNumbers; }
-	if( displayType == kUInt32       ) { return eDisplayTypeNumbers; }
-	if( displayType == kInt64        ) { return eDisplayTypeNumbers; }
-	if( displayType == kUInt64       ) { return eDisplayTypeNumbers; }
-	if( displayType == kFloat        ) { return eDisplayTypeNumbers; }
-	if( displayType == kDouble       ) { return eDisplayTypeNumbers; }
-	if( displayType == kIeeeExtended ) { return eDisplayTypeNumbers; }
-	if( displayType == kAscii        ) { return eDisplayTypeAscii;   }
-	if( displayType == kHexa         ) { return eDisplayTypeHexa;    }
-	if( displayType == kRaw          ) { return eDisplayTypeRaw;     }
-	return eDisplayTypeDefault;
+	try
+	{
+		return displayTypeMap.at( getProperty( kDisplayType, "" ) );
+	}
+	catch( const std::out_of_range& oor )
+	{
+		std::cout << "Warning : Unknown displayType" << std::endl;
+		return eDisplayTypeDefault;
+	}
 }
 
 std::string SpecNode::getCount() const
