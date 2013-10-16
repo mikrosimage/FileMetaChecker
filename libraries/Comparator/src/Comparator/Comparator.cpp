@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include <BasicElement/Element.hpp>
+#include <Common/Element.hpp>
 #include <BasicElement/SubElements/Data.hpp>
 #include <BasicElement/SubElements/Number.hpp>
 
@@ -22,14 +22,13 @@ std::shared_ptr< basic_element::Element > Comparator::getElement( const spec_rea
 		{
 			std::shared_ptr< basic_element::Data > d( new basic_element::Data( node, previous ) );
 			return static_cast< std::shared_ptr< basic_element::Element > >( d );
-			break;
 		}
 		case eTypeNumber:
 		{
 			std::shared_ptr< basic_element::Number > n( new basic_element::Number( node, previous ) );
 			return static_cast< std::shared_ptr< basic_element::Element > >( n );
-			break;
 		}
+		default: break;
 	}
 	return NULL;
 }
@@ -39,13 +38,13 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 	std::cout << "check start" << std::endl;
 	
 	const spec_reader::SpecNode* s = NULL;
-	std::shared_ptr< basic_element::Number > wElem;
-	std::shared_ptr< basic_element::Element > e = getElement( spec.getFirstNode( ), wElem );
+	std::shared_ptr< basic_element::Number > prev;
+	std::shared_ptr< basic_element::Element > e = getElement( spec.getFirstNode( ), prev );		// get first element
 
-	while( ( s = e->next() ) != NULL )
+	while( ( s = e->next() ) != NULL )	// if end of specification : stop
 	{
-		e = getElement( s, e );
-		e->check();
+		e = getElement( s, e );			// get an element
+		e->check();						// check it
 
 		if( e->getStatus() == eStatusInvalidButOptional ||
 			e->getStatus() == eStatusInvalidButSkip )
@@ -54,9 +53,9 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 			continue;
 		}
 
-		report.addElement( e );
+		report.addElement( e );			// add the element to report
 
-		if( e->getIndex() > 20 )
+		if( e->getIndex() > 20 )		// @todelete
 			break;
 	}
 	

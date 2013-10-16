@@ -1,8 +1,9 @@
 #include "SpecNode.hpp"
+#include <Common/Element.hpp>
 
+#include <iostream>
 #include <sstream>
 
-#include <BasicElement/Element.hpp>
 
 namespace be  = basic_element;
 namespace bpt = boost::property_tree;
@@ -13,8 +14,8 @@ namespace spec_reader
 size_t SpecNode::_globalIndex = 0;
 
 SpecNode::SpecNode( const bpt::ptree::const_iterator node, std::shared_ptr< be::Element > p )
-	: _node( node )
-	, _index ( _globalIndex++ )
+	: _index ( _globalIndex++ )
+	, _node( node )
 	, _parent( p )
 {
 }
