@@ -83,7 +83,7 @@ enum EType
 	eTypeNumber,
 	eTypeExif,
 	eTypeData,
-	eTypeKlv
+	eTypeKlv,
 };
 
 enum ESubType
@@ -102,16 +102,16 @@ enum ESubType
 	eSubTypeIeeeExtended,
 	eSubTypeAscii,
 	eSubTypeHexa,
-	eSubTypeRaw
+	eSubTypeRaw,
 };
 
 enum EDisplayType
 {
 	eDisplayTypeDefault = 0,
-	eDisplayTypeRaw,
+	eDisplayTypeNumbers,
 	eDisplayTypeAscii,
 	eDisplayTypeHexa,
-	eDisplayTypeNumbers
+	eDisplayTypeRaw,
 };
 
 enum EStatus
@@ -123,13 +123,11 @@ enum EStatus
 	eStatusInvalidForUnordered,
 	eStatusInvalidButSkip,
 	eStatusPassOverData,
-	eStatusSkip
+	eStatusSkip,
 };
 
-static const std::map< std::string, ESubType > subTypeMap {
-	{ kAscii,        eSubTypeAscii        },
-	{ kHexa,         eSubTypeHexa         },
-	{ kRaw,          eSubTypeRaw          },
+static const std::map< std::string, ESubType > subTypeMap
+{
 	{ kInt8,         eSubTypeInt8         },
 	{ kUInt8,        eSubTypeUInt8        },
 	{ kInt16,        eSubTypeInt16        },
@@ -141,6 +139,28 @@ static const std::map< std::string, ESubType > subTypeMap {
 	{ kFloat,        eSubTypeFloat        },
 	{ kDouble,       eSubTypeDouble       },
 	{ kIeeeExtended, eSubTypeIeeeExtended },
+	{ kAscii,        eSubTypeAscii        },
+	{ kHexa,         eSubTypeHexa         },
+	{ kRaw,          eSubTypeRaw          },
+};
+
+static const std::map< std::string, EDisplayType > displayTypeMap
+{
+	{ "",            eDisplayTypeDefault },
+	{ kInt8,         eDisplayTypeNumbers },
+	{ kUInt8,        eDisplayTypeNumbers },
+	{ kInt16,        eDisplayTypeNumbers },
+	{ kUInt16,       eDisplayTypeNumbers },
+	{ kInt32,        eDisplayTypeNumbers },
+	{ kUInt32,       eDisplayTypeNumbers },
+	{ kInt64,        eDisplayTypeNumbers },
+	{ kUInt64,       eDisplayTypeNumbers },
+	{ kFloat,        eDisplayTypeNumbers },
+	{ kDouble,       eDisplayTypeNumbers },
+	{ kIeeeExtended, eDisplayTypeNumbers },
+	{ kAscii,        eDisplayTypeAscii   },
+	{ kHexa,         eDisplayTypeHexa    },
+	{ kRaw,          eDisplayTypeRaw     },
 };
 
 #endif
