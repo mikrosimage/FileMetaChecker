@@ -2,6 +2,7 @@
 #define _COMMON_COMMON_HPP_
 
 #include <string>
+#include <map>
 
 // standard definition labels
 static const std::string kExtension = "extension";
@@ -123,6 +124,23 @@ enum EStatus
 	eStatusInvalidButSkip,
 	eStatusPassOverData,
 	eStatusSkip
+};
+
+static const std::map< std::string, ESubType > subTypeMap {
+	{ kAscii,        eSubTypeAscii        },
+	{ kHexa,         eSubTypeHexa         },
+	{ kRaw,          eSubTypeRaw          },
+	{ kInt8,         eSubTypeInt8         },
+	{ kUInt8,        eSubTypeUInt8        },
+	{ kInt16,        eSubTypeInt16        },
+	{ kUInt16,       eSubTypeUInt16       },
+	{ kInt32,        eSubTypeInt32        },
+	{ kUInt32,       eSubTypeUInt32       },
+	{ kInt64,        eSubTypeInt64        },
+	{ kUInt64,       eSubTypeUInt64       },
+	{ kFloat,        eSubTypeFloat        },
+	{ kDouble,       eSubTypeDouble       },
+	{ kIeeeExtended, eSubTypeIeeeExtended },
 };
 
 #endif
