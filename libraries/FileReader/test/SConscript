@@ -1,4 +1,12 @@
-# testEnv = env.Clone()
-# testEnv['CPPPATH'].append('./test/')
-# testEnv['LIBS'].append('boost_unit_test_framework')
+Import( 'project', 'libs' )
+
+project.UnitTest(
+	target = project.getDirs([-1]),
+	dirs = ['.'],
+	libraries = [
+		libs.fileReader,
+		libs.boost_unit_test_framework,
+	]
+)
+
 

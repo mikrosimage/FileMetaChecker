@@ -1,97 +1,29 @@
+EnsureSConsVersion( 1, 2 )
+EnsurePythonVersion( 2, 5 )
+
 import os
-import ConfigParser
+import sys
 
-env = Environment().Clone()
-config = ConfigParser.RawConfigParser()
-config.read('scons.cfg')
-
-# env['CC'] = 'clang'
-# env['CXX'] = 'clang++'
-env['CXX'] = 'g++'
-print "CXX is:", env['CXX']
-
-env.Append(
-        CPPPATH = [
-                '#',
-                '#libraries',
-                '#libraries/SpecReader/src',
-                '#libraries/BasicElement/src',
-                '#libraries/FileReader/src',
-                '#libraries/ReportGenerator/src',
-                '#libraries/Comparator/src',
-                config.get('PYTHON', 'inc'),
-                config.get('BOOST', 'inc'),
-                ]
-        )
-if env['CXX'] == 'clang++' :
-        env.Append(
-                CXXFLAGS = [
-                        '-std=c++11',
-                        '-fcolor-diagnostics',
-                        '-fPIC',
-                        #'-Wall', '-small' , '-fcompact', '-O', '-modern'
-                ]
-        )
-else :
-        env.Append(
-                CXXFLAGS = [
-                        '-std=gnu++0x',
-                        # '-fcolor-diagnostics',
-                        # '-fPIC',
-                        #'-Wall', '-small' , '-fcompact', '-O', '-modern'
-                ]
-        )
+sys.path.append('tools')
+from sconsProject import SConsProject
 
 
-# env.SharedLibrary(
-#         'fileReader',
-#         Glob( 'libraries/FileReader/src/FileReader/*.cpp' ),
-#         )
+class QualityCheck( SConsProject ):
+        '''
+        The project compilation object.
+        '''
 
-env.SharedLibrary(
-        'specReader',
-        Glob( 'libraries/SpecReader/src/SpecReader/*.cpp' ),
-        LIBPATH=config.get('BOOST', 'libdir'),
-        LIBS=['boost_filesystem'],
-        )
 
-env.SharedLibrary(
-        'basicElement',
-        [ Glob( 'libraries/BasicElement/src/BasicElement/*.cpp' ), 
-          Glob( 'libraries/BasicElement/src/BasicElement/SubElements/*.cpp' ),
-        ],
-        LIBPATH='.',
-        LIBS=['specReader'],
-        )
 
-env.SharedLibrary(
-        'comparator',
-        Glob( 'libraries/Comparator/src/Comparator/*.cpp' ),
-        LIBPATH='.',
-        LIBS=['basicElement'],
-        )
+#______________________________________________________________________________#
 
-env.SharedLibrary(
-        'reportGenerator',
-        Glob( 'libraries/ReportGenerator/src/ReportGenerator/*.cpp' ),
-        LIBPATH='.',
-        LIBS=['basicElement'],
-        )
+# Create the object available in all SConscripts
+project = QualityCheck()
+Export('project')
+Export({'libs':project.libs})
 
-env.Program(
-        'mikqc',
-        # Glob( 'app/*.cpp' ),
-        Glob( 'libraries/main.cpp' ),
-        LIBPATH=[ '.', 
-                  config.get('BOOST', 'libdir'), 
-                ],
-        LIBS=['fileReader',
-              'specReader',
-              'basicElement',
-              'comparator',
-              'reportGenerator',
-              'boost_system',
-              'boost_filesystem',
-             ],
-        )
+# Load SConscript files
+project.begin()
+project.SConscript()
+project.end()
 

@@ -1,0 +1,8 @@
+Import( 'project', 'libs' )
+
+project.ObjectLibrary(
+		'common',
+		includes=[project.getRealAbsoluteCwd('src')],
+	)
+
+

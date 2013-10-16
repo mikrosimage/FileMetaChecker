@@ -1,13 +1,13 @@
 Import( 'project', 'libs' )
 
 project.StaticLibrary(
-		'fileReader',
+		'basicElement',
 		dirs      = ['src'],
 		includes  = ['src'],
 		libraries = [
-			libs.boost,
-			# libs.common,
-			],
+			libs.common,
+			libs.specReader,
+		],
 		shared = True
 	)
 
