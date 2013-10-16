@@ -7,6 +7,7 @@ project.StaticLibrary(
 		libraries = [
 			libs.common,
 			libs.boost,
+			libs.boost_filesystem,
 		],
 		shared = True
 	)
