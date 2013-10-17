@@ -23,7 +23,7 @@ class SpecNode
 {
 public:
 	SpecNode( const boost::property_tree::ptree::const_iterator node, 
-		      std::shared_ptr< basic_element::Element > p = std::shared_ptr< basic_element::Element >() );
+		      std::shared_ptr< basic_element::Element > parent = std::shared_ptr< basic_element::Element >() );
 
 	size_t getIndex( ) const { return _index; }
 
@@ -36,10 +36,11 @@ public:
 	std::string  getRequirement() const;
 	std::string  getGroupSize()   const;
 	
-	bool   isGroup()    const;
-	bool   isOrdered()  const;
-	bool   isOptional() const;
-	size_t isRepeated() const;
+	bool   isGroup()     const;
+	bool   isOrdered()   const;
+	bool   isOptional()  const;
+	bool   isBigEndian() const;
+	size_t isRepeated()  const;
 
 	std::vector< std::string >                           getValues()      const;
 	std::vector< std::pair< std::string, std::string > > getRange()       const;
@@ -47,8 +48,11 @@ public:
 	std::map< std::string, std::string >                 getMap()         const;
 	
 	std::shared_ptr< basic_element::Element > getParent() const { return _parent; }
-	SpecNode* next      ( std::shared_ptr< basic_element::Element > parent  ) const;
+	SpecNode* next() const;
+	SpecNode* next      ( std::shared_ptr< basic_element::Element > parent ) const;
 	SpecNode* firstChild( std::shared_ptr< basic_element::Element > element ) const;
+	
+	size_t getChildrenNumber() const;
 	std::set< std::string > getChildrenNodes() const;
 	
 private:

@@ -1,5 +1,6 @@
 #include "SpecNode.hpp"
 #include <Common/Element.hpp>
+#include <Common/log.hpp>
 
 #include <iostream>
 #include <sstream>
@@ -14,10 +15,10 @@ namespace spec_reader
 
 size_t SpecNode::_globalIndex = 0;
 
-SpecNode::SpecNode( const bpt::ptree::const_iterator node, std::shared_ptr< be::Element > p )
+SpecNode::SpecNode( const bpt::ptree::const_iterator node, std::shared_ptr< be::Element > parent )
 	: _index ( _globalIndex++ )
 	, _node( node )
-	, _parent( p )
+	, _parent( parent )
 {
 }
 
@@ -62,7 +63,7 @@ ESubType SpecNode::getSubType() const
 	}
 	catch( const std::out_of_range& oor )
 	{
-		std::cout << "Warning : Unknown subtype" << std::endl;
+		LOG_WARNING( "Unknown subtype" );
 		return eSubTypeUnknown;
 	}
 }
@@ -75,7 +76,7 @@ EDisplayType SpecNode::getDisplayType() const
 	}
 	catch( const std::out_of_range& oor )
 	{
-		std::cout << "Warning : Unknown displayType" << std::endl;
+		LOG_WARNING( "Unknown displayType" );
 		return eDisplayTypeDefault;
 	}
 }
@@ -97,25 +98,22 @@ std::string SpecNode::getGroupSize() const
 
 bool SpecNode::isGroup() const
 {
-	if( _index == 2 ||
-		_index == 5 ||
-		_index == 14 )
-		return true;
-	return false;
+	return _node->second.get_child_optional( kGroup );
 }
 
 bool SpecNode::isOrdered() const
 {
-	if( _index == 14 )
-		return false;
-	return true;
+	return ( getProperty( kOrdered, kTrue ) == kTrue );
 }
 
 bool SpecNode::isOptional() const
 {
-	if( _index == 7 )
-		return true;
-	return false;
+	return ( getProperty( kOptional, kFalse ) == kTrue );
+}
+
+bool SpecNode::isBigEndian() const
+{
+	return ( getProperty( kEndian, kEndianBig ) == kEndianBig );
 }
 
 size_t SpecNode::isRepeated() const
@@ -219,10 +217,29 @@ std::map< std::string, std::string > SpecNode::getMap() const
 	return map;
 }
 
+SpecNode* SpecNode::next() const
+{
+	if( _index == 8 ||		// @todo : find a way to check if last child !
+		_index == 10 ||
+		_index == 12 ||
+		_index == 17 ||
+		_index == 18 )
+		return NULL;
+
+	// if( _parent == NULL )
+	// 	LOG_WARNING( "Pas de parent" );
+	// else
+	// 	LOG_FATAL( _parent->getChildrenNumber() );
+	// @todo : while( previous->getId() != _parent->getId() ) iterate, then compare to children number
+
+	bpt::ptree::const_iterator node = _node;
+	SpecNode* s = new SpecNode( ++node, _parent );
+	return s;
+}
 
 SpecNode* SpecNode::next( std::shared_ptr< be::Element > parent ) const
 {
-	if( _index == 8 ||
+	if( _index == 8 ||		// @todo : find a way to check if last child !
 		_index == 10 ||
 		_index == 12 ||
 		_index == 17 ||
@@ -231,36 +248,51 @@ SpecNode* SpecNode::next( std::shared_ptr< be::Element > parent ) const
 
 	bpt::ptree::const_iterator node = _node;
 	SpecNode* s = new SpecNode( ++node, parent );
-	// std::ostringstream osstrId;
-	// osstrId << "next " << _index; 
-	// s->setId( osstrId.str() );
-	// s->setType( eTypeData );
 	return s;
 }
 
-SpecNode* SpecNode::firstChild( std::shared_ptr< be::Element > e ) const
+SpecNode* SpecNode::firstChild( std::shared_ptr< be::Element > element ) const
 {
 	try
 	{
 		if( ! isGroup() )
 			throw std::runtime_error( "firstChild: This node has no child." );
-		SpecNode* s = new SpecNode( _node->second.get_child( kGroup ).begin(), e );
+		SpecNode* s = new SpecNode( _node->second.get_child( kGroup ).begin(), element );
 		return s;
 	}
 	catch( std::runtime_error& e )
 	{
-		std::cout << "Error: " << e.what();
+		LOG_ERROR( e.what() );
 		throw;
 	}
 }
 
+size_t SpecNode::getChildrenNumber() const
+{
+	if( ! isGroup() )
+		return 0;
+	return _node->second.get_child( kGroup ).size();
+}
+
 std::set< std::string > SpecNode::getChildrenNodes() const
 {
-	// @todo : parse element children in ptree (and their Id ? or pointer ?)
-	std::set< std::string > list;
-	list.insert( "child" );
-	list.insert( "prout" );
-	return list;
+	try
+	{
+		if( ! isGroup() )
+			throw std::runtime_error( "getChildrenNodes: This node has no child." );
+		
+		std::set< std::string > list;
+		for( const bpt::ptree::value_type& child : _node->second.get_child( kGroup ) )
+		{
+			list.insert( child.second.get< std::string >( kId ) );
+		}
+		return list;
+	}
+	catch( std::runtime_error& e )
+	{
+		LOG_ERROR( e.what() );
+		throw;
+	}
 }
 
 
@@ -272,7 +304,7 @@ std::string SpecNode::getProperty( const std::string& prop ) const
 	}
 	catch( std::runtime_error& e )
 	{
-		std::cout << "Error: " << e.what();
+		LOG_ERROR( e.what() );
 		throw;
 	}
 }

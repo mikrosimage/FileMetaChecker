@@ -32,6 +32,7 @@ public:
 	std::string getStringStatus() const;
 	
 	std::weak_ptr< Element > getParent() const { return _parent; }
+	size_t getChildrenNumber() const { return _specNode->getChildrenNumber(); }
 	
 	virtual void check() = 0;
 
