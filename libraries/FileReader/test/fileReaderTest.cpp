@@ -16,7 +16,7 @@ BOOST_AUTO_TEST_SUITE( fileReader_tests_suite01 )
 BOOST_AUTO_TEST_CASE( fileReader_init )
 {
 	common::level = common::eLogTrace;
-	LOG_INFO( common::level );
+	// LOG_INFO( common::level );
 }
 
 BOOST_AUTO_TEST_CASE( fileReader_test_streambuffer )
@@ -136,50 +136,50 @@ BOOST_AUTO_TEST_CASE( fileReader_test_streambuffer )
 }
 
 
-// BOOST_AUTO_TEST_CASE( fileReader_test_filebuffer )
-// {
-// 	LOG_INFO( " >>> fileReader_test_filebuffer <<< " );
+BOOST_AUTO_TEST_CASE( fileReader_test_filebuffer )
+{
+	LOG_INFO( " >>> fileReader_test_filebuffer <<< " );
 
-// 	std::string content = "FILE reader";
+	std::string content = "FILE reader";
 
-// 	std::ofstream myfile( "test.txt" );
-// 	myfile << content;
-// 	myfile.close();
+	std::ofstream myfile( "test.txt" );
+	myfile << content;
+	myfile.close();
 
-// 	std::ifstream is;
-// 	std::filebuf* fb = is.rdbuf();
+	std::ifstream is;
+	std::filebuf* fb = is.rdbuf();
 
-// 	fb->open( "test.txt", std::ios::in );
-// 	BOOST_CHECK_EQUAL( fb->is_open(), true );
-// 	BOOST_CHECK_EQUAL( fb->in_avail(), content.size() );
+	fb->open( "test.txt", std::ios::in );
+	BOOST_CHECK_EQUAL( fb->is_open(), true );
+	BOOST_CHECK_EQUAL( fb->in_avail(), content.size() );
 
-// 	file_reader::FileReader fr( fb );
+	file_reader::FileReader fr( fb );
 
-// 	BOOST_CHECK_EQUAL( fr.getLength(),  content.size() );
-// 	BOOST_CHECK_EQUAL( fr.getPosition(), 0 );
+	BOOST_CHECK_EQUAL( fr.getLength(),  content.size() );
+	BOOST_CHECK_EQUAL( fr.getPosition(), 0 );
 
-// 	char buffer[ content.size() + 1 ];
-// 	std::memset( buffer, 0, content.size() + 1 );	// "+ 1" to compensate the NULL char ending std::strings
-// 	bool ret;
+	char buffer[ content.size() + 1 ];
+	std::memset( buffer, 0, content.size() + 1 );	// "+ 1" to compensate the NULL char ending std::strings
+	bool ret;
 
-// 	ret= fr.readData( buffer, content.size() );
-// 	BOOST_CHECK_EQUAL( ret, true );
+	ret= fr.readData( buffer, content.size() );
+	BOOST_CHECK_EQUAL( ret, true );
 
-// 	BOOST_CHECK_EQUAL( strcmp( content.c_str(), buffer ), 0 );
+	BOOST_CHECK_EQUAL( strcmp( content.c_str(), buffer ), 0 );
 
-// 	BOOST_CHECK_EQUAL( fr.getPosition(), content.size() );
-// 	BOOST_CHECK_EQUAL( fr.getLength(),   content.size() );
-// 	BOOST_CHECK_EQUAL( fr.getPosition(), content.size() );
-// 	BOOST_CHECK_EQUAL( fr.isEndOfFile(), true );
+	BOOST_CHECK_EQUAL( fr.getPosition(), content.size() );
+	BOOST_CHECK_EQUAL( fr.getLength(),   content.size() );
+	BOOST_CHECK_EQUAL( fr.getPosition(), content.size() );
+	BOOST_CHECK_EQUAL( fr.isEndOfFile(), true );
 
-// 	ret = fr.readData( buffer, 1 );
-// 	BOOST_CHECK_EQUAL( ret, 0 );
+	ret = fr.readData( buffer, 1 );
+	BOOST_CHECK_EQUAL( ret, 0 );
 
-// 	BOOST_CHECK_EQUAL( fr.isEndOfFile(), true );
-// 	fr.goToBegin();
-// 	BOOST_CHECK_EQUAL( fr.isEndOfFile(), false );
+	BOOST_CHECK_EQUAL( fr.isEndOfFile(), true );
+	fr.goToBegin();
+	BOOST_CHECK_EQUAL( fr.isEndOfFile(), false );
 
-// 	fb->close();
-// }
+	fb->close();
+}
 
 BOOST_AUTO_TEST_SUITE_END()
