@@ -6,7 +6,6 @@ project.StaticLibrary(
 		includes  = ['src'],
 		libraries = [
 			libs.boost,
-			# libs.common,
 			],
 		shared = True
 	)
