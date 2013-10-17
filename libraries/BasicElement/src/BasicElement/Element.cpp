@@ -136,5 +136,9 @@ std::string Element::getStringStatus() const
 	return "";
 }
 
+size_t Element::getChildrenNumber() const
+{
+	return _specNode->getChildrenNumber();
+}
 
 }
