@@ -16,7 +16,7 @@ namespace spec_reader
 size_t SpecNode::_globalIndex = 0;
 
 SpecNode::SpecNode( const bpt::ptree::const_iterator node, std::shared_ptr< be::Element > parent )
-	: _index ( _globalIndex++ )
+	: _uId ( _globalIndex++ )
 	, _node( node )
 	, _parent( parent )
 {
@@ -118,10 +118,10 @@ bool SpecNode::isBigEndian() const
 
 size_t SpecNode::isRepeated() const
 {
-	if( _index == 4 )
+	if( _uId == 4 )
 		return 3;
 
-	if( _index == 5 )
+	if( _uId == 5 )
 		return 2;
 	
 	return 1;
@@ -219,11 +219,11 @@ std::map< std::string, std::string > SpecNode::getMap() const
 
 SpecNode* SpecNode::next() const
 {
-	if( _index == 8 ||		// @todo : find a way to check if last child !
-		_index == 10 ||
-		_index == 12 ||
-		_index == 17 ||
-		_index == 18 )
+	if( _uId == 8 ||		// @todo : find a way to check if last child !
+		_uId == 10 ||
+		_uId == 12 ||
+		_uId == 17 ||
+		_uId == 18 )
 		return NULL;
 
 	// if( _parent == NULL )
@@ -239,11 +239,11 @@ SpecNode* SpecNode::next() const
 
 SpecNode* SpecNode::next( std::shared_ptr< be::Element > parent ) const
 {
-	if( _index == 8 ||		// @todo : find a way to check if last child !
-		_index == 10 ||
-		_index == 12 ||
-		_index == 17 ||
-		_index == 18 )
+	if( _uId == 8 ||		// @todo : find a way to check if last child !
+		_uId == 10 ||
+		_uId == 12 ||
+		_uId == 17 ||
+		_uId == 18 )
 		return NULL;
 
 	bpt::ptree::const_iterator node = _node;

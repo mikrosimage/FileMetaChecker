@@ -25,7 +25,7 @@ public:
 	SpecNode( const boost::property_tree::ptree::const_iterator node, 
 		      std::shared_ptr< basic_element::Element > parent = std::shared_ptr< basic_element::Element >() );
 
-	size_t getIndex( ) const { return _index; }
+	size_t getUId( ) const { return _uId; }
 
 	std::string  getId()          const;
 	std::string  getLabel()       const;
@@ -60,7 +60,7 @@ private:
 	std::string getProperty( const std::string& prop, const std::string& defaultValue ) const;
 
 private:
-	size_t _index;
+	size_t _uId;
 	boost::property_tree::ptree::const_iterator _node;
 	std::shared_ptr< basic_element::Element >   _parent;
 	
