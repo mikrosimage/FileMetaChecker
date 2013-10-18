@@ -55,7 +55,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 
 		report.addElement( e );			// add the element to report
 
-		if( e->getIndex() > 20 )		// @todelete
+		if( e->getUniqueId() > 20 )		// @todelete
 			break;
 	}
 	
