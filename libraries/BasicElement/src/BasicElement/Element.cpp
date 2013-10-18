@@ -8,25 +8,26 @@ namespace sr = spec_reader;
 namespace basic_element
 {
 
-Element::Element( const sr::SpecNode* node, const std::shared_ptr< Element > prev )
-	: _id          ( node->getId() )
-	, _type        ( node->getType() )
-	, _checkedGroup( false )
-	, _index       ( node->getIndex() )
-	, _iteration   ( 1 )
-	, _status      ( eStatusNotCheck )
-	, _parent      ( node->getParent() )
-	, _previous    ( prev )
+Element::Element( const sr::SpecNode* node, const std::shared_ptr< Element > previous )
+	: _parent      ( node->getParent() )
+	, _previous    ( previous )
 	, _specNode    ( node )
+	, _checkedGroup( false )
 {
-	if( node->isRepeated() > 1 && ( prev.use_count() != 0 ) )
+	_prop.id        = node->getId();
+	_prop.type      = node->getType();
+	_prop.uId       = node->getIndex();
+	_prop.iteration = 1;
+	_prop.status    = eStatusNotCheck;
+
+	if( node->isRepeated() > 1 && ( previous.use_count() != 0 ) )
 	{
 		std::shared_ptr< Element > e = _previous.lock();
 		while( e.use_count() != 0 )
 		{
 			if( e->getId() == node->getId() )
 			{
-				_iteration = e->getIteration() + 1;
+				_prop.iteration = e->getIteration() + 1;
 				break;
 			}
 			else
@@ -41,25 +42,25 @@ Element::Element( const sr::SpecNode* node, const std::shared_ptr< Element > pre
 
 const sr::SpecNode* Element::next( )
 {
-	if( _status == eStatusNotCheck )
+	if( _prop.status == eStatusNotCheck )
 		return _specNode;
 
-	std::shared_ptr< Element > p;
+	std::shared_ptr< Element > parent;
 
 	if( _parent.use_count() != 0 )
-		p = _parent.lock();
+		parent = _parent.lock();
 	
-	if( _specNode->isOptional() && _status == eStatusInvalid )
+	if( _specNode->isOptional() && _prop.status == eStatusInvalid )
 	{
-		return _specNode->next( p );
+		return _specNode->next( parent );
 	}
 	
-	if( _status == eStatusInvalidButSkip && _parent.use_count() != 0 && ( ! p->_specNode->isOrdered() ) )
+	if( _prop.status == eStatusInvalidButSkip && _parent.use_count() != 0 && ( ! parent->_specNode->isOrdered() ) )
 	{
 		std::cout << "Unordered, check one another baby !" << std::endl;
-		_status = eStatusInvalidButSkip;
+		_prop.status = eStatusInvalidButSkip;
 		
-		return p->_specNode->firstChild( p );
+		return parent->_specNode->firstChild( parent );
 	}
 	
 	if( _specNode->isGroup() && ! _checkedGroup )
@@ -73,25 +74,25 @@ const sr::SpecNode* Element::next( )
 
 	if( count > 1 )
 	{
-		if( _iteration < count )
+		if( _prop.iteration < count )
 			return _specNode;
 	}
 	
-	const sr::SpecNode* sn = _specNode->next( p );
+	const sr::SpecNode* sn = _specNode->next( parent );
 	
 	if( sn == NULL && _parent.use_count() != 0 )
 	{
-		if( ! p->_specNode->isOrdered() )
+		if( ! parent->_specNode->isOrdered() )
 		{
 			std::set< std::string > childIds;
 			
-			childIds = p->_specNode->getChildrenNodes();
+			childIds = parent->_specNode->getChildrenNodes();
 			
 			std::shared_ptr< Element > prev;
 			if( _previous.use_count() != 0 )
 			{
 				prev = _previous.lock();
-				while( prev->getId() != p->getId() )
+				while( prev->getId() != parent->getId() )
 				{
 					for( auto id : childIds )
 					{
@@ -104,17 +105,17 @@ const sr::SpecNode* Element::next( )
 				}
 			}			
 			
-			std::cout << _id << "   " << _index << std::endl;
+			std::cout << _prop.id << "   " << _prop.uId << std::endl;
 			std::cout << "End of check Unordered " << childIds.size() << std::endl;
 			
 			if( childIds.size() != 0 )
 			{
 				std::cout << "prout" << std::endl;		// Error or Warning ?
 				//status = eStatusInvalid;
-				p->_status = eStatusInvalidForUnordered;
+				parent->_prop.status = eStatusInvalidForUnordered;
 			}
 		}
-		return p->next( );
+		return parent->next( );
 	}
 	
 	return sn;
@@ -122,7 +123,7 @@ const sr::SpecNode* Element::next( )
 
 std::string Element::getStringStatus() const
 {
-	switch( _status )
+	switch( _prop.status )
 	{
 		case eStatusNotCheck           : return "not check";
 		case eStatusSkip               : return "skip";
@@ -139,6 +140,21 @@ std::string Element::getStringStatus() const
 size_t Element::getChildrenNumber() const
 {
 	return _specNode->getChildrenNumber();
+}
+
+void Element::getEndianOrderedData( char* buffer, const char* data ) const
+{
+	if( ! _specNode->isBigEndian() )
+		std::reverse_copy( data, data + _prop.size, buffer );
+	else
+		std::memcpy( buffer, data, _prop.size );
+}
+
+char* Element::get() const
+{
+	if( _prop.data == NULL )
+		throw std::runtime_error( "Undefined data" );
+	return _prop.data;
 }
 
 }

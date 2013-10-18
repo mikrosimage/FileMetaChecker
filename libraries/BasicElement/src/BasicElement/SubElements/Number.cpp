@@ -13,8 +13,8 @@ Number::Number( const spec_reader::SpecNode* node, const std::shared_ptr< Elemen
 
 void Number::check()
 {
-	std::cout << _index << "  check number" << std::endl;
-	_status = eStatusPassOverData;
+	std::cout << _prop.uId << "  check number" << std::endl;
+	_prop.status = eStatusPassOverData;
 }
 
 }

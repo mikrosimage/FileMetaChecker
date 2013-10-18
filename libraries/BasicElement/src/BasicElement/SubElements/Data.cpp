@@ -11,21 +11,21 @@ Data::Data( const spec_reader::SpecNode* node, const std::shared_ptr< Element > 
 
 void Data::check()
 {
-	std::cout << _index << "  check data" << std::endl;
+	std::cout << _prop.uId << "  check data" << std::endl;
 	
-	if( _index == 7 )
+	if( _prop.uId == 7 )
 	{
-		_status = eStatusInvalidButOptional;
+		_prop.status = eStatusInvalidButOptional;
 		return;
 	}
 	
-	if( _index == 16 )
+	if( _prop.uId == 16 )
 	{
-		_status = eStatusInvalidButSkip;
+		_prop.status = eStatusInvalidButSkip;
 		return;
 	}
 	
-	_status = eStatusValid;
+	_prop.status = eStatusValid;
 }
 
 }
