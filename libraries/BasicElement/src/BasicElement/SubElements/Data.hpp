@@ -13,6 +13,9 @@ class Data : public Element
 	
 public:
 	Data( const spec_reader::SpecNode* node, const std::shared_ptr< Element > previous = std::shared_ptr< Element >() );	
+
+	void set( const char* data, const size_t& size );
+
 	void check();
 };
 
