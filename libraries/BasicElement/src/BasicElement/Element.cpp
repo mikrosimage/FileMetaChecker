@@ -32,7 +32,7 @@ Element::Element( const sr::SpecNode* node, const std::shared_ptr< Element > pre
 	_prop.isGroup       = node->isGroup();
 	_prop.isOrdered     = node->isOrdered();
 	_prop.isOptional    = node->isOptional();
-	_prop.bigEndianData = node->isBigEndian();	
+	_prop.bigEndianData = node->isBigEndian();
 
 	if( node->isRepeated() > 1 && ( previous.use_count() != 0 ) )
 	{
