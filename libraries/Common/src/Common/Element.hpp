@@ -22,18 +22,19 @@ class Element
 	{
 		std::string   id;
 		std::string   label;
-		std::string   error;
-		std::string   warning;
 		
 		size_t        uId;
 		size_t        size;
 		size_t        iteration;
 		
 		std::string   countExpr;
-		std::string   groupSizeExpr;
 		std::string   requiredExpr;
+		std::string   groupSizeExpr;
 		
+		std::vector< std::string > values;
+		std::vector< std::pair< std::string, std::string > > rangeExpr;
 		std::vector< std::pair< std::string, std::string > > repetExpr;
+		std::map< std::string, std::string > map;
 
 		EType         type;
 		ESubType      subType;
@@ -43,31 +44,61 @@ class Element
 		
 		char*         data;
 		
-		bool          bigEndianData;
-		bool          isOptional;
+		bool          isGroup;
 		bool          isOrdered;
-		bool          hasGroup;
+		bool          isOptional;
+		bool          bigEndianData;
+		
+		std::string   error;
+		std::string   warning;
 	};
 
 public:
-	Element( const spec_reader::SpecNode* node, const std::shared_ptr< Element > previous = std::shared_ptr< Element >() );
+	Element( const spec_reader::SpecNode* node, 
+		     const std::shared_ptr< Element > previous = std::shared_ptr< Element >() );
 	
 	const spec_reader::SpecNode* next( );
 	
-	std::string getId()        const { return _prop.id; }
-	EType       getType()      const { return _prop.type; }
-	EStatus     getStatus()          { return _prop.status; }
-	size_t      getIndex()     const { return _prop.uId; }
+	std::string getId()    const { return _prop.id; }
+	std::string getLabel() const { return _prop.label; }
+
+	size_t      getUniqueId()  const { return _prop.uId; }
+	size_t      getSize()      const { return _prop.size; }
 	size_t      getIteration() const { return _prop.iteration; }
 	
-	std::string getStringStatus() const;
+	std::string getCount()       const { return _prop.countExpr; }
+	std::string getRequirement() const { return _prop.requiredExpr; }
+	std::string getGroupSize()   const { return _prop.groupSizeExpr; }
+
+	std::vector< std::string >
+	getValues() const { return _prop.values; }
+
+	std::vector< std::pair< std::string, std::string > > 
+	getRange() const { return _prop.rangeExpr; }
 	
+	std::vector< std::pair< std::string, std::string > > 
+	getRepetitions() const { return _prop.repetExpr; }
+	
+	std::map< std::string, std::string >
+	getMap() const { return _prop.map; }
+
+	EType        getType()         const { return _prop.type; }
+	ESubType     getSubType()      const { return _prop.subType; }
+	EDisplayType getDisplayType()  const { return _prop.displayType; }
+	EStatus      getStatus()       const { return _prop.status; }
+	std::string  getStringStatus() const;
+	
+	char* getData() const;
+
+	bool isGroup()     const { return _prop.isGroup; }
+	bool isOrdered()   const { return _prop.isOrdered; }
+	bool isOptional()  const { return _prop.isOptional; }
+	bool isBigEndian() const { return _prop.bigEndianData; }
+
 	std::weak_ptr< Element > getParent() const { return _parent; }
 	size_t getChildrenNumber() const;
 
 	void getEndianOrderedData( char* buffer, const char* data ) const;
-
-	char* get() const;
 	
 	virtual void check() = 0;
 

@@ -14,11 +14,25 @@ Element::Element( const sr::SpecNode* node, const std::shared_ptr< Element > pre
 	, _specNode    ( node )
 	, _checkedGroup( false )
 {
-	_prop.id        = node->getId();
-	_prop.type      = node->getType();
-	_prop.uId       = node->getIndex();
-	_prop.iteration = 1;
-	_prop.status    = eStatusNotCheck;
+	_prop.id            = node->getId();
+	_prop.label         = node->getLabel();
+	_prop.uId           = node->getUId();
+	_prop.iteration     = 1;
+	_prop.countExpr     = node->getCount();
+	_prop.requiredExpr  = node->getRequirement();
+	_prop.groupSizeExpr = node->getGroupSize();
+	_prop.values        = node->getValues();
+	_prop.rangeExpr     = node->getRange();
+	_prop.repetExpr     = node->getRepetitions();
+	_prop.map           = node->getMap();
+	_prop.type          = node->getType();
+	_prop.subType       = node->getSubType();
+	_prop.displayType   = node->getDisplayType();
+	_prop.status        = eStatusNotCheck;
+	_prop.isGroup       = node->isGroup();
+	_prop.isOrdered     = node->isOrdered();
+	_prop.isOptional    = node->isOptional();
+	_prop.bigEndianData = node->isBigEndian();	
 
 	if( node->isRepeated() > 1 && ( previous.use_count() != 0 ) )
 	{
@@ -150,7 +164,7 @@ void Element::getEndianOrderedData( char* buffer, const char* data ) const
 		std::memcpy( buffer, data, _prop.size );
 }
 
-char* Element::get() const
+char* Element::getData() const
 {
 	if( _prop.data == NULL )
 		throw std::runtime_error( "Undefined data" );
