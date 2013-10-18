@@ -28,7 +28,7 @@ Element::Element( const sr::SpecNode* node, const std::shared_ptr< Element > pre
 	_prop.type          = node->getType();
 	_prop.subType       = node->getSubType();
 	_prop.displayType   = node->getDisplayType();
-	_prop.status        = eStatusNotCheck;
+	_prop.status        = eStatusNotChecked;
 	_prop.isGroup       = node->isGroup();
 	_prop.isOrdered     = node->isOrdered();
 	_prop.isOptional    = node->isOptional();
@@ -56,7 +56,7 @@ Element::Element( const sr::SpecNode* node, const std::shared_ptr< Element > pre
 
 const sr::SpecNode* Element::next( )
 {
-	if( _prop.status == eStatusNotCheck )
+	if( _prop.status == eStatusNotChecked )
 		return _specNode;
 
 	std::shared_ptr< Element > parent;
@@ -139,7 +139,7 @@ std::string Element::getStringStatus() const
 {
 	switch( _prop.status )
 	{
-		case eStatusNotCheck           : return "not check";
+		case eStatusNotChecked         : return "not checked";
 		case eStatusSkip               : return "skip";
 		case eStatusPassOverData       : return "pass over data";
 		case eStatusValid              : return "valid";

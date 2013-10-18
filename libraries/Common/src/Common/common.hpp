@@ -116,7 +116,7 @@ enum EDisplayType
 
 enum EStatus
 {
-	eStatusNotCheck = 0,
+	eStatusNotChecked = 0,
 	eStatusValid,
 	eStatusInvalid,
 	eStatusInvalidButOptional,
