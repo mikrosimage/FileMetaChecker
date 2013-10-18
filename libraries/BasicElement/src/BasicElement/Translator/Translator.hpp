@@ -3,6 +3,9 @@
 
 #include <cstring>
 #include <Common/Element.hpp>
+#include <Common/common.hpp>
+#include <vector>
+#include <sstream> 
 
 template< typename NumberType >
 union NumberData
@@ -22,10 +25,21 @@ public:
 	template< typename OutType >
 	OutType get();
 
+	std::string get( const EDisplayType dispType );
+
+	template< EDisplayType >
+	void fillStream( std::ostringstream& osstr );
+
+private:
+	template< typename NumberType >
+	std::vector< NumberType > convertToVector() const;
+
 private:
 	const basic_element::Element* ref;
 };
 
 #include "Translator.tcc"
+#include "TranslatorFillStream.tcc"
+#include "TranslatorGetDisplayType.tcc"
 
 #endif
