@@ -29,6 +29,7 @@ Element::Element( const sr::SpecNode* node, const std::shared_ptr< Element > pre
 	_prop.subType       = node->getSubType();
 	_prop.displayType   = node->getDisplayType();
 	_prop.status        = eStatusNotChecked;
+	_prop.data          = NULL;
 	_prop.isGroup       = node->isGroup();
 	_prop.isOrdered     = node->isOrdered();
 	_prop.isOptional    = node->isOptional();
@@ -166,8 +167,6 @@ void Element::getEndianOrderedData( char* buffer, const char* data ) const
 
 char* Element::getData() const
 {
-	if( _prop.data == NULL )
-		throw std::runtime_error( "Undefined data" );
 	return _prop.data;
 }
 
