@@ -1,7 +1,6 @@
 #include <BasicElement/SubElements/Data.hpp>
 #include <SpecReader/SpecNode.hpp>
 #include <boost/property_tree/json_parser.hpp>
-#include <BasicElement/Translator/Translator.hpp>
 
 BOOST_AUTO_TEST_SUITE( basic_element_test_data )
 

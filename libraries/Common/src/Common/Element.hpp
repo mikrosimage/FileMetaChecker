@@ -89,6 +89,7 @@ public:
 	std::string  getStringStatus() const;
 	
 	char* getData() const;
+	void  set( const char* data, const size_t& size );
 
 	bool isGroup()     const { return _prop.isGroup; }
 	bool isOrdered()   const { return _prop.isOrdered; }

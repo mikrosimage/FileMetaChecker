@@ -171,4 +171,12 @@ char* Element::getData() const
 	return _prop.data;
 }
 
+void Element::set( const char* data, const size_t& size )
+{
+	_prop.data = new char [size];
+	_prop.size = size;
+	
+	std::memcpy( _prop.data, data, _prop.size );
+}
+
 }
