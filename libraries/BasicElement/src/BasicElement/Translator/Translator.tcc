@@ -1,6 +1,9 @@
 #include <Common/log.hpp> 	// @todelete !
 #include <iomanip>
 
+namespace basic_element
+{
+
 template< typename OutType>
 OutType Translator::get()
 {
@@ -61,4 +64,4 @@ std::vector< NumberType > Translator::convertToVector() const
 	return vector;
 }
 
-
+}

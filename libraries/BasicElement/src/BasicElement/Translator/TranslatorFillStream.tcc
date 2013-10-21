@@ -1,4 +1,7 @@
 
+namespace basic_element
+{
+
 template< EDisplayType >
 void Translator::fillStream( std::ostringstream& osstr )
 {
@@ -29,4 +32,6 @@ void Translator::fillStream< eDisplayTypeNumbers >( std::ostringstream& osstr )
 {
 	for( char value : get< std::vector< char > >() )
 		osstr << (short) value;
+}
+
 }

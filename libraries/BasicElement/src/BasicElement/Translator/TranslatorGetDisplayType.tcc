@@ -1,4 +1,7 @@
 
+namespace basic_element
+{
+
 std::string Translator::get( const EDisplayType dispType )
 {
 	if( _ref->getData() == nullptr )
@@ -37,3 +40,4 @@ std::string Translator::get( const EDisplayType dispType )
 	return osstr.str();
 }
 
+}

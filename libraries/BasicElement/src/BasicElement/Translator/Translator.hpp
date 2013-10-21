@@ -7,6 +7,9 @@
 #include <vector>
 #include <sstream> 
 
+namespace basic_element
+{
+
 template< typename NumberType >
 union NumberData
 {
@@ -37,6 +40,8 @@ private:
 private:
 	const basic_element::Element* _ref;
 };
+	
+}
 
 #include "Translator.tcc"
 #include "TranslatorFillStream.tcc"
