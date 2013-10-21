@@ -1,7 +1,7 @@
 
 std::string Translator::get( const EDisplayType dispType )
 {
-	if( ref->getData() == NULL )
+	if( _ref->getData() == NULL )
 		throw std::runtime_error( "Undefined data" );
 
 	std::ostringstream osstr;
@@ -9,7 +9,7 @@ std::string Translator::get( const EDisplayType dispType )
 	{
 		case eDisplayTypeDefault :
 		{
-			switch( ref->getSubType() )
+			switch( _ref->getSubType() )
 			{
 				case eSubTypeUnknown      : break;
 				case eSubTypeInt8         : osstr << (short) get<          char >(); break;

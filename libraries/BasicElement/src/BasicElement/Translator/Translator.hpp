@@ -18,7 +18,7 @@ class Translator
 {
 public:
 	Translator( const basic_element::Element* elem )
-		: ref( elem )
+		: _ref( elem )
 	{
 	}
 
@@ -35,7 +35,7 @@ private:
 	std::vector< NumberType > convertToVector() const;
 
 private:
-	const basic_element::Element* ref;
+	const basic_element::Element* _ref;
 };
 
 #include "Translator.tcc"

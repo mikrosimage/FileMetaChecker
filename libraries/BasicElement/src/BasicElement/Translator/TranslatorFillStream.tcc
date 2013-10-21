@@ -8,19 +8,19 @@ void Translator::fillStream( std::ostringstream& osstr )
 template< >
 void Translator::fillStream< eDisplayTypeAscii >( std::ostringstream& osstr )
 {
-	for( size_t i = 0; i < ref->getSize(); ++i )
-		osstr << ref->getData()[i];
+	for( size_t i = 0; i < _ref->getSize(); ++i )
+		osstr << _ref->getData()[i];
 }
 
 template< >
 void Translator::fillStream< eDisplayTypeHexa >( std::ostringstream& osstr )
 {
-	for( size_t i = 0; i < ref->getSize(); ++i )
+	for( size_t i = 0; i < _ref->getSize(); ++i )
 	{
 		osstr << std::hex 
 		      << std::setfill('0') 
 		      << std::setw(2) 
-		      << (int)(unsigned char) ref->getData()[i];
+		      << (int)(unsigned char) _ref->getData()[i];
 	}
 }
 

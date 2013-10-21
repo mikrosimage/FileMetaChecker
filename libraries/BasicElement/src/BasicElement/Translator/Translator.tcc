@@ -4,14 +4,14 @@
 template< typename OutType>
 OutType Translator::get()
 {
-	if( ref->getData() == NULL )
+	if( _ref->getData() == NULL )
 		throw std::runtime_error( "Undefined data" );
 
 	// LOG_TRACE( "Generic translator: to number type" );
-	if( ref->getSize() != sizeof( OutType ) )
+	if( _ref->getSize() != sizeof( OutType ) )
 		throw std::runtime_error( "invalid data size" );
 	NumberData< OutType > num;
-	std::memcpy( num.data, ref->getData(), ref->getSize() );
+	std::memcpy( num.data, _ref->getData(), _ref->getSize() );
 	return num.value;
 }
 
@@ -19,7 +19,7 @@ OutType Translator::get()
 template< > \
 std::vector< x > Translator::get< std::vector< x > >() \
 { \
-	if( ref->getData() == NULL ) \
+	if( _ref->getData() == NULL ) \
 		throw std::runtime_error( "Undefined data" ); \
 	return convertToVector< x >(); \
 }
@@ -40,22 +40,22 @@ GET_VECTOR(     long double    )
 template< >
 std::string Translator::get< std::string >()
 {
-	if( ref->getData() == NULL )
+	if( _ref->getData() == NULL )
 		throw std::runtime_error( "Undefined data" );
 	// LOG_TRACE( "Specific translator: to string" );
-	return std::string { ref->getData(), ref->getSize() };
+	return std::string { _ref->getData(), _ref->getSize() };
 }
 
 template< typename NumberType >
 std::vector< NumberType > Translator::convertToVector() const
 {
-	if( ref->getSize() % sizeof( NumberType ) != 0 )
+	if( _ref->getSize() % sizeof( NumberType ) != 0 )
 		throw std::runtime_error( "invalid data size" );
 	std::vector< NumberType > vector;
-	for( size_t i = 0; i < ref->getSize(); i += sizeof( NumberType ) )
+	for( size_t i = 0; i < _ref->getSize(); i += sizeof( NumberType ) )
 	{
 		NumberData< NumberType > num;
-		std::memcpy( num.data, &ref->getData()[i], ref->getSize() );
+		std::memcpy( num.data, &_ref->getData()[i], _ref->getSize() );
 		vector.push_back( num.value );
 	}
 	return vector;
