@@ -2,7 +2,7 @@
 namespace basic_element
 {
 
-std::string Translator::get( const EDisplayType dispType )
+std::string Translator::display( const EDisplayType dispType )
 {
 	if( _ref->getData() == nullptr )
 		throw std::runtime_error( "Undefined data" );
@@ -26,9 +26,9 @@ std::string Translator::get( const EDisplayType dispType )
 				case eSubTypeFloat        : osstr << get<          float     >(); break;
 				case eSubTypeDouble       : osstr << get<          double    >(); break;
 				case eSubTypeIeeeExtended : osstr << get<     long double    >(); break;
-				case eSubTypeAscii        : osstr << get( eDisplayTypeAscii    ); break;
-				case eSubTypeHexa         : osstr << get( eDisplayTypeHexa     ); break;
-				case eSubTypeRaw          : osstr << get( eDisplayTypeRaw      ); break;
+				case eSubTypeAscii        : osstr << display( eDisplayTypeAscii    ); break;
+				case eSubTypeHexa         : osstr << display( eDisplayTypeHexa     ); break;
+				case eSubTypeRaw          : osstr << display( eDisplayTypeRaw      ); break;
 			}
 			break;
 		}
