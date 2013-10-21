@@ -122,7 +122,7 @@ enum EStatus
 	eStatusInvalidButOptional,
 	eStatusInvalidForUnordered,
 	eStatusInvalidButSkip,
-	eStatusPassOverData,
+	eStatusPassOver,
 	eStatusSkip,
 };
 

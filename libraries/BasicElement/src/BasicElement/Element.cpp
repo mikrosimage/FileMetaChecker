@@ -12,29 +12,32 @@ Element::Element( const sr::SpecNode* node, const std::shared_ptr< Element > pre
 	: _parent      ( node->getParent() )
 	, _previous    ( previous )
 	, _specNode    ( node )
+	, _prop        ( { node->getId(),			// id
+	                   node->getLabel(),		// label
+	                   node->getUId(),			// uId
+	                   0,						// size
+	                   1,						// iteration
+	                   node->getCount(),		// countExpr
+	                   node->getRequirement(),	// requiredExpr
+	                   node->getGroupSize(),	// groupSizeExpr
+	                   node->getValues(),		// values
+	                   node->getRange(),		// rangeExpr
+	                   node->getRepetitions(),	// repetExpr
+	                   node->getMap(),			// map
+	                   node->getType(),			// type
+	                   node->getSubType(),		// subType
+	                   node->getDisplayType(),	// displayType
+	                   eStatusNotChecked,		// status
+	                   nullptr,					// data
+	                   node->isGroup(),			// isGroup
+	                   node->isOrdered(),		// isOrdered
+	                   node->isOptional(),		// isOptional
+	                   node->isBigEndian(),		// bigEndianData
+	                   "",						// error
+	                   ""						// warning
+	                } )
 	, _checkedGroup( false )
 {
-	_prop.id            = node->getId();
-	_prop.label         = node->getLabel();
-	_prop.uId           = node->getUId();
-	_prop.iteration     = 1;
-	_prop.countExpr     = node->getCount();
-	_prop.requiredExpr  = node->getRequirement();
-	_prop.groupSizeExpr = node->getGroupSize();
-	_prop.values        = node->getValues();
-	_prop.rangeExpr     = node->getRange();
-	_prop.repetExpr     = node->getRepetitions();
-	_prop.map           = node->getMap();
-	_prop.type          = node->getType();
-	_prop.subType       = node->getSubType();
-	_prop.displayType   = node->getDisplayType();
-	_prop.status        = eStatusNotChecked;
-	_prop.data          = nullptr;
-	_prop.isGroup       = node->isGroup();
-	_prop.isOrdered     = node->isOrdered();
-	_prop.isOptional    = node->isOptional();
-	_prop.bigEndianData = node->isBigEndian();
-
 	if( node->isRepeated() > 1 && ( previous.use_count() != 0 ) )
 	{
 		std::shared_ptr< Element > e = _previous.lock();
@@ -142,7 +145,7 @@ std::string Element::getStringStatus() const
 	{
 		case eStatusNotChecked         : return "not checked";
 		case eStatusSkip               : return "skip";
-		case eStatusPassOverData       : return "pass over data";
+		case eStatusPassOver           : return "pass over";
 		case eStatusValid              : return "valid";
 		case eStatusInvalid            : return "invalid";
 		case eStatusInvalidButSkip     : return "invalid but skip";
