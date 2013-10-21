@@ -1,7 +1,7 @@
 
 std::string Translator::get( const EDisplayType dispType )
 {
-	if( _ref->getData() == NULL )
+	if( _ref->getData() == nullptr )
 		throw std::runtime_error( "Undefined data" );
 
 	std::ostringstream osstr;

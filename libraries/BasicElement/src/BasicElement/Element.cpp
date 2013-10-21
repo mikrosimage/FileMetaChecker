@@ -29,7 +29,7 @@ Element::Element( const sr::SpecNode* node, const std::shared_ptr< Element > pre
 	_prop.subType       = node->getSubType();
 	_prop.displayType   = node->getDisplayType();
 	_prop.status        = eStatusNotChecked;
-	_prop.data          = NULL;
+	_prop.data          = nullptr;
 	_prop.isGroup       = node->isGroup();
 	_prop.isOrdered     = node->isOrdered();
 	_prop.isOptional    = node->isOptional();

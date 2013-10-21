@@ -4,7 +4,7 @@
 template< typename OutType>
 OutType Translator::get()
 {
-	if( _ref->getData() == NULL )
+	if( _ref->getData() == nullptr )
 		throw std::runtime_error( "Undefined data" );
 
 	// LOG_TRACE( "Generic translator: to number type" );
@@ -19,7 +19,7 @@ OutType Translator::get()
 template< > \
 std::vector< x > Translator::get< std::vector< x > >() \
 { \
-	if( _ref->getData() == NULL ) \
+	if( _ref->getData() == nullptr ) \
 		throw std::runtime_error( "Undefined data" ); \
 	return convertToVector< x >(); \
 }
@@ -40,7 +40,7 @@ GET_VECTOR(     long double    )
 template< >
 std::string Translator::get< std::string >()
 {
-	if( _ref->getData() == NULL )
+	if( _ref->getData() == nullptr )
 		throw std::runtime_error( "Undefined data" );
 	// LOG_TRACE( "Specific translator: to string" );
 	return std::string { _ref->getData(), _ref->getSize() };
