@@ -86,11 +86,11 @@ BOOST_AUTO_TEST_CASE( basic_element_translator_1 )
 		const char buff[4] { 'W', 'A', 'V', 'E' };
 		elem.set( (const char*)&buff, 4 );
 
-		BOOST_CHECK_EQUAL( Translator( &elem ).display( eDisplayTypeDefault ), "" );
-		BOOST_CHECK_EQUAL( Translator( &elem ).display( eDisplayTypeNumbers ), "87658669" );
-		BOOST_CHECK_EQUAL( Translator( &elem ).display( eDisplayTypeAscii   ), "WAVE" );
-		BOOST_CHECK_EQUAL( Translator( &elem ).display( eDisplayTypeHexa    ), "57415645" );
-		BOOST_CHECK_EQUAL( Translator( &elem ).display( eDisplayTypeRaw     ), "WAVE" );
+		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeDefault ), "" );
+		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeNumbers ), "87658669" );
+		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeAscii   ), "WAVE" );
+		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeHexa    ), "57415645" );
+		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeRaw     ), "WAVE" );
 		
 	}
 	{
@@ -98,11 +98,11 @@ BOOST_AUTO_TEST_CASE( basic_element_translator_1 )
 		const char buff[4] { 'W', 'A', 'V', 'E' };
 		data.set( (const char*)&buff, 4 );
 
-		BOOST_CHECK_EQUAL( Translator( &data ).display( eDisplayTypeDefault ), "" );
-		BOOST_CHECK_EQUAL( Translator( &data ).display( eDisplayTypeNumbers ), "87658669" );
-		BOOST_CHECK_EQUAL( Translator( &data ).display( eDisplayTypeAscii   ), "WAVE" );
-		BOOST_CHECK_EQUAL( Translator( &data ).display( eDisplayTypeHexa    ), "57415645" );
-		BOOST_CHECK_EQUAL( Translator( &data ).display( eDisplayTypeRaw     ), "WAVE" );
+		BOOST_CHECK_EQUAL( Translator( &data ).get( eDisplayTypeDefault ), "" );
+		BOOST_CHECK_EQUAL( Translator( &data ).get( eDisplayTypeNumbers ), "87658669" );
+		BOOST_CHECK_EQUAL( Translator( &data ).get( eDisplayTypeAscii   ), "WAVE" );
+		BOOST_CHECK_EQUAL( Translator( &data ).get( eDisplayTypeHexa    ), "57415645" );
+		BOOST_CHECK_EQUAL( Translator( &data ).get( eDisplayTypeRaw     ), "WAVE" );
 		
 	}
 }
@@ -143,11 +143,11 @@ BOOST_AUTO_TEST_CASE( basic_element_translator_2 )
 		BOOST_CHECK_EQUAL( Translator( &elem ).get<   int >(), 1163280727 );
 		BOOST_CHECK_THROW( Translator( &elem ).get< short >(), std::runtime_error );
 	
-		BOOST_CHECK_EQUAL( Translator( &elem ).display( eDisplayTypeDefault ), "WAVE" );
-		BOOST_CHECK_EQUAL( Translator( &elem ).display( eDisplayTypeNumbers ), "87658669" );
-		BOOST_CHECK_EQUAL( Translator( &elem ).display( eDisplayTypeAscii   ), "WAVE" );
-		BOOST_CHECK_EQUAL( Translator( &elem ).display( eDisplayTypeHexa    ), "57415645" );
-		BOOST_CHECK_EQUAL( Translator( &elem ).display( eDisplayTypeRaw     ), "WAVE" );
+		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeDefault ), "WAVE" );
+		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeNumbers ), "87658669" );
+		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeAscii   ), "WAVE" );
+		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeHexa    ), "57415645" );
+		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeRaw     ), "WAVE" );
 		
 	}
 	{
@@ -184,11 +184,11 @@ BOOST_AUTO_TEST_CASE( basic_element_translator_2 )
 		BOOST_CHECK_EQUAL( Translator( &elem ).get<   int >(), 1163280727 );
 		BOOST_CHECK_THROW( Translator( &elem ).get< short >(), std::runtime_error );
 	
-		BOOST_CHECK_EQUAL( Translator( &elem ).display( eDisplayTypeDefault ), "1163280727" );
-		BOOST_CHECK_EQUAL( Translator( &elem ).display( eDisplayTypeNumbers ), "87658669" );
-		BOOST_CHECK_EQUAL( Translator( &elem ).display( eDisplayTypeAscii   ), "WAVE" );
-		BOOST_CHECK_EQUAL( Translator( &elem ).display( eDisplayTypeHexa    ), "57415645" );
-		BOOST_CHECK_EQUAL( Translator( &elem ).display( eDisplayTypeRaw     ), "WAVE" );
+		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeDefault ), "1163280727" );
+		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeNumbers ), "87658669" );
+		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeAscii   ), "WAVE" );
+		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeHexa    ), "57415645" );
+		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeRaw     ), "WAVE" );
 		
 	}
 	{
@@ -223,11 +223,11 @@ BOOST_AUTO_TEST_CASE( basic_element_translator_2 )
 		BOOST_CHECK_THROW( Translator( &elem ).get<   int >(), std::runtime_error );
 		BOOST_CHECK_THROW( Translator( &elem ).get< short >(), std::runtime_error );
 	
-		BOOST_CHECK_EQUAL( Translator( &elem ).display( eDisplayTypeDefault ), "87" );
-		BOOST_CHECK_EQUAL( Translator( &elem ).display( eDisplayTypeNumbers ), "87" );
-		BOOST_CHECK_EQUAL( Translator( &elem ).display( eDisplayTypeAscii   ), "W" );
-		BOOST_CHECK_EQUAL( Translator( &elem ).display( eDisplayTypeHexa    ), "57" );
-		BOOST_CHECK_EQUAL( Translator( &elem ).display( eDisplayTypeRaw     ), "W" );
+		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeDefault ), "87" );
+		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeNumbers ), "87" );
+		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeAscii   ), "W" );
+		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeHexa    ), "57" );
+		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeRaw     ), "W" );
 	}
 }
 

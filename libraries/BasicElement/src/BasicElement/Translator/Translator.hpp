@@ -28,7 +28,7 @@ public:
 	template< typename OutType >
 	OutType get();
 
-	std::string display( const EDisplayType dispType = eDisplayTypeDefault );
+	std::string get( const EDisplayType dispType = eDisplayTypeDefault );
 
 	template< EDisplayType >
 	void fillStream( std::ostringstream& osstr );
