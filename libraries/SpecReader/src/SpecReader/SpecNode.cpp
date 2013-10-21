@@ -52,6 +52,7 @@ EType SpecNode::getType() const
 		case eSubTypeRaw          : return eTypeData;
 		default                   : break;
 	}
+	LOG_WARNING( "Unknown type/subtype" );
 	return eTypeUnknown;
 }
 
@@ -63,7 +64,6 @@ ESubType SpecNode::getSubType() const
 	}
 	catch( const std::out_of_range& oor )
 	{
-		LOG_WARNING( "Unknown subtype" );
 		return eSubTypeUnknown;
 	}
 }
