@@ -106,7 +106,9 @@ public:
 
 	std::string getErrorLabel();
 	std::string getWarningLabel();
-	
+
+	void setStatus( const EStatus status );
+
 protected:
 	std::weak_ptr< Element >                  _parent;
 	const std::weak_ptr< Element >            _previous;

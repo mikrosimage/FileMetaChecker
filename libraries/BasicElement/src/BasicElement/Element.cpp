@@ -201,4 +201,10 @@ std::string Element::getWarningLabel()
 	return _prop.warning;
 }
 
+void Element::setStatus( const EStatus status )
+{
+	_prop.status = status;
+}
+
+
 }
