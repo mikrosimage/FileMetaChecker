@@ -12,7 +12,6 @@ class Number : public Element
 public:
 	Number( const spec_reader::SpecNode* node, const std::shared_ptr< Element > previous = std::shared_ptr< Element >() );
 
-	void check();
 };
 
 }

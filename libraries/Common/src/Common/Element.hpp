@@ -107,8 +107,6 @@ public:
 	std::string getErrorLabel();
 	std::string getWarningLabel();
 	
-	virtual void check() = 0;
-
 protected:
 	std::weak_ptr< Element >                  _parent;
 	const std::weak_ptr< Element >            _previous;
