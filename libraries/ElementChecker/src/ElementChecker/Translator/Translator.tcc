@@ -94,24 +94,15 @@ bool Translator::isSystemLittleEndian()
 void Translator::getOrderedData( char* buffer )
 {
 	if( ! _ref->isBigEndian() )
-	{
-		LOG_FATAL( "/// 1" );
 		std::reverse_copy( _ref->getData(), _ref->getData() + _ref->getSize(), buffer );
-	}
 	else
-	{
-		LOG_FATAL( "/// 2" );
 		std::memcpy( buffer, _ref->getData(), _ref->getSize() );
-	}
 
 	if( _ref->getType() == eTypeNumber && isSystemLittleEndian() )
 	{
-		LOG_FATAL( "/// 3" );
 		char* temp = new char[ _ref->getSize() ];
 		std::memcpy( temp, buffer, _ref->getSize() );
-
 		std::reverse_copy( temp, temp + _ref->getSize(), buffer );	// swap if system little endian
-
 		delete[] temp;
 	}
 }
