@@ -1,8 +1,6 @@
 #include <BasicElement/SubElements/Number.hpp>
 #include <BasicElement/SubElements/Data.hpp>
 
-using namespace element_checker;
-
 BOOST_AUTO_TEST_SUITE( element_checker_test_checker )
 
 BOOST_AUTO_TEST_CASE( element_checker_checker_data )

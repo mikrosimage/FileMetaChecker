@@ -11,6 +11,8 @@
 using namespace boost::unit_test;
 namespace bpt = boost::property_tree;
 
+using namespace element_checker;
+
 spec_reader::SpecNode getSpecNode( bpt::ptree& tree, const std::string& jsonString )
 {
 	std::istringstream isstream( jsonString );
@@ -28,4 +30,5 @@ BOOST_AUTO_TEST_CASE( element_checker_test_init )
 BOOST_AUTO_TEST_SUITE_END()
 
 // #include "translatorTest.hpp"
+// #include "rangesTest.hpp"
 #include "checkerTest.hpp"

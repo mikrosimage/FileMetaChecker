@@ -2,8 +2,6 @@
 #include <BasicElement/SubElements/Data.hpp>
 #include <ElementChecker/Translator/Translator.hpp>
 
-using namespace element_checker;
-
 BOOST_AUTO_TEST_SUITE( element_checker_test_translator )
 
 BOOST_AUTO_TEST_CASE( element_checker_translator_1 )
