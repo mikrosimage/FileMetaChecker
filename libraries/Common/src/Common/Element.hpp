@@ -99,8 +99,6 @@ public:
 	std::weak_ptr< Element > getParent() const { return _parent; }
 	size_t getChildrenNumber() const;
 
-	void getEndianOrderedData( char* buffer, const char* data ) const;
-
 	void addErrorLabel( const std::string& error );
 	void addWarningLabel( const std::string& warning );
 

@@ -168,17 +168,9 @@ void Element::set( const char* data, const size_t& size )
 	std::memcpy( _prop.data, data, _prop.size );
 }
 
-size_t Element::getChildrenNumber() const
+size_t Element::getChildrenNumber() const		// @todo replace by _children (after init..)
 {
 	return _specNode->getChildrenNumber();
-}
-
-void Element::getEndianOrderedData( char* buffer, const char* data ) const
-{
-	if( ! _specNode->isBigEndian() )
-		std::reverse_copy( data, data + _prop.size, buffer );
-	else
-		std::memcpy( buffer, data, _prop.size );
 }
 
 void Element::addErrorLabel( const std::string& error )
