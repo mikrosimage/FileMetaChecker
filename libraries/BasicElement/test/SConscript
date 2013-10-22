@@ -9,15 +9,3 @@ project.UnitTest(
 		libs.boost_unit_test_framework,
 	]
 )
-
-project.UnitTest(
-	target = "TestTranslator",
-	sources = ['translatorTest.cpp'],
-	# dirs = ['.'],
-	libraries = [
-		libs.basicElement,
-		libs.boost_unit_test_framework,
-	]
-)
-
-

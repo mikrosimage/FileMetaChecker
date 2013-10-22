@@ -2,7 +2,7 @@
 
 #include <BasicElement/SubElements/Number.hpp>
 #include <BasicElement/SubElements/Data.hpp>
-#include <BasicElement/Translator/Translator.hpp>
+#include <ElementChecker/Translator/Translator.hpp>
 
 #include <SpecReader/SpecNode.hpp>
 
