@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data_error_warning )
 		Data data( &node );
 		data.addErrorLabel( kError );
 		data.addErrorLabel( kError );
-		BOOST_CHECK_EQUAL( data.getErrorLabel(), kError + kError );
+		BOOST_CHECK_EQUAL( data.getErrorLabel(), kError + " / " + kError );
 	}
 	{
 		Data data( &node );
@@ -194,7 +194,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data_error_warning )
 		Data data( &node );
 		data.addWarningLabel( kWarning );
 		data.addWarningLabel( kWarning );
-		BOOST_CHECK_EQUAL( data.getWarningLabel(), kWarning + kWarning );
+		BOOST_CHECK_EQUAL( data.getWarningLabel(), kWarning + " / " + kWarning );
 	}
 }
 

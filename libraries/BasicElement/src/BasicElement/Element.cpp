@@ -183,12 +183,18 @@ void Element::getEndianOrderedData( char* buffer, const char* data ) const
 
 void Element::addErrorLabel( const std::string& error )
 {
-	_prop.error += error;
+	if( _prop.error.empty() )
+		_prop.error = error;
+	else
+		_prop.error += " / " + error;
 }
 
 void Element::addWarningLabel( const std::string& warning )
 {
-	_prop.warning += warning;
+	if( _prop.warning.empty() )
+		_prop.warning = warning;
+	else
+		_prop.warning += " / " + warning;
 }
 
 std::string Element::getErrorLabel()
