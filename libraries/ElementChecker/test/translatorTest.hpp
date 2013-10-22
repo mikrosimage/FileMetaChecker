@@ -2,8 +2,6 @@
 #include <BasicElement/SubElements/Data.hpp>
 #include <ElementChecker/Translator/Translator.hpp>
 
-#include <SpecReader/SpecNode.hpp>
-
 using namespace element_checker;
 
 BOOST_AUTO_TEST_SUITE( element_checker_test_translator )
