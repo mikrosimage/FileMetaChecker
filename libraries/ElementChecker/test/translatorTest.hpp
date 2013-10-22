@@ -1,31 +1,16 @@
-#define BOOST_TEST_MODULE qc_basic_element_translator
-
 #include <BasicElement/SubElements/Number.hpp>
 #include <BasicElement/SubElements/Data.hpp>
 #include <ElementChecker/Translator/Translator.hpp>
 
 #include <SpecReader/SpecNode.hpp>
 
-#include <Common/log.hpp>
-
-#include <boost/test/unit_test.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
-
-using namespace boost::unit_test;
 using namespace basic_element;
-namespace bpt = boost::property_tree;
 
-BOOST_AUTO_TEST_SUITE( basic_element_test_translator )
+BOOST_AUTO_TEST_SUITE( element_checker_test_translator )
 
-BOOST_AUTO_TEST_CASE( basic_element_translator_init )
+BOOST_AUTO_TEST_CASE( element_checker_translator_1 )
 {
-	common::level = common::eLogTrace;
-	// LOG_INFO( common::level );
-}
-
-BOOST_AUTO_TEST_CASE( basic_element_translator_1 )
-{
+	LOG_INFO( ">>> element_checker_translator_1 <<<" );
 	std::string jsonString = R"*(
 			{
 				"header": [
@@ -107,8 +92,9 @@ BOOST_AUTO_TEST_CASE( basic_element_translator_1 )
 	}
 }
 
-BOOST_AUTO_TEST_CASE( basic_element_translator_2 )
+BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 {
+	LOG_INFO( ">>> element_checker_translator_2 <<<" );
 	{
 		std::string jsonString = R"*(
 				{

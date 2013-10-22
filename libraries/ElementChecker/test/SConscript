@@ -1,19 +1,8 @@
 Import( 'project', 'libs' )
 
-# project.UnitTest(
-# 	target = "TestElementChecker",
-# 	sources = ['elementCheckerTest.cpp'],
-# 	# dirs = ['.'],
-# 	libraries = [
-# 		libs.elementChecker,
-# 		libs.boost_unit_test_framework,
-# 	]
-# )
-
 project.UnitTest(
 	target = "TestTranslator",
-	sources = ['translatorTest.cpp'],
-	# dirs = ['.'],
+	sources = ['elementCheckerTest.cpp'],
 	libraries = [
 		libs.elementChecker,
 		libs.boost_unit_test_framework,
