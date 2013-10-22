@@ -7,6 +7,12 @@
 #include <iostream>
 #include <memory>
 
+namespace basic_element
+{
+	class Data;
+	class Number;
+}
+
 namespace element_checker
 {
 
@@ -17,6 +23,10 @@ public:
 	Checker( const std::shared_ptr< basic_element::Element > element );
 
 	void check();
+
+private:
+	EStatus checkData  ( std::shared_ptr< basic_element::Data   > data );
+	EStatus checkNumber( std::shared_ptr< basic_element::Number > number );
 
 private:
 	std::shared_ptr< basic_element::Element > _element;
