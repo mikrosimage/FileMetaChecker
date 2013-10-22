@@ -1,6 +1,7 @@
 #include <Common/log.hpp>
 
 #include <limits>
+#include <sstream>
 
 namespace element_checker
 {
