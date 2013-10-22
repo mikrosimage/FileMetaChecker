@@ -1,0 +1,14 @@
+Import( 'project', 'libs' )
+
+project.StaticLibrary(
+		'elementChecker',
+		dirs      = ['src'],
+		includes  = ['src'],
+		libraries = [
+			libs.common,
+			libs.basicElement,
+		],
+		shared = True
+	)
+
+
