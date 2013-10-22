@@ -104,6 +104,48 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_number )
 		Checker( elem ).check();
 		BOOST_CHECK_EQUAL( elem->getStatus(), eStatusPassOver );
 	}
+
+	{
+		bpt::ptree tree;
+		spec_reader::SpecNode node = getSpecNode( tree, jsonStringBegin + R"*( ,"range": [ { "min": "1", "max": "10" } ] )*"  + jsonStringEnd );
+
+		std::shared_ptr< basic_element::Number > elem = std::make_shared< basic_element::Number >( &node );
+	
+		const char buff[4] { 0x00, 0x00, 0x00, 0x05 };
+		elem->set( (const char*)&buff, 4 );
+
+		Checker( elem ).check();
+		BOOST_CHECK_EQUAL( elem->getSubType(), eSubTypeUInt32 );
+		BOOST_CHECK_EQUAL( elem->getStatus(), eStatusValid );
+	}
+
+	{
+		bpt::ptree tree;
+		spec_reader::SpecNode node = getSpecNode( tree, jsonStringBegin + R"*( ,"endian":"little","range": [ { "min": "1", "max": "10" } ] )*"  + jsonStringEnd );
+
+		std::shared_ptr< basic_element::Number > elem = std::make_shared< basic_element::Number >( &node );
+	
+		const char buff[4] { 0x05, 0x00, 0x00, 0x00 };
+		elem->set( (const char*)&buff, 4 );
+
+		Checker( elem ).check();
+		BOOST_CHECK_EQUAL( elem->getSubType(), eSubTypeUInt32 );
+		BOOST_CHECK_EQUAL( elem->getStatus(), eStatusValid );
+	}
+
+	{
+		bpt::ptree tree;
+		spec_reader::SpecNode node = getSpecNode( tree, jsonStringBegin + R"*( ,"range": [ { "max": "5" }, { "min": "10" } ] )*"  + jsonStringEnd );
+
+		std::shared_ptr< basic_element::Number > elem = std::make_shared< basic_element::Number >( &node );
+	
+		const char buff[4] { 0x00, 0x00, 0x00, 0x08 };
+		elem->set( (const char*)&buff, 4 );
+
+		Checker( elem ).check();
+		BOOST_CHECK_EQUAL( elem->getSubType(), eSubTypeUInt32 );
+		BOOST_CHECK_EQUAL( elem->getStatus(), eStatusInvalid );
+	}
 }
 
 BOOST_AUTO_TEST_SUITE_END()

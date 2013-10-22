@@ -1,9 +1,11 @@
 #include "Checker.hpp"
 
+#include <ElementChecker/Translator/Translator.hpp>
+#include <ElementChecker/Ranges/Ranges.hpp>
+
 #include <Common/log.hpp>
 #include <BasicElement/SubElements/Data.hpp>
 #include <BasicElement/SubElements/Number.hpp>
-#include <ElementChecker/Translator/Translator.hpp>
 
 #include <algorithm>
 
@@ -99,18 +101,33 @@ EStatus Checker::checkData( std::shared_ptr< basic_element::Data > data )
 
 EStatus Checker::checkNumber( std::shared_ptr< basic_element::Number > number )
 {
-	EStatus status = eStatusInvalid;
-
 	if( number->getRange().empty() )
 	{
 		return eStatusPassOver;
 	}
 	
-	// if( isNumberInRange() )	// @todo
-	// 	status = eStatusValid;
+	bool isInRange = false;
+	switch( number->getSubType() )
+	{
+		case eSubTypeInt8         : isInRange = Ranges< basic_element::int8         >( number->getRange() ).isInRanges( Translator( number.get() ).get< basic_element::int8         >() ); break;
+		case eSubTypeUInt8        : isInRange = Ranges< basic_element::uint8        >( number->getRange() ).isInRanges( Translator( number.get() ).get< basic_element::uint8        >() ); break;
+		case eSubTypeInt16        : isInRange = Ranges< basic_element::int16        >( number->getRange() ).isInRanges( Translator( number.get() ).get< basic_element::int16        >() ); break;
+		case eSubTypeUInt16       : isInRange = Ranges< basic_element::uint16       >( number->getRange() ).isInRanges( Translator( number.get() ).get< basic_element::uint16       >() ); break;
+		case eSubTypeInt32        : isInRange = Ranges< basic_element::int32        >( number->getRange() ).isInRanges( Translator( number.get() ).get< basic_element::int32        >() ); break;
+		case eSubTypeUInt32       : isInRange = Ranges< basic_element::uint32       >( number->getRange() ).isInRanges( Translator( number.get() ).get< basic_element::uint32       >() ); break;
+		case eSubTypeInt64        : isInRange = Ranges< basic_element::int64        >( number->getRange() ).isInRanges( Translator( number.get() ).get< basic_element::int64        >() ); break;
+		case eSubTypeUInt64       : isInRange = Ranges< basic_element::uint64       >( number->getRange() ).isInRanges( Translator( number.get() ).get< basic_element::uint64       >() ); break;
+		case eSubTypeFloat        : isInRange = Ranges< float                       >( number->getRange() ).isInRanges( Translator( number.get() ).get< float                       >() ); break;
+		case eSubTypeDouble       : isInRange = Ranges< double                      >( number->getRange() ).isInRanges( Translator( number.get() ).get< double                      >() ); break;
+		case eSubTypeIeeeExtended : isInRange = Ranges< basic_element::ieeeExtended >( number->getRange() ).isInRanges( Translator( number.get() ).get< basic_element::ieeeExtended >() ); break;
+		default: break;
+	}
 
-	// LOG_TRACE( "status: " << status );
-	return status;
+	if( isInRange )
+		return eStatusValid;
+	
+	number->addErrorLabel( "Invalid subtype" );
+	return eStatusInvalid;
 }
 
 }
