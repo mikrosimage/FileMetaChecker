@@ -1,7 +1,7 @@
 Import( 'project', 'libs' )
 
 project.UnitTest(
-	target = "TestTranslator",
+	target = "TestElementChecker",
 	sources = ['elementCheckerTest.cpp'],
 	libraries = [
 		libs.elementChecker,
