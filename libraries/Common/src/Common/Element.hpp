@@ -100,6 +100,12 @@ public:
 	size_t getChildrenNumber() const;
 
 	void getEndianOrderedData( char* buffer, const char* data ) const;
+
+	void addErrorLabel( const std::string& error );
+	void addWarningLabel( const std::string& warning );
+
+	std::string getErrorLabel();
+	std::string getWarningLabel();
 	
 	virtual void check() = 0;
 

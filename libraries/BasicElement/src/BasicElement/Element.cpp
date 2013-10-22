@@ -181,4 +181,24 @@ void Element::getEndianOrderedData( char* buffer, const char* data ) const
 		std::memcpy( buffer, data, _prop.size );
 }
 
+void Element::addErrorLabel( const std::string& error )
+{
+	_prop.error += error;
+}
+
+void Element::addWarningLabel( const std::string& warning )
+{
+	_prop.warning += warning;
+}
+
+std::string Element::getErrorLabel()
+{
+	return _prop.error;
+}
+
+std::string Element::getWarningLabel()
+{
+	return _prop.warning;
+}
+
 }
