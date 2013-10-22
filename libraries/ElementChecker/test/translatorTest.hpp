@@ -4,7 +4,7 @@
 
 #include <SpecReader/SpecNode.hpp>
 
-using namespace basic_element;
+using namespace element_checker;
 
 BOOST_AUTO_TEST_SUITE( element_checker_test_translator )
 
@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_1 )
 	bpt::read_json( isstream, tree );
 
 	spec_reader::SpecNode node( tree.get_child( "header" ).begin() );
-	Number elem( &node );
+	basic_element::Number elem( &node );
 
 	{
 		Translator tr = Translator( &elem );
@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_1 )
 		
 	}
 	{
-		Data data( &node );
+		basic_element::Data data( &node );
 		const char buff[4] { 'W', 'A', 'V', 'E' };
 		data.set( (const char*)&buff, 4 );
 
@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 		bpt::read_json( isstream, tree );
 
 		spec_reader::SpecNode node( tree.get_child( "header" ).begin() );
-		Data elem( &node );
+		basic_element::Data elem( &node );
 	
 		const char buff[4] { 'W', 'A', 'V', 'E' };
 		elem.set( (const char*)&buff, 4 );
@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 		bpt::read_json( isstream, tree );
 
 		spec_reader::SpecNode node( tree.get_child( "header" ).begin() );
-		Number elem( &node );
+		basic_element::Number elem( &node );
 	
 		const char buff[4] { 'W', 'A', 'V', 'E' };
 		elem.set( (const char*)&buff, 4 );
@@ -196,7 +196,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 		bpt::read_json( isstream, tree );
 
 		spec_reader::SpecNode node( tree.get_child( "header" ).begin() );
-		Number elem( &node );
+		basic_element::Number elem( &node );
 	
 		const char buff[1] { 'W' };
 		elem.set( (const char*)&buff, 1 );

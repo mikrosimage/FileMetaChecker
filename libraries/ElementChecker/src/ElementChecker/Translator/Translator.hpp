@@ -7,7 +7,7 @@
 #include <vector>
 #include <sstream> 
 
-namespace basic_element
+namespace element_checker
 {
 
 template< typename NumberType >

@@ -1,5 +1,5 @@
 
-namespace basic_element
+namespace element_checker
 {
 
 template< EDisplayType >

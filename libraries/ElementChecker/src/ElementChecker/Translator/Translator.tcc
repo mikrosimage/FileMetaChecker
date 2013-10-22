@@ -1,7 +1,7 @@
 #include <Common/log.hpp> 	// @todelete !
 #include <iomanip>
 
-namespace basic_element
+namespace element_checker
 {
 
 template< typename OutType>
