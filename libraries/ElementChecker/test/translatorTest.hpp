@@ -92,6 +92,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 {
 	LOG_INFO( ">>> element_checker_translator_2 <<<" );
 	{
+		LOG_INFO( "\t>>> translator_2_1 <<<" );
 		std::string jsonString = R"*(
 				{
 					"header": [
@@ -133,6 +134,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 		
 	}
 	{
+		LOG_INFO( "\t>>> translator_2_2 <<<" );
 		std::string jsonString = R"*(
 				{
 					"header": [
@@ -158,15 +160,15 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 
 
 		BOOST_CHECK_EQUAL( Translator( &elem ).get< std::string >(), "WAVE" );
-		BOOST_CHECK_EQUAL( Translator( &elem ).get< std::vector< int > >().at(0), 1163280727 );
+		BOOST_CHECK_EQUAL( Translator( &elem ).get< std::vector< int > >().at(0), 1463899717 );
 		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< char > >().at(0), 87 );
 		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< char > >().at(1), 65 );
 		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< char > >().at(2), 86 );
 		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< char > >().at(3), 69 );
-		BOOST_CHECK_EQUAL( Translator( &elem ).get<   int >(), 1163280727 );
+		BOOST_CHECK_EQUAL( Translator( &elem ).get<   int >(), 1463899717 );
 		BOOST_CHECK_THROW( Translator( &elem ).get< short >(), std::runtime_error );
 	
-		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeDefault ), "1163280727" );
+		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeDefault ), "1463899717" );
 		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeNumbers ), "87658669" );
 		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeAscii   ), "WAVE" );
 		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeHexa    ), "57415645" );
@@ -174,6 +176,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 		
 	}
 	{
+		LOG_INFO( "\t>>> translator_2_3 <<<" );
 		std::string jsonString = R"*(
 				{
 					"header": [
@@ -210,6 +213,47 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeAscii   ), "W" );
 		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeHexa    ), "57" );
 		BOOST_CHECK_EQUAL( Translator( &elem ).get( eDisplayTypeRaw     ), "W" );
+	}
+
+	{
+		LOG_INFO( "\t>>> translator_2_4 <<<" );
+		std::string jsonString = R"*(
+				{
+					"header": [
+						{ 
+							"id": "id",
+							"label": "label",
+							"type": "uint32",
+							"endian": "little"
+						}
+					]
+				}
+			)*";
+
+		std::istringstream isstream( jsonString );
+		bpt::ptree tree;
+
+		bpt::read_json( isstream, tree );
+
+		spec_reader::SpecNode node( tree.get_child( "header" ).begin() );
+		basic_element::Number elem( &node );
+	
+		const char buff[4] { 0x01, 0x00, 0x00, 0x00 };
+		elem.set( (const char*)&buff, 4 );
+
+		BOOST_CHECK_EQUAL( elem.isBigEndian(), false );
+		BOOST_CHECK_EQUAL( Translator( &elem ).get<   int >(), 1 );
+		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< char > >().size(), 4 );
+		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< char > >().at(0), 1 );
+		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< char > >().at(1), 0 );
+		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< char > >().at(2), 0 );
+		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< char > >().at(3), 0 );
+
+		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< short > >().size(), 2 );
+		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< short > >().at(0), 1 );
+		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< short > >().at(1), 0 );
+		
+		BOOST_CHECK_THROW( Translator( &elem ).get< short >(), std::runtime_error );
 	}
 }
 

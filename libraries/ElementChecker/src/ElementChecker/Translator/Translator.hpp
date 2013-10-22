@@ -35,7 +35,10 @@ public:
 
 private:
 	template< typename NumberType >
-	std::vector< NumberType > convertToVector() const;
+	std::vector< NumberType > convertToVector();
+
+	bool isSystemLittleEndian();
+	void getOrderedData( char* buffer );
 
 private:
 	const basic_element::Element* _ref;

@@ -1,5 +1,6 @@
 #include <Common/log.hpp> 	// @todelete !
 #include <iomanip>
+#include <algorithm>
 
 namespace element_checker
 {
@@ -13,8 +14,13 @@ OutType Translator::get()
 	// LOG_TRACE( "Generic translator: to number type" );
 	if( _ref->getSize() != sizeof( OutType ) )
 		throw std::runtime_error( "invalid data size" );
+	
 	NumberData< OutType > num;
-	std::memcpy( num.data, _ref->getData(), _ref->getSize() );
+	char* buffer = new char [ _ref->getSize() ];
+	
+	getOrderedData( buffer );
+	std::memcpy( num.data, buffer, _ref->getSize() );
+	delete[] buffer;
 	return num.value;
 }
 
@@ -50,18 +56,64 @@ std::string Translator::get< std::string >()
 }
 
 template< typename NumberType >
-std::vector< NumberType > Translator::convertToVector() const
+std::vector< NumberType > Translator::convertToVector()
 {
 	if( _ref->getSize() % sizeof( NumberType ) != 0 )
 		throw std::runtime_error( "invalid data size" );
+
 	std::vector< NumberType > vector;
+	
 	for( size_t i = 0; i < _ref->getSize(); i += sizeof( NumberType ) )
 	{
 		NumberData< NumberType > num;
-		std::memcpy( num.data, &_ref->getData()[i], _ref->getSize() );
+		char* buffer = new char [ _ref->getSize() ];
+
+		if( _ref->getSize() == sizeof( NumberType ) )
+			getOrderedData( buffer );
+		else
+			std::memcpy( buffer, _ref->getData(), _ref->getSize() );
+
+		std::memcpy( num.data, &buffer[i], _ref->getSize() );
+		delete[] buffer;
 		vector.push_back( num.value );
 	}
 	return vector;
+}
+
+bool Translator::isSystemLittleEndian()
+{
+	union
+	{
+		unsigned int i;
+		char c[4];
+	} binInt = { 0x00000001 };
+
+	return ( binInt.c[0] == 1 ); 
+}
+
+void Translator::getOrderedData( char* buffer )
+{
+	if( ! _ref->isBigEndian() )
+	{
+		LOG_FATAL( "/// 1" );
+		std::reverse_copy( _ref->getData(), _ref->getData() + _ref->getSize(), buffer );
+	}
+	else
+	{
+		LOG_FATAL( "/// 2" );
+		std::memcpy( buffer, _ref->getData(), _ref->getSize() );
+	}
+
+	if( _ref->getType() == eTypeNumber && isSystemLittleEndian() )
+	{
+		LOG_FATAL( "/// 3" );
+		char* temp = new char[ _ref->getSize() ];
+		std::memcpy( temp, buffer, _ref->getSize() );
+
+		std::reverse_copy( temp, temp + _ref->getSize(), buffer );	// swap if system little endian
+
+		delete[] temp;
+	}
 }
 
 }
