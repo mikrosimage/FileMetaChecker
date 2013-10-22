@@ -44,7 +44,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 	while( ( s = e->next() ) != NULL )	// if end of specification : stop
 	{
 		e = getElement( s, e );			// get an element
-		e->check();						// check it
+		// e->check();						// check it
 
 		if( e->getStatus() == eStatusInvalidButOptional ||
 			e->getStatus() == eStatusInvalidButSkip )
