@@ -13,15 +13,6 @@ namespace bpt = boost::property_tree;
 
 using namespace element_checker;
 
-// Specificiation spec;
-
-// spec_reader::SpecNode getSpecNode( bpt::ptree& tree, const std::string& jsonString )
-// {
-// 	std::istringstream isstream( jsonString );
-// 	boost::property_tree::json_parser::read_json( isstream, tree );
-// 	return spec_reader::SpecNode( &spec, tree.get_child( "header" ).begin() );
-// }
-
 BOOST_AUTO_TEST_SUITE( element_checker_test )
 
 BOOST_AUTO_TEST_CASE( element_checker_test_init )
