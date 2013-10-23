@@ -62,8 +62,14 @@ void Range< ValueType >::setRange( const ValueType& min, const ValueType& max )
 template< typename ValueType >
 void Range< ValueType >::setRange( const std::string& min, const std::string& max )
 {
-	ValueType minValue = fromString( min );
-	ValueType maxValue = fromString( max );
+	ValueType minValue = _min;
+	ValueType maxValue = _max;
+
+	if( ! min.empty() )
+		minValue = fromString( min );
+	if( ! max.empty() )
+		maxValue = fromString( max );
+	
 	if( minValue > maxValue )
 		throw std::range_error( "The 'min' value must be less than the 'max' value" );
 	_min = minValue;
@@ -99,7 +105,7 @@ ValueType Range< ValueType >::fromString( const std::string& value )
 		ValueType ret;
 		std::stringstream sstr( value );
 		sstr >> ret;
-		// LOG_TRACE( "NumberTranslator::fromString: " << ret );
+		// LOG_TRACE( "Range::fromString: " << ret );
 		return ret;
 	}
 	catch( const std::range_error& e )
@@ -117,7 +123,7 @@ char Range< char >::fromString( const std::string& value )
 		short ret;
 		std::stringstream sstr( value );
 		sstr >> ret;
-		// LOG_TRACE( "NumberTranslator::fromString: " << ret );
+		// LOG_TRACE( "Range::fromString: " << ret );
 		if( ret > 127 || ret < -128 )
 			throw std::range_error( "fromString: string cannot be converted to int8" );
 		return (char) ret;
@@ -137,7 +143,7 @@ unsigned char Range< unsigned char >::fromString( const std::string& value )
 		unsigned short ret;
 		std::stringstream sstr( value );
 		sstr >> ret;
-		// LOG_TRACE( "NumberTranslator::fromString: " << ret );
+		// LOG_TRACE( "Range::fromString: " << ret );
 		if( ret > 255 || ret < 0 )
 			throw std::range_error( "fromString: string cannot be converted to uint8" );
 		return (unsigned char) ret;
