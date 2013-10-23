@@ -86,9 +86,9 @@ bool Translator::isSystemLittleEndian()
 	{
 		unsigned int i;
 		char c[4];
-	} binInt = { 0x00000001 };
+	} binInt = { 0x01020304 };
 
-	return ( binInt.c[0] == 1 ); 
+	return ( binInt.c[0] == 4 ); 
 }
 
 void Translator::getOrderedData( char* buffer )
