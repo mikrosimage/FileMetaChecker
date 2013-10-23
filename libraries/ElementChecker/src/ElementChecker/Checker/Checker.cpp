@@ -9,10 +9,12 @@
 
 #include <algorithm>
 
+namespace be = basic_element;
+
 namespace element_checker
 {
 
-Checker::Checker( const std::shared_ptr< basic_element::Element > element )
+Checker::Checker( const std::shared_ptr< be::Element > element )
 	: _element( element )
 {
 }
@@ -31,7 +33,7 @@ void Checker::check()
 		}
 		case eTypeNumber  :
 		{
-			std::shared_ptr< basic_element::Number > number = std::static_pointer_cast< basic_element::Number >( _element );
+			std::shared_ptr< be::Number > number = std::static_pointer_cast< be::Number >( _element );
 			_element->setStatus( checkNumber( number ) );
 			break;
 		}
@@ -41,7 +43,7 @@ void Checker::check()
 		}
 		case eTypeData    :
 		{
-			std::shared_ptr< basic_element::Data > data = std::static_pointer_cast< basic_element::Data >( _element );
+			std::shared_ptr< be::Data > data = std::static_pointer_cast< be::Data >( _element );
 			_element->setStatus( checkData( data ) );
 			break;
 		}
@@ -53,7 +55,7 @@ void Checker::check()
 
 }
 
-EStatus Checker::checkData( std::shared_ptr< basic_element::Data > data )
+EStatus Checker::checkData( std::shared_ptr< be::Data > data )
 {
 	if( data->getSize() == 0 )
 		LOG_WARNING( data->getId() << ": Null data size !" );
@@ -99,34 +101,34 @@ EStatus Checker::checkData( std::shared_ptr< basic_element::Data > data )
 	return status;
 }
 
-EStatus Checker::checkNumber( std::shared_ptr< basic_element::Number > number )
+EStatus Checker::checkNumber( std::shared_ptr< be::Number > num )
 {
-	if( number->getRange().empty() )
+	if( num->getRange().empty() )
 	{
 		return eStatusPassOver;
 	}
 	
-	bool isInRange = false;
-	switch( number->getSubType() )
+	bool inRange = false;
+	switch( num->getSubType() )
 	{
-		case eSubTypeInt8         : isInRange = Ranges< basic_element::int8         >( number->getRange() ).isInRanges( Translator( number.get() ).get< basic_element::int8         >() ); break;
-		case eSubTypeUInt8        : isInRange = Ranges< basic_element::uint8        >( number->getRange() ).isInRanges( Translator( number.get() ).get< basic_element::uint8        >() ); break;
-		case eSubTypeInt16        : isInRange = Ranges< basic_element::int16        >( number->getRange() ).isInRanges( Translator( number.get() ).get< basic_element::int16        >() ); break;
-		case eSubTypeUInt16       : isInRange = Ranges< basic_element::uint16       >( number->getRange() ).isInRanges( Translator( number.get() ).get< basic_element::uint16       >() ); break;
-		case eSubTypeInt32        : isInRange = Ranges< basic_element::int32        >( number->getRange() ).isInRanges( Translator( number.get() ).get< basic_element::int32        >() ); break;
-		case eSubTypeUInt32       : isInRange = Ranges< basic_element::uint32       >( number->getRange() ).isInRanges( Translator( number.get() ).get< basic_element::uint32       >() ); break;
-		case eSubTypeInt64        : isInRange = Ranges< basic_element::int64        >( number->getRange() ).isInRanges( Translator( number.get() ).get< basic_element::int64        >() ); break;
-		case eSubTypeUInt64       : isInRange = Ranges< basic_element::uint64       >( number->getRange() ).isInRanges( Translator( number.get() ).get< basic_element::uint64       >() ); break;
-		case eSubTypeFloat        : isInRange = Ranges< float                       >( number->getRange() ).isInRanges( Translator( number.get() ).get< float                       >() ); break;
-		case eSubTypeDouble       : isInRange = Ranges< double                      >( number->getRange() ).isInRanges( Translator( number.get() ).get< double                      >() ); break;
-		case eSubTypeIeeeExtended : isInRange = Ranges< basic_element::ieeeExtended >( number->getRange() ).isInRanges( Translator( number.get() ).get< basic_element::ieeeExtended >() ); break;
+		case eSubTypeInt8         : inRange = Ranges< be::int8         >( num->getRange() ).isInRanges( Translator( num.get() ).get< be::int8         >() ); break;
+		case eSubTypeUInt8        : inRange = Ranges< be::uint8        >( num->getRange() ).isInRanges( Translator( num.get() ).get< be::uint8        >() ); break;
+		case eSubTypeInt16        : inRange = Ranges< be::int16        >( num->getRange() ).isInRanges( Translator( num.get() ).get< be::int16        >() ); break;
+		case eSubTypeUInt16       : inRange = Ranges< be::uint16       >( num->getRange() ).isInRanges( Translator( num.get() ).get< be::uint16       >() ); break;
+		case eSubTypeInt32        : inRange = Ranges< be::int32        >( num->getRange() ).isInRanges( Translator( num.get() ).get< be::int32        >() ); break;
+		case eSubTypeUInt32       : inRange = Ranges< be::uint32       >( num->getRange() ).isInRanges( Translator( num.get() ).get< be::uint32       >() ); break;
+		case eSubTypeInt64        : inRange = Ranges< be::int64        >( num->getRange() ).isInRanges( Translator( num.get() ).get< be::int64        >() ); break;
+		case eSubTypeUInt64       : inRange = Ranges< be::uint64       >( num->getRange() ).isInRanges( Translator( num.get() ).get< be::uint64       >() ); break;
+		case eSubTypeFloat        : inRange = Ranges< float            >( num->getRange() ).isInRanges( Translator( num.get() ).get< float            >() ); break;
+		case eSubTypeDouble       : inRange = Ranges< double           >( num->getRange() ).isInRanges( Translator( num.get() ).get< double           >() ); break;
+		case eSubTypeIeeeExtended : inRange = Ranges< be::ieeeExtended >( num->getRange() ).isInRanges( Translator( num.get() ).get< be::ieeeExtended >() ); break;
 		default: break;
 	}
 
-	if( isInRange )
+	if( inRange )
 		return eStatusValid;
 	
-	number->addErrorLabel( "Invalid subtype" );
+	num->addErrorLabel( "Invalid subtype" );
 	return eStatusInvalid;
 }
 

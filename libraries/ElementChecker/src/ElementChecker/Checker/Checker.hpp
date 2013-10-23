@@ -26,7 +26,7 @@ public:
 
 private:
 	EStatus checkData  ( std::shared_ptr< basic_element::Data   > data );
-	EStatus checkNumber( std::shared_ptr< basic_element::Number > number );
+	EStatus checkNumber( std::shared_ptr< basic_element::Number > num  );
 
 private:
 	std::shared_ptr< basic_element::Element > _element;
