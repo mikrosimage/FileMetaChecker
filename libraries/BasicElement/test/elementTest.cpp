@@ -1,7 +1,7 @@
 #define BOOST_TEST_MODULE qc_spec_reader
 
 #include <Common/log.hpp>
-#include <SpecReader/SpecNode.hpp>
+#include <SpecReader/Specification.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include <boost/property_tree/json_parser.hpp>
@@ -12,12 +12,12 @@ using namespace basic_element;
 std::string id    = "id";
 std::string label = "label";
 
-spec_reader::SpecNode getSpecNode( boost::property_tree::ptree& tree, const std::string& jsonString )
-{
-	std::istringstream isstream( jsonString );
-	boost::property_tree::json_parser::read_json( isstream, tree );
-	return spec_reader::SpecNode( tree.get_child( "header" ).begin() );
-}
+// spec_reader::SpecNode getSpecNode( boost::property_tree::ptree& tree, const std::string& jsonString )
+// {
+// 	std::istringstream isstream( jsonString );
+// 	boost::property_tree::json_parser::read_json( isstream, tree );
+// 	return spec_reader::SpecNode( &spec, tree.get_child( "header" ).begin() );
+// }
 
 BOOST_AUTO_TEST_SUITE( basic_element_test_suite01 )
 

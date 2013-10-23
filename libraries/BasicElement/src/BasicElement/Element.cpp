@@ -56,87 +56,90 @@ Element::Element( const sr::SpecNode* node, const std::shared_ptr< Element > pre
 			}
 		}
 	}
+
+	// if( _parent.use_count() != 0 )
+	if( _parent.lock().get() != nullptr )
+	{
+		_parent.lock()->_children.push_back( std::make_shared< Element >( *this ) );
+	}
 }
 
 const sr::SpecNode* Element::next( )
 {
-	if( _prop.status == eStatusNotChecked )
+	if( _prop.status == eStatusNotChecked )		// if element has been checked
 		return _specNode;
 
 	std::shared_ptr< Element > parent;
 
-	if( _parent.use_count() != 0 )
-		parent = _parent.lock();
+	if( _parent.use_count() != 0 )		// if parent exists (?)
+		parent = _parent.lock();		// copy the parent
 	
-	if( _specNode->isOptional() && _prop.status == eStatusInvalid )
-	{
-		return _specNode->next( parent );
-	}
+	// Optional element :
+	if( _prop.isOptional && _prop.status == eStatusInvalid )		// if element optional & invalid
+		return _specNode->next( parent );							// go to next SpecNode
 	
-	if( _prop.status == eStatusInvalidButSkip && _parent.use_count() != 0 && ( ! parent->_specNode->isOrdered() ) )
+	// Unordered groups :
+	if( _prop.status == eStatusInvalidButSkip 		// if element status = invalidButSkip (unordered group case)
+	 && _parent.use_count() != 0 					// and if parent exists
+	 && ( ! parent->_specNode->isOrdered() ) )		// and if parent is not ordered
 	{
 		std::cout << "Unordered, check one another baby !" << std::endl;
-		_prop.status = eStatusInvalidButSkip;
-		
-		return parent->_specNode->firstChild( parent );
+		return parent->_specNode->firstChild( parent );		// go to the first SpecNode of the childhood
 	}
 	
-	if( _specNode->isGroup() && ! _checkedGroup )
+	// Groups :
+	if( _specNode->isGroup() && ! _checkedGroup )	// if element has a group not already checked 
 	{
-		_checkedGroup = true;
-		std::shared_ptr< Element > t( this );
-		return _specNode->firstChild( t );
+		_checkedGroup = true;						// it becomes checked
+		std::shared_ptr< Element > t( this );		// creates a pointer to this current element
+		return _specNode->firstChild( t );			// go to the first child SpecNode
 	}
 	
-	size_t count = _specNode->isRepeated();
+	// Repetitions
+	size_t count = _specNode->isRepeated();		// get repetitions
 
-	if( count > 1 )
+	if( count > 1 )								// if repeated element
 	{
-		if( _prop.iteration < count )
-			return _specNode;
+		if( _prop.iteration < count )			// and not repeated enough yet
+			return _specNode;					// go to the same SpecNode
 	}
 	
-	const sr::SpecNode* sn = _specNode->next( parent );
+	const sr::SpecNode* nextNode = _specNode->next( parent );		// creates a pointer to the next SpecNode
 	
-	if( sn == NULL && _parent.use_count() != 0 )
+	// in Unoredered groups : check if every nodes have been checked
+	if( nextNode == nullptr && _parent.use_count() != 0 )		// if their is no more SpecNode after and parent exists
 	{
-		if( ! parent->_specNode->isOrdered() )
+		if( ! parent->_specNode->isOrdered() )			// if the current group (parent's children) is not ordered
 		{
-			std::set< std::string > childIds;
+			std::set< std::string > childIds = parent->_specNode->getChildrenNodes();	// create a list with the children IDs
 			
-			childIds = parent->_specNode->getChildrenNodes();
-			
-			std::shared_ptr< Element > prev;
-			if( _previous.use_count() != 0 )
+			if( _previous.use_count() != 0 )		// if the previous element exists (the current element is not the first)
 			{
-				prev = _previous.lock();
-				while( prev->getId() != parent->getId() )
+				std::shared_ptr< Element > prev = _previous.lock();	// creates a pointer to the previous element
+				while( prev->getId() != parent->getId() )	// while the previous element is not the parent
 				{
-					for( auto id : childIds )
+					for( auto id : childIds )				// for each ID in the children ID list
 					{
-						if( prev->getId() == id )
-						{
-							childIds.erase( id );
-						}
+						if( prev->getId() == id )			// if the previous element's ID is equal to one ID of the list
+							childIds.erase( id );			// erase this ID from the list
 					}
-					prev = prev->_previous.lock();
+					prev = prev->_previous.lock();			// go to the previous element of the previous, etc..
 				}
 			}			
 			
 			std::cout << _prop.id << "   " << _prop.uId << std::endl;
 			std::cout << "End of check Unordered " << childIds.size() << std::endl;
 			
-			if( childIds.size() != 0 )
+			if( childIds.size() != 0 )					// if it remains some IDs in the list
 			{
 				std::cout << "prout" << std::endl;		// Error or Warning ?
 				//status = eStatusInvalid;
-				parent->_prop.status = eStatusInvalidForUnordered;
+				parent->_prop.status = eStatusInvalidForUnordered;	// every nodes haven't been checked : the parent is not valid
 			}
 		}
-		return parent->next( );
+		return parent->next( );			// go to the node after the parent
 	}
-	
-	return sn;
+	return nextNode;	// go to the next node
 }
 
 std::string Element::getStringStatus() const
@@ -166,11 +169,6 @@ void Element::set( const char* data, const size_t& size )
 	_prop.size = size;
 	
 	std::memcpy( _prop.data, data, _prop.size );
-}
-
-size_t Element::getChildrenNumber() const		// @todo replace by _children (after init..)
-{
-	return _specNode->getChildrenNumber();
 }
 
 void Element::addErrorLabel( const std::string& error )

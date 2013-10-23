@@ -18,8 +18,9 @@ BOOST_AUTO_TEST_CASE( basic_element_data )
 		}
 	)*";
 
-	boost::property_tree::ptree tree;
-	spec_reader::SpecNode node = getSpecNode( tree, jsonString );
+	spec_reader::Specification spec;
+	spec.setFromString( jsonString );
+	spec_reader::SpecNode node = *spec.getFirstNode();
 
 	BOOST_CHECK_EQUAL( node.getId(),          id    );
 	BOOST_CHECK_EQUAL( node.getLabel(),       label );
@@ -76,8 +77,9 @@ BOOST_AUTO_TEST_CASE( basic_element_data_subType )
 			}
 		)*";
 
-		boost::property_tree::ptree tree;
-		spec_reader::SpecNode node = getSpecNode( tree, jsonString );
+		spec_reader::Specification spec;
+		spec.setFromString( jsonString );
+		spec_reader::SpecNode node = *spec.getFirstNode();
 		
 		Data data( &node );
 		BOOST_CHECK_EQUAL( data.getSubType(), eSubTypeUnknown );
@@ -94,8 +96,9 @@ BOOST_AUTO_TEST_CASE( basic_element_data_subType )
 			}
 		)*";
 
-		boost::property_tree::ptree tree;
-		spec_reader::SpecNode node = getSpecNode( tree, jsonString );
+		spec_reader::Specification spec;
+		spec.setFromString( jsonString );
+		spec_reader::SpecNode node = *spec.getFirstNode();
 
 		Data data( &node );
 		BOOST_CHECK_EQUAL( data.getSubType(), eSubTypeHexa );
@@ -112,8 +115,9 @@ BOOST_AUTO_TEST_CASE( basic_element_data_subType )
 			}
 		)*";
 
-		boost::property_tree::ptree tree;
-		spec_reader::SpecNode node = getSpecNode( tree, jsonString );
+		spec_reader::Specification spec;
+		spec.setFromString( jsonString );
+		spec_reader::SpecNode node = *spec.getFirstNode();
 
 		Data data( &node );
 		BOOST_CHECK_EQUAL( data.getSubType(), eSubTypeAscii );
@@ -130,8 +134,9 @@ BOOST_AUTO_TEST_CASE( basic_element_data_subType )
 			}
 		)*";
 
-		boost::property_tree::ptree tree;
-		spec_reader::SpecNode node = getSpecNode( tree, jsonString );
+		spec_reader::Specification spec;
+		spec.setFromString( jsonString );
+		spec_reader::SpecNode node = *spec.getFirstNode();
 
 		Data data( &node );
 		BOOST_CHECK_EQUAL( data.getSubType(), eSubTypeRaw );
@@ -148,8 +153,9 @@ BOOST_AUTO_TEST_CASE( basic_element_data_subType )
 			}
 		)*";
 
-		boost::property_tree::ptree tree;
-		spec_reader::SpecNode node = getSpecNode( tree, jsonString );
+		spec_reader::Specification spec;
+		spec.setFromString( jsonString );
+		spec_reader::SpecNode node = *spec.getFirstNode();
 
 		Data data( &node );
 		BOOST_CHECK_EQUAL( data.getSubType(), eSubTypeUInt8 );
@@ -171,8 +177,9 @@ BOOST_AUTO_TEST_CASE( basic_element_data_error_warning )
 		}
 	)*";
 
-	boost::property_tree::ptree tree;
-	spec_reader::SpecNode node = getSpecNode( tree, jsonString );
+	spec_reader::Specification spec;
+	spec.setFromString( jsonString );
+	spec_reader::SpecNode node = *spec.getFirstNode();
 
 	{
 		Data data( &node );
@@ -197,5 +204,232 @@ BOOST_AUTO_TEST_CASE( basic_element_data_error_warning )
 		BOOST_CHECK_EQUAL( data.getWarningLabel(), kWarning + " / " + kWarning );
 	}
 }
+
+BOOST_AUTO_TEST_CASE( basic_element_data_next )
+{
+	LOG_INFO( "\n>>> basic_element_data_next <<<" );
+	{
+		std::string jsonString = R"*(
+				{
+					"header": [
+						{ "id": "value1" },
+						{ "id": "value2" },
+						{ "id": "value3" },
+						{ "id": "value4" }
+					]
+				}
+			)*";
+
+		spec_reader::Specification spec;
+		spec.setFromString( jsonString );
+		spec_reader::SpecNode node = *spec.getFirstNode();
+
+		BOOST_CHECK_EQUAL( node.getId(),                         "value1" );
+		BOOST_CHECK_EQUAL( node.next()->getId(),                 "value2" );
+		BOOST_CHECK_EQUAL( node.next()->next()->getId(),         "value3" );
+		BOOST_CHECK_EQUAL( node.next()->next()->next()->getId(), "value4" );
+		BOOST_CHECK( node.next()->next()->next()->next() == nullptr );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( basic_element_data_next_firstchild )
+{
+	LOG_INFO( "\n>>> basic_element_data_next_firstchild <<<" );
+	{
+		std::string jsonString = R"*(
+				{
+					"header": [
+						{ "id": "value1", "label": "Value1", "type": "ascii" },
+						{ "id": "value2", "label": "Value2", "type": "ascii" },
+						{ "id": "value3", "label": "Value3", "type": "ascii" },
+						{ "id": "value4", "label": "Value4", "type": "ascii", "group": [
+							{ "id": "firstchild" },
+							{ "id": "secondchild" },
+							{ "id": "thirdchild" }
+						] }
+					]
+				}
+			)*";
+
+		spec_reader::Specification spec;
+		spec.setFromString( jsonString );
+		spec_reader::SpecNode node = *spec.getFirstNode();
+
+		BOOST_CHECK_EQUAL( node.getId(),                         "value1" );
+		BOOST_CHECK_EQUAL( node.next()->getId(),                 "value2" );
+		BOOST_CHECK_EQUAL( node.next()->next()->getId(),         "value3" );
+		BOOST_CHECK_EQUAL( node.next()->next()->next()->getId(), "value4" );
+
+		std::shared_ptr< Element > parent = std::make_shared< Element >( node.next()->next()->next() );
+		
+		BOOST_CHECK_EQUAL( node.next()->next()->next()->firstChild( parent )->getId(),                 "firstchild" );
+		BOOST_CHECK_EQUAL( node.next()->next()->next()->firstChild( parent )->next()->getId(),        "secondchild" );
+		BOOST_CHECK_EQUAL( node.next()->next()->next()->firstChild( parent )->next()->next()->getId(), "thirdchild" );
+
+		BOOST_CHECK( node.next()->next()->next()->firstChild( parent )->next()->next()->next() == nullptr );
+	}
+}
+
+// BOOST_AUTO_TEST_CASE( spec_reader_spec_reader::SpecNode_first_child )
+// {
+// 	LOG_INFO( "\n>>> spec_reader_spec_reader::SpecNode_first_child <<<" );	// @todo : finish it after basic_element !
+// 	{
+// 		std::string jsonString = R"*(
+// 				{
+// 					"header": [
+// 						{ 
+// 							"id": "value1",
+// 							"group": [
+// 								{ "id": "value11" },
+// 								{ "id": "value12" },
+// 								{ "id": "value13" }
+// 							]
+// 						}
+// 					]
+// 				}
+// 			)*";
+
+// 		std::istringstream isstream( jsonString );
+// 		bpt::ptree tree;
+
+// 		bpt::read_json( isstream, tree );
+
+// 		spec_reader::SpecNode node( tree.get_child( "header" ).begin() );
+// 		BOOST_CHECK_EQUAL( node.getId(),  "value1" );
+
+// 		std::set< std::string > childrenList = node.getChildrenNodes();
+// 		BOOST_CHECK_EQUAL( childrenList.size(), 3 );
+// 		BOOST_CHECK_EQUAL( childrenList.count( "value11" ), 1 );
+// 		BOOST_CHECK_EQUAL( childrenList.count( "value12" ), 1 );
+// 		BOOST_CHECK_EQUAL( childrenList.count( "value13" ), 1 );
+
+// 		// std::shared_ptr< basic_element::Element > element( new basic_element::Element( &node, NULL ) );
+// 		// node = *node.firstChild( element );
+// 		// BOOST_CHECK_EQUAL( node.getId(), "value11" );
+// 		// BOOST_CHECK_EQUAL( node.getParent(), element );
+
+// 		// node = *node.next();
+// 		// BOOST_CHECK_EQUAL( node.getId(), "value12" );
+// 		// BOOST_CHECK_EQUAL( node.getParent(), element );
+
+// 		// node = *node.next();
+// 		// BOOST_CHECK_EQUAL( node.getId(), "value13" );
+// 		// BOOST_CHECK_EQUAL( node.getParent(), element );
+
+// 		// node = *node.next();
+// 		// LOG_INFO( node.getId() );
+// 	}
+// 	// {
+// 	// 	std::string jsonString = " { \"header\": [ ";
+// 	// 	jsonString += " { \"id\": \"value1\" },";
+// 	// 	jsonString += " { \"id\": \"value2\" },";
+// 	// 	jsonString += " { \"id\": \"value3\" },";
+// 	// 	jsonString += " { \"id\": \"value4\" }";
+// 	// 	jsonString += " ] } ";
+
+// 	// 	std::istringstream isstream( jsonString );
+// 	// 	bpt::ptree tree;
+
+// 	// 	bpt::read_json( isstream, tree );
+// 	// 	spec_reader::SpecNode node( tree.get_child( "header" ).begin(), 0, 4 );
+// 	// 	BOOST_CHECK_EQUAL( node.getId(), "value1"  );
+// 	// 	BOOST_CHECK_THROW( node.firstChild(), std::runtime_error );
+
+// 	// 	node = node.next();
+// 	// 	BOOST_CHECK_EQUAL( node.getId(), "value2" );
+
+// 	// 	node = node.next();
+// 	// 	BOOST_CHECK_EQUAL( node.getId(), "value3" );
+
+// 	// 	node = node.next();
+// 	// 	BOOST_CHECK_EQUAL( node.getId(), "value4" );
+
+// 	// 	node = node.next();
+// 	// 	BOOST_CHECK_EQUAL( node.getIndex(),      4 );
+// 	// 	BOOST_CHECK_EQUAL( node.getIndexTotal(), 4 );
+// 	// }
+// }
+
+// // BOOST_AUTO_TEST_CASE( spec_reader_spec_reader::SpecNode_first_child_recursivity )
+// // {
+// // 	LOG_INFO( "\n>>> spec_reader_spec_reader::SpecNode_first_child_recursivity <<<" );
+// // 	{
+// // 		std::string jsonString = " { \"header\": [ ";
+// // 		jsonString += " { \"id\": \"value1\",";
+// // 		jsonString += "   \"group\": [ ";
+// // 		jsonString += "     { \"id\": \"value11\" },";
+// // 		jsonString += "     { \"id\": \"value12\",";
+// // 		jsonString += "       \"group\": [ ";
+// // 		jsonString += "          { \"id\": \"value121\", ";
+// // 		jsonString += "            \"group\": [ ";
+// // 		jsonString += "               { \"id\": \"value1211\" },";
+// // 		jsonString += "               { \"id\": \"value1212\" }";
+// // 		jsonString += "            ] } ";
+// // 		jsonString += "       ] }, ";
+// // 		jsonString += "     { \"id\": \"value13\" }";
+// // 		jsonString += "   ] } ";
+// // 		jsonString += " ] } ";
+
+// // 		std::istringstream isstream( jsonString );
+// // 		bpt::ptree tree;
+
+// // 		bpt::read_json( isstream, tree );
+// // 		spec_reader::SpecNode node( tree.get_child( "header" ).begin(), 0, 1 );
+// // 		BOOST_CHECK_EQUAL( node.getId(),  "value1" );
+// // 		BOOST_CHECK_EQUAL( node.getIndex(),      0 );
+// // 		BOOST_CHECK_EQUAL( node.getIndexTotal(), 1 );
+
+// // 		node = node.firstChild();
+// // 		BOOST_CHECK_EQUAL( node.getId(), "value11" );
+// // 		BOOST_CHECK_EQUAL( node.getIndex(),      0 );
+// // 		BOOST_CHECK_EQUAL( node.getIndexTotal(), 3 );
+		
+// // 		node = node.next();
+// // 		BOOST_CHECK_EQUAL( node.getId(), "value12" );
+// // 		BOOST_CHECK_EQUAL( node.getIndex(),      1 );
+// // 		BOOST_CHECK_EQUAL( node.getIndexTotal(), 3 );
+
+// // 		spec_reader::SpecNode childNode = node.firstChild();
+// // 		BOOST_CHECK_EQUAL( childNode.getId(), "value121" );
+// // 		BOOST_CHECK_EQUAL( childNode.getIndex(),       0 );
+// // 		BOOST_CHECK_EQUAL( childNode.getIndexTotal(),  1 );
+
+// // 		childNode = childNode.next();
+// // 		BOOST_CHECK_EQUAL( childNode.getIndex(),      1 );
+// // 		BOOST_CHECK_EQUAL( childNode.getIndexTotal(), 1 );
+
+// // 		childNode = childNode.firstChild();
+// // 		BOOST_CHECK_EQUAL( childNode.getId(), "value1211" );
+// // 		BOOST_CHECK_EQUAL( childNode.getIndex(),        0 );
+// // 		BOOST_CHECK_EQUAL( childNode.getIndexTotal(),   2 );
+
+// // 		childNode = childNode.next();
+// // 		BOOST_CHECK_EQUAL( childNode.getId(), "value1212" );
+// // 		BOOST_CHECK_EQUAL( childNode.getIndex(),        1 );
+// // 		BOOST_CHECK_EQUAL( childNode.getIndexTotal(),   2 );
+
+// // 		BOOST_CHECK_THROW( childNode.firstChild(), std::runtime_error );
+		
+// // 		childNode = childNode.next();
+// // 		BOOST_CHECK_EQUAL( childNode.getIndex(),      2 );
+// // 		BOOST_CHECK_EQUAL( childNode.getIndexTotal(), 2 );
+
+// // 		node = node.next();
+// // 		BOOST_CHECK_EQUAL( node.getId(), "value13" );
+// // 		BOOST_CHECK_EQUAL( node.getIndex(),      2 );
+// // 		BOOST_CHECK_EQUAL( node.getIndexTotal(), 3 );
+
+// // 		BOOST_CHECK_THROW( node.firstChild(), std::runtime_error );
+
+// // 		node = node.next();
+// // 		BOOST_CHECK_EQUAL( node.getIndex(),      3 );
+// // 		BOOST_CHECK_EQUAL( node.getIndexTotal(), 3 );
+
+// // 		node = node.next();
+// // 		BOOST_CHECK_EQUAL( node.getIndex(),      3 );
+// // 		BOOST_CHECK_EQUAL( node.getIndexTotal(), 3 );
+// // 	}
+// // }
+
 
 BOOST_AUTO_TEST_SUITE_END()

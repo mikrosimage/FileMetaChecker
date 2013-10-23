@@ -97,7 +97,6 @@ public:
 	bool isBigEndian() const { return _prop.bigEndianData; }
 
 	std::weak_ptr< Element > getParent() const { return _parent; }
-	size_t getChildrenNumber() const;
 
 	void addErrorLabel( const std::string& error );
 	void addWarningLabel( const std::string& warning );
@@ -106,6 +105,11 @@ public:
 	std::string getWarningLabel();
 
 	void setStatus( const EStatus status );
+
+	const spec_reader::SpecNode* getSpecNode()
+	{
+		return _specNode;
+	}
 
 protected:
 	std::weak_ptr< Element >                  _parent;
