@@ -19,10 +19,12 @@ namespace basic_element
 namespace spec_reader
 {
 
+class Specification;
+
 class SpecNode
 {
 public:
-	SpecNode( const boost::property_tree::ptree::const_iterator node, 
+	SpecNode( const Specification* spec, const boost::property_tree::ptree::const_iterator node, 
 		      std::shared_ptr< basic_element::Element > parent = std::shared_ptr< basic_element::Element >() );
 
 	size_t getUId( ) const { return _uId; }
@@ -48,13 +50,19 @@ public:
 	std::map< std::string, std::string >                 getMap()         const;
 	
 	std::shared_ptr< basic_element::Element > getParent() const { return _parent; }
-	SpecNode* next() const;
-	SpecNode* next      ( std::shared_ptr< basic_element::Element > parent ) const;
+
+	SpecNode* next      ( std::shared_ptr< basic_element::Element > parent = nullptr ) const;
 	SpecNode* firstChild( std::shared_ptr< basic_element::Element > element ) const;
 	
 	size_t getChildrenNumber() const;
 	std::set< std::string > getChildrenNodes() const;
 	
+protected:
+	boost::property_tree::ptree::const_iterator getIterator() const
+	{
+		return _node;
+	}
+
 private:
 	std::string getProperty( const std::string& prop ) const;
 	std::string getProperty( const std::string& prop, const std::string& defaultValue ) const;
@@ -63,6 +71,7 @@ private:
 	size_t _uId;
 	boost::property_tree::ptree::const_iterator _node;
 	std::shared_ptr< basic_element::Element >   _parent;
+	const Specification*                        _specification;
 	
 	static size_t _globalIndex;
 };

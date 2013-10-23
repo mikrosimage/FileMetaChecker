@@ -22,6 +22,7 @@ public:
 	std::vector< std::string > getSupportedExtensions();
 
 	SpecNode* getFirstNode();
+	boost::property_tree::ptree::const_iterator end() const;
 
 private:
 	boost::property_tree::ptree _specTree;

@@ -126,7 +126,7 @@ SpecNode* Specification::getFirstNode()
 {
 	try
 	{
-		SpecNode* s = new SpecNode( _specTree.get_child( kHeader ).begin() );
+		SpecNode* s = new SpecNode( this, _specTree.get_child( kHeader ).begin() );
 		return s;
 	}
 	catch( const std::runtime_error& e )
@@ -134,6 +134,12 @@ SpecNode* Specification::getFirstNode()
 		std::cout << "Error: " <<  e.what() << std::endl;
 		throw;
 	}
+}
+
+bpt::ptree::const_iterator Specification::end() const
+{
+	bpt::ptree::const_iterator end = _specTree.get_child( kHeader ).end();
+	return end;
 }
 
 }

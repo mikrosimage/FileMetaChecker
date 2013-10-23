@@ -1,4 +1,5 @@
 #include "SpecNode.hpp"
+#include "Specification.hpp"
 #include <Common/Element.hpp>
 #include <Common/log.hpp>
 
@@ -15,10 +16,11 @@ namespace spec_reader
 
 size_t SpecNode::_globalIndex = 0;
 
-SpecNode::SpecNode( const bpt::ptree::const_iterator node, std::shared_ptr< be::Element > parent )
+SpecNode::SpecNode( const Specification* spec, const bpt::ptree::const_iterator node, std::shared_ptr< be::Element > parent )
 	: _uId ( _globalIndex++ )
 	, _node( node )
 	, _parent( parent )
+	, _specification( spec )
 {
 }
 
@@ -217,37 +219,19 @@ std::map< std::string, std::string > SpecNode::getMap() const
 	return map;
 }
 
-SpecNode* SpecNode::next() const
-{
-	if( _uId == 8 ||		// @todo : find a way to check if last child !
-		_uId == 10 ||
-		_uId == 12 ||
-		_uId == 17 ||
-		_uId == 18 )
-		return NULL;
-
-	// if( _parent == NULL )
-	// 	LOG_WARNING( "Pas de parent" );
-	// else
-	// 	LOG_FATAL( _parent->getChildrenNumber() );
-	// @todo : while( previous->getId() != _parent->getId() ) iterate, then compare to children number
-
-	bpt::ptree::const_iterator node = _node;
-	SpecNode* s = new SpecNode( ++node, _parent );
-	return s;
-}
-
 SpecNode* SpecNode::next( std::shared_ptr< be::Element > parent ) const
 {
-	if( _uId == 8 ||		// @todo : find a way to check if last child !
-		_uId == 10 ||
-		_uId == 12 ||
-		_uId == 17 ||
-		_uId == 18 )
-		return NULL;
-
 	bpt::ptree::const_iterator node = _node;
-	SpecNode* s = new SpecNode( ++node, parent );
+	std::shared_ptr< be::Element > p = ( parent == nullptr ) ? _parent : parent;
+
+	++node;
+	if( p.use_count() && p->getSpecNode()->getIterator()->second.get_child( kGroup ).end() == node )
+		return nullptr;
+
+	if( node == _specification->end() )
+		return nullptr;
+	
+	SpecNode* s = new SpecNode( _specification, node, p );
 	return s;
 }
 
@@ -257,7 +241,8 @@ SpecNode* SpecNode::firstChild( std::shared_ptr< be::Element > element ) const
 	{
 		if( ! isGroup() )
 			throw std::runtime_error( "firstChild: This node has no child." );
-		SpecNode* s = new SpecNode( _node->second.get_child( kGroup ).begin(), element );
+		bpt::ptree::const_iterator node = _node->second.get_child( kGroup ).begin();
+		SpecNode* s = new SpecNode( _specification, node, element );
 		return s;
 	}
 	catch( std::runtime_error& e )
