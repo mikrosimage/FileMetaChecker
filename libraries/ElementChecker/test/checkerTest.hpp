@@ -23,9 +23,10 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_data )
 			)*";
 
 	{
-		bpt::ptree tree;
-		spec_reader::SpecNode node = getSpecNode( tree, jsonStringBegin + jsonStringEnd );
-		
+		spec_reader::Specification spec;
+		spec.setFromString( jsonStringBegin + jsonStringEnd );
+		spec_reader::SpecNode node = *spec.getFirstNode();
+
 		std::shared_ptr< basic_element::Data > elem = std::make_shared< basic_element::Data >( &node );
 	
 		const char buff[4] { 'W', 'A', 'V', 'E' };
@@ -35,8 +36,9 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_data )
 		BOOST_CHECK_EQUAL( elem->getStatus(), eStatusPassOver );
 	}
 	{
-		bpt::ptree tree;
-		spec_reader::SpecNode node = getSpecNode( tree, jsonStringBegin + R"*( ,"values": "WAVE" )*" + jsonStringEnd );
+		spec_reader::Specification spec;
+		spec.setFromString( jsonStringBegin + R"*( ,"values": "WAVE" )*" + jsonStringEnd );
+		spec_reader::SpecNode node = *spec.getFirstNode();
 
 		std::shared_ptr< basic_element::Data > elem = std::make_shared< basic_element::Data >( &node );
 	
@@ -47,8 +49,9 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_data )
 		BOOST_CHECK_EQUAL( elem->getStatus(), eStatusValid );
 	}
 	{
-		bpt::ptree tree;
-		spec_reader::SpecNode node = getSpecNode( tree, jsonStringBegin + R"*( ,"values": "wave" )*" + jsonStringEnd );
+		spec_reader::Specification spec;
+		spec.setFromString( jsonStringBegin + R"*( ,"values": "wave" )*" + jsonStringEnd );
+		spec_reader::SpecNode node = *spec.getFirstNode();
 
 		std::shared_ptr< basic_element::Data > elem = std::make_shared< basic_element::Data >( &node );
 	
@@ -59,8 +62,9 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_data )
 		BOOST_CHECK_EQUAL( elem->getStatus(), eStatusValid );
 	}
 	{
-		bpt::ptree tree;
-		spec_reader::SpecNode node = getSpecNode( tree, jsonStringBegin + R"*( ,"values": "evaw" )*"  + jsonStringEnd );
+		spec_reader::Specification spec;
+		spec.setFromString( jsonStringBegin + R"*( ,"values": "evaw" )*"  + jsonStringEnd );
+		spec_reader::SpecNode node = *spec.getFirstNode();
 
 		std::shared_ptr< basic_element::Data > elem = std::make_shared< basic_element::Data >( &node );
 	
@@ -93,9 +97,10 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_number )
 			)*";
 
 	{
-		bpt::ptree tree;
-		spec_reader::SpecNode node = getSpecNode( tree, jsonStringBegin + jsonStringEnd );
-		
+		spec_reader::Specification spec;
+		spec.setFromString( jsonStringBegin + jsonStringEnd );
+		spec_reader::SpecNode node = *spec.getFirstNode();
+
 		std::shared_ptr< basic_element::Number > elem = std::make_shared< basic_element::Number >( &node );
 	
 		const char buff[4] { 0x00, 0x00, 0x00, 0x01 };
@@ -106,8 +111,9 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_number )
 	}
 
 	{
-		bpt::ptree tree;
-		spec_reader::SpecNode node = getSpecNode( tree, jsonStringBegin + R"*( ,"range": [ { "min": "1", "max": "10" } ] )*"  + jsonStringEnd );
+		spec_reader::Specification spec;
+		spec.setFromString( jsonStringBegin + R"*( ,"range": [ { "min": "1", "max": "10" } ] )*"  + jsonStringEnd );
+		spec_reader::SpecNode node = *spec.getFirstNode();
 
 		std::shared_ptr< basic_element::Number > elem = std::make_shared< basic_element::Number >( &node );
 	
@@ -120,8 +126,9 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_number )
 	}
 
 	{
-		bpt::ptree tree;
-		spec_reader::SpecNode node = getSpecNode( tree, jsonStringBegin + R"*( ,"endian":"little","range": [ { "min": "1", "max": "10" } ] )*"  + jsonStringEnd );
+		spec_reader::Specification spec;
+		spec.setFromString( jsonStringBegin + R"*( ,"endian":"little","range": [ { "min": "1", "max": "10" } ] )*"  + jsonStringEnd );
+		spec_reader::SpecNode node = *spec.getFirstNode();
 
 		std::shared_ptr< basic_element::Number > elem = std::make_shared< basic_element::Number >( &node );
 	
@@ -134,8 +141,9 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_number )
 	}
 
 	{
-		bpt::ptree tree;
-		spec_reader::SpecNode node = getSpecNode( tree, jsonStringBegin + R"*( ,"range": [ { "max": "5" }, { "min": "10" } ] )*"  + jsonStringEnd );
+		spec_reader::Specification spec;
+		spec.setFromString( jsonStringBegin + R"*( ,"range": [ { "max": "5" }, { "min": "10" } ] )*"  + jsonStringEnd );
+		spec_reader::SpecNode node = *spec.getFirstNode();
 
 		std::shared_ptr< basic_element::Number > elem = std::make_shared< basic_element::Number >( &node );
 	

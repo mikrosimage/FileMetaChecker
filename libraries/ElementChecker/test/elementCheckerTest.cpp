@@ -2,7 +2,7 @@
 
 #include <ElementChecker/Checker/Checker.hpp>
 #include <Common/log.hpp>
-#include <SpecReader/SpecNode.hpp>
+#include <SpecReader/Specification.hpp>
 
 #include <boost/test/unit_test.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -13,12 +13,14 @@ namespace bpt = boost::property_tree;
 
 using namespace element_checker;
 
-spec_reader::SpecNode getSpecNode( bpt::ptree& tree, const std::string& jsonString )
-{
-	std::istringstream isstream( jsonString );
-	boost::property_tree::json_parser::read_json( isstream, tree );
-	return spec_reader::SpecNode( tree.get_child( "header" ).begin() );
-}
+// Specificiation spec;
+
+// spec_reader::SpecNode getSpecNode( bpt::ptree& tree, const std::string& jsonString )
+// {
+// 	std::istringstream isstream( jsonString );
+// 	boost::property_tree::json_parser::read_json( isstream, tree );
+// 	return spec_reader::SpecNode( &spec, tree.get_child( "header" ).begin() );
+// }
 
 BOOST_AUTO_TEST_SUITE( element_checker_test )
 
