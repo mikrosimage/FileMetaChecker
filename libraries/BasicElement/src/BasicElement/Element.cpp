@@ -1,4 +1,5 @@
 #include <Common/Element.hpp>
+#include <Common/log.hpp>
 #include <SpecReader/SpecNode.hpp>
 
 #include <iostream>
@@ -67,39 +68,50 @@ Element::Element( const std::shared_ptr< sr::SpecNode > node, const std::shared_
 std::shared_ptr< spec_reader::SpecNode > Element::next( )
 {
 	if( _prop.status == eStatusNotChecked )		// if element has been checked
+	{
+		LOG_TRACE( getId() << ": Not Checked" );
 		return _specNode;
+	}
 
 	std::shared_ptr< Element > parent;
 
 	if( _parent.use_count() != 0 )		// if parent exists (?)
+	{
+		LOG_TRACE( getId() << ": Copy parent" );
 		parent = _parent.lock();		// copy the parent
+	}
 	
 	// Optional element :
 	if( _prop.isOptional && _prop.status == eStatusInvalid )		// if element optional & invalid
+	{
+		LOG_TRACE( getId() << ": Element optional & Invalid" );
 		return _specNode->next( parent );							// go to next SpecNode
+	}
 	
 	// Unordered groups :
 	if( _prop.status == eStatusInvalidButSkip 		// if element status = invalidButSkip (unordered group case)
 	 && _parent.use_count() != 0 					// and if parent exists
 	 && ( ! parent->_specNode->isOrdered() ) )		// and if parent is not ordered
 	{
-		std::cout << "Unordered, check one another baby !" << std::endl;
+		LOG_TRACE( getId() << ": Unordered, check one another baby !" );
 		return parent->_specNode->firstChild( parent );		// go to the first SpecNode of the childhood
 	}
 	
 	// Groups :
 	if( _specNode->isGroup() && ! _checkedGroup )	// if element has a group not already checked 
 	{
+		LOG_TRACE( getId() << ": IsGroup" );
 		_checkedGroup = true;						// it becomes checked
-		std::shared_ptr< Element > t( this );		// creates a pointer to this current element
+		std::shared_ptr< Element > t = std::make_shared< Element >( *this );		// creates a pointer to this current element
 		return _specNode->firstChild( t );			// go to the first child SpecNode
 	}
 	
 	// Repetitions
 	size_t count = _specNode->isRepeated();		// get repetitions
-
+	
 	if( count > 1 )								// if repeated element
 	{
+		LOG_TRACE( getId() << ": Repeated: " << _prop.iteration );
 		if( _prop.iteration < count )			// and not repeated enough yet
 			return _specNode;					// go to the same SpecNode
 	}
@@ -109,8 +121,10 @@ std::shared_ptr< spec_reader::SpecNode > Element::next( )
 	// in Unoredered groups : check if every nodes have been checked
 	if( nextNode == nullptr && _parent.use_count() != 0 )		// if their is no more SpecNode after and parent exists
 	{
+		LOG_TRACE( getId() << ": Last Element" );
 		if( ! parent->_specNode->isOrdered() )			// if the current group (parent's children) is not ordered
 		{
+			LOG_TRACE( getId() << ": Unordered group check" );
 			std::set< std::string > childIds = parent->_specNode->getChildrenNodes();	// create a list with the children IDs
 			
 			if( _previous.use_count() != 0 )		// if the previous element exists (the current element is not the first)
@@ -139,6 +153,7 @@ std::shared_ptr< spec_reader::SpecNode > Element::next( )
 		}
 		return parent->next( );			// go to the node after the parent
 	}
+	LOG_TRACE( getId() << ": Next !" );
 	return nextNode;	// go to the next node
 }
 
