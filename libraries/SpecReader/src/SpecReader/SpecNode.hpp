@@ -51,8 +51,8 @@ public:
 	
 	std::shared_ptr< basic_element::Element > getParent() const { return _parent; }
 
-	SpecNode* next      ( std::shared_ptr< basic_element::Element > parent = nullptr ) const;
-	SpecNode* firstChild( std::shared_ptr< basic_element::Element > element ) const;
+	std::shared_ptr< spec_reader::SpecNode > next      ( std::shared_ptr< basic_element::Element > parent = nullptr ) const;
+	std::shared_ptr< spec_reader::SpecNode > firstChild( std::shared_ptr< basic_element::Element > element ) const;
 	
 	size_t getChildrenNumber() const;
 	std::set< std::string > getChildrenNodes() const;

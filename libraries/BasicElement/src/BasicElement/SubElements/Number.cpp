@@ -6,7 +6,7 @@
 namespace basic_element
 {
 
-Number::Number( const spec_reader::SpecNode* node, const std::shared_ptr< Element > previous )
+Number::Number( const std::shared_ptr< spec_reader::SpecNode > node, const std::shared_ptr< Element > previous )
  : Element( node, previous )
 {
 }

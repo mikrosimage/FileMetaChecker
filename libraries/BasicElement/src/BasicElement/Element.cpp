@@ -8,7 +8,7 @@ namespace sr = spec_reader;
 namespace basic_element
 {
 
-Element::Element( const sr::SpecNode* node, const std::shared_ptr< Element > previous )
+Element::Element( const std::shared_ptr< sr::SpecNode > node, const std::shared_ptr< Element > previous )
 	: _parent      ( node->getParent() )
 	, _previous    ( previous )
 	, _specNode    ( node )
@@ -64,7 +64,7 @@ Element::Element( const sr::SpecNode* node, const std::shared_ptr< Element > pre
 	}
 }
 
-const sr::SpecNode* Element::next( )
+std::shared_ptr< spec_reader::SpecNode > Element::next( )
 {
 	if( _prop.status == eStatusNotChecked )		// if element has been checked
 		return _specNode;
@@ -104,7 +104,7 @@ const sr::SpecNode* Element::next( )
 			return _specNode;					// go to the same SpecNode
 	}
 	
-	const sr::SpecNode* nextNode = _specNode->next( parent );		// creates a pointer to the next SpecNode
+	std::shared_ptr< sr::SpecNode > nextNode = _specNode->next( parent );		// creates a pointer to the next SpecNode
 	
 	// in Unoredered groups : check if every nodes have been checked
 	if( nextNode == nullptr && _parent.use_count() != 0 )		// if their is no more SpecNode after and parent exists

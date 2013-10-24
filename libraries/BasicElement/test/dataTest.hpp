@@ -20,35 +20,35 @@ BOOST_AUTO_TEST_CASE( basic_element_data )
 
 	spec_reader::Specification spec;
 	spec.setFromString( jsonString );
-	spec_reader::SpecNode node = *spec.getFirstNode();
+	std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
 
-	BOOST_CHECK_EQUAL( node.getId(),          id    );
-	BOOST_CHECK_EQUAL( node.getLabel(),       label );
-	BOOST_CHECK_EQUAL( node.getType(),        eTypeData       );
-	BOOST_CHECK_EQUAL( node.getSubType(),     eSubTypeAscii   );
-	BOOST_CHECK_EQUAL( node.getDisplayType(), eDisplayTypeRaw );
+	BOOST_CHECK_EQUAL( node->getId(),          id    );
+	BOOST_CHECK_EQUAL( node->getLabel(),       label );
+	BOOST_CHECK_EQUAL( node->getType(),        eTypeData       );
+	BOOST_CHECK_EQUAL( node->getSubType(),     eSubTypeAscii   );
+	BOOST_CHECK_EQUAL( node->getDisplayType(), eDisplayTypeRaw );
 	{
-		Data data( &node );
+		Data data( node );
 		BOOST_CHECK_EQUAL( data.getId(),          id    );
 		BOOST_CHECK_EQUAL( data.getLabel(),       label );
 		BOOST_CHECK_EQUAL( data.getType(),        eTypeData       );
 		BOOST_CHECK_EQUAL( data.getSubType(),     eSubTypeAscii   );
 		BOOST_CHECK_EQUAL( data.getDisplayType(), eDisplayTypeRaw );
 
-		BOOST_CHECK_EQUAL( data.getUniqueId(),    node.getUId()         );
-		BOOST_CHECK_EQUAL( data.getCount(),       node.getCount()       );
-		BOOST_CHECK_EQUAL( data.getRequirement(), node.getRequirement() );
-		BOOST_CHECK_EQUAL( data.getGroupSize(),   node.getGroupSize()   );
+		BOOST_CHECK_EQUAL( data.getUniqueId(),    node->getUId()         );
+		BOOST_CHECK_EQUAL( data.getCount(),       node->getCount()       );
+		BOOST_CHECK_EQUAL( data.getRequirement(), node->getRequirement() );
+		BOOST_CHECK_EQUAL( data.getGroupSize(),   node->getGroupSize()   );
 
-		BOOST_CHECK_EQUAL( data.getValues().size(),      node.getValues().size()      );
-		BOOST_CHECK_EQUAL( data.getRange().size(),       node.getRange().size()       );
-		BOOST_CHECK_EQUAL( data.getRepetitions().size(), node.getRepetitions().size() );
-		BOOST_CHECK_EQUAL( data.getMap().size(),         node.getMap().size()         );
+		BOOST_CHECK_EQUAL( data.getValues().size(),      node->getValues().size()      );
+		BOOST_CHECK_EQUAL( data.getRange().size(),       node->getRange().size()       );
+		BOOST_CHECK_EQUAL( data.getRepetitions().size(), node->getRepetitions().size() );
+		BOOST_CHECK_EQUAL( data.getMap().size(),         node->getMap().size()         );
 
-		BOOST_CHECK_EQUAL( data.isGroup(),     node.isGroup()     );
-		BOOST_CHECK_EQUAL( data.isOrdered(),   node.isOrdered()   );
-		BOOST_CHECK_EQUAL( data.isOptional(),  node.isOptional()  );
-		BOOST_CHECK_EQUAL( data.isBigEndian(), node.isBigEndian() );
+		BOOST_CHECK_EQUAL( data.isGroup(),     node->isGroup()     );
+		BOOST_CHECK_EQUAL( data.isOrdered(),   node->isOrdered()   );
+		BOOST_CHECK_EQUAL( data.isOptional(),  node->isOptional()  );
+		BOOST_CHECK_EQUAL( data.isBigEndian(), node->isBigEndian() );
 
 		BOOST_CHECK( data.getData() == nullptr );
 	
@@ -79,9 +79,9 @@ BOOST_AUTO_TEST_CASE( basic_element_data_subType )
 
 		spec_reader::Specification spec;
 		spec.setFromString( jsonString );
-		spec_reader::SpecNode node = *spec.getFirstNode();
+		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
 		
-		Data data( &node );
+		Data data( node );
 		BOOST_CHECK_EQUAL( data.getSubType(), eSubTypeUnknown );
 	}
 	{
@@ -98,9 +98,9 @@ BOOST_AUTO_TEST_CASE( basic_element_data_subType )
 
 		spec_reader::Specification spec;
 		spec.setFromString( jsonString );
-		spec_reader::SpecNode node = *spec.getFirstNode();
+		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
 
-		Data data( &node );
+		Data data( node );
 		BOOST_CHECK_EQUAL( data.getSubType(), eSubTypeHexa );
 	}
 	{
@@ -117,9 +117,9 @@ BOOST_AUTO_TEST_CASE( basic_element_data_subType )
 
 		spec_reader::Specification spec;
 		spec.setFromString( jsonString );
-		spec_reader::SpecNode node = *spec.getFirstNode();
+		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
 
-		Data data( &node );
+		Data data( node );
 		BOOST_CHECK_EQUAL( data.getSubType(), eSubTypeAscii );
 	}
 	{
@@ -136,9 +136,9 @@ BOOST_AUTO_TEST_CASE( basic_element_data_subType )
 
 		spec_reader::Specification spec;
 		spec.setFromString( jsonString );
-		spec_reader::SpecNode node = *spec.getFirstNode();
+		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
 
-		Data data( &node );
+		Data data( node );
 		BOOST_CHECK_EQUAL( data.getSubType(), eSubTypeRaw );
 	}
 	{
@@ -155,9 +155,9 @@ BOOST_AUTO_TEST_CASE( basic_element_data_subType )
 
 		spec_reader::Specification spec;
 		spec.setFromString( jsonString );
-		spec_reader::SpecNode node = *spec.getFirstNode();
+		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
 
-		Data data( &node );
+		Data data( node );
 		BOOST_CHECK_EQUAL( data.getSubType(), eSubTypeUInt8 );
 	}
 }
@@ -179,26 +179,26 @@ BOOST_AUTO_TEST_CASE( basic_element_data_error_warning )
 
 	spec_reader::Specification spec;
 	spec.setFromString( jsonString );
-	spec_reader::SpecNode node = *spec.getFirstNode();
+	std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
 
 	{
-		Data data( &node );
+		Data data( node );
 		data.addErrorLabel( kError );
 		BOOST_CHECK_EQUAL( data.getErrorLabel(), kError );
 	}
 	{
-		Data data( &node );
+		Data data( node );
 		data.addErrorLabel( kError );
 		data.addErrorLabel( kError );
 		BOOST_CHECK_EQUAL( data.getErrorLabel(), kError + " / " + kError );
 	}
 	{
-		Data data( &node );
+		Data data( node );
 		data.addWarningLabel( kWarning );
 		BOOST_CHECK_EQUAL( data.getWarningLabel(), kWarning );
 	}
 	{
-		Data data( &node );
+		Data data( node );
 		data.addWarningLabel( kWarning );
 		data.addWarningLabel( kWarning );
 		BOOST_CHECK_EQUAL( data.getWarningLabel(), kWarning + " / " + kWarning );
@@ -222,13 +222,13 @@ BOOST_AUTO_TEST_CASE( basic_element_data_next )
 
 		spec_reader::Specification spec;
 		spec.setFromString( jsonString );
-		spec_reader::SpecNode node = *spec.getFirstNode();
+		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
 
-		BOOST_CHECK_EQUAL( node.getId(),                         "value1" );
-		BOOST_CHECK_EQUAL( node.next()->getId(),                 "value2" );
-		BOOST_CHECK_EQUAL( node.next()->next()->getId(),         "value3" );
-		BOOST_CHECK_EQUAL( node.next()->next()->next()->getId(), "value4" );
-		BOOST_CHECK( node.next()->next()->next()->next() == nullptr );
+		BOOST_CHECK_EQUAL( node->getId(),                         "value1" );
+		BOOST_CHECK_EQUAL( node->next()->getId(),                 "value2" );
+		BOOST_CHECK_EQUAL( node->next()->next()->getId(),         "value3" );
+		BOOST_CHECK_EQUAL( node->next()->next()->next()->getId(), "value4" );
+		BOOST_CHECK( node->next()->next()->next()->next() == nullptr );
 	}
 }
 
@@ -253,20 +253,20 @@ BOOST_AUTO_TEST_CASE( basic_element_data_next_firstchild )
 
 		spec_reader::Specification spec;
 		spec.setFromString( jsonString );
-		spec_reader::SpecNode node = *spec.getFirstNode();
+		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
 
-		BOOST_CHECK_EQUAL( node.getId(),                         "value1" );
-		BOOST_CHECK_EQUAL( node.next()->getId(),                 "value2" );
-		BOOST_CHECK_EQUAL( node.next()->next()->getId(),         "value3" );
-		BOOST_CHECK_EQUAL( node.next()->next()->next()->getId(), "value4" );
+		BOOST_CHECK_EQUAL( node->getId(),                         "value1" );
+		BOOST_CHECK_EQUAL( node->next()->getId(),                 "value2" );
+		BOOST_CHECK_EQUAL( node->next()->next()->getId(),         "value3" );
+		BOOST_CHECK_EQUAL( node->next()->next()->next()->getId(), "value4" );
 
-		std::shared_ptr< Element > parent = std::make_shared< Element >( node.next()->next()->next() );
+		std::shared_ptr< Element > parent = std::make_shared< Element >( node->next()->next()->next() );
 		
-		BOOST_CHECK_EQUAL( node.next()->next()->next()->firstChild( parent )->getId(),                 "firstchild" );
-		BOOST_CHECK_EQUAL( node.next()->next()->next()->firstChild( parent )->next()->getId(),        "secondchild" );
-		BOOST_CHECK_EQUAL( node.next()->next()->next()->firstChild( parent )->next()->next()->getId(), "thirdchild" );
+		BOOST_CHECK_EQUAL( node->next()->next()->next()->firstChild( parent )->getId(),                 "firstchild" );
+		BOOST_CHECK_EQUAL( node->next()->next()->next()->firstChild( parent )->next()->getId(),        "secondchild" );
+		BOOST_CHECK_EQUAL( node->next()->next()->next()->firstChild( parent )->next()->next()->getId(), "thirdchild" );
 
-		BOOST_CHECK( node.next()->next()->next()->firstChild( parent )->next()->next()->next() == nullptr );
+		BOOST_CHECK( node->next()->next()->next()->firstChild( parent )->next()->next()->next() == nullptr );
 	}
 }
 

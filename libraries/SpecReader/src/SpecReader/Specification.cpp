@@ -122,12 +122,11 @@ std::vector< std::string > Specification::getSupportedExtensions( )
 	}
 }
 
-SpecNode* Specification::getFirstNode()
+std::shared_ptr< SpecNode > Specification::getFirstNode()
 {
 	try
 	{
-		SpecNode* s = new SpecNode( this, _specTree.get_child( kHeader ).begin() );
-		return s;
+		return std::make_shared< SpecNode >( this, _specTree.get_child( kHeader ).begin() );
 	}
 	catch( const std::runtime_error& e )
 	{

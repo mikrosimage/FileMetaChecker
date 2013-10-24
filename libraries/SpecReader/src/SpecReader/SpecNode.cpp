@@ -219,7 +219,7 @@ std::map< std::string, std::string > SpecNode::getMap() const
 	return map;
 }
 
-SpecNode* SpecNode::next( std::shared_ptr< be::Element > parent ) const
+std::shared_ptr< spec_reader::SpecNode > SpecNode::next( std::shared_ptr< be::Element > parent ) const
 {
 	bpt::ptree::const_iterator node = _node;
 	std::shared_ptr< be::Element > p = ( parent == nullptr ) ? _parent : parent;
@@ -231,19 +231,17 @@ SpecNode* SpecNode::next( std::shared_ptr< be::Element > parent ) const
 	if( node == _specification->end() )
 		return nullptr;
 	
-	SpecNode* s = new SpecNode( _specification, node, p );
-	return s;
+	return std::make_shared< SpecNode >( _specification, node, p );
 }
 
-SpecNode* SpecNode::firstChild( std::shared_ptr< be::Element > element ) const
+std::shared_ptr< spec_reader::SpecNode > SpecNode::firstChild( std::shared_ptr< be::Element > element ) const
 {
 	try
 	{
 		if( ! isGroup() )
 			throw std::runtime_error( "firstChild: This node has no child." );
 		bpt::ptree::const_iterator node = _node->second.get_child( kGroup ).begin();
-		SpecNode* s = new SpecNode( _specification, node, element );
-		return s;
+		return std::make_shared< SpecNode >( _specification, node, element );
 	}
 	catch( std::runtime_error& e )
 	{

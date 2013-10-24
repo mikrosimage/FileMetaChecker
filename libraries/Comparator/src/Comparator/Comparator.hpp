@@ -31,7 +31,7 @@ public:
 	void check( spec_reader::Specification& spec, file_reader::FileReader& reader, report_generator::Report& report );
 	
 private:
-	std::shared_ptr< basic_element::Element > getElement( const spec_reader::SpecNode* node, const std::shared_ptr< basic_element::Element > previous );
+	std::shared_ptr< basic_element::Element > getElement( const std::shared_ptr< spec_reader::SpecNode > node, const std::shared_ptr< basic_element::Element > previous );
 	
 };
 

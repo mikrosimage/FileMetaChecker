@@ -14,7 +14,7 @@ Comparator::Comparator()
 {
 }
 	
-std::shared_ptr< basic_element::Element > Comparator::getElement( const spec_reader::SpecNode* node, const std::shared_ptr< basic_element::Element > previous )
+std::shared_ptr< basic_element::Element > Comparator::getElement( const std::shared_ptr< spec_reader::SpecNode > node, const std::shared_ptr< basic_element::Element > previous )
 {
 	switch( node->getType() )
 	{
@@ -37,7 +37,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 {
 	std::cout << "check start" << std::endl;
 	
-	const spec_reader::SpecNode* s = NULL;
+	std::shared_ptr< spec_reader::SpecNode > s = NULL;
 	std::shared_ptr< basic_element::Number > prev;
 	std::shared_ptr< basic_element::Element > e = getElement( spec.getFirstNode( ), prev );		// get first element
 

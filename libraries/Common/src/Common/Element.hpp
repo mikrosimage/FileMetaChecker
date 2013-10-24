@@ -54,10 +54,10 @@ class Element
 	};
 
 public:
-	Element( const spec_reader::SpecNode* node, 
+	Element( const std::shared_ptr< spec_reader::SpecNode > node, 
 		     const std::shared_ptr< Element > previous = std::shared_ptr< Element >() );
 	
-	const spec_reader::SpecNode* next( );
+	std::shared_ptr< spec_reader::SpecNode > next( );
 	
 	std::string getId()    const { return _prop.id; }
 	std::string getLabel() const { return _prop.label; }
@@ -106,7 +106,7 @@ public:
 
 	void setStatus( const EStatus status );
 
-	const spec_reader::SpecNode* getSpecNode()
+	std::shared_ptr< spec_reader::SpecNode > getSpecNode()
 	{
 		return _specNode;
 	}
@@ -114,7 +114,7 @@ public:
 protected:
 	std::weak_ptr< Element >                  _parent;
 	const std::weak_ptr< Element >            _previous;
-	const spec_reader::SpecNode*              _specNode;
+	std::shared_ptr< spec_reader::SpecNode >             _specNode;
 	std::vector< std::shared_ptr< Element > > _children;
 	
 	Properties _prop;

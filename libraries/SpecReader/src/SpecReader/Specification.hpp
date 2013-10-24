@@ -3,6 +3,8 @@
 
 #include "SpecNode.hpp"
 
+#include <memory>
+
 namespace spec_reader
 {
 
@@ -21,7 +23,7 @@ public:
 	std::string getType();
 	std::vector< std::string > getSupportedExtensions();
 
-	SpecNode* getFirstNode();
+	std::shared_ptr< SpecNode > getFirstNode();
 	boost::property_tree::ptree::const_iterator end() const;
 
 private:
