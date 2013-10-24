@@ -272,14 +272,6 @@ BOOST_AUTO_TEST_CASE( basic_element_data_next_firstchild )
 	}
 }
 
-
-// Data& getNextElement( std::shared_ptr< spec_reader::SpecNode > node )
-// {
-// 	Data data( node );
-// 	data.setStatus( eStatusSkip );
-// 	return data;
-// }
-
 BOOST_AUTO_TEST_CASE( basic_element_data_next_first_child_recursivity )
 {
 	LOG_INFO( "\n>>> basic_element_data_next_first_child_recursivity <<<" );
