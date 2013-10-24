@@ -24,8 +24,9 @@ class Specification;
 class SpecNode
 {
 public:
-	SpecNode( const Specification* spec, const boost::property_tree::ptree::const_iterator node, 
-		      std::shared_ptr< basic_element::Element > parent = std::shared_ptr< basic_element::Element >() );
+	SpecNode( const Specification* spec,
+		      const boost::property_tree::ptree::const_iterator node, 
+		      const std::shared_ptr< basic_element::Element > parent = std::shared_ptr< basic_element::Element >() );
 
 	size_t getUId( ) const { return _uId; }
 
@@ -70,7 +71,7 @@ private:
 private:
 	size_t _uId;
 	boost::property_tree::ptree::const_iterator _node;
-	std::shared_ptr< basic_element::Element >   _parent;
+	const std::shared_ptr< basic_element::Element >   _parent;
 	const Specification*                        _specification;
 	
 	static size_t _globalIndex;
