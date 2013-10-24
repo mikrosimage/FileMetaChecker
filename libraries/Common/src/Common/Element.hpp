@@ -16,6 +16,8 @@ namespace spec_reader
 namespace basic_element
 {
 
+typedef std::vector< std::pair< std::string, std::string > > ExpressionList;
+
 class Element
 {
 	struct Properties
@@ -32,8 +34,8 @@ class Element
 		std::string   groupSizeExpr;
 		
 		std::vector< std::string > values;
-		std::vector< std::pair< std::string, std::string > > rangeExpr;
-		std::vector< std::pair< std::string, std::string > > repetExpr;
+		ExpressionList rangeExpr;
+		ExpressionList repetExpr;
 		std::map< std::string, std::string > map;
 
 		EType         type;
@@ -70,17 +72,10 @@ public:
 	std::string getRequirement() const { return _prop.requiredExpr; }
 	std::string getGroupSize()   const { return _prop.groupSizeExpr; }
 
-	std::vector< std::string >
-	getValues() const { return _prop.values; }
-
-	std::vector< std::pair< std::string, std::string > > 
-	getRange() const { return _prop.rangeExpr; }
-	
-	std::vector< std::pair< std::string, std::string > > 
-	getRepetitions() const { return _prop.repetExpr; }
-	
-	std::map< std::string, std::string >
-	getMap() const { return _prop.map; }
+	std::vector< std::string >           getValues()      const { return _prop.values; }
+	ExpressionList                       getRange()       const { return _prop.rangeExpr; }
+	ExpressionList                       getRepetitions() const { return _prop.repetExpr; }
+	std::map< std::string, std::string > getMap()         const { return _prop.map; }
 
 	EType        getType()         const { return _prop.type; }
 	ESubType     getSubType()      const { return _prop.subType; }
