@@ -39,37 +39,14 @@ std::string SpecNode::getLabel() const
 
 EType SpecNode::getType() const
 {
-	switch( getSubType() )
-	{
-		case eSubTypeInt8         :
-		case eSubTypeUInt8        :
-		case eSubTypeInt16        :
-		case eSubTypeUInt16       :
-		case eSubTypeInt32        :
-		case eSubTypeUInt32       :
-		case eSubTypeInt64        :
-		case eSubTypeUInt64       :
-		case eSubTypeFloat        :
-		case eSubTypeDouble       :
-		case eSubTypeIeeeExtended : return eTypeNumber;
-		case eSubTypeAscii        :
-		case eSubTypeHexa         :
-		case eSubTypeRaw          : return eTypeData;
-		default                   : break;
-	}
-	LOG_WARNING( "Unknown type/subtype" );
-	return eTypeUnknown;
-}
-
-ESubType SpecNode::getSubType() const
-{
 	try
 	{
-		return subTypeMap.at( getProperty( kType ) );
+		return typeMap.at( getProperty( kType ) );
 	}
 	catch( const std::out_of_range& oor )
 	{
-		return eSubTypeUnknown;
+		LOG_WARNING( "Unknown type" );
+		return eTypeUnknown;
 	}
 }
 

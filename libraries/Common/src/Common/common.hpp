@@ -80,29 +80,22 @@ static const std::string kWarning  = "warning";
 enum EType
 {
 	eTypeUnknown = 0,
-	eTypeNumber,
+	eTypeInt8,
+	eTypeUInt8,
+	eTypeInt16,
+	eTypeUInt16,
+	eTypeInt32,
+	eTypeUInt32,
+	eTypeInt64,
+	eTypeUInt64,
+	eTypeFloat,
+	eTypeDouble,
+	eTypeIeeeExtended,
+	eTypeAscii,
+	eTypeHexa,
+	eTypeRaw,
 	eTypeExif,
-	eTypeData,
 	eTypeKlv,
-};
-
-enum ESubType
-{
-	eSubTypeUnknown = 0,
-	eSubTypeInt8,
-	eSubTypeUInt8,
-	eSubTypeInt16,
-	eSubTypeUInt16,
-	eSubTypeInt32,
-	eSubTypeUInt32,
-	eSubTypeInt64,
-	eSubTypeUInt64,
-	eSubTypeFloat,
-	eSubTypeDouble,
-	eSubTypeIeeeExtended,
-	eSubTypeAscii,
-	eSubTypeHexa,
-	eSubTypeRaw,
 };
 
 enum EDisplayType
@@ -126,22 +119,24 @@ enum EStatus
 	eStatusSkip,
 };
 
-static const std::map< std::string, ESubType > subTypeMap
+static const std::map< std::string, EType > typeMap
 {
-	{ kInt8,         eSubTypeInt8         },
-	{ kUInt8,        eSubTypeUInt8        },
-	{ kInt16,        eSubTypeInt16        },
-	{ kUInt16,       eSubTypeUInt16       },
-	{ kInt32,        eSubTypeInt32        },
-	{ kUInt32,       eSubTypeUInt32       },
-	{ kInt64,        eSubTypeInt64        },
-	{ kUInt64,       eSubTypeUInt64       },
-	{ kFloat,        eSubTypeFloat        },
-	{ kDouble,       eSubTypeDouble       },
-	{ kIeeeExtended, eSubTypeIeeeExtended },
-	{ kAscii,        eSubTypeAscii        },
-	{ kHexa,         eSubTypeHexa         },
-	{ kRaw,          eSubTypeRaw          },
+	{ kInt8,         eTypeInt8         },
+	{ kUInt8,        eTypeUInt8        },
+	{ kInt16,        eTypeInt16        },
+	{ kUInt16,       eTypeUInt16       },
+	{ kInt32,        eTypeInt32        },
+	{ kUInt32,       eTypeUInt32       },
+	{ kInt64,        eTypeInt64        },
+	{ kUInt64,       eTypeUInt64       },
+	{ kFloat,        eTypeFloat        },
+	{ kDouble,       eTypeDouble       },
+	{ kIeeeExtended, eTypeIeeeExtended },
+	{ kAscii,        eTypeAscii        },
+	{ kHexa,         eTypeHexa         },
+	{ kRaw,          eTypeRaw          },
+	{ kExif,         eTypeExif         },
+	{ kKlv,          eTypeKlv          },
 };
 
 static const std::map< std::string, EDisplayType > displayTypeMap
@@ -161,6 +156,18 @@ static const std::map< std::string, EDisplayType > displayTypeMap
 	{ kAscii,        eDisplayTypeAscii   },
 	{ kHexa,         eDisplayTypeHexa    },
 	{ kRaw,          eDisplayTypeRaw     },
+};
+
+static const std::map< EStatus, std::string > statusMap
+{
+	{ eStatusNotChecked,          "not checked"           },
+	{ eStatusValid,               "skip"                  },
+	{ eStatusInvalid,             "pass over"             },
+	{ eStatusInvalidButOptional,  "valid"                 },
+	{ eStatusInvalidForUnordered, "invalid"               },
+	{ eStatusInvalidButSkip,      "invalid but skip"      },
+	{ eStatusPassOver,            "invalid but optional"  },
+	{ eStatusSkip,                "invalid for unordered" },
 };
 
 #endif

@@ -16,20 +16,20 @@ Comparator::Comparator()
 	
 std::shared_ptr< basic_element::Element > Comparator::getElement( const std::shared_ptr< spec_reader::SpecNode > node, const std::shared_ptr< basic_element::Element > previous )
 {
-	switch( node->getType() )
-	{
-		case eTypeData:
-		{
-			std::shared_ptr< basic_element::Data > d( new basic_element::Data( node, previous ) );
-			return static_cast< std::shared_ptr< basic_element::Element > >( d );
-		}
-		case eTypeNumber:
-		{
-			std::shared_ptr< basic_element::Number > n( new basic_element::Number( node, previous ) );
-			return static_cast< std::shared_ptr< basic_element::Element > >( n );
-		}
-		default: break;
-	}
+	// switch( node->getType() )
+	// {
+	// 	case eTypeData:
+	// 	{
+	// 		std::shared_ptr< basic_element::Data > d( new basic_element::Data( node, previous ) );
+	// 		return static_cast< std::shared_ptr< basic_element::Element > >( d );
+	// 	}
+	// 	case eTypeNumber:
+	// 	{
+	// 		std::shared_ptr< basic_element::Number > n( new basic_element::Number( node, previous ) );
+	// 		return static_cast< std::shared_ptr< basic_element::Element > >( n );
+	// 	}
+	// 	default: break;
+	// }
 	return NULL;
 }
 	

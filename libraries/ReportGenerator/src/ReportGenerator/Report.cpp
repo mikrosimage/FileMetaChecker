@@ -26,7 +26,7 @@ void Report::print( const std::shared_ptr< basic_element::Element > e )
 	}
 
 	std::cout << std::setw( 5*count ) << " " << "-------------------------------------------------" << std::endl;
-	std::cout << std::setw( 5*count ) << " " << "| " << e->getUniqueId() << "\t" << e->getId() << " |" << e->getStringStatus() << ") - " << e->getIteration()  << std::endl;
+	std::cout << std::setw( 5*count ) << " " << "| " << e->_uId << "\t" << e->_id << " |" << statusMap.at( e->_status ) << ") - " << e->_iteration << std::endl;
 	std::cout << std::setw( 5*count ) << " " << "-------------------------------------------------" << std::endl;
 }
 

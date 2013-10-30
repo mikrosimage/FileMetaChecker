@@ -8,18 +8,18 @@ namespace element_checker
 template< typename OutType>
 OutType Translator::get()
 {
-	if( _ref->getData() == nullptr )
+	if( _ref->_data == nullptr )
 		throw std::runtime_error( "Undefined data" );
 
 	// LOG_TRACE( "Generic translator: to number type" );
-	if( _ref->getSize() != sizeof( OutType ) )
+	if( _ref->_size != sizeof( OutType ) )
 		throw std::runtime_error( "invalid data size" );
 	
 	NumberData< OutType > num;
-	char* buffer = new char [ _ref->getSize() ];
+	char* buffer = new char [ _ref->_size ];
 	
 	getOrderedData( buffer );
-	std::memcpy( num.data, buffer, _ref->getSize() );
+	std::memcpy( num.data, buffer, _ref->_size );
 	delete[] buffer;
 	return num.value;
 }
@@ -28,7 +28,7 @@ OutType Translator::get()
 template< > \
 std::vector< x > Translator::get< std::vector< x > >() \
 { \
-	if( _ref->getData() == nullptr ) \
+	if( _ref->_data == nullptr ) \
 		throw std::runtime_error( "Undefined data" ); \
 	return convertToVector< x >(); \
 }
@@ -49,31 +49,31 @@ GET_VECTOR(     long double    )
 template< >
 std::string Translator::get< std::string >()
 {
-	if( _ref->getData() == nullptr )
+	if( _ref->_data == nullptr )
 		throw std::runtime_error( "Undefined data" );
 	// LOG_TRACE( "Specific translator: to string" );
-	return std::string { _ref->getData(), _ref->getSize() };
+	return std::string { _ref->_data, _ref->_size };
 }
 
 template< typename NumberType >
 std::vector< NumberType > Translator::convertToVector()
 {
-	if( _ref->getSize() % sizeof( NumberType ) != 0 )
+	if( _ref->_size % sizeof( NumberType ) != 0 )
 		throw std::runtime_error( "invalid data size" );
 
 	std::vector< NumberType > vector;
 	
-	for( size_t i = 0; i < _ref->getSize(); i += sizeof( NumberType ) )
+	for( size_t i = 0; i < _ref->_size; i += sizeof( NumberType ) )
 	{
 		NumberData< NumberType > num;
-		char* buffer = new char [ _ref->getSize() ];
+		char* buffer = new char [ _ref->_size ];
 
-		if( _ref->getSize() == sizeof( NumberType ) )
+		if( _ref->_size == sizeof( NumberType ) )
 			getOrderedData( buffer );
 		else
-			std::memcpy( buffer, _ref->getData(), _ref->getSize() );
+			std::memcpy( buffer, _ref->_data, _ref->_size );
 
-		std::memcpy( num.data, &buffer[i], _ref->getSize() );
+		std::memcpy( num.data, &buffer[i], _ref->_size );
 		delete[] buffer;
 		vector.push_back( num.value );
 	}
@@ -93,16 +93,27 @@ bool Translator::isSystemLittleEndian()
 
 void Translator::getOrderedData( char* buffer )
 {
-	if( ! _ref->isBigEndian() )
-		std::reverse_copy( _ref->getData(), _ref->getData() + _ref->getSize(), buffer );
+	if( ! _ref->_isBigEndian )
+		std::reverse_copy( _ref->_data, _ref->_data + _ref->_size, buffer );
 	else
-		std::memcpy( buffer, _ref->getData(), _ref->getSize() );
+		std::memcpy( buffer, _ref->_data, _ref->_size );
 
-	if( _ref->getType() == eTypeNumber && isSystemLittleEndian() )
+	if( ( _ref->_type ==eTypeInt8
+	   || _ref->_type ==eTypeUInt8
+	   || _ref->_type ==eTypeInt16
+	   || _ref->_type ==eTypeUInt16
+	   || _ref->_type ==eTypeInt32
+	   || _ref->_type ==eTypeUInt32
+	   || _ref->_type ==eTypeInt64
+	   || _ref->_type ==eTypeUInt64
+	   || _ref->_type ==eTypeFloat
+	   || _ref->_type ==eTypeDouble
+	   || _ref->_type ==eTypeIeeeExtended )
+	   && isSystemLittleEndian() )
 	{
-		char* temp = new char[ _ref->getSize() ];
-		std::memcpy( temp, buffer, _ref->getSize() );
-		std::reverse_copy( temp, temp + _ref->getSize(), buffer );	// swap if system little endian
+		char* temp = new char[ _ref->_size ];
+		std::memcpy( temp, buffer, _ref->_size );
+		std::reverse_copy( temp, temp + _ref->_size, buffer );	// swap if system little endian
 		delete[] temp;
 	}
 }

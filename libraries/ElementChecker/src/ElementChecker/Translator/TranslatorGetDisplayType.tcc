@@ -4,7 +4,7 @@ namespace element_checker
 
 std::string Translator::get( const EDisplayType dispType )
 {
-	if( _ref->getData() == nullptr )
+	if( _ref->_data == nullptr )
 		throw std::runtime_error( "Undefined data" );
 
 	std::ostringstream osstr;
@@ -12,23 +12,24 @@ std::string Translator::get( const EDisplayType dispType )
 	{
 		case eDisplayTypeDefault :
 		{
-			switch( _ref->getSubType() )
+			switch( _ref->_type )
 			{
-				case eSubTypeUnknown      : break;
-				case eSubTypeInt8         : osstr << (short) get<          char >(); break;
-				case eSubTypeUInt8        : osstr << (short) get< unsigned char >(); break;
-				case eSubTypeInt16        : osstr << get<          short     >(); break;
-				case eSubTypeUInt16       : osstr << get< unsigned short     >(); break;
-				case eSubTypeInt32        : osstr << get<          int       >(); break;
-				case eSubTypeUInt32       : osstr << get< unsigned int       >(); break;
-				case eSubTypeInt64        : osstr << get<          long long >(); break;
-				case eSubTypeUInt64       : osstr << get< unsigned long long >(); break;
-				case eSubTypeFloat        : osstr << get<          float     >(); break;
-				case eSubTypeDouble       : osstr << get<          double    >(); break;
-				case eSubTypeIeeeExtended : osstr << get<     long double    >(); break;
-				case eSubTypeAscii        : osstr << get( eDisplayTypeAscii    ); break;
-				case eSubTypeHexa         : osstr << get( eDisplayTypeHexa     ); break;
-				case eSubTypeRaw          : osstr << get( eDisplayTypeRaw      ); break;
+				case eTypeUnknown      : break;
+				case eTypeInt8         : osstr << (short) get<          char >(); break;
+				case eTypeUInt8        : osstr << (short) get< unsigned char >(); break;
+				case eTypeInt16        : osstr << get<          short     >(); break;
+				case eTypeUInt16       : osstr << get< unsigned short     >(); break;
+				case eTypeInt32        : osstr << get<          int       >(); break;
+				case eTypeUInt32       : osstr << get< unsigned int       >(); break;
+				case eTypeInt64        : osstr << get<          long long >(); break;
+				case eTypeUInt64       : osstr << get< unsigned long long >(); break;
+				case eTypeFloat        : osstr << get<          float     >(); break;
+				case eTypeDouble       : osstr << get<          double    >(); break;
+				case eTypeIeeeExtended : osstr << get<     long double    >(); break;
+				case eTypeAscii        : osstr << get( eDisplayTypeAscii    ); break;
+				case eTypeHexa         : osstr << get( eDisplayTypeHexa     ); break;
+				case eTypeRaw          : osstr << get( eDisplayTypeRaw      ); break;
+				default: break; 
 			}
 			break;
 		}

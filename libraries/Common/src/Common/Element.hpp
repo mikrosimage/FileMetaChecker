@@ -18,42 +18,19 @@ namespace basic_element
 
 typedef std::vector< std::pair< std::string, std::string > > ExpressionList;
 
+typedef          char       int8;
+typedef unsigned char      uint8;
+typedef          short      int16;
+typedef unsigned short     uint16;
+typedef          int        int32;
+typedef unsigned int       uint32;
+typedef   signed long long  int64;
+typedef unsigned long long uint64;
+
+typedef long double  ieeeExtended;    // 80 bits IEEE Standard 754 floating point
+
 class Element
 {
-	struct Properties
-	{
-		std::string   id;
-		std::string   label;
-		
-		size_t        uId;
-		size_t        size;
-		size_t        iteration;
-		
-		std::string   countExpr;
-		std::string   requiredExpr;
-		std::string   groupSizeExpr;
-		
-		std::vector< std::string > values;
-		ExpressionList rangeExpr;
-		ExpressionList repetExpr;
-		std::map< std::string, std::string > map;
-
-		EType         type;
-		ESubType      subType;
-		EDisplayType  displayType;
-		
-		EStatus       status;
-		
-		char*         data;
-		
-		bool          isGroup;
-		bool          isOrdered;
-		bool          isOptional;
-		bool          bigEndianData;
-		
-		std::string   error;
-		std::string   warning;
-	};
 
 public:
 	Element( const std::shared_ptr< spec_reader::SpecNode > node, 
@@ -61,52 +38,13 @@ public:
 		     const std::shared_ptr< Element > parent = nullptr );
 	
 	std::shared_ptr< spec_reader::SpecNode > next( );
-	// std::shared_ptr< Element > next( );
-	
-	std::string getId()    const { return _prop.id; }
-	std::string getLabel() const { return _prop.label; }
 
-	size_t      getUniqueId()  const { return _prop.uId; }
-	size_t      getSize()      const { return _prop.size; }
-	size_t      getIteration() const { return _prop.iteration; }
-	
-	std::string getCount()       const { return _prop.countExpr; }
-	std::string getRequirement() const { return _prop.requiredExpr; }
-	std::string getGroupSize()   const { return _prop.groupSizeExpr; }
-
-	std::vector< std::string >           getValues()      const { return _prop.values; }
-	ExpressionList                       getRange()       const { return _prop.rangeExpr; }
-	ExpressionList                       getRepetitions() const { return _prop.repetExpr; }
-	std::map< std::string, std::string > getMap()         const { return _prop.map; }
-
-	EType        getType()         const { return _prop.type; }
-	ESubType     getSubType()      const { return _prop.subType; }
-	EDisplayType getDisplayType()  const { return _prop.displayType; }
-	EStatus      getStatus()       const { return _prop.status; }
-	std::string  getStringStatus() const;
-	
-	char* getData() const;
 	void  set( const char* data, const size_t& size );
 
-	bool isGroup()     const { return _prop.isGroup; }
-	bool isOrdered()   const { return _prop.isOrdered; }
-	bool isOptional()  const { return _prop.isOptional; }
-	bool isBigEndian() const { return _prop.bigEndianData; }
+	std::shared_ptr< Element >               getParent() const { return _parent.lock(); }
+	std::shared_ptr< spec_reader::SpecNode > getSpecNode()     { return _specNode.lock(); }
 
-	std::shared_ptr< Element > getParent() const { return _parent.lock(); }
-
-	void addErrorLabel( const std::string& error );
-	void addWarningLabel( const std::string& warning );
-
-	std::string getErrorLabel();
-	std::string getWarningLabel();
-
-	void setStatus( const EStatus status );
-
-	std::shared_ptr< spec_reader::SpecNode > getSpecNode()
-	{
-		return _specNode.lock();
-	}
+	std::string getStringStatus() const;
 
 protected:
 	std::weak_ptr< Element > _parent;
@@ -114,10 +52,41 @@ protected:
 	std::weak_ptr< spec_reader::SpecNode >  _specNode;
 	// std::shared_ptr< spec_reader::SpecNode >  _specNode;
 	std::vector< std::shared_ptr< Element > > _children;
+
+public:
+	std::string   _id;
+	std::string   _label;
 	
-	Properties _prop;
-	bool       _checkedGroup;
+	size_t        _uId;
+	size_t        _size;
+	size_t        _iteration;
 	
+	std::string   _countExpr;
+	std::string   _requiredExpr;
+	std::string   _groupSizeExpr;
+	
+	std::vector< std::string >           _values;
+	std::map< std::string, std::string > _map;
+	
+	ExpressionList _rangeExpr;
+	ExpressionList _repetExpr;
+
+	EType         _type;
+	EDisplayType  _displayType;
+	
+	EStatus       _status;
+	
+	std::string   _error;
+	std::string   _warning;
+	
+	bool          _isGroup;
+	bool          _isOrdered;
+	bool          _isOptional;
+	bool          _isBigEndian;
+	bool          _checkedGroup;
+
+	char*         _data;
+		
 };
 
 }

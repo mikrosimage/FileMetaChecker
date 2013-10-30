@@ -33,7 +33,6 @@ public:
 	std::string  getId()          const;
 	std::string  getLabel()       const;
 	EType        getType()        const;
-	ESubType     getSubType()     const;
 	EDisplayType getDisplayType() const;
 	std::string  getCount()       const;
 	std::string  getRequirement() const;
