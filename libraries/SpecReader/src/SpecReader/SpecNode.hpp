@@ -11,10 +11,10 @@
 
 #include <boost/property_tree/ptree.hpp>
 
-namespace basic_element
-{
-	class Element;
-}
+// namespace basic_element
+// {
+// 	class Element;
+// }
 
 namespace spec_reader
 {
@@ -26,7 +26,7 @@ class SpecNode
 public:
 	SpecNode( const Specification* spec,
 		      const boost::property_tree::ptree::const_iterator node, 
-		      const std::shared_ptr< basic_element::Element > parent = std::shared_ptr< basic_element::Element >() );
+		      const SpecNode* parent = nullptr );
 
 	size_t getUId( ) const { return _uId; }
 
@@ -50,10 +50,10 @@ public:
 	std::vector< std::pair< std::string, std::string > > getRepetitions() const;
 	std::map< std::string, std::string >                 getMap()         const;
 	
-	std::shared_ptr< basic_element::Element > getParent() const { return _parent; }
+	const SpecNode* getParent() const { return _parent; }
 
-	std::shared_ptr< spec_reader::SpecNode > next      ( std::shared_ptr< basic_element::Element > parent = nullptr ) const;
-	std::shared_ptr< spec_reader::SpecNode > firstChild( std::shared_ptr< basic_element::Element > element ) const;
+	std::shared_ptr< spec_reader::SpecNode > next      () const;
+	std::shared_ptr< spec_reader::SpecNode > firstChild() const;
 	
 	size_t getChildrenNumber() const;
 	std::set< std::string > getChildrenNodes() const;
@@ -71,7 +71,7 @@ private:
 private:
 	size_t _uId;
 	boost::property_tree::ptree::const_iterator _node;
-	const std::shared_ptr< basic_element::Element >   _parent;
+	const SpecNode*                             _parent;
 	const Specification*                        _specification;
 	
 	static size_t _globalIndex;

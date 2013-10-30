@@ -57,9 +57,11 @@ class Element
 
 public:
 	Element( const std::shared_ptr< spec_reader::SpecNode > node, 
-		     const std::shared_ptr< Element > previous = std::shared_ptr< Element >() );
+		     const std::shared_ptr< Element > previous = std::shared_ptr< Element >(),
+		     const std::shared_ptr< Element > parent = nullptr );
 	
 	std::shared_ptr< spec_reader::SpecNode > next( );
+	// std::shared_ptr< Element > next( );
 	
 	std::string getId()    const { return _prop.id; }
 	std::string getLabel() const { return _prop.label; }
@@ -91,7 +93,7 @@ public:
 	bool isOptional()  const { return _prop.isOptional; }
 	bool isBigEndian() const { return _prop.bigEndianData; }
 
-	std::weak_ptr< Element > getParent() const { return _parent; }
+	std::shared_ptr< Element > getParent() const { return _parent.lock(); }
 
 	void addErrorLabel( const std::string& error );
 	void addWarningLabel( const std::string& warning );
@@ -103,13 +105,14 @@ public:
 
 	std::shared_ptr< spec_reader::SpecNode > getSpecNode()
 	{
-		return _specNode;
+		return _specNode.lock();
 	}
 
 protected:
-	std::weak_ptr< Element >                  _parent;
-	const std::weak_ptr< Element >            _previous;
-	std::shared_ptr< spec_reader::SpecNode >             _specNode;
+	std::weak_ptr< Element > _parent;
+	std::weak_ptr< Element > _previous;
+	std::weak_ptr< spec_reader::SpecNode >  _specNode;
+	// std::shared_ptr< spec_reader::SpecNode >  _specNode;
 	std::vector< std::shared_ptr< Element > > _children;
 	
 	Properties _prop;

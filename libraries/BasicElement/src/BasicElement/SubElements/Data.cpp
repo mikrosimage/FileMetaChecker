@@ -5,8 +5,12 @@
 namespace basic_element
 {
 
-Data::Data( const std::shared_ptr< spec_reader::SpecNode > node, const std::shared_ptr< Element > previous )
- : Element( node, previous )
+// Data::Data( const std::shared_ptr< spec_reader::SpecNode > node, const std::shared_ptr< Element > previous )
+//  : Element( node, previous )
+Data::Data( const std::shared_ptr< spec_reader::SpecNode > node, 
+            const std::shared_ptr< Element > previous,
+            const std::shared_ptr< Element > parent )
+ : Element( node, previous, parent )
 {
 }
 

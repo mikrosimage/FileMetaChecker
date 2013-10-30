@@ -37,27 +37,27 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 {
 	std::cout << "check start" << std::endl;
 	
-	std::shared_ptr< spec_reader::SpecNode > s = NULL;
-	std::shared_ptr< basic_element::Number > prev;
-	std::shared_ptr< basic_element::Element > e = getElement( spec.getFirstNode( ), prev );		// get first element
+	// std::shared_ptr< spec_reader::SpecNode > s = NULL;
+	// std::shared_ptr< basic_element::Number > prev;
+	// std::shared_ptr< basic_element::Element > e = getElement( spec.getFirstNode( ), prev );		// get first element
 
-	while( ( s = e->next() ) != NULL )	// if end of specification : stop
-	{
-		e = getElement( s, e );			// get an element
-		// e->check();						// check it
+	// while( ( s = e->next() ) != NULL )	// if end of specification : stop
+	// {
+	// 	e = getElement( s, e );			// get an element
+	// 	// e->check();						// check it
 
-		if( e->getStatus() == eStatusInvalidButOptional ||
-			e->getStatus() == eStatusInvalidButSkip )
-		{
-			std::cout << "go back in raw file" << std::endl;
-			continue;
-		}
+	// 	if( e->getStatus() == eStatusInvalidButOptional ||
+	// 		e->getStatus() == eStatusInvalidButSkip )
+	// 	{
+	// 		std::cout << "go back in raw file" << std::endl;
+	// 		continue;
+	// 	}
 
-		report.addElement( e );			// add the element to report
+	// 	report.addElement( e );			// add the element to report
 
-		if( e->getUniqueId() > 20 )		// @todelete
-			break;
-	}
+	// 	if( e->getUniqueId() > 20 )		// @todelete
+	// 		break;
+	// }
 	
 	std::cout << "check end" << std::endl;
 }

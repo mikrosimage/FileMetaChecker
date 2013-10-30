@@ -1,6 +1,7 @@
 #define BOOST_TEST_MODULE qc_spec_reader
 
 #include <Common/log.hpp>
+#include <Common/Element.hpp>
 #include <SpecReader/Specification.hpp>
 
 #include <boost/test/unit_test.hpp>

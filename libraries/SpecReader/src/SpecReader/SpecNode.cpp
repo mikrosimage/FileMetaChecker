@@ -16,12 +16,15 @@ namespace spec_reader
 
 size_t SpecNode::_globalIndex = 0;
 
-SpecNode::SpecNode( const Specification* spec, const bpt::ptree::const_iterator node, std::shared_ptr< be::Element > parent )
+SpecNode::SpecNode( const Specification* spec,
+	                const bpt::ptree::const_iterator node,
+	                const SpecNode* parent )
 	: _uId ( _globalIndex++ )
 	, _node( node )
 	, _parent( parent )
 	, _specification( spec )
 {
+	LOG_FATAL( "SPECNODE: " << &*this << " # parent:" << &*_parent );
 }
 
 std::string SpecNode::getId() const
@@ -219,29 +222,37 @@ std::map< std::string, std::string > SpecNode::getMap() const
 	return map;
 }
 
-std::shared_ptr< spec_reader::SpecNode > SpecNode::next( std::shared_ptr< be::Element > parent ) const
+std::shared_ptr< spec_reader::SpecNode > SpecNode::next() const
 {
 	bpt::ptree::const_iterator node = _node;
-	std::shared_ptr< be::Element > p = ( parent == nullptr ) ? _parent : parent;
-
 	++node;
-	if( p.use_count() && p->getSpecNode()->getIterator()->second.get_child( kGroup ).end() == node )
+
+	if( _parent != nullptr && _parent->getIterator()->second.get_child( kGroup ).end() == node )
+	{
+		LOG_WARNING( "SpecNode::next " << getId() << ": Last Element (group)" );
 		return nullptr;
+	}
 
 	if( node == _specification->end() )
+	{
+		LOG_WARNING( "SpecNode::next " << getId() << ": Last Element (specification)" );
 		return nullptr;
+	}
 	
-	return std::make_shared< SpecNode >( _specification, node, p );
+	LOG_WARNING( "SpecNode::next " << getId() << ": Next" );
+	return std::make_shared< SpecNode >( _specification, node, _parent );
 }
 
-std::shared_ptr< spec_reader::SpecNode > SpecNode::firstChild( std::shared_ptr< be::Element > element ) const
+std::shared_ptr< spec_reader::SpecNode > SpecNode::firstChild() const
 {
 	try
 	{
+		LOG_WARNING( "SpecNode::firstChild " << getId() );
 		if( ! isGroup() )
-			throw std::runtime_error( "firstChild: This node has no child." );
+			throw std::runtime_error( "SpecNode::firstChild: This node has no child." );
 		bpt::ptree::const_iterator node = _node->second.get_child( kGroup ).begin();
-		return std::make_shared< SpecNode >( _specification, node, element );
+		const SpecNode* thisOne = new SpecNode( *this );
+		return std::make_shared< SpecNode >( _specification, node, thisOne );
 	}
 	catch( std::runtime_error& e )
 	{
@@ -262,7 +273,7 @@ std::set< std::string > SpecNode::getChildrenNodes() const
 	try
 	{
 		if( ! isGroup() )
-			throw std::runtime_error( "getChildrenNodes: This node has no child." );
+			throw std::runtime_error( "SpecNode::getChildrenNodes: This node has no child." );
 		
 		std::set< std::string > list;
 		for( const bpt::ptree::value_type& child : _node->second.get_child( kGroup ) )

@@ -21,8 +21,10 @@ class Number : public Element
 {
 	
 public:
-	Number( const std::shared_ptr< spec_reader::SpecNode > node, const std::shared_ptr< Element > previous = std::shared_ptr< Element >() );
-
+	// Number( const std::shared_ptr< spec_reader::SpecNode > node, const std::shared_ptr< Element > previous = std::shared_ptr< Element >() );
+	Number( const std::shared_ptr< spec_reader::SpecNode > node, 
+	        const std::shared_ptr< Element > previous = std::shared_ptr< Element >(),
+	        const std::shared_ptr< Element > parent = nullptr );
 };
 
 }
