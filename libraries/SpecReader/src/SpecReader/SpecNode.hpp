@@ -11,11 +11,6 @@
 
 #include <boost/property_tree/ptree.hpp>
 
-// namespace basic_element
-// {
-// 	class Element;
-// }
-
 namespace spec_reader
 {
 

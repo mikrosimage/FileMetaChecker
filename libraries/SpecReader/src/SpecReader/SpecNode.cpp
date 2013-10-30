@@ -225,8 +225,7 @@ std::shared_ptr< spec_reader::SpecNode > SpecNode::firstChild() const
 		if( ! isGroup() )
 			throw std::runtime_error( "SpecNode::firstChild: This node has no child." );
 		bpt::ptree::const_iterator node = _node->second.get_child( kGroup ).begin();
-		const SpecNode* thisOne = new SpecNode( *this );
-		return std::make_shared< SpecNode >( _specification, node, thisOne );
+		return std::make_shared< SpecNode >( _specification, node, this );
 	}
 	catch( std::runtime_error& e )
 	{

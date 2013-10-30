@@ -600,6 +600,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_next )
 		BOOST_CHECK_EQUAL( node.next()->getId(),                 "value2" );
 		BOOST_CHECK_EQUAL( node.next()->next()->getId(),         "value3" );
 		BOOST_CHECK_EQUAL( node.next()->next()->next()->getId(), "value4" );
+		BOOST_CHECK( node.next()->next()->next()->next() == nullptr );
 	}
 }
 
@@ -632,6 +633,139 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_children )
 		BOOST_CHECK_EQUAL( childrenList.count( "value11" ), 1 );
 		BOOST_CHECK_EQUAL( childrenList.count( "value12" ), 1 );
 		BOOST_CHECK_EQUAL( childrenList.count( "value13" ), 1 );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( spec_reader_specNode_firstchild )
+{
+	LOG_INFO( "\n>>> spec_reader_specNode_firstchild <<<" );
+	{
+		std::string jsonString = R"*(
+				{
+					"header": [
+						{ "id": "value1", "label": "Value1", "type": "ascii" },
+						{ "id": "value2", "label": "Value2", "type": "ascii" },
+						{ "id": "value3", "label": "Value3", "type": "ascii" },
+						{ "id": "value4", "label": "Value4", "type": "ascii", "group": [
+							{ "id": "firstchild" },
+							{ "id": "secondchild" },
+							{ "id": "thirdchild" }
+						] }
+					]
+				}
+			)*";
+
+		Specification spec;
+		spec.setFromString( jsonString );
+		std::shared_ptr< SpecNode > node1 = spec.getFirstNode();
+
+		BOOST_CHECK_EQUAL( node1->getId(), "value1" );
+		
+		std::shared_ptr< SpecNode > node2 = node1->next();
+		BOOST_CHECK_EQUAL( node2->getId(), "value2" );
+		
+		std::shared_ptr< SpecNode > node3 = node2->next();
+		BOOST_CHECK_EQUAL( node3->getId(), "value3" );
+		
+		std::shared_ptr< SpecNode > node4 = node3->next();
+		BOOST_CHECK_EQUAL( node4->getId(), "value4" );
+		
+		BOOST_CHECK( node1->next()->next()->next()->next() == nullptr );
+
+		std::shared_ptr< SpecNode > child1 = node4->firstChild();
+		BOOST_CHECK_EQUAL( child1->getId(), "firstchild" );
+
+		std::shared_ptr< SpecNode > child2 = child1->next();
+		BOOST_CHECK_EQUAL( child2->getId(), "secondchild" );
+
+		std::shared_ptr< SpecNode > child3 = child2->next();
+		BOOST_CHECK_EQUAL( child3->getId(), "thirdchild" );
+
+		BOOST_CHECK( child3->next() == nullptr );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( spec_reader_specNode_next_first_child_recursivity )
+{
+	LOG_INFO( "\n>>> spec_reader_specNode_next_first_child_recursivity <<<" );
+	{
+		std::string jsonString = R"*(
+				{
+					"header": [
+						{ "id": "value1",
+						  "label": "Value1",
+						  "type": "ascii",
+						  "group": [
+								{ "id": "value11",
+								  "label": "Value11",
+								  "type": "ascii" },
+								{ "id": "value12",
+								  "label": "Value12",
+								  "type": "ascii",
+								  "group": [
+										{ "id": "value121",
+										  "label": "Value121",
+										  "type": "ascii",
+										  "group": [
+											{ "id": "value1211", "label": "Value1211", "type": "ascii" },
+											{ "id": "value1212", "label": "Value1212", "type": "ascii" }
+										  ] }
+							      ] },
+								{ "id": "value13",
+								  "label": "Value13",
+								  "type": "ascii" }
+						  ] }
+					]
+				}
+			)*";
+
+		Specification spec;
+		spec.setFromString( jsonString );
+		std::shared_ptr< SpecNode > node1 = spec.getFirstNode();
+
+		BOOST_CHECK_EQUAL( node1->getId(),  "value1" );
+		BOOST_CHECK( node1->getParent() == nullptr );
+		
+		std::shared_ptr< SpecNode > node2 = node1->firstChild();
+		BOOST_CHECK_EQUAL( node2->getId(), "value11" );
+		BOOST_CHECK_EQUAL( node2->getParent()->getId(), "value1" );
+		BOOST_CHECK_EQUAL( node2->getParent()->getUId(), node1->getUId() );
+		
+		std::shared_ptr< SpecNode > node3 = node2->next();
+		BOOST_CHECK_EQUAL( node3->getId(), "value12" );
+		BOOST_CHECK_EQUAL( node3->getParent()->getId(), "value1" );
+		BOOST_CHECK_EQUAL( node2->getParent()->getUId(), node1->getUId() );
+
+		std::shared_ptr< SpecNode > childNode1 = node3->firstChild();
+		
+		BOOST_CHECK_EQUAL( childNode1->getId(), "value121" );
+		BOOST_CHECK_EQUAL( childNode1->getParent()->getId(), "value12" );
+		BOOST_CHECK_EQUAL( childNode1->getParent()->getUId(), node3->getUId() );
+
+		std::shared_ptr< SpecNode > nullNode = childNode1->next();
+		
+		BOOST_CHECK( nullNode == nullptr );
+
+		std::shared_ptr< SpecNode > childNode2 = childNode1->firstChild();
+		BOOST_CHECK_EQUAL( childNode2->getId(), "value1211" );
+		BOOST_CHECK_EQUAL( childNode2->getParent()->getId(), "value121" );
+		BOOST_CHECK_EQUAL( childNode2->getParent()->getUId(), childNode1->getUId() );
+
+		std::shared_ptr< SpecNode > childNode3 = childNode2->next();
+		BOOST_CHECK_EQUAL( childNode3->getId(), "value1212" );
+		BOOST_CHECK_EQUAL( childNode3->getParent()->getId(), "value121" );
+		BOOST_CHECK_EQUAL( childNode3->getParent()->getUId(), childNode1->getUId() );
+		BOOST_CHECK_THROW( childNode3->firstChild(), std::runtime_error );
+		
+		nullNode = childNode3->next();
+		BOOST_CHECK( nullNode == nullptr );
+
+		std::shared_ptr< SpecNode > node4 = node3->next();
+		BOOST_CHECK_EQUAL( node4->getId(), "value13" );
+		BOOST_CHECK_THROW( node4->firstChild(), std::runtime_error );
+
+		std::shared_ptr< SpecNode > node5 = node4->next();
+		BOOST_CHECK( node5 == nullptr );
 	}
 }
 
