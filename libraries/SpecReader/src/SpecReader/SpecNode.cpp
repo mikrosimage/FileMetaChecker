@@ -1,14 +1,11 @@
 #include "SpecNode.hpp"
 #include "Specification.hpp"
-#include <Common/Element.hpp>
 #include <Common/log.hpp>
 
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
 
-
-namespace be  = basic_element;
 namespace bpt = boost::property_tree;
 
 namespace spec_reader

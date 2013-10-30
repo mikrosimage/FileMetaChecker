@@ -2,9 +2,7 @@
 
 #include <iostream>
 
-#include <Common/Element.hpp>
-#include <BasicElement/SubElements/Data.hpp>
-#include <BasicElement/SubElements/Number.hpp>
+#include <BasicElement/Element.hpp>
 
 #include <SpecReader/Specification.hpp>
 #include <FileReader/FileReader.hpp>

@@ -2,7 +2,7 @@
 #define _ELEMENT_CHECKER_CHECKER_HPP_
 
 #include <Common/common.hpp>
-#include <Common/Element.hpp>
+#include <BasicElement/Element.hpp>
 
 #include <iostream>
 #include <memory>
@@ -25,8 +25,8 @@ public:
 	void check();
 
 private:
-	EStatus checkData  ( std::shared_ptr< basic_element::Data   > data );
-	EStatus checkNumber( std::shared_ptr< basic_element::Number > num  );
+	// EStatus checkData  ( std::shared_ptr< basic_element::Data   > data );
+	// EStatus checkNumber( std::shared_ptr< basic_element::Number > num  );
 
 private:
 	std::shared_ptr< basic_element::Element > _element;

@@ -1,4 +1,4 @@
-#include <Common/Element.hpp>
+#include "Element.hpp"
 #include <Common/log.hpp>
 #include <SpecReader/SpecNode.hpp>
 
@@ -183,22 +183,6 @@ std::shared_ptr< spec_reader::SpecNode > Element::next( )
 	LOG_WARNING( "Element::next " << _id << ": Next !" );
 	// go to the next node
 	return nextNode;
-}
-
-std::string Element::getStringStatus() const
-{
-	switch( _status )
-	{
-		case eStatusNotChecked         : return "not checked";
-		case eStatusSkip               : return "skip";
-		case eStatusPassOver           : return "pass over";
-		case eStatusValid              : return "valid";
-		case eStatusInvalid            : return "invalid";
-		case eStatusInvalidButSkip     : return "invalid but skip";
-		case eStatusInvalidButOptional : return "invalid but optional";
-		case eStatusInvalidForUnordered: return "invalid for unordered";
-	}
-	return "";
 }
 
 void Element::set( const char* data, const size_t& size )

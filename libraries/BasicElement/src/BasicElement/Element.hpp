@@ -44,13 +44,10 @@ public:
 	std::shared_ptr< Element >               getParent() const { return _parent.lock(); }
 	std::shared_ptr< spec_reader::SpecNode > getSpecNode()     { return _specNode.lock(); }
 
-	std::string getStringStatus() const;
-
 protected:
 	std::weak_ptr< Element > _parent;
 	std::weak_ptr< Element > _previous;
 	std::weak_ptr< spec_reader::SpecNode >  _specNode;
-	// std::shared_ptr< spec_reader::SpecNode >  _specNode;
 	std::vector< std::shared_ptr< Element > > _children;
 
 public:
