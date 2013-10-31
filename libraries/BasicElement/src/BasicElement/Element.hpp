@@ -41,8 +41,9 @@ public:
 
 	void  set( const char* data, const size_t& size );
 
-	std::shared_ptr< Element >               getParent() const { return _parent.lock(); }
-	std::shared_ptr< spec_reader::SpecNode > getSpecNode()     { return _specNode; }
+	std::shared_ptr< Element >               getParent()   const { return _parent.lock(); }
+	std::shared_ptr< Element >               getPrevious() const { return _previous.lock(); }
+	std::shared_ptr< spec_reader::SpecNode > getSpecNode()       { return _specNode; }
 
 protected:
 	std::weak_ptr< Element > _parent;
