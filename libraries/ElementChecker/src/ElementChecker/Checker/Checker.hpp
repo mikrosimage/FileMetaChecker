@@ -7,12 +7,6 @@
 #include <iostream>
 #include <memory>
 
-namespace basic_element
-{
-	class Data;
-	class Number;
-}
-
 namespace element_checker
 {
 
