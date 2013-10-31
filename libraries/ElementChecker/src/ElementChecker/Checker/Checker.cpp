@@ -36,67 +36,67 @@ void Checker::check()
 		case eTypeUnknown : LOG_ERROR( "Unknown element type, cannot check it" ); break;
 		case eTypeInt8         :
 		{
-			if( Ranges< be::int8         >( _element->_rangeExpr ).isInRanges( Translator( _element.get() ).get< be::int8         >() ) )
+			if( Ranges< be::int8         >( _element->_rangeExpr ).isInRanges( Translator( _element ).get< be::int8         >() ) )
 				status = eStatusValid;
 			break;
 		}
 		case eTypeUInt8        :
 		{
-			if( Ranges< be::uint8        >( _element->_rangeExpr ).isInRanges( Translator( _element.get() ).get< be::uint8        >() ) )
+			if( Ranges< be::uint8        >( _element->_rangeExpr ).isInRanges( Translator( _element ).get< be::uint8        >() ) )
 				status = eStatusValid;
 			break;
 		}
 		case eTypeInt16        :
 		{
-			if( Ranges< be::int16        >( _element->_rangeExpr ).isInRanges( Translator( _element.get() ).get< be::int16        >() ) )
+			if( Ranges< be::int16        >( _element->_rangeExpr ).isInRanges( Translator( _element ).get< be::int16        >() ) )
 				status = eStatusValid;
 			break;
 		}
 		case eTypeUInt16       :
 		{
-			if( Ranges< be::uint16       >( _element->_rangeExpr ).isInRanges( Translator( _element.get() ).get< be::uint16       >() ) )
+			if( Ranges< be::uint16       >( _element->_rangeExpr ).isInRanges( Translator( _element ).get< be::uint16       >() ) )
 				status = eStatusValid;
 			break;
 		}
 		case eTypeInt32        :
 		{
-			if( Ranges< be::int32        >( _element->_rangeExpr ).isInRanges( Translator( _element.get() ).get< be::int32        >() ) )
+			if( Ranges< be::int32        >( _element->_rangeExpr ).isInRanges( Translator( _element ).get< be::int32        >() ) )
 				status = eStatusValid;
 			break;
 		}
 		case eTypeUInt32       :
 		{
-			if( Ranges< be::uint32       >( _element->_rangeExpr ).isInRanges( Translator( _element.get() ).get< be::uint32       >() ) )
+			if( Ranges< be::uint32       >( _element->_rangeExpr ).isInRanges( Translator( _element ).get< be::uint32       >() ) )
 				status = eStatusValid;
 			break;
 		}
 		case eTypeInt64        :
 		{
-			if( Ranges< be::int64        >( _element->_rangeExpr ).isInRanges( Translator( _element.get() ).get< be::int64        >() ) )
+			if( Ranges< be::int64        >( _element->_rangeExpr ).isInRanges( Translator( _element ).get< be::int64        >() ) )
 				status = eStatusValid;
 			break;
 		}
 		case eTypeUInt64       :
 		{
-			if( Ranges< be::uint64       >( _element->_rangeExpr ).isInRanges( Translator( _element.get() ).get< be::uint64       >() ) )
+			if( Ranges< be::uint64       >( _element->_rangeExpr ).isInRanges( Translator( _element ).get< be::uint64       >() ) )
 				status = eStatusValid;
 			break;
 		}
 		case eTypeFloat        :
 		{
-			if( Ranges< float            >( _element->_rangeExpr ).isInRanges( Translator( _element.get() ).get< float            >() ) )
+			if( Ranges< float            >( _element->_rangeExpr ).isInRanges( Translator( _element ).get< float            >() ) )
 				status = eStatusValid;
 			break;
 		}
 		case eTypeDouble       :
 		{
-			if( Ranges< double           >( _element->_rangeExpr ).isInRanges( Translator( _element.get() ).get< double           >() ) )
+			if( Ranges< double           >( _element->_rangeExpr ).isInRanges( Translator( _element ).get< double           >() ) )
 				status = eStatusValid;
 			break;
 		}
 		case eTypeIeeeExtended :
 		{
-			if( Ranges< be::ieeeExtended >( _element->_rangeExpr ).isInRanges( Translator( _element.get() ).get< be::ieeeExtended >() ) )
+			if( Ranges< be::ieeeExtended >( _element->_rangeExpr ).isInRanges( Translator( _element ).get< be::ieeeExtended >() ) )
 				status = eStatusValid;
 			break;
 		}
@@ -104,7 +104,7 @@ void Checker::check()
 		case eTypeAscii :
 		case eTypeHexa  :
 		{
-			std::string orig = Translator( _element.get() ).get();
+			std::string orig = Translator( _element ).get();
 			std::string lowCase = orig;
 			std::string upCase  = orig;
 			std::transform( lowCase.begin(), lowCase.end(), lowCase.begin(), ::tolower );

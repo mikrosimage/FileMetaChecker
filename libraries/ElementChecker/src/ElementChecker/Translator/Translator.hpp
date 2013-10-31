@@ -20,7 +20,7 @@ union NumberData
 class Translator
 {
 public:
-	Translator( const basic_element::Element* elem )
+	Translator( const std::shared_ptr< basic_element::Element > elem )
 		: _ref( elem )
 	{
 	}
@@ -41,7 +41,7 @@ private:
 	void getOrderedData( char* buffer );
 
 private:
-	const basic_element::Element* _ref;
+	const std::shared_ptr< basic_element::Element > _ref;
 };
 	
 }
