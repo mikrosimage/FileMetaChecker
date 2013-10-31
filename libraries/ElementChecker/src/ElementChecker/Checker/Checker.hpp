@@ -20,12 +20,15 @@ class Checker
 {
 	
 public:
-	Checker( const std::shared_ptr< basic_element::Element > element );
+	Checker();
 
-	void check();
+	void check( const std::shared_ptr< basic_element::Element > element );
+	std::vector< std::shared_ptr< basic_element::Element > > getElementList() { return _elementList; }
+private:
+	bool isIterationValid( const std::shared_ptr< basic_element::Element > element, const std::string& errorMessage );
 
 private:
-	std::shared_ptr< basic_element::Element > _element;
+	std::vector< std::shared_ptr< basic_element::Element > > _elementList;
 };
 
 }

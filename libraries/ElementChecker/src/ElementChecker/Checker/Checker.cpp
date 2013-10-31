@@ -12,91 +12,91 @@ namespace be = basic_element;
 namespace element_checker
 {
 
-Checker::Checker( const std::shared_ptr< be::Element > element )
-	: _element( element )
+Checker::Checker()
 {
 }
 
-void Checker::check()
+void Checker::check( const std::shared_ptr< basic_element::Element > element )
 {
-	LOG_INFO( _element->_type );
-	
-	if( _element->_size == 0 )
-		LOG_WARNING( _element->_id << ": Null data size !" );
+	if( element->_size == 0 )	// @todo: parse count expression
+		LOG_WARNING( element->_id << ": Null data size !" );
 
-	if( _element->_values.empty() && _element->_rangeExpr.empty() )
+	// if nothing to compare
+	if( element->_values.empty() && element->_rangeExpr.empty() )
 	{
-		_element->_status = eStatusPassOver;
+		element->_status = eStatusPassOver;
+		_elementList.push_back( element );
 		return;
 	}
 
+	// element check :
 	EStatus status = eStatusInvalid;
-	switch( _element->_type )
+	switch( element->_type )
 	{
 		case eTypeUnknown : LOG_ERROR( "Unknown element type, cannot check it" ); break;
 		case eTypeInt8         :
 		{
-			if( Ranges< be::int8         >( _element->_rangeExpr ).isInRanges( Translator( _element ).get< be::int8         >() ) )
+			if( Ranges< be::int8         >( element->_rangeExpr ).isInRanges( Translator( element ).get< be::int8         >() ) )
 				status = eStatusValid;
 			break;
 		}
 		case eTypeUInt8        :
 		{
-			if( Ranges< be::uint8        >( _element->_rangeExpr ).isInRanges( Translator( _element ).get< be::uint8        >() ) )
+			if( Ranges< be::uint8        >( element->_rangeExpr ).isInRanges( Translator( element ).get< be::uint8        >() ) )
 				status = eStatusValid;
 			break;
 		}
 		case eTypeInt16        :
 		{
-			if( Ranges< be::int16        >( _element->_rangeExpr ).isInRanges( Translator( _element ).get< be::int16        >() ) )
+			if( Ranges< be::int16        >( element->_rangeExpr ).isInRanges( Translator( element ).get< be::int16        >() ) )
 				status = eStatusValid;
 			break;
 		}
 		case eTypeUInt16       :
 		{
-			if( Ranges< be::uint16       >( _element->_rangeExpr ).isInRanges( Translator( _element ).get< be::uint16       >() ) )
+			if( Ranges< be::uint16       >( element->_rangeExpr ).isInRanges( Translator( element ).get< be::uint16       >() ) )
 				status = eStatusValid;
 			break;
 		}
 		case eTypeInt32        :
 		{
-			if( Ranges< be::int32        >( _element->_rangeExpr ).isInRanges( Translator( _element ).get< be::int32        >() ) )
+			if( Ranges< be::int32        >( element->_rangeExpr ).isInRanges( Translator( element ).get< be::int32        >() ) )
 				status = eStatusValid;
 			break;
 		}
 		case eTypeUInt32       :
 		{
-			if( Ranges< be::uint32       >( _element->_rangeExpr ).isInRanges( Translator( _element ).get< be::uint32       >() ) )
+			if( Ranges< be::uint32       >( element->_rangeExpr ).isInRanges( Translator( element ).get< be::uint32       >() ) )
 				status = eStatusValid;
 			break;
 		}
 		case eTypeInt64        :
 		{
-			if( Ranges< be::int64        >( _element->_rangeExpr ).isInRanges( Translator( _element ).get< be::int64        >() ) )
+			if( Ranges< be::int64        >( element->_rangeExpr ).isInRanges( Translator( element ).get< be::int64        >() ) )
 				status = eStatusValid;
 			break;
 		}
 		case eTypeUInt64       :
 		{
-			if( Ranges< be::uint64       >( _element->_rangeExpr ).isInRanges( Translator( _element ).get< be::uint64       >() ) )
+			if( Ranges< be::uint64       >( element->_rangeExpr ).isInRanges( Translator( element ).get< be::uint64       >() ) )
 				status = eStatusValid;
 			break;
 		}
 		case eTypeFloat        :
 		{
-			if( Ranges< float            >( _element->_rangeExpr ).isInRanges( Translator( _element ).get< float            >() ) )
+			if( Ranges< float            >( element->_rangeExpr ).isInRanges( Translator( element ).get< float            >() ) )
 				status = eStatusValid;
 			break;
 		}
 		case eTypeDouble       :
 		{
-			if( Ranges< double           >( _element->_rangeExpr ).isInRanges( Translator( _element ).get< double           >() ) )
+			if( Ranges< double           >( element->_rangeExpr ).isInRanges( Translator( element ).get< double           >() ) )
 				status = eStatusValid;
 			break;
 		}
 		case eTypeIeeeExtended :
 		{
-			if( Ranges< be::ieeeExtended >( _element->_rangeExpr ).isInRanges( Translator( _element ).get< be::ieeeExtended >() ) )
+			if( Ranges< be::ieeeExtended >( element->_rangeExpr ).isInRanges( Translator( element ).get< be::ieeeExtended >() ) )
 				status = eStatusValid;
 			break;
 		}
@@ -104,23 +104,24 @@ void Checker::check()
 		case eTypeAscii :
 		case eTypeHexa  :
 		{
-			std::string orig = Translator( _element ).get();
+			std::string orig = Translator( element ).get();
 			std::string lowCase = orig;
 			std::string upCase  = orig;
 			std::transform( lowCase.begin(), lowCase.end(), lowCase.begin(), ::tolower );
 			std::transform(  upCase.begin(),  upCase.end(),  upCase.begin(), ::toupper );
 
-			for( std::string value : _element->_values )
+			for( std::string value : element->_values )
 				if( value == orig || value == lowCase || value == upCase )
 					status = eStatusValid;
 			
 			if( status == eStatusInvalid )
-				_element->_error += "Invalid value ";
+				element->_error += "Invalid value ";
 			break;
 		}
 
 		case eTypeRaw   :
 		{
+			// @todo: get count (ExpressionParser)
 			status = eStatusPassOver;
 			break;
 		}
@@ -134,9 +135,57 @@ void Checker::check()
 			break;
 		}
 	}
-	_element->_status = status;
 
+	element->_status = status;
+
+	// if element invalid and repeated : checked if iterations valid
+	if( status == eStatusInvalid && ! element->_repetExpr.empty() )
+	{
+		std::string errorMessage;
+		if( ! isIterationValid( element->getPrevious(), errorMessage ) )
+		{
+			element->_error += errorMessage;
+			_elementList.push_back( element );
+		}
+		return;
+	}
+
+	_elementList.push_back( element );
 }
+
+bool Checker::isIterationValid( const std::shared_ptr< basic_element::Element > element, const std::string& errorMessage )
+{
+	if( element->_repetExpr.empty() )
+		return true;
+
+	for( std::pair< std::string, std::string > repetPair : element->_repetExpr )
+	{
+		LOG_ERROR( "Checker: repetitions: " << repetPair.first << " # " << repetPair.second );
+		// if( repetPair.first == repetPair.second )
+		// {
+		// 	ExpressionParser repetParser( _elementList );
+		// 	repetNumber = repetParser.getExpressionResult< size_t >( repetPair.first );
+		// }
+		// else
+		// {
+		// 	be::expression_parser::ExpressionParser repetParser( _elementList );
+		// 	size_t repetMin = 0;
+		// 	size_t repetMax = 0;
+
+		// 	if( ! repetPair.first.empty() )
+		// 		repetMin = repetParser.getExpressionResult< size_t >( repetPair.first );
+		// 	if( ! repetPair.second.empty() )
+		// 		repetMax = repetParser.getExpressionResult< size_t >( repetPair.second );
+
+		// 	if( repetMax != 0 && repetMin > repetMax )
+		// 		repetRange.push_back( std::make_pair( repetMax, repetMin ) );
+		// 	else
+		// 		repetRange.push_back( std::make_pair( repetMin, repetMax ) );
+		// }
+	}
+	return false;
+}
+
 
 }
 

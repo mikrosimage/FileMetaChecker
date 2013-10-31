@@ -20,6 +20,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_data )
 				}
 			)*";
 
+	Checker checker;
 	{
 		spec_reader::Specification spec;
 		spec.setFromString( jsonStringBegin + jsonStringEnd );
@@ -30,8 +31,9 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_data )
 		const char buff[4] { 'W', 'A', 'V', 'E' };
 		elem->set( (const char*)&buff, 4 );
 
-		Checker( elem ).check();
+		checker.check( elem );
 		BOOST_CHECK_EQUAL( elem->_status, eStatusPassOver );
+		BOOST_CHECK_EQUAL( checker.getElementList().size(), 1 );
 	}
 	{
 		spec_reader::Specification spec;
@@ -43,8 +45,9 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_data )
 		const char buff[4] { 'W', 'A', 'V', 'E' };
 		elem->set( (const char*)&buff, 4 );
 
-		Checker( elem ).check();
+		checker.check( elem );
 		BOOST_CHECK_EQUAL( elem->_status, eStatusValid );
+		BOOST_CHECK_EQUAL( checker.getElementList().size(), 2 );
 	}
 	{
 		spec_reader::Specification spec;
@@ -56,8 +59,9 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_data )
 		const char buff[4] { 'W', 'A', 'V', 'E' };
 		elem->set( (const char*)&buff, 4 );
 
-		Checker( elem ).check();
+		checker.check( elem );
 		BOOST_CHECK_EQUAL( elem->_status, eStatusValid );
+		BOOST_CHECK_EQUAL( checker.getElementList().size(), 3 );
 	}
 	{
 		spec_reader::Specification spec;
@@ -69,9 +73,10 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_data )
 		const char buff[4] { 'W', 'A', 'V', 'E' };
 		elem->set( (const char*)&buff, 4 );
 
-		Checker( elem ).check();
+		checker.check( elem );
 		BOOST_CHECK_EQUAL( elem->_status, eStatusInvalid );
 		BOOST_CHECK_EQUAL( elem->_error, "Invalid value " );
+		BOOST_CHECK_EQUAL( checker.getElementList().size(), 4 );
 	}
 }
 
@@ -94,6 +99,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_number )
 				}
 			)*";
 
+	Checker checker;
 	{
 		spec_reader::Specification spec;
 		spec.setFromString( jsonStringBegin + jsonStringEnd );
@@ -104,9 +110,10 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_number )
 		const char buff[4] { 0x00, 0x00, 0x00, 0x01 };
 		elem->set( (const char*)&buff, 4 );
 
-		Checker( elem ).check();
+		checker.check( elem );
 		BOOST_CHECK_EQUAL( elem->_type, eTypeUInt32 );
 		BOOST_CHECK_EQUAL( elem->_status, eStatusPassOver );
+		BOOST_CHECK_EQUAL( checker.getElementList().size(), 1 );
 	}
 
 	{
@@ -119,9 +126,10 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_number )
 		const char buff[4] { 0x00, 0x00, 0x00, 0x05 };
 		elem->set( (const char*)&buff, 4 );
 
-		Checker( elem ).check();
+		checker.check( elem );
 		BOOST_CHECK_EQUAL( elem->_type, eTypeUInt32 );
 		BOOST_CHECK_EQUAL( elem->_status, eStatusValid );
+		BOOST_CHECK_EQUAL( checker.getElementList().size(), 2 );
 	}
 
 	{
@@ -134,9 +142,10 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_number )
 		const char buff[4] { 0x05, 0x00, 0x00, 0x00 };
 		elem->set( (const char*)&buff, 4 );
 
-		Checker( elem ).check();
+		checker.check( elem );
 		BOOST_CHECK_EQUAL( elem->_type, eTypeUInt32 );
 		BOOST_CHECK_EQUAL( elem->_status, eStatusValid );
+		BOOST_CHECK_EQUAL( checker.getElementList().size(), 3 );
 	}
 
 	{
@@ -149,9 +158,10 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_number )
 		const char buff[4] { 0x00, 0x00, 0x00, 0x08 };
 		elem->set( (const char*)&buff, 4 );
 
-		Checker( elem ).check();
+		checker.check( elem );
 		BOOST_CHECK_EQUAL( elem->_type, eTypeUInt32 );
 		BOOST_CHECK_EQUAL( elem->_status, eStatusInvalid );
+		BOOST_CHECK_EQUAL( checker.getElementList().size(), 4 );
 	}
 }
 
