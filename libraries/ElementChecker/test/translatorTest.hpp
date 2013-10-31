@@ -1,5 +1,3 @@
-#include <BasicElement/SubElements/Number.hpp>
-#include <BasicElement/SubElements/Data.hpp>
 #include <ElementChecker/Translator/Translator.hpp>
 
 BOOST_AUTO_TEST_SUITE( element_checker_test_translator )
@@ -26,13 +24,11 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_1 )
 			}
 		)*";
 
-	std::istringstream isstream( jsonString );
-	bpt::ptree tree;
+	spec_reader::Specification spec;
+	spec.setFromString( jsonString );
+	std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
 
-	bpt::read_json( isstream, tree );
-
-	spec_reader::SpecNode node( tree.get_child( "header" ).begin() );
-	basic_element::Number elem( &node );
+	basic_element::Element elem( node );
 
 	{
 		Translator tr = Translator( &elem );
@@ -75,7 +71,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_1 )
 		
 	}
 	{
-		basic_element::Data data( &node );
+		basic_element::Element data( node );
 		const char buff[4] { 'W', 'A', 'V', 'E' };
 		data.set( (const char*)&buff, 4 );
 
@@ -105,13 +101,11 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 				}
 			)*";
 
-		std::istringstream isstream( jsonString );
-		bpt::ptree tree;
+		spec_reader::Specification spec;
+		spec.setFromString( jsonString );
+		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
 
-		bpt::read_json( isstream, tree );
-
-		spec_reader::SpecNode node( tree.get_child( "header" ).begin() );
-		basic_element::Data elem( &node );
+		basic_element::Element elem( node );
 	
 		const char buff[4] { 'W', 'A', 'V', 'E' };
 		elem.set( (const char*)&buff, 4 );
@@ -147,13 +141,11 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 				}
 			)*";
 
-		std::istringstream isstream( jsonString );
-		bpt::ptree tree;
+		spec_reader::Specification spec;
+		spec.setFromString( jsonString );
+		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
 
-		bpt::read_json( isstream, tree );
-
-		spec_reader::SpecNode node( tree.get_child( "header" ).begin() );
-		basic_element::Number elem( &node );
+		basic_element::Element elem( node );
 	
 		const char buff[4] { 'W', 'A', 'V', 'E' };
 		elem.set( (const char*)&buff, 4 );
@@ -189,13 +181,11 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 				}
 			)*";
 
-		std::istringstream isstream( jsonString );
-		bpt::ptree tree;
+		spec_reader::Specification spec;
+		spec.setFromString( jsonString );
+		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
 
-		bpt::read_json( isstream, tree );
-
-		spec_reader::SpecNode node( tree.get_child( "header" ).begin() );
-		basic_element::Number elem( &node );
+		basic_element::Element elem( node );
 	
 		const char buff[1] { 'W' };
 		elem.set( (const char*)&buff, 1 );
@@ -230,28 +220,26 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 				}
 			)*";
 
-		std::istringstream isstream( jsonString );
-		bpt::ptree tree;
+		spec_reader::Specification spec;
+		spec.setFromString( jsonString );
+		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
 
-		bpt::read_json( isstream, tree );
-
-		spec_reader::SpecNode node( tree.get_child( "header" ).begin() );
-		basic_element::Number elem( &node );
+		basic_element::Element elem( node );
 	
 		const char buff[4] { 0x01, 0x00, 0x00, 0x00 };
 		elem.set( (const char*)&buff, 4 );
 
-		BOOST_CHECK_EQUAL( elem.isBigEndian(), false );
+		BOOST_CHECK_EQUAL( elem._isBigEndian, false );
 		BOOST_CHECK_EQUAL( Translator( &elem ).get<   int >(), 1 );
 		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< char > >().size(), 4 );
-		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< char > >().at(0), 1 );
-		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< char > >().at(1), 0 );
-		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< char > >().at(2), 0 );
-		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< char > >().at(3), 0 );
+		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< char > >().at(0),  1 );
+		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< char > >().at(1),  0 );
+		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< char > >().at(2),  0 );
+		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< char > >().at(3),  0 );
 
 		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< short > >().size(), 2 );
-		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< short > >().at(0), 1 );
-		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< short > >().at(1), 0 );
+		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< short > >().at(0),  1 );
+		BOOST_CHECK_EQUAL( (short) Translator( &elem ).get< std::vector< short > >().at(1),  0 );
 		
 		BOOST_CHECK_THROW( Translator( &elem ).get< short >(), std::runtime_error );
 	}

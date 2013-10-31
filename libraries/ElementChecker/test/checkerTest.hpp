@@ -1,5 +1,3 @@
-#include <BasicElement/SubElements/Number.hpp>
-#include <BasicElement/SubElements/Data.hpp>
 
 BOOST_AUTO_TEST_SUITE( element_checker_test_checker )
 
@@ -27,53 +25,53 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_data )
 		spec.setFromString( jsonStringBegin + jsonStringEnd );
 		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
 
-		std::shared_ptr< basic_element::Data > elem = std::make_shared< basic_element::Data >( node );
+		std::shared_ptr< basic_element::Element > elem( new basic_element::Element( node ) );
 	
 		const char buff[4] { 'W', 'A', 'V', 'E' };
 		elem->set( (const char*)&buff, 4 );
 
 		Checker( elem ).check();
-		BOOST_CHECK_EQUAL( elem->getStatus(), eStatusPassOver );
+		BOOST_CHECK_EQUAL( elem->_status, eStatusPassOver );
 	}
 	{
 		spec_reader::Specification spec;
 		spec.setFromString( jsonStringBegin + R"*( ,"values": "WAVE" )*" + jsonStringEnd );
 		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
 
-		std::shared_ptr< basic_element::Data > elem = std::make_shared< basic_element::Data >( node );
+		std::shared_ptr< basic_element::Element > elem( new basic_element::Element( node ) );
 	
 		const char buff[4] { 'W', 'A', 'V', 'E' };
 		elem->set( (const char*)&buff, 4 );
 
 		Checker( elem ).check();
-		BOOST_CHECK_EQUAL( elem->getStatus(), eStatusValid );
+		BOOST_CHECK_EQUAL( elem->_status, eStatusValid );
 	}
 	{
 		spec_reader::Specification spec;
 		spec.setFromString( jsonStringBegin + R"*( ,"values": "wave" )*" + jsonStringEnd );
 		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
 
-		std::shared_ptr< basic_element::Data > elem = std::make_shared< basic_element::Data >( node );
+		std::shared_ptr< basic_element::Element > elem( new basic_element::Element( node ) );
 	
 		const char buff[4] { 'W', 'A', 'V', 'E' };
 		elem->set( (const char*)&buff, 4 );
 
 		Checker( elem ).check();
-		BOOST_CHECK_EQUAL( elem->getStatus(), eStatusValid );
+		BOOST_CHECK_EQUAL( elem->_status, eStatusValid );
 	}
 	{
 		spec_reader::Specification spec;
 		spec.setFromString( jsonStringBegin + R"*( ,"values": "evaw" )*"  + jsonStringEnd );
 		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
 
-		std::shared_ptr< basic_element::Data > elem = std::make_shared< basic_element::Data >( node );
+		std::shared_ptr< basic_element::Element > elem( new basic_element::Element( node ) );
 	
 		const char buff[4] { 'W', 'A', 'V', 'E' };
 		elem->set( (const char*)&buff, 4 );
 
 		Checker( elem ).check();
-		BOOST_CHECK_EQUAL( elem->getStatus(), eStatusInvalid );
-		BOOST_CHECK_EQUAL( elem->getErrorLabel(), "Invalid value" );
+		BOOST_CHECK_EQUAL( elem->_status, eStatusInvalid );
+		BOOST_CHECK_EQUAL( elem->_error, "Invalid value " );
 	}
 }
 
@@ -101,13 +99,14 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_number )
 		spec.setFromString( jsonStringBegin + jsonStringEnd );
 		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
 
-		std::shared_ptr< basic_element::Number > elem = std::make_shared< basic_element::Number >( node );
+		std::shared_ptr< basic_element::Element > elem( new basic_element::Element( node ) );
 	
 		const char buff[4] { 0x00, 0x00, 0x00, 0x01 };
 		elem->set( (const char*)&buff, 4 );
 
 		Checker( elem ).check();
-		BOOST_CHECK_EQUAL( elem->getStatus(), eStatusPassOver );
+		BOOST_CHECK_EQUAL( elem->_type, eTypeUInt32 );
+		BOOST_CHECK_EQUAL( elem->_status, eStatusPassOver );
 	}
 
 	{
@@ -115,14 +114,14 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_number )
 		spec.setFromString( jsonStringBegin + R"*( ,"range": [ { "min": "1", "max": "10" } ] )*"  + jsonStringEnd );
 		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
 
-		std::shared_ptr< basic_element::Number > elem = std::make_shared< basic_element::Number >( node );
+		std::shared_ptr< basic_element::Element > elem( new basic_element::Element( node ) );
 	
 		const char buff[4] { 0x00, 0x00, 0x00, 0x05 };
 		elem->set( (const char*)&buff, 4 );
 
 		Checker( elem ).check();
-		BOOST_CHECK_EQUAL( elem->getSubType(), eSubTypeUInt32 );
-		BOOST_CHECK_EQUAL( elem->getStatus(), eStatusValid );
+		BOOST_CHECK_EQUAL( elem->_type, eTypeUInt32 );
+		BOOST_CHECK_EQUAL( elem->_status, eStatusValid );
 	}
 
 	{
@@ -130,14 +129,14 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_number )
 		spec.setFromString( jsonStringBegin + R"*( ,"endian":"little","range": [ { "min": "1", "max": "10" } ] )*"  + jsonStringEnd );
 		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
 
-		std::shared_ptr< basic_element::Number > elem = std::make_shared< basic_element::Number >( node );
+		std::shared_ptr< basic_element::Element > elem( new basic_element::Element( node ) );
 	
 		const char buff[4] { 0x05, 0x00, 0x00, 0x00 };
 		elem->set( (const char*)&buff, 4 );
 
 		Checker( elem ).check();
-		BOOST_CHECK_EQUAL( elem->getSubType(), eSubTypeUInt32 );
-		BOOST_CHECK_EQUAL( elem->getStatus(), eStatusValid );
+		BOOST_CHECK_EQUAL( elem->_type, eTypeUInt32 );
+		BOOST_CHECK_EQUAL( elem->_status, eStatusValid );
 	}
 
 	{
@@ -145,14 +144,14 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_number )
 		spec.setFromString( jsonStringBegin + R"*( ,"range": [ { "max": "5" }, { "min": "10" } ] )*"  + jsonStringEnd );
 		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
 
-		std::shared_ptr< basic_element::Number > elem = std::make_shared< basic_element::Number >( node );
+		std::shared_ptr< basic_element::Element > elem( new basic_element::Element( node ) );
 	
 		const char buff[4] { 0x00, 0x00, 0x00, 0x08 };
 		elem->set( (const char*)&buff, 4 );
 
 		Checker( elem ).check();
-		BOOST_CHECK_EQUAL( elem->getSubType(), eSubTypeUInt32 );
-		BOOST_CHECK_EQUAL( elem->getStatus(), eStatusInvalid );
+		BOOST_CHECK_EQUAL( elem->_type, eTypeUInt32 );
+		BOOST_CHECK_EQUAL( elem->_status, eStatusInvalid );
 	}
 }
 
