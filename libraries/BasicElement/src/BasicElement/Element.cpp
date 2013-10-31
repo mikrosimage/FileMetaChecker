@@ -39,32 +39,35 @@ Element::Element( const std::shared_ptr< sr::SpecNode > node,
 	, _checkedGroup  ( false )
 	, _data          ( nullptr )
 {
-	if( node->isRepeated() > 1 && ( previous.use_count() != 0 ) )
-	{
-		std::shared_ptr< Element > prev = previous;
-		while( prev.use_count() != 0 )
-		{
-			if( prev->_id == node->getId() )
-			{
-				_iteration = prev->_iteration + 1;
-				break;
-			}
-			else
-			{
-				if( prev->getParent().use_count() == 0 )
-					break;
-				prev = prev->getParent();
-			}
-		}
-	}
+	// if( node->isRepeated() > 1 && ( previous.use_count() != 0 ) )
+	// {
+	// 	std::shared_ptr< Element > prev = previous;
+	// 	while( prev.use_count() != 0 )
+	// 	{
+	// 		if( prev->_id == node->getId() )
+	// 		{
+	// 			_iteration = prev->_iteration + 1;
+	// 			break;
+	// 		}
+	// 		else
+	// 		{
+	// 			if( prev->getParent().use_count() == 0 )
+	// 				break;
+	// 			prev = prev->getParent();
+	// 		}
+	// 	}
+	// }
+
+	if( previous.use_count() != 0 && ! _repetExpr.empty() && _previous.lock()->_id == _id && _previous.lock()->_status == eStatusValid )
+		_iteration = _previous.lock()->_iteration + 1;
 
 	if( ! _previous.expired() )
-		LOG_FATAL( _id << ": " << previous->_id );
+		LOG_FATAL( _id << "'s previous: " << previous->_id );
 
 	if( ! _parent.expired() )
 		_parent.lock()->_children.push_back( std::make_shared< Element >( *this ) );
 
-	LOG_ERROR( _id << ": " << &*this << " - Parent: " << &*_parent.lock() << " - Previous: " << &( *( _previous.lock().get() ) ) << " - SpecNode: " << &*_specNode.get() );
+	LOG_ERROR( _id << ": " << &*this << " - Parent: " << &*_parent.lock() << " - Previous: " << &( *( _previous.lock().get() ) ) << " - SpecNode: " << &*_specNode.get() << " - Iteration: " << _iteration );
 }
 
 std::shared_ptr< spec_reader::SpecNode > Element::next( )
@@ -111,22 +114,14 @@ std::shared_ptr< spec_reader::SpecNode > Element::next( )
 		return child;
 	}
 	
-	// Repetitions
-	// get repetitions
-	size_t count = _specNode->isRepeated();
-	
 	// if repeated element
-	if( count > 1 )
+	if( ! _repetExpr.empty() && _status == eStatusValid )
 	{
-		LOG_WARNING( "Element::next " << _id << ": Repeated: " << _iteration );
-		// and not repeated enough yet
-		if( _iteration < count )
-		{
-			// go to the same SpecNode
-			return _specNode;
-		}
+		LOG_WARNING( ">>>>>>>>>>>>>> Element::next " << _id << ": Repeated: " << _iteration );
+		// go to the same SpecNode
+		return _specNode;
 	}
-	
+
 	// creates a pointer to the next SpecNode
 	std::shared_ptr< sr::SpecNode > nextNode = _specNode->next();
 

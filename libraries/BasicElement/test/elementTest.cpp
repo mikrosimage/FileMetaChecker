@@ -278,33 +278,39 @@ BOOST_AUTO_TEST_CASE( basic_element_next_first_child_recursivity )
 		
 		std::shared_ptr< Element > elem2( new Element( elem1->next(), elem1, elem1 ) );
 		BOOST_CHECK_EQUAL( elem2->_id, node->firstChild()->getId() );
+		BOOST_CHECK_EQUAL( elem2->getPrevious()->_uId, elem1->_uId );
 		elem2->_status = eStatusValid;
 
 		std::shared_ptr< Element > elem3( new Element( elem2->next(), elem2, elem1 ) );
 		BOOST_CHECK_EQUAL( elem3->_id, node->firstChild()->next()->getId() );
+		BOOST_CHECK_EQUAL( elem3->getPrevious()->_uId, elem2->_uId );
 		elem3->_status = eStatusValid;
 
 		std::shared_ptr< Element > elem4( new Element( elem3->next(), elem3, elem3 ) );
 		BOOST_CHECK_EQUAL( elem4->_id, node->firstChild()->next()->firstChild()->getId() );
+		BOOST_CHECK_EQUAL( elem4->getPrevious()->_uId, elem3->_uId );
 		elem4->_status = eStatusValid;
 
 		std::shared_ptr< Element > elem5( new Element( elem4->next(), elem4, elem4 ) );
 		BOOST_CHECK_EQUAL( elem5->_id, node->firstChild()->next()->firstChild()->firstChild()->getId() );
+		BOOST_CHECK_EQUAL( elem5->getPrevious()->_uId, elem4->_uId );
 		elem5->_status = eStatusValid;
 
 		std::shared_ptr< Element > elem6( new Element( elem5->next(), elem5, elem4 ) );
 		BOOST_CHECK_EQUAL( elem6->_id, node->firstChild()->next()->firstChild()->firstChild()->next()->getId() );
+		BOOST_CHECK_EQUAL( elem6->getPrevious()->_uId, elem5->_uId );
 		elem6->_status = eStatusValid;
 
 		std::shared_ptr< Element > elem7( new Element( elem6->next(), elem6, elem1 ) );
 		BOOST_CHECK_EQUAL( elem7->_id, node->firstChild()->next()->next()->getId() );
+		BOOST_CHECK_EQUAL( elem7->getPrevious()->_uId, elem6->_uId );
 		elem7->_status = eStatusValid;
 
 		BOOST_CHECK( elem7->next() == nullptr );
 	}
 }
 
- BOOST_AUTO_TEST_CASE( basic_element_data_unordered_group )
+BOOST_AUTO_TEST_CASE( basic_element_data_unordered_group )
 {
 	LOG_INFO( "\n>>> basic_element_data_unordered_group <<<" );
 	{
@@ -433,6 +439,64 @@ BOOST_AUTO_TEST_CASE( basic_element_next_first_child_recursivity )
 
 		BOOST_CHECK( elem4->next() == nullptr );
 		BOOST_CHECK_EQUAL( elem1->_status,  eStatusInvalidForUnordered );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( basic_element_next_repetition_1 )
+{
+	LOG_INFO( "\n>>> basic_element_next_repetition_1 <<<" );
+	{
+		std::string jsonString = R"*(
+				{
+					"header": [
+						{ "id": "value1", "label": "Value1", "type": "ascii" },
+						{ "id": "value2", "label": "Value2", "type": "ascii", "repeated": "3" },
+						{ "id": "value3", "label": "Value3", "type": "ascii" },
+						{ "id": "value4", "label": "Value4", "type": "ascii" }
+					]
+				}
+			)*";
+
+		spec_reader::Specification spec;
+		spec.setFromString( jsonString );
+		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
+		BOOST_CHECK_EQUAL( node->getId(),                         "value1" );
+		BOOST_CHECK_EQUAL( node->next()->getId(),                 "value2" );
+		BOOST_CHECK_EQUAL( node->next()->next()->getId(),         "value3" );
+		BOOST_CHECK_EQUAL( node->next()->next()->next()->getId(), "value4" );
+
+		std::shared_ptr< Element > elem1( new Element( node ) );
+		BOOST_CHECK_EQUAL( elem1->_id,        "value1"      );
+		BOOST_CHECK_EQUAL( elem1->_label,     "Value1"      );
+		BOOST_CHECK_EQUAL( elem1->_type,      eTypeAscii );
+		BOOST_CHECK_EQUAL( elem1->_status,    eStatusNotChecked );
+		elem1->_status = eStatusSkip;
+
+		std::shared_ptr< Element > elem2( new Element( elem1->next(), elem1 ) );
+		BOOST_CHECK_EQUAL( elem2->_id, node->next()->getId() );
+		elem2->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem3( new Element( elem2->next(), elem2 ) );
+		BOOST_CHECK_EQUAL( elem3->_id, node->next()->getId() );
+		elem3->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem4( new Element( elem3->next(), elem3 ) );
+		BOOST_CHECK_EQUAL( elem4->_id, node->next()->getId() );
+		elem4->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem5( new Element( elem4->next(), elem4 ) );
+		BOOST_CHECK_EQUAL( elem5->_id, node->next()->getId() );
+		elem5->_status = eStatusInvalid;
+
+		std::shared_ptr< Element > elem6( new Element( elem5->next(), elem5 ) );
+		BOOST_CHECK_EQUAL( elem6->_id, node->next()->next()->getId() );
+		elem6->_status = eStatusInvalid;
+
+		std::shared_ptr< Element > elem7( new Element( elem6->next(), elem6 ) );
+		BOOST_CHECK_EQUAL( elem7->_id, node->next()->next()->next()->getId() );
+		elem7->_status = eStatusValid;
+
+		BOOST_CHECK( elem7->next() == nullptr );
 	}
 }
 
