@@ -2,6 +2,7 @@
 
 #include <ElementChecker/Translator/Translator.hpp>
 #include <ElementChecker/Ranges/Ranges.hpp>
+#include <ElementChecker/ExpressionParser/ExpressionParser.hpp>
 
 #include <Common/log.hpp>
 
@@ -161,27 +162,29 @@ bool Checker::isIterationValid( const std::shared_ptr< basic_element::Element > 
 	for( std::pair< std::string, std::string > repetPair : element->_repetExpr )
 	{
 		LOG_ERROR( "Checker: repetitions: " << repetPair.first << " # " << repetPair.second );
-		// if( repetPair.first == repetPair.second )
-		// {
-		// 	ExpressionParser repetParser( _elementList );
-		// 	repetNumber = repetParser.getExpressionResult< size_t >( repetPair.first );
-		// }
-		// else
-		// {
-		// 	be::expression_parser::ExpressionParser repetParser( _elementList );
-		// 	size_t repetMin = 0;
-		// 	size_t repetMax = 0;
+		if( repetPair.first == repetPair.second )
+		{
+			ExpressionParser repetParser( _elementList );
+			size_t repetNumber = repetParser.getExpressionResult< size_t >( repetPair.first );
+			LOG_FATAL( "////// REPETITION : " << repetNumber );
+		}
+		else
+		{
+			ExpressionParser repetParser( _elementList );
+			size_t repetMin = 0;
+			size_t repetMax = 0;
 
-		// 	if( ! repetPair.first.empty() )
-		// 		repetMin = repetParser.getExpressionResult< size_t >( repetPair.first );
-		// 	if( ! repetPair.second.empty() )
-		// 		repetMax = repetParser.getExpressionResult< size_t >( repetPair.second );
+			if( ! repetPair.first.empty() )
+				repetMin = repetParser.getExpressionResult< size_t >( repetPair.first );
+			if( ! repetPair.second.empty() )
+				repetMax = repetParser.getExpressionResult< size_t >( repetPair.second );
 
-		// 	if( repetMax != 0 && repetMin > repetMax )
-		// 		repetRange.push_back( std::make_pair( repetMax, repetMin ) );
-		// 	else
-		// 		repetRange.push_back( std::make_pair( repetMin, repetMax ) );
-		// }
+			// if( repetMax != 0 && repetMin > repetMax )
+			// 	repetRange.push_back( std::make_pair( repetMax, repetMin ) );
+			// else
+			// 	repetRange.push_back( std::make_pair( repetMin, repetMax ) );
+			LOG_FATAL( "////// REPETITIONS : " << repetMin << " / " << repetMax );
+		}
 	}
 	return false;
 }
