@@ -243,6 +243,43 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 		
 		BOOST_CHECK_THROW( Translator( elem ).get< short >(), std::runtime_error );
 	}
+	{
+		LOG_INFO( "\t>>> translator_2_5 <<<" );
+		std::string jsonString = R"*(
+				{
+					"header": [
+						{ 
+							"id": "id",
+							"label": "label",
+							"type": "uint32"
+						}
+					]
+				}
+			)*";
+
+		spec_reader::Specification spec;
+		spec.setFromString( jsonString );
+		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
+
+		std::shared_ptr< basic_element::Element > elem( new basic_element::Element( node ) );
+	
+		const char buff[4] { 0x62, 0x61, 0x62, 0x61 };
+		elem->set( (const char*)&buff, 4 );
+
+		BOOST_CHECK_EQUAL( Translator( elem ).get<   int >(), 1650549345 );
+		BOOST_CHECK_EQUAL( Translator( elem ).get< std::string >(), "baba" );
+		BOOST_CHECK_EQUAL( (short) Translator( elem ).get< std::vector< char > >().size(), 4 );
+		BOOST_CHECK_EQUAL( (short) Translator( elem ).get< std::vector< char > >().at(0), 98 );
+		BOOST_CHECK_EQUAL( (short) Translator( elem ).get< std::vector< char > >().at(1), 97 );
+		BOOST_CHECK_EQUAL( (short) Translator( elem ).get< std::vector< char > >().at(2), 98 );
+		BOOST_CHECK_EQUAL( (short) Translator( elem ).get< std::vector< char > >().at(3), 97 );
+
+		BOOST_CHECK_EQUAL( (short) Translator( elem ).get< std::vector< short > >().size(),    2 );
+		BOOST_CHECK_EQUAL( (short) Translator( elem ).get< std::vector< short > >().at(0), 24930 );
+		BOOST_CHECK_EQUAL( (short) Translator( elem ).get< std::vector< short > >().at(1), 24930 );
+		
+		BOOST_CHECK_THROW( Translator( elem ).get< short >(), std::runtime_error );
+	}
 }
 
 BOOST_AUTO_TEST_SUITE_END()

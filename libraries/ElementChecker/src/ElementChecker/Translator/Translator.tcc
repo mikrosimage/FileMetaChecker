@@ -47,7 +47,7 @@ GET_VECTOR(     long double    )
 
 
 template< >
-std::string Translator::get< std::string >()
+std::string Translator::get< std::string >()	// get ascii character !
 {
 	if( _ref->_data == nullptr )
 		throw std::runtime_error( "Undefined data" );
