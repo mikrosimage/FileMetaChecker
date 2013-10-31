@@ -24,4 +24,5 @@ BOOST_AUTO_TEST_SUITE_END()
 
 // #include "translatorTest.hpp"
 // #include "rangesTest.hpp"
+// #include "expressionParserTest.hpp"
 #include "checkerTest.hpp"
