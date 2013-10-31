@@ -36,10 +36,6 @@ public:
 	Element( const std::shared_ptr< spec_reader::SpecNode > node, 
 		     const std::shared_ptr< Element > previous = std::shared_ptr< Element >(),
 		     const std::shared_ptr< Element > parent = nullptr );
-
-	// Element( const std::shared_ptr< spec_reader::SpecNode > node, 
-	// 	     Element* previous = nullptr,
-	// 	     const std::shared_ptr< Element > parent = nullptr );
 	
 	std::shared_ptr< spec_reader::SpecNode > next( );
 
@@ -51,7 +47,6 @@ public:
 protected:
 	std::weak_ptr< Element > _parent;
 	std::weak_ptr< Element > _previous;
-	// std::shared_ptr< Element > _previous;
 	std::shared_ptr< spec_reader::SpecNode >  _specNode;
 	std::vector< std::shared_ptr< Element > > _children;
 
