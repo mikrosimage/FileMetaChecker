@@ -19,7 +19,7 @@ public:
 	void check( const std::shared_ptr< basic_element::Element > element );
 	std::vector< std::shared_ptr< basic_element::Element > > getElementList() { return _elementList; }
 private:
-	bool isIterationValid( const std::shared_ptr< basic_element::Element > element, const std::string& errorMessage );
+	bool isIterationValid( const std::shared_ptr< basic_element::Element > element, std::string& errorMessage );
 
 private:
 	std::vector< std::shared_ptr< basic_element::Element > > _elementList;

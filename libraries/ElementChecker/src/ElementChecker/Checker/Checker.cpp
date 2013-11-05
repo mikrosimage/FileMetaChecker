@@ -116,7 +116,7 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 					status = eStatusValid;
 			
 			if( status == eStatusInvalid )
-				element->_error += "Invalid value ";
+				element->_error += "Invalid value - ";
 			break;
 		}
 
@@ -145,6 +145,7 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 		std::string errorMessage;
 		if( ! isIterationValid( element->getPrevious(), errorMessage ) )
 		{
+			LOG_ERROR( element->_id << ": " << errorMessage );
 			element->_error += errorMessage;
 			_elementList.push_back( element );
 		}
@@ -154,19 +155,22 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 	_elementList.push_back( element );
 }
 
-bool Checker::isIterationValid( const std::shared_ptr< basic_element::Element > element, const std::string& errorMessage )
+bool Checker::isIterationValid( const std::shared_ptr< basic_element::Element > element, std::string& errorMessage )
 {
 	if( element->_repetExpr.empty() )
 		return true;
 
+	std::stringstream error;
 	for( std::pair< std::string, std::string > repetPair : element->_repetExpr )
 	{
-		LOG_ERROR( "Checker: repetitions: " << repetPair.first << " # " << repetPair.second );
 		if( repetPair.first == repetPair.second )
 		{
 			ExpressionParser repetParser( _elementList );
 			size_t repetNumber = repetParser.getExpressionResult< size_t >( repetPair.first );
-			LOG_FATAL( "////// REPETITION : " << repetNumber );
+			// LOG_FATAL( "////// REPETITION : " << element->_iteration << " / " << repetNumber );
+			if( element->_iteration == repetNumber )
+				return true;
+			error << element->_iteration << " / " << repetNumber;
 		}
 		else
 		{
@@ -179,13 +183,14 @@ bool Checker::isIterationValid( const std::shared_ptr< basic_element::Element > 
 			if( ! repetPair.second.empty() )
 				repetMax = repetParser.getExpressionResult< size_t >( repetPair.second );
 
-			// if( repetMax != 0 && repetMin > repetMax )
-			// 	repetRange.push_back( std::make_pair( repetMax, repetMin ) );
-			// else
-			// 	repetRange.push_back( std::make_pair( repetMin, repetMax ) );
-			LOG_FATAL( "////// REPETITIONS : " << repetMin << " / " << repetMax );
+			// LOG_FATAL( "////// REPETITIONS : " << element->_iteration << " / [" << repetMin << ", " << repetMax << "]" );
+			if( repetMin <= element->_iteration )
+				if( repetMax == 0 || repetMax >= element->_iteration )
+					return true;
+			error << element->_iteration << " / [" << repetMin << ", " << repetMax << "]";
 		}
 	}
+	errorMessage = "Out of repetition range (" + error.str() + ") - ";
 	return false;
 }
 
