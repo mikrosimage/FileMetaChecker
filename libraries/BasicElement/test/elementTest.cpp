@@ -442,9 +442,9 @@ BOOST_AUTO_TEST_CASE( basic_element_data_unordered_group )
 	}
 }
 
-BOOST_AUTO_TEST_CASE( basic_element_next_repetition_1 )
+BOOST_AUTO_TEST_CASE( basic_element_next_repetition_one )
 {
-	LOG_INFO( "\n>>> basic_element_next_repetition_1 <<<" );
+	LOG_INFO( "\n>>> basic_element_next_repetition_one <<<" );
 	{
 		std::string jsonString = R"*(
 				{
@@ -497,6 +497,256 @@ BOOST_AUTO_TEST_CASE( basic_element_next_repetition_1 )
 		elem7->_status = eStatusValid;
 
 		BOOST_CHECK( elem7->next() == nullptr );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( basic_element_next_repetition_first )
+{
+	LOG_INFO( "\n>>> basic_element_next_repetition_first <<<" );
+	{
+		std::string jsonString = R"*(
+				{
+					"header": [
+						{ "id": "value1", "label": "Value1", "type": "ascii", "repeated": "3" },
+						{ "id": "value2", "label": "Value2", "type": "ascii" }
+					]
+				}
+			)*";
+
+		spec_reader::Specification spec;
+		spec.setFromString( jsonString );
+		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
+		BOOST_CHECK_EQUAL( node->getId(),                         "value1" );
+		BOOST_CHECK_EQUAL( node->next()->getId(),                 "value2" );
+
+		std::shared_ptr< Element > elem1( new Element( node ) );
+		BOOST_CHECK_EQUAL( elem1->_id,        "value1"      );
+		BOOST_CHECK_EQUAL( elem1->_label,     "Value1"      );
+		BOOST_CHECK_EQUAL( elem1->_type,      eTypeAscii );
+		BOOST_CHECK_EQUAL( elem1->_status,    eStatusNotChecked );
+		elem1->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem2( new Element( elem1->next(), elem1 ) );
+		BOOST_CHECK_EQUAL( elem2->_id, node->getId() );
+		elem2->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem3( new Element( elem2->next(), elem2 ) );
+		BOOST_CHECK_EQUAL( elem3->_id, node->getId() );
+		elem3->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem4( new Element( elem3->next(), elem3 ) );
+		BOOST_CHECK_EQUAL( elem4->_id, node->getId() );
+		elem4->_status = eStatusInvalid;
+
+		std::shared_ptr< Element > elem5( new Element( elem4->next(), elem4 ) );
+		BOOST_CHECK_EQUAL( elem5->_id, node->next()->getId() );
+		elem5->_status = eStatusValid;
+
+		BOOST_CHECK( elem5->next() == nullptr );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( basic_element_next_repetition_last )
+{
+	LOG_INFO( "\n>>> basic_element_next_repetition_last <<<" );
+	{
+		std::string jsonString = R"*(
+				{
+					"header": [
+						{ "id": "value1", "label": "Value1", "type": "ascii" },
+						{ "id": "value2", "label": "Value2", "type": "ascii", "repeated": "3" }
+					]
+				}
+			)*";
+
+		spec_reader::Specification spec;
+		spec.setFromString( jsonString );
+		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
+		BOOST_CHECK_EQUAL( node->getId(),                         "value1" );
+		BOOST_CHECK_EQUAL( node->next()->getId(),                 "value2" );
+
+		std::shared_ptr< Element > elem1( new Element( node ) );
+		BOOST_CHECK_EQUAL( elem1->_id,        "value1"      );
+		BOOST_CHECK_EQUAL( elem1->_label,     "Value1"      );
+		BOOST_CHECK_EQUAL( elem1->_type,      eTypeAscii );
+		BOOST_CHECK_EQUAL( elem1->_status,    eStatusNotChecked );
+		elem1->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem2( new Element( elem1->next(), elem1 ) );
+		BOOST_CHECK_EQUAL( elem2->_id, node->next()->getId() );
+		elem2->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem3( new Element( elem2->next(), elem2 ) );
+		BOOST_CHECK_EQUAL( elem3->_id, node->next()->getId() );
+		elem3->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem4( new Element( elem3->next(), elem3 ) );
+		BOOST_CHECK_EQUAL( elem4->_id, node->next()->getId() );
+		elem4->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem5( new Element( elem4->next(), elem4 ) );
+		BOOST_CHECK_EQUAL( elem5->_id, node->next()->getId() );
+		elem5->_status = eStatusInvalid;
+
+		BOOST_CHECK( elem5->next() == nullptr );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( basic_element_next_repetition_group )
+{
+	LOG_INFO( "\n>>> basic_element_next_repetition_group <<<" );
+	{
+		std::string jsonString = R"*(
+				{
+					"header": [
+						{ "id": "value1",
+						  "label": "Value1",
+						  "type": "ascii",
+						  "repeated": "2",
+						  "group": [
+								{ "id": "value11",
+								  "label": "Value11",
+								  "type": "ascii" },
+								{ "id": "value12",
+								  "label": "Value12",
+								  "type": "ascii" },
+								{ "id": "value13",
+								  "label": "Value13",
+								  "type": "ascii" }
+						  ] }
+					]
+				}
+			)*";
+
+		spec_reader::Specification spec;
+		spec.setFromString( jsonString );
+		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
+		BOOST_CHECK_EQUAL( node->getId(),                               "value1" );
+		BOOST_CHECK_EQUAL( node->firstChild()->getId(),                 "value11" );
+		BOOST_CHECK_EQUAL( node->firstChild()->next()->getId(),         "value12" );
+		BOOST_CHECK_EQUAL( node->firstChild()->next()->next()->getId(), "value13" );
+
+		std::shared_ptr< Element > elem1( new Element( node ) );
+		BOOST_CHECK_EQUAL( elem1->_id,        "value1"      );
+		BOOST_CHECK_EQUAL( elem1->_label,     "Value1"      );
+		BOOST_CHECK_EQUAL( elem1->_type,      eTypeAscii );
+		BOOST_CHECK_EQUAL( elem1->_status,    eStatusNotChecked );
+		elem1->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem2( new Element( elem1->next(), elem1, elem1 ) );
+		BOOST_CHECK_EQUAL( elem2->_id, node->firstChild()->getId() );
+		elem2->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem3( new Element( elem2->next(), elem2, elem1 ) );
+		BOOST_CHECK_EQUAL( elem3->_id, node->firstChild()->next()->getId() );
+		elem3->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem4( new Element( elem3->next(), elem3, elem1 ) );
+		BOOST_CHECK_EQUAL( elem4->_id, node->firstChild()->next()->next()->getId() );
+		elem4->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem5( new Element( elem4->next(), elem4 ) );
+		BOOST_CHECK_EQUAL( elem5->_id, node->getId() );
+		elem5->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem6( new Element( elem5->next(), elem5, elem4 ) );
+		BOOST_CHECK_EQUAL( elem6->_id, node->firstChild()->getId() );
+		elem6->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem7( new Element( elem6->next(), elem6, elem4 ) );
+		BOOST_CHECK_EQUAL( elem7->_id, node->firstChild()->next()->getId() );
+		elem7->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem8( new Element( elem7->next(), elem7, elem4 ) );
+		BOOST_CHECK_EQUAL( elem8->_id, node->firstChild()->next()->next()->getId() );
+		elem8->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem9( new Element( elem8->next(), elem8 ) );
+		BOOST_CHECK_EQUAL( elem9->_id, node->getId() );
+		elem9->_status = eStatusInvalid;
+
+		BOOST_CHECK( elem9->next() == nullptr );
+	}
+	LOG_INFO( "\n>>> basic_element_next_repetition_group suite <<<" );
+	{
+		std::string jsonString = R"*(
+				{
+					"header": [
+						{ "id": "value1",
+						  "label": "Value1",
+						  "type": "ascii",
+						  "repeated": "2",
+						  "group": [
+								{ "id": "value11",
+								  "label": "Value11",
+								  "type": "ascii" },
+								{ "id": "value12",
+								  "label": "Value12",
+								  "type": "ascii" },
+								{ "id": "value13",
+								  "label": "Value13",
+								  "type": "ascii" }
+						  ]
+						},
+						{ "id": "value2",
+						  "label": "Value2",
+						  "type": "ascii" }
+					]
+				}
+			)*";
+
+		spec_reader::Specification spec;
+		spec.setFromString( jsonString );
+		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
+		BOOST_CHECK_EQUAL( node->getId(),                               "value1" );
+		BOOST_CHECK_EQUAL( node->firstChild()->getId(),                 "value11" );
+		BOOST_CHECK_EQUAL( node->firstChild()->next()->getId(),         "value12" );
+		BOOST_CHECK_EQUAL( node->firstChild()->next()->next()->getId(), "value13" );
+
+		std::shared_ptr< Element > elem1( new Element( node ) );
+		BOOST_CHECK_EQUAL( elem1->_id,        "value1"      );
+		BOOST_CHECK_EQUAL( elem1->_label,     "Value1"      );
+		BOOST_CHECK_EQUAL( elem1->_type,      eTypeAscii );
+		BOOST_CHECK_EQUAL( elem1->_status,    eStatusNotChecked );
+		elem1->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem2( new Element( elem1->next(), elem1, elem1 ) );
+		BOOST_CHECK_EQUAL( elem2->_id, node->firstChild()->getId() );
+		elem2->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem3( new Element( elem2->next(), elem2, elem1 ) );
+		BOOST_CHECK_EQUAL( elem3->_id, node->firstChild()->next()->getId() );
+		elem3->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem4( new Element( elem3->next(), elem3, elem1 ) );
+		BOOST_CHECK_EQUAL( elem4->_id, node->firstChild()->next()->next()->getId() );
+		elem4->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem5( new Element( elem4->next(), elem4 ) );
+		BOOST_CHECK_EQUAL( elem5->_id, node->getId() );
+		elem5->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem6( new Element( elem5->next(), elem5, elem4 ) );
+		BOOST_CHECK_EQUAL( elem6->_id, node->firstChild()->getId() );
+		elem6->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem7( new Element( elem6->next(), elem6, elem4 ) );
+		BOOST_CHECK_EQUAL( elem7->_id, node->firstChild()->next()->getId() );
+		elem7->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem8( new Element( elem7->next(), elem7, elem4 ) );
+		BOOST_CHECK_EQUAL( elem8->_id, node->firstChild()->next()->next()->getId() );
+		elem8->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem9( new Element( elem8->next(), elem8 ) );
+		BOOST_CHECK_EQUAL( elem9->_id, node->getId() );
+		elem9->_status = eStatusInvalid;
+
+		std::shared_ptr< Element > elem10( new Element( elem9->next(), elem8 ) );
+		BOOST_CHECK_EQUAL( elem10->_id, node->next()->getId() );
+		elem10->_status = eStatusValid;
+
+		BOOST_CHECK( elem10->next() == nullptr );
 	}
 }
 

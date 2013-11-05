@@ -39,35 +39,34 @@ Element::Element( const std::shared_ptr< sr::SpecNode > node,
 	, _checkedGroup  ( false )
 	, _data          ( nullptr )
 {
-	// if( node->isRepeated() > 1 && ( previous.use_count() != 0 ) )
-	// {
-	// 	std::shared_ptr< Element > prev = previous;
-	// 	while( prev.use_count() != 0 )
-	// 	{
-	// 		if( prev->_id == node->getId() )
-	// 		{
-	// 			_iteration = prev->_iteration + 1;
-	// 			break;
-	// 		}
-	// 		else
-	// 		{
-	// 			if( prev->getParent().use_count() == 0 )
-	// 				break;
-	// 			prev = prev->getParent();
-	// 		}
-	// 	}
-	// }
-
-	if( previous.use_count() != 0 && ! _repetExpr.empty() && _previous.lock()->_id == _id && _previous.lock()->_status == eStatusValid )
-		_iteration = _previous.lock()->_iteration + 1;
+	if( ! _repetExpr.empty() )
+	{
+		std::shared_ptr< Element > prev = previous;
+		while( prev != nullptr )
+		{
+			if( prev->_id != _id )
+			{
+				prev = prev->getPrevious();
+			}
+			else
+			{
+				if( prev->_status == eStatusValid || prev->_status == eStatusPassOver )
+				{
+					_iteration = prev->_iteration + 1;
+					LOG_ERROR( "ELEMENT: prev: " << prev->_id );
+				}
+				break;
+			}
+		}
+	}
 
 	if( ! _previous.expired() )
-		LOG_FATAL( _id << "'s previous: " << previous->_id );
+		LOG_ERROR( "ELEMENT: " << _id << "'s previous: " << previous->_id );
 
 	if( ! _parent.expired() )
 		_parent.lock()->_children.push_back( std::make_shared< Element >( *this ) );
 
-	LOG_ERROR( _id << ": " << &*this << " - Parent: " << &*_parent.lock() << " - Previous: " << &( *( _previous.lock().get() ) ) << " - SpecNode: " << &*_specNode.get() << " - Iteration: " << _iteration );
+	LOG_ERROR( "ELEMENT: " << _id << ": " << &*this << " - Parent: " << &*_parent.lock() << " - Previous: " << &( *( _previous.lock().get() ) ) << " - SpecNode: " << &*_specNode.get() << " - Iteration: " << _iteration );
 }
 
 std::shared_ptr< spec_reader::SpecNode > Element::next( )
@@ -102,8 +101,8 @@ std::shared_ptr< spec_reader::SpecNode > Element::next( )
 	}
 	
 	// Groups :
-	// if element has a group not already checked
-	if( _specNode->isGroup() && ! _checkedGroup )
+	// if element has a group not already checked and is valid or first time parsed
+	if( _specNode->isGroup() && ! _checkedGroup && ( _iteration == 1 || _status == eStatusValid ) )
 	{
 		LOG_WARNING( "Element::next " << _id << ": IsGroup" );
 		// it becomes checked
@@ -173,6 +172,7 @@ std::shared_ptr< spec_reader::SpecNode > Element::next( )
 			}
 		}
 		// go to the node after the parent
+		LOG_WARNING( "Element::next " << _id << ": Parent's (" << _parent.lock()->_id << ") next !" );
 		return parent->next( );
 	}
 	LOG_WARNING( ">>> Element::next " << _id << ": Next ! " << nextNode );
