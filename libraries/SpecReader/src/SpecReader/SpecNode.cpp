@@ -21,7 +21,7 @@ SpecNode::SpecNode( const Specification* spec,
 	, _parent( parent )
 	, _specification( spec )
 {
-	LOG_FATAL( "SPECNODE: " << &*this << " # parent:" << &*_parent );
+	// LOG_FATAL( "SPECNODE: " << &*this << " # parent:" << &*_parent );
 }
 
 std::string SpecNode::getId() const
