@@ -60,9 +60,6 @@ Element::Element( const std::shared_ptr< sr::SpecNode > node,
 		}
 	}
 
-	// if( ! _previous.expired() )
-	// 	LOG_ERROR( "ELEMENT: " << _id << "'s previous: " << previous->_id );
-
 	if( ! _parent.expired() )
 		_parent.lock()->_children.push_back( std::make_shared< Element >( *this ) );
 
@@ -71,69 +68,49 @@ Element::Element( const std::shared_ptr< sr::SpecNode > node,
 
 std::shared_ptr< spec_reader::SpecNode > Element::next( )
 {
-	// if element has been checked
+	// if element has been checked, back to the same SpecNode
 	if( _status == eStatusNotChecked )
-	{
 		return _specNode;
-	}
 
 	std::shared_ptr< Element > parent;
-	// if parent exists (?)
+	// if parent exists, copy it
 	if( _parent.use_count() != 0 )
-	{
-		// copy the parent
 		parent = _parent.lock();
-	}
 	
-	// Optional element :
-	// if element optional & invalid
+	// Optional: if element optional & invalid, got to the next SpecNode
 	if( _isOptional && _status == eStatusInvalid )
-	{
-		// go to next SpecNode
 		return _specNode->next();
-	}
 	
-	// Unordered groups : if element status = Valid and parent is not ordered
+	// Unordered Groups: if element valid and parent is unordered, go to the first child of the parent
 	if( _status == eStatusValid && _parent.use_count() != 0 && ( ! parent->_isOrdered ) )
-	{
-		// go to the first SpecNode of the childhood
 		return parent->_specNode->firstChild();
-	}
 	
-	// Groups :
-	// if element has a group not already checked and is valid or first time parsed
+	// Groups: if element has a group not already checked and is valid or first time parsed, go to the first child
 	if( _specNode->isGroup() && ! _checkedGroup && ( _iteration == 1 || _status == eStatusValid ) )
 	{
-		LOG_ERROR( "Element::next " << _id << ": IsGroup" );
-		// it becomes checked
+		// LOG_ERROR( "Element::next " << _id << ": IsGroup" );
 		_checkedGroup = true;
-		// creates a pointer to this current element
 		std::shared_ptr< spec_reader::SpecNode > child( _specNode->firstChild() );
-		// go to the first child SpecNode
 		return child;
 	}
 	
-	// if repeated element
+	// Repetition: if repeated element, go to the same SpecNode
 	if( ! _repetExpr.empty() && _status == eStatusValid )
 	{
-		LOG_ERROR( ">>>>>>>>>>>>>> Element::next " << _id << ": Repeated: " << _iteration );
-		// go to the same SpecNode
+		// LOG_ERROR( ">>>>>>>>>>>>>> Element::next " << _id << ": Repeated: " << _iteration );
 		return _specNode;
 	}
 
-	// creates a pointer to the next SpecNode
 	std::shared_ptr< sr::SpecNode > nextNode = _specNode->next();
 
-	// in Unoredered groups : check if every nodes have been checked
-	// if their is no more SpecNode after and parent exists
+	// Last Element: if their is no more SpecNode after and parent exists, go to the node after the parent
 	if( nextNode == nullptr && _parent.use_count() != 0 )
 	{
-		// go to the node after the parent
-		LOG_ERROR( "Element::next " << _id << ": last element -> parent's (" << _parent.lock()->_id << ") next !" );
+		// LOG_ERROR( "Element::next " << _id << ": last element -> parent's (" << _parent.lock()->_id << ") next !" );
 		return parent->next( );
 	}
-	LOG_ERROR( ">>> Element::next " << _id << ": Next ! " << nextNode );
-	// go to the next node
+
+	// LOG_ERROR( ">>> Element::next " << _id << ": Next ! " << nextNode );
 	return nextNode;
 }
 
