@@ -29,3 +29,4 @@ BOOST_AUTO_TEST_SUITE_END()
 #include "checkerTestRepetitions.hpp"
 #include "checkerTestUnordered.hpp"
 #include "checkerTestCount.hpp"
+#include "checkerTestOptional.hpp"

@@ -20,7 +20,7 @@ Checker::Checker()
 
 void Checker::check( const std::shared_ptr< basic_element::Element > element )
 {
-	if( element->_size == 0 && element->_countExpr.empty() )	// @todo: parse count expression
+	if( element->_size == 0 && element->_countExpr.empty() )
 		LOG_WARNING( element->_id << ": Null data size !" );
 
 	// if nothing to compare
@@ -123,7 +123,6 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 
 		case eTypeRaw   :
 		{
-			// @todo: get count (ExpressionParser)
 			status = eStatusPassOver;
 			break;
 		}
@@ -138,8 +137,18 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 		}
 	}
 
+	// optional case : do nothing
+	if( element->_isOptional && status == eStatusInvalid && element->_iteration == 1 )
+	{
+		LOG_ERROR( "CHECKER: " << element->_id << ": is Optional" );
+		element->_status = status;
+		return;
+	}
+
+	std::shared_ptr< basic_element::Element > parent = element->getParent();
+
 	// end of unordered group : check iterations
-	if( element->getParent() != nullptr && ! element->getParent()->_isOrdered && status == eStatusInvalid )
+	if( parent != nullptr && ! parent->_isOrdered && status == eStatusInvalid )
 	{
 		LOG_ERROR( "CHECKER: " << element->_id << ": Unordered group" );
 		element->_status = eStatusInvalidButSkip;
@@ -148,14 +157,14 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 		{
 			LOG_ERROR( "CHECKER: " << element->_id << ": Last element" );
 			// create a list with the children IDs
-			std::set< std::string > childIds = element->getParent()->getSpecNode()->getChildrenNodes();
+			std::set< std::string > childIds = parent->getSpecNode()->getChildrenNodes();
 			// if the previous element exists (the current element is not the first)
 			if( element->getPrevious() == nullptr )
 				throw std::runtime_error( "Checker: Invalid tree" );
 			// creates a pointer to the previous element
 			std::shared_ptr< basic_element::Element > prev = element->getPrevious();
 			// while the previous element is not the parent
-			while( prev->_id != element->getParent()->_id )
+			while( prev->_id != parent->_id )
 			{
 				// for each ID in the children ID list
 				for( auto id : childIds )				
@@ -183,10 +192,10 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 			// if it remains some IDs in the list
 			if( childIds.size() != 0 )
 			{
-				LOG_ERROR( "CHECKER: " << element->getParent()->_id );
-				LOG_ERROR( "CHECKER: " << &*element->getParent() );
+				LOG_ERROR( "CHECKER: " << parent->_id );
+				LOG_ERROR( "CHECKER: " << &*parent );
 				// every nodes haven't been checked : the parent is not valid
-				element->getParent()->_status = eStatusInvalidForUnordered;
+				parent->_status = eStatusInvalidForUnordered;
 			}
 		}
 		LOG_ERROR( "CHECKER: " << element->_id << "'s status: " << element->_status );
@@ -219,7 +228,7 @@ size_t Checker::getSize( const std::shared_ptr< basic_element::Element > element
 	{
 		ExpressionParser sizeParser( _elementList );
 		element->_size = sizeParser.getExpressionResult< size_t >( element->_countExpr );
-		LOG_FATAL( "COUNT: " << element->_id << "'s size: " << element->_size );
+		LOG_ERROR( "COUNT: " << element->_id << "'s size: " << element->_size );
 	}
 	return element->_size;
 }
