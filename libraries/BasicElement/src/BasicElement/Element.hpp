@@ -46,6 +46,9 @@ public:
 	std::shared_ptr< spec_reader::SpecNode > getSpecNode()       { return _specNode; }
 
 protected:
+	void initSize();
+
+protected:
 	std::weak_ptr< Element > _parent;
 	std::weak_ptr< Element > _previous;
 	std::shared_ptr< spec_reader::SpecNode >  _specNode;

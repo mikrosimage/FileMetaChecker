@@ -40,6 +40,7 @@ Element::Element( const std::shared_ptr< sr::SpecNode > node,
 	, _data          ( nullptr )
 {
 	LOG_ERROR( "____________________" << _id <<  "____________________" );
+	initSize();
 	if( ! _repetExpr.empty() )
 	{
 		std::shared_ptr< Element > prev = previous;
@@ -114,13 +115,46 @@ std::shared_ptr< spec_reader::SpecNode > Element::next( )
 	return nextNode;
 }
 
-
 void Element::set( const char* data, const size_t& size )
 {
 	_data = new char [size];
 	_size = size;
 	
 	std::memcpy( _data, data, _size );
+}
+
+void Element::initSize()
+{
+	try
+	{
+		if( ! _values.empty() )
+		{
+			_size = _values.at( 0 ).size();
+			for( std::string value : _values )
+				if( value.size() != _size )
+					throw std::runtime_error( "Values must have the same size" );
+		}
+
+		switch( _type )
+		{
+			case eTypeInt8         : _size =  1; break;
+			case eTypeUInt8        : _size =  1; break;
+			case eTypeInt16        : _size =  2; break;
+			case eTypeUInt16       : _size =  2; break;
+			case eTypeInt32        : _size =  4; break;
+			case eTypeUInt32       : _size =  4; break;
+			case eTypeInt64        : _size =  8; break;
+			case eTypeUInt64       : _size =  8; break;
+			case eTypeFloat        : _size =  4; break;
+			case eTypeDouble       : _size =  8; break;
+			case eTypeIeeeExtended : _size = 10; break;
+			default: break;
+		}
+	}
+	catch( std::runtime_error e )
+	{
+		LOG_ERROR( "(" << _id << ") " << e.what() );
+	}
 }
 
 }
