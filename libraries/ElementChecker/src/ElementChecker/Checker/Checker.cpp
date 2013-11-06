@@ -220,6 +220,36 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 
 	LOG_ERROR( "CHECKER: " << element->_id << "'s status: " << status );
 	_elementList.push_back( element );
+
+	// check GroupSize
+	if( parent != nullptr && element->getPrevious() != nullptr && element->getSpecNode()->next() == nullptr && ! parent->_groupSizeExpr.empty() )
+	{
+		std::shared_ptr< basic_element::Element > prev = element->getPrevious();
+		size_t groupSize = element->_size;
+		while( prev != nullptr || prev->_id != parent->_id )
+		{
+			groupSize += prev->_size;
+			// LOG_FATAL( "ELEMENT: prev: " << prev->_id << " size: " << prev->_size << " | " << groupSize );
+			if( prev->_id == parent->_id )
+				break;
+			prev = prev->getPrevious();
+		}
+		ExpressionParser groupSizeParser( _elementList );
+		size_t parentGroupSize = groupSizeParser.getExpressionResult< size_t >( parent->_groupSizeExpr );
+		// LOG_FATAL( "parentGroupSize: " << parentGroupSize );
+
+		int sizeDiff = parentGroupSize - groupSize;
+		if( sizeDiff != 0 )
+		{
+			std::stringstream warningMessage;
+			if( sizeDiff > 0 )
+				warningMessage << "Group size difference: " << sizeDiff << " missing bytes - ";
+			if( sizeDiff < 0 )
+				warningMessage << "Group size difference: " << abs( sizeDiff ) << " unexpected bytes - ";
+			LOG_WARNING( warningMessage.str() );
+			parent->_warning += warningMessage.str();
+		}
+	}
 }
 
 size_t Checker::getSize( const std::shared_ptr< basic_element::Element > element )

@@ -30,3 +30,4 @@ BOOST_AUTO_TEST_SUITE_END()
 #include "checkerTestUnordered.hpp"
 #include "checkerTestCount.hpp"
 #include "checkerTestOptional.hpp"
+#include "checkerTestGroupSize.hpp"
