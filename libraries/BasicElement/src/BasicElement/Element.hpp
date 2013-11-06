@@ -68,6 +68,8 @@ public:
 	
 	std::vector< std::string >           _values;
 	std::map< std::string, std::string > _map;
+
+	std::string   _mapValue;
 	
 	ExpressionList _rangeExpr;
 	ExpressionList _repetExpr;

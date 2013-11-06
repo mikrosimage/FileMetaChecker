@@ -25,6 +25,7 @@ Element::Element( const std::shared_ptr< sr::SpecNode > node,
 	, _groupSizeExpr ( node->getGroupSize() )
 	, _values        ( node->getValues() )
 	, _map           ( node->getMap() )
+	, _mapValue      ( "" )
 	, _rangeExpr     ( node->getRange() )
 	, _repetExpr     ( node->getRepetitions() )
 	, _type          ( node->getType() )
