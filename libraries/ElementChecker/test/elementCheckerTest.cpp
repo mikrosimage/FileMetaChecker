@@ -26,3 +26,5 @@ BOOST_AUTO_TEST_SUITE_END()
 // #include "rangesTest.hpp"
 // #include "expressionParserTest.hpp"
 #include "checkerTest.hpp"
+#include "checkerTestRepetitions.hpp"
+#include "checkerTestUnordered.hpp"
