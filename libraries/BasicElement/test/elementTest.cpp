@@ -388,58 +388,6 @@ BOOST_AUTO_TEST_CASE( basic_element_data_unordered_group )
 		BOOST_CHECK( elem0->next() == nullptr );
 		BOOST_CHECK_EQUAL( elem1->_status,  eStatusSkip );
 	}
-	LOG_INFO( "\n>>> basic_element_data_unordered_group suite <<<" );
-	{
-		std::string jsonString = R"*(
-				{
-					"header": [
-						{ "id": "value1",
-						  "label": "Value1",
-						  "type": "ascii",
-						  "ordered": false,
-						  "group": [
-								{ "id": "value11",
-								  "label": "Value11",
-								  "type": "ascii" },
-								{ "id": "value12",
-								  "label": "Value12",
-								  "type": "ascii" },
-								{ "id": "value13",
-								  "label": "Value13",
-								  "type": "ascii" }
-						  ] }
-					]
-				}
-			)*";
-
-		spec_reader::Specification spec;
-		spec.setFromString( jsonString );
-		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
-
-		std::shared_ptr< Element > elem1( new Element( node ) );
-		BOOST_CHECK_EQUAL( elem1->_id,        "value1"      );
-		BOOST_CHECK_EQUAL( elem1->_label,     "Value1"      );
-		BOOST_CHECK_EQUAL( elem1->_type,      eTypeAscii );
-		BOOST_CHECK_EQUAL( elem1->_isGroup,   true  );
-		BOOST_CHECK_EQUAL( elem1->_isOrdered, false );
-		BOOST_CHECK_EQUAL( elem1->_status,    eStatusNotChecked );
-		elem1->_status = eStatusSkip;
-
-		std::shared_ptr< Element > elem2( new Element( elem1->next(), elem1, elem1 ) );
-		BOOST_CHECK_EQUAL( elem2->_id, "value11" );
-		elem2->_status = eStatusInvalidButSkip;
-
-		std::shared_ptr< Element > elem3( new Element( elem2->next(), elem2, elem1 ) );
-		BOOST_CHECK_EQUAL( elem3->_id, "value12" );
-		elem3->_status = eStatusInvalidButSkip;
-
-		std::shared_ptr< Element > elem4( new Element( elem3->next(), elem3, elem1 ) );
-		BOOST_CHECK_EQUAL( elem4->_id, "value13" );
-		elem4->_status = eStatusInvalidButSkip;
-
-		BOOST_CHECK( elem4->next() == nullptr );
-		BOOST_CHECK_EQUAL( elem1->_status,  eStatusInvalidForUnordered );
-	}
 }
 
 BOOST_AUTO_TEST_CASE( basic_element_next_repetition_one )

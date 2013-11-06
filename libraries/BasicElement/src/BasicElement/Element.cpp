@@ -39,29 +39,29 @@ Element::Element( const std::shared_ptr< sr::SpecNode > node,
 	, _checkedGroup  ( false )
 	, _data          ( nullptr )
 {
+	LOG_ERROR( "____________________" << _id <<  "____________________" );
 	if( ! _repetExpr.empty() )
 	{
 		std::shared_ptr< Element > prev = previous;
-		while( prev != nullptr )
+		while( prev != nullptr || ( parent != nullptr && prev->_id != parent->_id ) )
 		{
-			if( prev->_id != _id )
+			if( prev->_id == _id && ( prev->_status == eStatusValid || prev->_status == eStatusPassOver ) )
 			{
-				prev = prev->getPrevious();
-			}
-			else
-			{
-				if( prev->_status == eStatusValid || prev->_status == eStatusPassOver )
-				{
-					_iteration = prev->_iteration + 1;
-					LOG_ERROR( "ELEMENT: prev: " << prev->_id );
-				}
+				_iteration = prev->_iteration + 1;
+				// LOG_ERROR( "ELEMENT: >>>> prev: " << prev->_id << " @" << &*prev );
 				break;
 			}
+
+			// LOG_ERROR( "ELEMENT: prev: " << prev->_id << " @" << &*prev );
+			if( parent != nullptr && prev->_id == parent->_id )
+				break;
+
+			prev = prev->getPrevious();
 		}
 	}
 
-	if( ! _previous.expired() )
-		LOG_ERROR( "ELEMENT: " << _id << "'s previous: " << previous->_id );
+	// if( ! _previous.expired() )
+	// 	LOG_ERROR( "ELEMENT: " << _id << "'s previous: " << previous->_id );
 
 	if( ! _parent.expired() )
 		_parent.lock()->_children.push_back( std::make_shared< Element >( *this ) );
@@ -94,7 +94,7 @@ std::shared_ptr< spec_reader::SpecNode > Element::next( )
 	}
 	
 	// Unordered groups : if element status = Valid and parent is not ordered
-	if( _status == eStatusValid && _parent.use_count() != 0 && ( ! parent->_specNode->isOrdered() ) )
+	if( _status == eStatusValid && _parent.use_count() != 0 && ( ! parent->_isOrdered ) )
 	{
 		// go to the first SpecNode of the childhood
 		return parent->_specNode->firstChild();
@@ -104,7 +104,7 @@ std::shared_ptr< spec_reader::SpecNode > Element::next( )
 	// if element has a group not already checked and is valid or first time parsed
 	if( _specNode->isGroup() && ! _checkedGroup && ( _iteration == 1 || _status == eStatusValid ) )
 	{
-		LOG_WARNING( "Element::next " << _id << ": IsGroup" );
+		LOG_ERROR( "Element::next " << _id << ": IsGroup" );
 		// it becomes checked
 		_checkedGroup = true;
 		// creates a pointer to this current element
@@ -116,7 +116,7 @@ std::shared_ptr< spec_reader::SpecNode > Element::next( )
 	// if repeated element
 	if( ! _repetExpr.empty() && _status == eStatusValid )
 	{
-		LOG_WARNING( ">>>>>>>>>>>>>> Element::next " << _id << ": Repeated: " << _iteration );
+		LOG_ERROR( ">>>>>>>>>>>>>> Element::next " << _id << ": Repeated: " << _iteration );
 		// go to the same SpecNode
 		return _specNode;
 	}
@@ -128,54 +128,11 @@ std::shared_ptr< spec_reader::SpecNode > Element::next( )
 	// if their is no more SpecNode after and parent exists
 	if( nextNode == nullptr && _parent.use_count() != 0 )
 	{
-		LOG_WARNING( "Element::next " << _id << ": Last Element" );
-		
-		// if the current group (parent's children) is not ordered
-		if( ! _parent.lock()->_specNode->isOrdered() )
-		{
-			LOG_WARNING( "Element::next " << _id << ": Unordered group check" );
-			
-			// create a list with the children IDs
-			std::set< std::string > childIds = parent->_specNode->getChildrenNodes();
-
-			// if the previous element exists (the current element is not the first)
-			if( _previous.lock().get() != nullptr )
-			{
-				// creates a pointer to the previous element
-				std::shared_ptr< Element > prev = _previous.lock();
-				// while the previous element is not the parent
-				while( prev->_id != parent->_id )
-				{
-					// for each ID in the children ID list
-					for( auto id : childIds )				
-					{
-						// if the previous element's ID is equal to one ID of the list
-						if( prev->_id == id && prev->_status == eStatusValid )
-						{
-							LOG_WARNING( "Element::next " << "childIds: " << id );
-							// erase this ID from the list
-							childIds.erase( id );
-						}
-					}
-					// go to the previous element of the previous, etc..
-					prev = prev->_previous.lock();
-				}
-			}			
-			LOG_WARNING( "Element::next " << _id << ": End of check Unordered, remaining children: " << childIds.size() );
-			// if it remains some IDs in the list
-			if( childIds.size() != 0 )
-			{
-				LOG_ERROR( "Element::next " << _parent.lock()->_id );
-				LOG_ERROR( "Element::next " << &*_parent.lock() );
-				// every nodes haven't been checked : the parent is not valid
-				_parent.lock()->_status = eStatusInvalidForUnordered;
-			}
-		}
 		// go to the node after the parent
-		LOG_WARNING( "Element::next " << _id << ": Parent's (" << _parent.lock()->_id << ") next !" );
+		LOG_ERROR( "Element::next " << _id << ": last element -> parent's (" << _parent.lock()->_id << ") next !" );
 		return parent->next( );
 	}
-	LOG_WARNING( ">>> Element::next " << _id << ": Next ! " << nextNode );
+	LOG_ERROR( ">>> Element::next " << _id << ": Next ! " << nextNode );
 	// go to the next node
 	return nextNode;
 }
