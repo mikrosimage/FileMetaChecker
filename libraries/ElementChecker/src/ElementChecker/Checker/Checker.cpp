@@ -20,7 +20,7 @@ Checker::Checker()
 
 void Checker::check( const std::shared_ptr< basic_element::Element > element )
 {
-	if( element->_size == 0 )	// @todo: parse count expression
+	if( element->_size == 0 && element->_countExpr.empty() )	// @todo: parse count expression
 		LOG_WARNING( element->_id << ": Null data size !" );
 
 	// if nothing to compare
@@ -141,12 +141,12 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 	// end of unordered group : check iterations
 	if( element->getParent() != nullptr && ! element->getParent()->_isOrdered && status == eStatusInvalid )
 	{
-		LOG_FATAL( "CHECKER: " << element->_id << ": Unordered group" );
+		LOG_ERROR( "CHECKER: " << element->_id << ": Unordered group" );
 		element->_status = eStatusInvalidButSkip;
 
 		if( element->getSpecNode()->next() == nullptr )
 		{
-			LOG_FATAL( "CHECKER: " << element->_id << ": Last element" );
+			LOG_ERROR( "CHECKER: " << element->_id << ": Last element" );
 			// create a list with the children IDs
 			std::set< std::string > childIds = element->getParent()->getSpecNode()->getChildrenNodes();
 			// if the previous element exists (the current element is not the first)
@@ -163,12 +163,12 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 					// if the previous element's ID is equal to one ID of the list
 					if( prev->_id == id && prev->_status == eStatusValid )
 					{
-						LOG_FATAL( "    >>> childIds: " << id );
+						LOG_ERROR( "CHECKER: >>> childIds: " << id );
 						// erase this ID from the list if repetitions ok !
 						std::string errorMessage;
 						if( ! prev->_repetExpr.empty() && ! isIterationValid( prev, errorMessage ) )
 						{
-							LOG_ERROR( prev->_id << ": " << errorMessage );
+							LOG_ERROR( "(" << prev->_id << ") " << errorMessage );
 							prev->_error += errorMessage;
 							_elementList.push_back( prev );
 							prev->getParent()->_status = eStatusInvalidGroupForIteration;
@@ -179,17 +179,17 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 				// go to the previous element of the previous, etc..
 				prev = prev->getPrevious();
 			}
-			LOG_FATAL( "CHECKER: " << element->_id << ": End of unordered group, remaining children: " << childIds.size() );
+			LOG_ERROR( "CHECKER: " << element->_id << ": End of unordered group, remaining children: " << childIds.size() );
 			// if it remains some IDs in the list
 			if( childIds.size() != 0 )
 			{
-				LOG_FATAL( "CHECKER: " << element->getParent()->_id );
-				LOG_FATAL( "CHECKER: " << &*element->getParent() );
+				LOG_ERROR( "CHECKER: " << element->getParent()->_id );
+				LOG_ERROR( "CHECKER: " << &*element->getParent() );
 				// every nodes haven't been checked : the parent is not valid
 				element->getParent()->_status = eStatusInvalidForUnordered;
 			}
 		}
-		LOG_FATAL( "CHECKER: " << element->_id << "'s status: " << element->_status );
+		LOG_ERROR( "CHECKER: " << element->_id << "'s status: " << element->_status );
 		return;
 	}
 
@@ -205,12 +205,23 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 			element->_error += errorMessage;
 			_elementList.push_back( element );
 		}
-		LOG_FATAL( "CHECKER: " << element->_id << "'s status: eStatusInvalid" );
+		LOG_ERROR( "CHECKER: " << element->_id << "'s status: eStatusInvalid" );
 		return;
 	}
 
-	LOG_FATAL( "CHECKER: " << element->_id << "'s status: " << status );
+	LOG_ERROR( "CHECKER: " << element->_id << "'s status: " << status );
 	_elementList.push_back( element );
+}
+
+size_t Checker::getSize( const std::shared_ptr< basic_element::Element > element )
+{
+	if( ! element->_countExpr.empty() )
+	{
+		ExpressionParser sizeParser( _elementList );
+		element->_size = sizeParser.getExpressionResult< size_t >( element->_countExpr );
+		LOG_FATAL( "COUNT: " << element->_id << "'s size: " << element->_size );
+	}
+	return element->_size;
 }
 
 bool Checker::isIterationValid( const std::shared_ptr< basic_element::Element > element, std::string& errorMessage )
@@ -225,7 +236,7 @@ bool Checker::isIterationValid( const std::shared_ptr< basic_element::Element > 
 		{
 			ExpressionParser repetParser( _elementList );
 			size_t repetNumber = repetParser.getExpressionResult< size_t >( repetPair.first );
-			LOG_FATAL( "////// REPETITION : " << element->_iteration << " / " << repetNumber );
+			LOG_ERROR( "CHECKER: repetition : " << element->_iteration << " / " << repetNumber );
 			if( element->_iteration == repetNumber )
 				return true;
 			error << element->_iteration << " / " << repetNumber;
@@ -241,7 +252,7 @@ bool Checker::isIterationValid( const std::shared_ptr< basic_element::Element > 
 			if( ! repetPair.second.empty() )
 				repetMax = repetParser.getExpressionResult< size_t >( repetPair.second );
 
-			LOG_FATAL( "////// REPETITIONS : " << element->_iteration << " / [" << repetMin << ", " << repetMax << "]" );
+			LOG_ERROR( "CHECKER: repetitions : " << element->_iteration << " / [" << repetMin << ", " << repetMax << "]" );
 			if( repetMin <= element->_iteration )
 				if( repetMax == 0 || repetMax >= element->_iteration )
 					return true;

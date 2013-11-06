@@ -17,6 +17,7 @@ public:
 	Checker();
 
 	void check( const std::shared_ptr< basic_element::Element > element );
+	size_t getSize( const std::shared_ptr< basic_element::Element > element );
 	std::vector< std::shared_ptr< basic_element::Element > > getElementList() { return _elementList; }
 private:
 	bool isIterationValid( const std::shared_ptr< basic_element::Element > element, std::string& errorMessage );
