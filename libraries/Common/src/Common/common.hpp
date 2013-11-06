@@ -115,6 +115,7 @@ enum EStatus
 	eStatusInvalidButOptional,
 	eStatusInvalidForUnordered,
 	eStatusInvalidButSkip,
+	eStatusInvalidGroupForIteration,
 	eStatusPassOver,
 	eStatusSkip,
 };
