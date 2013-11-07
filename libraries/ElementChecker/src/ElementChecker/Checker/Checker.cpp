@@ -164,6 +164,14 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 		}
 	}
 
+	if( ! isRequirementValid( element ) )
+	{
+		LOG_WARNING( "CHECKER: (" << element->_id << ") requirement not valid, element skipped" );
+		element->_isOptional = true;
+		element->_status = eStatusSkip;
+		return;
+	}
+
 	// optional case : do nothing
 	if( element->_isOptional && status == eStatusInvalid && element->_iteration == 1 )
 	{
@@ -327,6 +335,16 @@ bool Checker::isIterationValid( const std::shared_ptr< basic_element::Element > 
 	}
 	errorMessage = "Out of repetition range (" + error.str() + ") - ";
 	return false;
+}
+
+bool Checker::isRequirementValid( const std::shared_ptr< basic_element::Element > element )
+{
+	if( element->_requiredExpr.empty() )
+		return true;
+
+	ExpressionParser conditionParser( _elementList );
+	bool requirement = conditionParser.getExpressionResult< bool >( element->_requiredExpr );
+	return requirement;
 }
 
 

@@ -21,6 +21,7 @@ public:
 	std::vector< std::shared_ptr< basic_element::Element > > getElementList() { return _elementList; }
 private:
 	bool isIterationValid( const std::shared_ptr< basic_element::Element > element, std::string& errorMessage );
+	bool isRequirementValid( const std::shared_ptr< basic_element::Element > element );
 
 private:
 	std::vector< std::shared_ptr< basic_element::Element > > _elementList;
