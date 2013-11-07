@@ -49,7 +49,7 @@ void ExpressionParser::setVariables( const std::vector< std::shared_ptr< basic_e
 			case eTypeFloat        : oss << elem->_id << " = " << Translator( elem ).get< float                       >() << std::endl; break;
 			case eTypeDouble       : oss << elem->_id << " = " << Translator( elem ).get< double                      >() << std::endl; break;
 			case eTypeIeeeExtended : oss << elem->_id << " = " << Translator( elem ).get< basic_element::ieeeExtended >() << std::endl; break;
-			default: break;
+			default: oss << elem->_id << " = " << "True" << std::endl; break;
 		}
 		_contextString += oss.str();
 	}
@@ -62,8 +62,8 @@ ResultType ExpressionParser::getExpressionResult( const std::string& expression 
 	ResultType result = 0;
 	try
 	{
-		LOG_TRACE( expression );
-		LOG_TRACE( _contextString.c_str() );
+		// LOG_TRACE( expression );
+		// LOG_TRACE( _contextString.c_str() );
 		bpy::exec( _contextString.c_str(), _mainNamespace );
 		bpy::object returnText = bpy::eval( expression.c_str(), _mainNamespace );
 		result = bpy::extract< ResultType >( returnText );
@@ -82,6 +82,8 @@ std::string ExpressionParser::getExpressionResult<std::string>( const std::strin
 	std::string result = "";
 	try
 	{
+		// LOG_TRACE( expression );
+		// LOG_TRACE( _contextString.c_str() );
 		bpy::exec( _contextString.c_str(), _mainNamespace );
 		bpy::object returnText = bpy::eval( expression.c_str(), _mainNamespace );
 		result = bpy::extract< std::string >( returnText );
@@ -90,6 +92,25 @@ std::string ExpressionParser::getExpressionResult<std::string>( const std::strin
 	{
 		printPythonError( error );
 		throw;
+	}
+	return result;
+}
+
+template< >
+bool ExpressionParser::getExpressionResult< bool >( const std::string& expression )
+{
+	bool result = false;
+	try
+	{
+		// LOG_TRACE( expression );
+		// LOG_TRACE( _contextString.c_str() );
+		bpy::exec( _contextString.c_str(), _mainNamespace );
+		bpy::object returnText = bpy::eval( expression.c_str(), _mainNamespace );
+		result = bpy::extract< bool >( returnText );
+	}
+	catch( const bpy::error_already_set& error )
+	{
+		return result;
 	}
 	return result;
 }
