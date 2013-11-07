@@ -291,7 +291,7 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 
 size_t Checker::getSize( const std::shared_ptr< basic_element::Element > element )
 {
-	if( ! element->_countExpr.empty() )
+	if( ! element->_countExpr.empty() && element->_size == 0 )
 	{
 		ExpressionParser sizeParser( _elementList );
 		element->_size = sizeParser.getExpressionResult< size_t >( element->_countExpr );
