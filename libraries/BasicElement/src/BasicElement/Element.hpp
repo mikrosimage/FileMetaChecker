@@ -70,6 +70,7 @@ public:
 	std::map< std::string, std::string > _map;
 
 	std::string   _mapValue;
+	std::string   _dispValue;
 	
 	ExpressionList _rangeExpr;
 	ExpressionList _repetExpr;
