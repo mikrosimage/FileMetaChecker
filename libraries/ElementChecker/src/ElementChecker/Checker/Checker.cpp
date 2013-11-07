@@ -15,6 +15,27 @@ namespace be = basic_element;
 namespace element_checker
 {
 
+namespace utils
+{
+	template< typename NumberType >
+	EStatus checkNumberElement( const std::shared_ptr< basic_element::Element > element )
+	{
+		EStatus status = eStatusInvalid;
+		
+		if( element->_rangeExpr.empty() )
+			status = eStatusPassOver;
+
+		NumberType value = Translator( element ).get< NumberType >();
+		
+		if( Ranges< NumberType >( element->_rangeExpr ).isInRanges( value ) )
+			status = eStatusValid;
+		
+		element->_mapValue = Map< NumberType >( element->_map ).getLabel( value );
+		
+		return status;
+	}
+}
+
 Checker::Checker()
 {
 }
@@ -33,103 +54,25 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 		_elementList.push_back( element );
 		return;
 	}
-
-	EStatus status = eStatusPassOver;
-	if( ! element->_rangeExpr.empty() )
-		status = eStatusInvalid;
+	
+	EStatus status = eStatusInvalid;
 
 	switch( element->_type )
 	{
-		case eTypeUnknown : LOG_ERROR( "Unknown element type, cannot check it" ); break;
-		case eTypeInt8 :
-		{
-			be::int8 value = Translator( element ).get< be::int8 >();
-			if( Ranges< be::int8 >( element->_rangeExpr ).isInRanges( value ) )
-				status = eStatusValid;
-			element->_mapValue = Map< be::int8 >( element->_map ).getLabel( value );
-			break;
-		}
-		case eTypeUInt8 :
-		{
-			be::uint8 value = Translator( element ).get< be::uint8 >();
-			if( Ranges< be::uint8 >( element->_rangeExpr ).isInRanges( value ) )
-				status = eStatusValid;
-			element->_mapValue = Map< be::uint8 >( element->_map ).getLabel( value );
-			break;
-		}
-		case eTypeInt16 :
-		{
-			be::int16 value = Translator( element ).get< be::int16 >();
-			if( Ranges< be::int16 >( element->_rangeExpr ).isInRanges( value ) )
-				status = eStatusValid;
-			element->_mapValue = Map< be::int16 >( element->_map ).getLabel( value );
-			break;
-		}
-		case eTypeUInt16 :
-		{
-			be::uint16 value = Translator( element ).get< be::uint16 >();
-			if( Ranges< be::uint16 >( element->_rangeExpr ).isInRanges( value ) )
-				status = eStatusValid;
-			element->_mapValue = Map< be::uint16 >( element->_map ).getLabel( value );
-			break;
-		}
-		case eTypeInt32 :
-		{
-			be::int32 value = Translator( element ).get< be::int32 >();
-			if( Ranges< be::int32 >( element->_rangeExpr ).isInRanges( value ) )
-				status = eStatusValid;
-			element->_mapValue = Map< be::int32 >( element->_map ).getLabel( value );
-			break;
-		}
-		case eTypeUInt32 :
-		{
-			be::uint32 value = Translator( element ).get< be::uint32 >();
-			if( Ranges< be::uint32 >( element->_rangeExpr ).isInRanges( value ) )
-				status = eStatusValid;
-			element->_mapValue = Map< be::uint32 >( element->_map ).getLabel( value );
-			break;
-		}
-		case eTypeInt64 :
-		{
-			be::int64 value = Translator( element ).get< be::int64 >();
-			if( Ranges< be::int64 >( element->_rangeExpr ).isInRanges( value ) )
-				status = eStatusValid;
-			element->_mapValue = Map< be::int64 >( element->_map ).getLabel( value );
-			break;
-		}
-		case eTypeUInt64 :
-		{
-			be::uint64 value = Translator( element ).get< be::uint64 >();
-			if( Ranges< be::uint64 >( element->_rangeExpr ).isInRanges( value ) )
-				status = eStatusValid;
-			element->_mapValue = Map< be::uint64 >( element->_map ).getLabel( value );
-			break;
-		}
-		case eTypeFloat :
-		{
-			float value = Translator( element ).get< float >();
-			if( Ranges< float >( element->_rangeExpr ).isInRanges( value ) )
-				status = eStatusValid;
-			element->_mapValue = Map< float >( element->_map ).getLabel( value );
-			break;
-		}
-		case eTypeDouble :
-		{
-			double value = Translator( element ).get< double >();
-			if( Ranges< double >( element->_rangeExpr ).isInRanges( value ) )
-				status = eStatusValid;
-			element->_mapValue = Map< double >( element->_map ).getLabel( value );
-			break;
-		}
-		case eTypeIeeeExtended :
-		{
-			be::ieeeExtended value = Translator( element ).get< be::ieeeExtended >();
-			if( Ranges< be::ieeeExtended >( element->_rangeExpr ).isInRanges( value ) )
-				status = eStatusValid;
-			element->_mapValue = Map< be::ieeeExtended >( element->_map ).getLabel( value );
-			break;
-		}
-
+		case eTypeUnknown      : LOG_ERROR( "Unknown element type, cannot check it" ); break;
+		
+		case eTypeInt8         : status = utils::checkNumberElement< be::int8         >( element ); break;
+		case eTypeUInt8        : status = utils::checkNumberElement< be::uint8        >( element ); break;
+		case eTypeInt16        : status = utils::checkNumberElement< be::int16        >( element ); break;
+		case eTypeUInt16       : status = utils::checkNumberElement< be::uint16       >( element ); break;
+		case eTypeInt32        : status = utils::checkNumberElement< be::int32        >( element ); break;
+		case eTypeUInt32       : status = utils::checkNumberElement< be::uint32       >( element ); break;
+		case eTypeInt64        : status = utils::checkNumberElement< be::int64        >( element ); break;
+		case eTypeUInt64       : status = utils::checkNumberElement< be::uint64       >( element ); break;
+		case eTypeFloat        : status = utils::checkNumberElement< float            >( element ); break;
+		case eTypeDouble       : status = utils::checkNumberElement< double           >( element ); break;
+		case eTypeIeeeExtended : status = utils::checkNumberElement< be::ieeeExtended >( element ); break;
+		
 		case eTypeAscii :
 		case eTypeHexa  :
 		{
