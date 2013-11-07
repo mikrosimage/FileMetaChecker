@@ -3,6 +3,7 @@
 #include <ElementChecker/Translator/Translator.hpp>
 #include <ElementChecker/Ranges/Ranges.hpp>
 #include <ElementChecker/ExpressionParser/ExpressionParser.hpp>
+#include <ElementChecker/Map/Map.hpp>
 #include <SpecReader/SpecNode.hpp>
 
 #include <Common/log.hpp>
@@ -24,7 +25,7 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 		LOG_WARNING( element->_id << ": Null data size !" );
 
 	// if nothing to compare
-	if( element->_values.empty() && element->_rangeExpr.empty() )
+	if( element->_values.empty() && element->_rangeExpr.empty() && element->_map.empty() )
 	{
 		element->_status = eStatusPassOver;
 		_elementList.push_back( element );
@@ -32,80 +33,106 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 	}
 
 	// element check :
-	EStatus status = eStatusInvalid;
+	EStatus status = eStatusPassOver;
+	if( ! element->_rangeExpr.empty() )
+		status = eStatusInvalid;
+
 	switch( element->_type )
 	{
 		case eTypeUnknown : LOG_ERROR( "Unknown element type, cannot check it" ); break;
-		case eTypeInt8         :
+		case eTypeInt8 :
 		{
-			if( Ranges< be::int8         >( element->_rangeExpr ).isInRanges( Translator( element ).get< be::int8         >() ) )
+			be::int8 value = Translator( element ).get< be::int8 >();
+			if( Ranges< be::int8 >( element->_rangeExpr ).isInRanges( value ) )
 				status = eStatusValid;
+			element->_mapValue = Map< be::int8 >( element->_map ).getLabel( value );
 			break;
 		}
-		case eTypeUInt8        :
+		case eTypeUInt8 :
 		{
-			if( Ranges< be::uint8        >( element->_rangeExpr ).isInRanges( Translator( element ).get< be::uint8        >() ) )
+			be::uint8 value = Translator( element ).get< be::uint8 >();
+			if( Ranges< be::uint8 >( element->_rangeExpr ).isInRanges( value ) )
 				status = eStatusValid;
+			element->_mapValue = Map< be::uint8 >( element->_map ).getLabel( value );
 			break;
 		}
-		case eTypeInt16        :
+		case eTypeInt16 :
 		{
-			if( Ranges< be::int16        >( element->_rangeExpr ).isInRanges( Translator( element ).get< be::int16        >() ) )
+			be::int16 value = Translator( element ).get< be::int16 >();
+			if( Ranges< be::int16 >( element->_rangeExpr ).isInRanges( value ) )
 				status = eStatusValid;
+			element->_mapValue = Map< be::int16 >( element->_map ).getLabel( value );
 			break;
 		}
-		case eTypeUInt16       :
+		case eTypeUInt16 :
 		{
-			if( Ranges< be::uint16       >( element->_rangeExpr ).isInRanges( Translator( element ).get< be::uint16       >() ) )
+			be::uint16 value = Translator( element ).get< be::uint16 >();
+			if( Ranges< be::uint16 >( element->_rangeExpr ).isInRanges( value ) )
 				status = eStatusValid;
+			element->_mapValue = Map< be::uint16 >( element->_map ).getLabel( value );
 			break;
 		}
-		case eTypeInt32        :
+		case eTypeInt32 :
 		{
-			if( Ranges< be::int32        >( element->_rangeExpr ).isInRanges( Translator( element ).get< be::int32        >() ) )
+			be::int32 value = Translator( element ).get< be::int32 >();
+			if( Ranges< be::int32 >( element->_rangeExpr ).isInRanges( value ) )
 				status = eStatusValid;
+			element->_mapValue = Map< be::int32 >( element->_map ).getLabel( value );
 			break;
 		}
-		case eTypeUInt32       :
+		case eTypeUInt32 :
 		{
-			if( Ranges< be::uint32       >( element->_rangeExpr ).isInRanges( Translator( element ).get< be::uint32       >() ) )
+			be::uint32 value = Translator( element ).get< be::uint32 >();
+			if( Ranges< be::uint32 >( element->_rangeExpr ).isInRanges( value ) )
 				status = eStatusValid;
+			element->_mapValue = Map< be::uint32 >( element->_map ).getLabel( value );
 			break;
 		}
-		case eTypeInt64        :
+		case eTypeInt64 :
 		{
-			if( Ranges< be::int64        >( element->_rangeExpr ).isInRanges( Translator( element ).get< be::int64        >() ) )
+			be::int64 value = Translator( element ).get< be::int64 >();
+			if( Ranges< be::int64 >( element->_rangeExpr ).isInRanges( value ) )
 				status = eStatusValid;
+			element->_mapValue = Map< be::int64 >( element->_map ).getLabel( value );
 			break;
 		}
-		case eTypeUInt64       :
+		case eTypeUInt64 :
 		{
-			if( Ranges< be::uint64       >( element->_rangeExpr ).isInRanges( Translator( element ).get< be::uint64       >() ) )
+			be::uint64 value = Translator( element ).get< be::uint64 >();
+			if( Ranges< be::uint64 >( element->_rangeExpr ).isInRanges( value ) )
 				status = eStatusValid;
+			element->_mapValue = Map< be::uint64 >( element->_map ).getLabel( value );
 			break;
 		}
-		case eTypeFloat        :
+		case eTypeFloat :
 		{
-			if( Ranges< float            >( element->_rangeExpr ).isInRanges( Translator( element ).get< float            >() ) )
+			float value = Translator( element ).get< float >();
+			if( Ranges< float >( element->_rangeExpr ).isInRanges( value ) )
 				status = eStatusValid;
+			element->_mapValue = Map< float >( element->_map ).getLabel( value );
 			break;
 		}
-		case eTypeDouble       :
+		case eTypeDouble :
 		{
-			if( Ranges< double           >( element->_rangeExpr ).isInRanges( Translator( element ).get< double           >() ) )
+			double value = Translator( element ).get< double >();
+			if( Ranges< double >( element->_rangeExpr ).isInRanges( value ) )
 				status = eStatusValid;
+			element->_mapValue = Map< double >( element->_map ).getLabel( value );
 			break;
 		}
 		case eTypeIeeeExtended :
 		{
-			if( Ranges< be::ieeeExtended >( element->_rangeExpr ).isInRanges( Translator( element ).get< be::ieeeExtended >() ) )
+			be::ieeeExtended value = Translator( element ).get< be::ieeeExtended >();
+			if( Ranges< be::ieeeExtended >( element->_rangeExpr ).isInRanges( value ) )
 				status = eStatusValid;
+			element->_mapValue = Map< be::ieeeExtended >( element->_map ).getLabel( value );
 			break;
 		}
 
 		case eTypeAscii :
 		case eTypeHexa  :
 		{
+			status = eStatusInvalid;
 			std::string orig = Translator( element ).get();
 			std::string lowCase = orig;
 			std::string upCase  = orig;
@@ -131,7 +158,7 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 		{
 			break;
 		}
-		case eTypeKlv  :		
+		case eTypeKlv  :
 		{
 			break;
 		}
