@@ -34,7 +34,6 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 		return;
 	}
 
-	// element check :
 	EStatus status = eStatusPassOver;
 	if( ! element->_rangeExpr.empty() )
 		status = eStatusInvalid;
@@ -168,74 +167,27 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 
 	if( ! isRequirementValid( element ) )
 	{
-		LOG_WARNING( "CHECKER: (" << element->_id << ") requirement not valid, element skipped" );
+		LOG_TRACE( "CHECKER: (" << element->_id << ") requirement not valid, element skipped" );
 		element->_isOptional = true;
 		element->_status = eStatusSkip;
 		return;
 	}
 
-	// optional case : do nothing
 	if( element->_isOptional && status == eStatusInvalid && element->_iteration == 1 )
 	{
-		LOG_ERROR( "CHECKER: " << element->_id << ": is Optional" );
+		LOG_TRACE( "CHECKER: " << element->_id << ": is Optional" );
 		element->_status = status;
 		return;
 	}
 
 	std::shared_ptr< basic_element::Element > parent = element->getParent();
 
-	// end of unordered group : check iterations
 	if( parent != nullptr && ! parent->_isOrdered && status == eStatusInvalid )
 	{
-		LOG_ERROR( "CHECKER: " << element->_id << ": Unordered group" );
+		LOG_TRACE( "CHECKER: " << element->_id << ": Unordered group" );
 		element->_status = eStatusInvalidButSkip;
-
 		if( element->getSpecNode()->next() == nullptr )
-		{
-			LOG_ERROR( "CHECKER: " << element->_id << ": Last element" );
-			// create a list with the children IDs
-			std::set< std::string > childIds = parent->getSpecNode()->getChildrenNodes();
-			// if the previous element exists (the current element is not the first)
-			if( element->getPrevious() == nullptr )
-				throw std::runtime_error( "Checker: Invalid tree" );
-			// creates a pointer to the previous element
-			std::shared_ptr< basic_element::Element > prev = element->getPrevious();
-			// while the previous element is not the parent
-			while( prev->_id != parent->_id )
-			{
-				// for each ID in the children ID list
-				for( auto id : childIds )				
-				{
-					// if the previous element's ID is equal to one ID of the list
-					if( prev->_id == id && prev->_status == eStatusValid )
-					{
-						LOG_ERROR( "CHECKER: >>> childIds: " << id );
-						// erase this ID from the list if repetitions ok !
-						std::string errorMessage;
-						if( ! prev->_repetExpr.empty() && ! isIterationValid( prev, errorMessage ) )
-						{
-							LOG_ERROR( "(" << prev->_id << ") " << errorMessage );
-							prev->_error += errorMessage;
-							_elementList.push_back( prev );
-							prev->getParent()->_status = eStatusInvalidGroupForIteration;
-						}
-						childIds.erase( id );
-					}
-				}
-				// go to the previous element of the previous, etc..
-				prev = prev->getPrevious();
-			}
-			LOG_ERROR( "CHECKER: " << element->_id << ": End of unordered group, remaining children: " << childIds.size() );
-			// if it remains some IDs in the list
-			if( childIds.size() != 0 )
-			{
-				LOG_ERROR( "CHECKER: " << parent->_id );
-				LOG_ERROR( "CHECKER: " << &*parent );
-				// every nodes haven't been checked : the parent is not valid
-				parent->_status = eStatusInvalidForUnordered;
-			}
-		}
-		LOG_ERROR( "CHECKER: " << element->_id << "'s status: " << element->_status );
+			checkLastUnorderedElement( element );
 		return;
 	}
 
@@ -251,42 +203,14 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 			element->_error += errorMessage;
 			_elementList.push_back( element );
 		}
-		LOG_ERROR( "CHECKER: " << element->_id << "'s status: eStatusInvalid" );
 		return;
 	}
 
-	LOG_ERROR( "CHECKER: " << element->_id << "'s status: " << status );
+	LOG_TRACE( "CHECKER: " << element->_id << "'s status: " << status );
 	_elementList.push_back( element );
 
-	// check GroupSize
 	if( parent != nullptr && element->getPrevious() != nullptr && element->getSpecNode()->next() == nullptr && ! parent->_groupSizeExpr.empty() )
-	{
-		std::shared_ptr< basic_element::Element > prev = element->getPrevious();
-		size_t groupSize = element->_size;
-		while( prev != nullptr || prev->_id != parent->_id )
-		{
-			groupSize += prev->_size;
-			// LOG_FATAL( "ELEMENT: prev: " << prev->_id << " size: " << prev->_size << " | " << groupSize );
-			if( prev->_id == parent->_id )
-				break;
-			prev = prev->getPrevious();
-		}
-		ExpressionParser groupSizeParser( _elementList );
-		size_t parentGroupSize = groupSizeParser.getExpressionResult< size_t >( parent->_groupSizeExpr );
-		// LOG_FATAL( "parentGroupSize: " << parentGroupSize );
-
-		int sizeDiff = parentGroupSize - groupSize;
-		if( sizeDiff != 0 )
-		{
-			std::stringstream warningMessage;
-			if( sizeDiff > 0 )
-				warningMessage << "Group size difference: " << sizeDiff << " missing bytes - ";
-			if( sizeDiff < 0 )
-				warningMessage << "Group size difference: " << abs( sizeDiff ) << " unexpected bytes - ";
-			LOG_WARNING( warningMessage.str() );
-			parent->_warning += warningMessage.str();
-		}
-	}
+		checkGroupSize( element );
 }
 
 size_t Checker::getSize( const std::shared_ptr< basic_element::Element > element )
@@ -295,7 +219,7 @@ size_t Checker::getSize( const std::shared_ptr< basic_element::Element > element
 	{
 		ExpressionParser sizeParser( _elementList );
 		element->_size = sizeParser.getExpressionResult< size_t >( element->_countExpr );
-		LOG_ERROR( "COUNT: " << element->_id << "'s size: " << element->_size );
+		LOG_TRACE( "COUNT: " << element->_id << "'s size: " << element->_size );
 	}
 	return element->_size;
 }
@@ -349,6 +273,74 @@ bool Checker::isRequirementValid( const std::shared_ptr< basic_element::Element 
 	return requirement;
 }
 
+void Checker::checkLastUnorderedElement( const std::shared_ptr< basic_element::Element > element )
+{
+	LOG_TRACE( "CHECKER: " << element->_id << ": Last element" );
+	if( element->getPrevious() == nullptr )
+		throw std::runtime_error( "Checker: Invalid tree" );
+
+	std::shared_ptr< basic_element::Element > parent = element->getParent();
+	std::shared_ptr< basic_element::Element > prev   = element->getPrevious();
+	std::set< std::string > childIds = parent->getSpecNode()->getChildrenNodes();
+
+	while( prev->_id != parent->_id )
+	{
+		for( std::string id : childIds )				
+		{
+			if( prev->_id == id && prev->_status == eStatusValid )
+			{
+				LOG_TRACE( "CHECKER: >>> childIds: " << id );
+
+				std::string errorMessage;
+				if( ! prev->_repetExpr.empty() && ! isIterationValid( prev, errorMessage ) )
+				{
+					LOG_ERROR( "(" << prev->_id << ") " << errorMessage );
+					prev->_error += errorMessage;
+					_elementList.push_back( prev );
+					prev->getParent()->_status = eStatusInvalidGroupForIteration;
+				}
+
+				childIds.erase( id );
+			}
+		}
+		prev = prev->getPrevious();
+	}
+
+	LOG_TRACE( "CHECKER: " << element->_id << ": End of unordered group, remaining children: " << childIds.size() );
+
+	if( childIds.size() != 0 )
+		parent->_status = eStatusInvalidForUnordered;
+}
+
+void Checker::checkGroupSize( const std::shared_ptr< basic_element::Element > element )
+{
+	std::shared_ptr< basic_element::Element > parent = element->getParent();
+	std::shared_ptr< basic_element::Element > prev   = element->getPrevious();
+	size_t groupSize = element->_size;
+
+	while( prev != nullptr || prev->_id != parent->_id )
+	{
+		groupSize += prev->_size;
+		if( prev->_id == parent->_id )
+			break;
+		prev = prev->getPrevious();
+	}
+
+	ExpressionParser groupSizeParser( _elementList );
+	size_t parentGroupSize = groupSizeParser.getExpressionResult< size_t >( parent->_groupSizeExpr );
+
+	int sizeDiff = parentGroupSize - groupSize;
+	if( sizeDiff != 0 )
+	{
+		std::stringstream warningMessage;
+		if( sizeDiff > 0 )
+			warningMessage << "Group size difference: " << sizeDiff << " missing bytes - ";
+		if( sizeDiff < 0 )
+			warningMessage << "Group size difference: " << abs( sizeDiff ) << " unexpected bytes - ";
+		LOG_WARNING( warningMessage.str() );
+		parent->_warning += warningMessage.str();
+	}
+}
 
 }
 
