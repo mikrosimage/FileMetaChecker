@@ -24,6 +24,8 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 	if( element->_size == 0 && element->_countExpr.empty() )
 		LOG_WARNING( element->_id << ": Null data size !" );
 
+	element->_dispValue = Translator( element ).get( element->_displayType );
+
 	// if nothing to compare
 	if( element->_values.empty() && element->_rangeExpr.empty() && element->_map.empty() )
 	{

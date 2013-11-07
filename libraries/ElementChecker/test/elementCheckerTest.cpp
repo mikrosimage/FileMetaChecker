@@ -34,3 +34,4 @@ BOOST_AUTO_TEST_SUITE_END()
 #include "checkerTestGroupSize.hpp"
 #include "checkerTestMap.hpp"
 #include "checkerTestRequirement.hpp"
+#include "checkerTestDisplayType.hpp"
