@@ -161,14 +161,15 @@ static const std::map< std::string, EDisplayType > displayTypeMap
 
 static const std::map< EStatus, std::string > statusMap
 {
-	{ eStatusNotChecked,          "not checked"           },
-	{ eStatusValid,               "skip"                  },
-	{ eStatusInvalid,             "pass over"             },
-	{ eStatusInvalidButOptional,  "valid"                 },
-	{ eStatusInvalidForUnordered, "invalid"               },
-	{ eStatusInvalidButSkip,      "invalid but skip"      },
-	{ eStatusPassOver,            "invalid but optional"  },
-	{ eStatusSkip,                "invalid for unordered" },
+	{ eStatusNotChecked,               "Not checked"                 },
+	{ eStatusValid,                    "Valid"                       },
+	{ eStatusInvalid,                  "Invalid"                     },
+	{ eStatusInvalidButOptional,       "Invalid but optional"        },
+	{ eStatusInvalidForUnordered,      "Invalid for unordered"       },
+	{ eStatusInvalidButSkip,           "Invalid but skip"            },
+	{ eStatusInvalidGroupForIteration, "Invalid group for iteration" },
+	{ eStatusPassOver,                 "Pass over"                   },
+	{ eStatusSkip,                     "Skip"                        },
 };
 
 #endif
