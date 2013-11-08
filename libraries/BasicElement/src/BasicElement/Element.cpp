@@ -82,7 +82,12 @@ std::shared_ptr< spec_reader::SpecNode > Element::next( )
 	
 	// Optional: if element optional & invalid, got to the next SpecNode
 	if( _isOptional && _status == eStatusInvalid )
-		return _specNode->next();
+	{
+		if( _specNode->next() != nullptr )
+			return _specNode->next();
+		if( parent != nullptr )
+			return parent->next( );
+	}
 	
 	// Unordered Groups: if element valid and parent is unordered, go to the first child of the parent
 	if( _status == eStatusValid && _parent.use_count() != 0 && ( ! parent->_isOrdered ) )

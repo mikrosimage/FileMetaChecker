@@ -739,6 +739,46 @@ BOOST_AUTO_TEST_CASE( basic_element_next_optional )
 
 		BOOST_CHECK( elem4->next() == nullptr );
 	}
+	LOG_INFO( "\n>>> basic_element_next_optional in group <<<" );
+	{
+		std::string jsonString = R"*(
+				{
+					"header": [
+						{ "id": "value1", "label": "Value1", "type": "ascii" },
+						{ "id": "value2", "label": "Value2", "type": "ascii", "group": [
+							{ "id": "value21", "label": "Value21", "type": "ascii", "optional": true }
+						] },
+						{ "id": "value3", "label": "Value3", "type": "ascii" }
+					]
+				}
+			)*";
+
+		spec_reader::Specification spec;
+		spec.setFromString( jsonString );
+		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
+		BOOST_CHECK_EQUAL( node->getId(),                         "value1"  );
+		BOOST_CHECK_EQUAL( node->next()->getId(),                 "value2"  );
+		BOOST_CHECK_EQUAL( node->next()->firstChild()->getId(),   "value21" );
+		BOOST_CHECK_EQUAL( node->next()->next()->getId(),         "value3"  );
+
+		std::shared_ptr< Element > elem1( new Element( node ) );
+		elem1->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem2( new Element( elem1->next(), elem1 ) );
+		BOOST_CHECK_EQUAL( elem2->_id, node->next()->getId() );
+		elem2->_status = eStatusValid;
+
+		std::shared_ptr< Element > elem3( new Element( elem2->next(), elem2, elem2 ) );
+		BOOST_CHECK_EQUAL( elem3->_id, node->next()->firstChild()->getId() );
+		BOOST_CHECK_EQUAL( elem3->_isOptional, true );
+		elem3->_status = eStatusInvalid;
+
+		std::shared_ptr< Element > elem4( new Element( elem3->next(), elem3 ) );
+		BOOST_CHECK_EQUAL( elem4->_id, node->next()->next()->getId() );
+		elem4->_status = eStatusValid;
+
+		BOOST_CHECK( elem4->next() == nullptr );
+	}
 	LOG_INFO( "\n>>> basic_element_next_optional group <<<" );
 	{
 		std::string jsonString = R"*(
