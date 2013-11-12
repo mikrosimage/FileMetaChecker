@@ -110,7 +110,7 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 
 	if( ! isRequirementValid( element ) )
 	{
-		LOG_TRACE( "CHECKER: (" << element->_id << ") requirement not valid, element skipped" );
+		LOG_ERROR( "CHECKER: (" << element->_id << ") requirement not valid, element skipped" );
 		element->_isOptional = true;
 		element->_status = eStatusSkip;
 		return;
@@ -118,7 +118,7 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 
 	if( element->_isOptional && status == eStatusInvalid && element->_iteration == 1 )
 	{
-		LOG_TRACE( "CHECKER: " << element->_id << ": is Optional" );
+		LOG_ERROR( "CHECKER: " << element->_id << ": is Optional" );
 		element->_status = status;
 		return;
 	}
@@ -127,7 +127,7 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 
 	if( parent != nullptr && ! parent->_isOrdered && status == eStatusInvalid )
 	{
-		LOG_TRACE( "CHECKER: " << element->_id << ": Unordered group" );
+		LOG_ERROR( "CHECKER: " << element->_id << ": Unordered group" );
 		element->_status = eStatusInvalidButSkip;
 		if( element->getSpecNode()->next() == nullptr )
 			checkLastUnorderedElement( element );
@@ -139,17 +139,20 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 	// if element invalid and repeated : checked if iterations valid
 	if( status == eStatusInvalid && ! element->_repetExpr.empty() )
 	{
+		LOG_ERROR( "CHECKER: check Repetitions" );
 		std::string errorMessage;
-		if( ! isIterationValid( element->getPrevious(), errorMessage ) )
+		std::shared_ptr< basic_element::Element > previous = element->getPrevious();
+		if( ! isIterationValid( previous, errorMessage ) )
 		{
 			LOG_ERROR( element->_id << ": " << errorMessage );
 			element->_error += errorMessage;
 			_elementList.push_back( element );
 		}
+		LOG_FATAL( "CHECKER: repetitions " << previous );
 		return;
 	}
 
-	LOG_TRACE( "CHECKER: " << element->_id << "'s status: " << status );
+	LOG_ERROR( "CHECKER: " << element->_id << "'s status: " << status );
 	_elementList.push_back( element );
 
 	if( parent != nullptr && element->getPrevious() != nullptr && element->getSpecNode()->next() == nullptr && ! parent->_groupSizeExpr.empty() )
@@ -218,7 +221,7 @@ bool Checker::isRequirementValid( const std::shared_ptr< basic_element::Element 
 
 void Checker::checkLastUnorderedElement( const std::shared_ptr< basic_element::Element > element )
 {
-	LOG_TRACE( "CHECKER: " << element->_id << ": Last element" );
+	LOG_FATAL( "CHECKER: " << element->_id << ": Last element " << &*element << " <-" << &*element->getPrevious() );
 	if( element->getPrevious() == nullptr )
 		throw std::runtime_error( "Checker: Invalid tree" );
 
