@@ -23,7 +23,7 @@ if 'sharedNoUndefined' in project.CC:
 	qualityCheckFlags['SHLINKFLAGS'] = [project.CC['sharedNoUndefined']]
 
 if project.env['compiler'] == "gcc" :
-	qualityCheckFlags['CXXFLAGS'] = ' -std=gnu++0x'
+	qualityCheckFlags['CXXFLAGS'] = '-std=c++11'
 
 # Creates a dependency target without associated code or compiled object,
 # but only associated with compilation flags
