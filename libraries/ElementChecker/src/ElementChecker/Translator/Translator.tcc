@@ -1,6 +1,7 @@
 #include <Common/log.hpp> 	// @todelete !
 #include <iomanip>
 #include <algorithm>
+#include <stdexcept>
 
 namespace element_checker
 {
