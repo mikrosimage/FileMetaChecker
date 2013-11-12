@@ -16,7 +16,7 @@ void Report::init( const std::vector< std::shared_ptr< basic_element::Element > 
 
 void Report::print()
 {
-	std::cout << std::setfill( '-' ) << std::setw( 191 ) << " " << std::endl;
+	std::cout << std::setfill( '-' ) << std::setw( 201 ) << " " << std::endl;
 	std::cout << "|" << std::setfill( ' ' ) << std::setw( 16 ) << "" << "Elements"  << std::setfill( ' ' ) << std::setw( 16 ) << "|"
 					 << std::setfill( ' ' ) << std::setw( 16 ) << "" << "Value"     << std::setfill( ' ' ) << std::setw( 16 ) << "|"
 	        		 << std::setfill( ' ' ) << std::setw(  2 ) << "" << "Iteration" << std::setfill( ' ' ) << std::setw(  2 ) << "|"
@@ -24,7 +24,7 @@ void Report::print()
 	        		 << std::setfill( ' ' ) << std::setw( 10 ) << "" << "Error"     << std::setfill( ' ' ) << std::setw( 11 ) << "|"
 	        		 << std::setfill( ' ' ) << std::setw( 10 ) << "" << "Warning"   << std::setfill( ' ' ) << std::setw( 11 ) << "|"
 	        		 << std::setfill( ' ' ) << std::setw( 10 ) << "" << "Comment"   << std::setfill( ' ' ) << std::setw( 10 ) << "|" << std::endl;
-	std::cout << std::setfill( '-' ) << std::setw( 191 ) << " " << std::endl;
+	std::cout << std::setfill( '-' ) << std::setw( 201 ) << " " << std::endl;
 
 	for( std::shared_ptr< basic_element::Element > element : _elementList )
 		print( element );
