@@ -20,12 +20,12 @@ public:
 	{
 	}
 	
-	void addElement( const std::shared_ptr< basic_element::Element > e );
-	void print( const std::shared_ptr< basic_element::Element > e );
+	void init( const std::vector< std::shared_ptr< basic_element::Element > >& elementList );
 	void print();
-
+	void print( const std::shared_ptr< basic_element::Element > element );
+	
 private:
-	std::vector< std::shared_ptr< basic_element::Element > > _elements;
+	std::vector< std::shared_ptr< basic_element::Element > > _elementList;
 
 };
 
