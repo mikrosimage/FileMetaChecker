@@ -203,17 +203,17 @@ std::shared_ptr< spec_reader::SpecNode > SpecNode::next() const
 
 	if( _parent != nullptr && _parent->getIterator()->second.get_child( kGroup ).end() == node )
 	{
-		LOG_WARNING( "SpecNode::next " << getId() << ": Last Element (group)" );
+		// LOG_WARNING( "SpecNode::next " << getId() << ": Last Element (group)" );
 		return nullptr;
 	}
 
 	if( node == _specification->end() )
 	{
-		LOG_WARNING( "SpecNode::next " << getId() << ": Last Element (specification)" );
+		// LOG_WARNING( "SpecNode::next " << getId() << ": Last Element (specification)" );
 		return nullptr;
 	}
 	
-	LOG_WARNING( "SpecNode::next " << getId() << ": Next" );
+	// LOG_WARNING( "SpecNode::next " << getId() << ": Next" );
 	return std::make_shared< SpecNode >( _specification, node, _parent );
 }
 
@@ -221,7 +221,7 @@ std::shared_ptr< spec_reader::SpecNode > SpecNode::firstChild() const
 {
 	try
 	{
-		LOG_WARNING( "SpecNode::firstChild " << getId() );
+		// LOG_WARNING( "SpecNode::firstChild " << getId() );
 		if( ! isGroup() )
 			throw std::runtime_error( "SpecNode::firstChild: This node has no child." );
 		bpt::ptree::const_iterator node = _node->second.get_child( kGroup ).begin();
