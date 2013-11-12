@@ -727,7 +727,7 @@ BOOST_AUTO_TEST_CASE( basic_element_next_optional )
 		std::shared_ptr< Element > elem2( new Element( elem1->next(), elem1 ) );
 		BOOST_CHECK_EQUAL( elem2->_id, node->next()->getId() );
 		BOOST_CHECK_EQUAL( elem2->_isOptional, true );
-		elem2->_status = eStatusInvalid;
+		elem2->_status = eStatusInvalidButOptional;
 
 		std::shared_ptr< Element > elem3( new Element( elem2->next(), elem2 ) );
 		BOOST_CHECK_EQUAL( elem3->_id, node->next()->next()->getId() );
@@ -771,7 +771,7 @@ BOOST_AUTO_TEST_CASE( basic_element_next_optional )
 		std::shared_ptr< Element > elem3( new Element( elem2->next(), elem2, elem2 ) );
 		BOOST_CHECK_EQUAL( elem3->_id, node->next()->firstChild()->getId() );
 		BOOST_CHECK_EQUAL( elem3->_isOptional, true );
-		elem3->_status = eStatusInvalid;
+		elem3->_status = eStatusInvalidButOptional;
 
 		std::shared_ptr< Element > elem4( new Element( elem3->next(), elem3 ) );
 		BOOST_CHECK_EQUAL( elem4->_id, node->next()->next()->getId() );
@@ -806,7 +806,7 @@ BOOST_AUTO_TEST_CASE( basic_element_next_optional )
 		std::shared_ptr< Element > elem2( new Element( elem1->next(), elem1 ) );
 		BOOST_CHECK_EQUAL( elem2->_id, node->next()->getId() );
 		BOOST_CHECK_EQUAL( elem2->_isOptional, true );
-		elem2->_status = eStatusInvalid;
+		elem2->_status = eStatusInvalidButOptional;
 
 		std::shared_ptr< Element > elem3( new Element( elem2->next(), elem2 ) );
 		BOOST_CHECK_EQUAL( elem3->_id, node->next()->next()->getId() );

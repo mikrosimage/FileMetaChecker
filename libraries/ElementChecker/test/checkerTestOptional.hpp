@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_optional )
 		elem2->set( (const char*)&buff3, checker.getSize( elem2 ) );
 		checker.check( elem2 );
 		BOOST_CHECK_EQUAL( elem2->_isOptional, true );
-		BOOST_CHECK_EQUAL( elem2->_status, eStatusInvalid );
+		BOOST_CHECK_EQUAL( elem2->_status, eStatusInvalidButOptional );
 
 		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2 ) );
 		BOOST_CHECK_EQUAL( elem3->_id, node->next()->next()->getId() );
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_optional_repeated )
 		elem2->set( (const char*)&buff3, checker.getSize( elem2 ) );
 		checker.check( elem2 );
 		BOOST_CHECK_EQUAL( elem2->_isOptional, true );
-		BOOST_CHECK_EQUAL( elem2->_status, eStatusInvalid );
+		BOOST_CHECK_EQUAL( elem2->_status, eStatusInvalidButOptional );
 
 		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2 ) );
 		BOOST_CHECK_EQUAL( elem3->_id, node->next()->next()->getId() );
@@ -246,7 +246,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_optional_group )
 		elem2->set( (const char*)&buff3, checker.getSize( elem2 ) );
 		checker.check( elem2 );
 		BOOST_CHECK_EQUAL( elem2->_isOptional, true );
-		BOOST_CHECK_EQUAL( elem2->_status, eStatusInvalid );
+		BOOST_CHECK_EQUAL( elem2->_status, eStatusInvalidButOptional );
 
 		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2 ) );
 		BOOST_CHECK_EQUAL( elem3->_id, node->next()->next()->getId() );
@@ -296,7 +296,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_optional_group )
 		elem4->set( (const char*)&buff6, checker.getSize( elem4 ) );
 		checker.check( elem4 );
 		BOOST_CHECK_EQUAL( elem4->_isOptional, true );
-		BOOST_CHECK_EQUAL( elem4->_status, eStatusInvalid );
+		BOOST_CHECK_EQUAL( elem4->_status, eStatusInvalidButOptional );
 
 		std::shared_ptr< basic_element::Element > elem5( new basic_element::Element( elem4->next(), elem4, elem2 ) );
 		BOOST_CHECK_EQUAL( elem5->_id, node->next()->firstChild()->next()->next()->getId() );
@@ -352,7 +352,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_optional_group )
 		elem4->set( (const char*)&buff6, checker.getSize( elem4 ) );
 		checker.check( elem4 );
 		BOOST_CHECK_EQUAL( elem4->_isOptional, true );
-		BOOST_CHECK_EQUAL( elem4->_status, eStatusInvalid );
+		BOOST_CHECK_EQUAL( elem4->_status, eStatusInvalidButOptional );
 
 		std::shared_ptr< basic_element::Element > elem5( new basic_element::Element( elem4->next(), elem4, elem2 ) );
 		BOOST_CHECK_EQUAL( elem5->_id, node->next()->firstChild()->next()->next()->getId() );

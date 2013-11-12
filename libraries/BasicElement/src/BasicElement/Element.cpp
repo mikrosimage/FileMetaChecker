@@ -81,7 +81,7 @@ std::shared_ptr< spec_reader::SpecNode > Element::next( )
 		parent = _parent.lock();
 	
 	// Optional: if element optional & invalid, got to the next SpecNode
-	if( _isOptional && _status == eStatusInvalid )
+	if( _isOptional && _status == eStatusInvalidButOptional )
 	{
 		if( _specNode->next() != nullptr )
 			return _specNode->next();

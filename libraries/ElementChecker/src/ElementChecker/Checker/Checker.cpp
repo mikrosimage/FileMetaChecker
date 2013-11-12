@@ -120,7 +120,7 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 	if( element->_isOptional && status == eStatusInvalid && element->_iteration == 1 )
 	{
 		LOG_ERROR( "CHECKER: " << element->_id << ": is Optional" );
-		element->_status = status;
+		element->_status = eStatusInvalidButOptional;
 		_elementList.push_back( element );
 		return;
 	}
