@@ -55,38 +55,38 @@ protected:
 	std::vector< std::shared_ptr< Element > > _children;
 
 public:
-	std::string   _id;
-	std::string   _label;
+	const std::string   _id;
+	const std::string   _label;
 	
-	size_t        _uId;
-	size_t        _size;
-	size_t        _iteration;
+	const size_t        _uId;
+	size_t              _size;
+	size_t              _iteration;
 	
-	std::string   _countExpr;
-	std::string   _requiredExpr;
-	std::string   _groupSizeExpr;
+	const std::string   _countExpr;
+	const std::string   _requiredExpr;
+	const std::string   _groupSizeExpr;
 	
-	std::vector< std::string >           _values;
-	std::map< std::string, std::string > _map;
+	const std::vector< std::string >           _values;
+	const std::map< std::string, std::string > _map;
 
 	std::string   _mapValue;
 	std::string   _dispValue;
 	
-	ExpressionList _rangeExpr;
-	ExpressionList _repetExpr;
+	const ExpressionList _rangeExpr;
+	const ExpressionList _repetExpr;
 
-	EType         _type;
-	EDisplayType  _displayType;
+	const EType         _type;
+	const EDisplayType  _displayType;
 	
 	EStatus       _status;
 	
 	std::string   _error;
 	std::string   _warning;
 	
-	bool          _isGroup;
-	bool          _isOrdered;
+	const bool    _isGroup;
+	const bool    _isOrdered;
 	bool          _isOptional;
-	bool          _isBigEndian;
+	const bool    _isBigEndian;
 	bool          _checkedGroup;
 
 	char*         _data;

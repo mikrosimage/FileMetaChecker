@@ -147,15 +147,15 @@ void Element::initSize()
 
 		switch( _type )
 		{
-			case eTypeInt8         : _size =  1; break;
+			case eTypeInt8         :
 			case eTypeUInt8        : _size =  1; break;
-			case eTypeInt16        : _size =  2; break;
+			case eTypeInt16        :
 			case eTypeUInt16       : _size =  2; break;
-			case eTypeInt32        : _size =  4; break;
-			case eTypeUInt32       : _size =  4; break;
-			case eTypeInt64        : _size =  8; break;
-			case eTypeUInt64       : _size =  8; break;
+			case eTypeInt32        :
+			case eTypeUInt32       :
 			case eTypeFloat        : _size =  4; break;
+			case eTypeInt64        :
+			case eTypeUInt64       :
 			case eTypeDouble       : _size =  8; break;
 			case eTypeIeeeExtended : _size = 10; break;
 			default: break;
@@ -168,4 +168,3 @@ void Element::initSize()
 }
 
 }
-

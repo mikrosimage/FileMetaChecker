@@ -5,7 +5,7 @@
 
 namespace basic_element
 {
-	class Element; 
+	class Element;
 }
 
 namespace spec_reader

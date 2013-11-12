@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE( basic_element_element )
 				"id": "id",
 				"label": "label",
 				"type": "ascii",
-				"displayType": "raw"			
+				"displayType": "raw"
 			}
 		  ]
 		}
@@ -232,34 +232,40 @@ BOOST_AUTO_TEST_CASE( basic_element_next_first_child_recursivity )
 	LOG_INFO( "\n>>> basic_element_next_first_child_recursivity <<<" );
 	{
 		std::string jsonString = R"*(
+			{
+				"header": [
 				{
-					"header": [
-						{ "id": "value1",
-						  "label": "Value1",
-						  "type": "ascii",
-						  "group": [
-								{ "id": "value11",
-								  "label": "Value11",
-								  "type": "ascii" },
-								{ "id": "value12",
-								  "label": "Value12",
-								  "type": "ascii",
-								  "group": [
-										{ "id": "value121",
-										  "label": "Value121",
-										  "type": "ascii",
-										  "group": [
-											{ "id": "value1211", "label": "Value1211", "type": "ascii" },
-											{ "id": "value1212", "label": "Value1212", "type": "ascii" }
-										  ] }
-							      ] },
-								{ "id": "value13",
-								  "label": "Value13",
-								  "type": "ascii" }
-						  ] }
-					]
-				}
-			)*";
+					"id": "value1",
+					"label": "Value1",
+					"type": "ascii",
+					"group": [
+					{
+						"id": "value11",
+						"label": "Value11",
+						"type": "ascii"
+					},
+					{
+						"id": "value12",
+						"label": "Value12",
+						"type": "ascii",
+						"group": [
+						{
+							"id": "value121",
+							"label": "Value121",
+							"type": "ascii",
+							"group": [
+							{ "id": "value1211", "label": "Value1211", "type": "ascii" },
+							{ "id": "value1212", "label": "Value1212", "type": "ascii" }
+							]
+						} ]
+					},
+					{
+						"id": "value13",
+						"label": "Value13",
+						"type": "ascii"
+					} ]
+				} ]
+			} )*";
 
 		spec_reader::Specification spec;
 		spec.setFromString( jsonString );
@@ -499,13 +505,11 @@ BOOST_AUTO_TEST_CASE( basic_element_next_repetition_last )
 	LOG_INFO( "\n>>> basic_element_next_repetition_last <<<" );
 	{
 		std::string jsonString = R"*(
-				{
-					"header": [
-						{ "id": "value1", "label": "Value1", "type": "ascii" },
-						{ "id": "value2", "label": "Value2", "type": "ascii", "repeated": "3" }
-					]
-				}
-			)*";
+		{
+			"header": [
+			{ "id": "value1", "label": "Value1", "type": "ascii" },
+			{ "id": "value2", "label": "Value2", "type": "ascii", "repeated": "3" } ]
+		} )*";
 
 		spec_reader::Specification spec;
 		spec.setFromString( jsonString );

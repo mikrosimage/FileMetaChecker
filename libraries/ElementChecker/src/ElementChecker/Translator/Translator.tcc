@@ -99,17 +99,17 @@ void Translator::getOrderedData( char* buffer )
 	else
 		std::memcpy( buffer, _ref->_data, _ref->_size );
 
-	if( ( _ref->_type ==eTypeInt8
-	   || _ref->_type ==eTypeUInt8
-	   || _ref->_type ==eTypeInt16
-	   || _ref->_type ==eTypeUInt16
-	   || _ref->_type ==eTypeInt32
-	   || _ref->_type ==eTypeUInt32
-	   || _ref->_type ==eTypeInt64
-	   || _ref->_type ==eTypeUInt64
-	   || _ref->_type ==eTypeFloat
-	   || _ref->_type ==eTypeDouble
-	   || _ref->_type ==eTypeIeeeExtended )
+	if( ( _ref->_type == eTypeInt8
+	   || _ref->_type == eTypeUInt8
+	   || _ref->_type == eTypeInt16
+	   || _ref->_type == eTypeUInt16
+	   || _ref->_type == eTypeInt32
+	   || _ref->_type == eTypeUInt32
+	   || _ref->_type == eTypeInt64
+	   || _ref->_type == eTypeUInt64
+	   || _ref->_type == eTypeFloat
+	   || _ref->_type == eTypeDouble
+	   || _ref->_type == eTypeIeeeExtended )
 	   && isSystemLittleEndian() )
 	{
 		char* temp = new char[ _ref->_size ];

@@ -9,7 +9,6 @@ namespace common
 namespace details
 {
 
-
 static const std::string kColorStd      ( "\x1b[0m" );
 
 static const std::string kColorBlack    ( "\x1b[30m" );
@@ -29,7 +28,7 @@ static const std::string kColorBoldBlue     ( "\x1b[34;1m" );
 static const std::string kColorBoldMagenta  ( "\x1b[35;1m" );
 static const std::string kColorBoldCyan     ( "\x1b[36;1m" );
 static const std::string kColorBoldWhite    ( "\x1b[37;1m" );
-	
+
 }
 
 }
