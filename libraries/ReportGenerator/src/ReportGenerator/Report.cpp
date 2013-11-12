@@ -27,10 +27,23 @@ void Report::print()
 	std::cout << std::setfill( '-' ) << std::setw( 201 ) << " " << std::endl;
 
 	for( std::shared_ptr< basic_element::Element > element : _elementList )
-		print( element );
+	{
+		switch( element->_status )
+		{
+			case eStatusNotChecked               : break;
+			case eStatusValid                    : print( element, common::details::kColorGreen );  break;
+			case eStatusInvalid                  : print( element, common::details::kColorRed );    break;
+			case eStatusInvalidButOptional       : break;
+			case eStatusInvalidForUnordered      : print( element, common::details::kColorRed );    break;
+			case eStatusInvalidButSkip           : break;
+			case eStatusInvalidGroupForIteration : print( element, common::details::kColorRed );    break;
+			case eStatusPassOver                 : print( element, common::details::kColorGreen );  break;
+			case eStatusSkip                     : break;
+		}
+	}
 }
 
-void Report::print( const std::shared_ptr< basic_element::Element > element )
+void Report::print( const std::shared_ptr< basic_element::Element > element, const std::string& dispColor )
 {
 	size_t count = 0;
 	std::shared_ptr< basic_element::Element > elemCopy( element );
@@ -41,20 +54,6 @@ void Report::print( const std::shared_ptr< basic_element::Element > element )
 		if( parent.use_count() == 0 )
 			break;
 		elemCopy = parent.lock();
-	}
-
-	std::string dispColor;
-	switch( element->_status )
-	{
-		case eStatusNotChecked               : dispColor = common::details::kColorYellow; break;
-		case eStatusValid                    : dispColor = common::details::kColorGreen;  break;
-		case eStatusInvalid                  : dispColor = common::details::kColorRed;    break;
-		case eStatusInvalidButOptional       : dispColor = common::details::kColorRed;    break;
-		case eStatusInvalidForUnordered      : dispColor = common::details::kColorRed;    break;
-		case eStatusInvalidButSkip           : dispColor = common::details::kColorRed;    break;
-		case eStatusInvalidGroupForIteration : dispColor = common::details::kColorRed;    break;
-		case eStatusPassOver                 : dispColor = common::details::kColorGreen;  break;
-		case eStatusSkip                     : dispColor = common::details::kColorYellow; break;
 	}
 
 	std::cout << dispColor 
