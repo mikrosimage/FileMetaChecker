@@ -29,7 +29,7 @@ void Map< KeyType >::setMap( const std::map< std::string, std::string >& map )
 	try
 	{
 		for( std::pair< std::string, std::string > pair : map )
-			_map.emplace( fromString( pair.first ), pair.second );
+			_map[ fromString( pair.first ) ] = pair.second;
 
 		// for( std::pair< KeyType, std::string > pair : _map )
 		// 	LOG_TRACE( "Map::setMap: " << pair.first << " | " << pair.second );
