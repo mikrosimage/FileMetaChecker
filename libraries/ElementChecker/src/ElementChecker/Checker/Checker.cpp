@@ -113,6 +113,7 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 		LOG_ERROR( "CHECKER: (" << element->_id << ") requirement not valid, element skipped" );
 		element->_isOptional = true;
 		element->_status = eStatusSkip;
+		_elementList.push_back( element );
 		return;
 	}
 
@@ -120,6 +121,7 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 	{
 		LOG_ERROR( "CHECKER: " << element->_id << ": is Optional" );
 		element->_status = status;
+		_elementList.push_back( element );
 		return;
 	}
 
@@ -233,10 +235,10 @@ void Checker::checkLastUnorderedElement( const std::shared_ptr< basic_element::E
 	{
 		for( std::string id : childIds )				
 		{
+
 			if( prev->_id == id && prev->_status == eStatusValid )
 			{
-				LOG_TRACE( "CHECKER: >>> childIds: " << id );
-
+				// LOG_FATAL( "CHECKER: >>> childIds: " << id );
 				std::string errorMessage;
 				if( ! prev->_repetExpr.empty() && ! isIterationValid( prev, errorMessage ) )
 				{
@@ -247,6 +249,12 @@ void Checker::checkLastUnorderedElement( const std::shared_ptr< basic_element::E
 				}
 
 				childIds.erase( id );
+			}
+
+			for( auto elem : _elementList )
+			{
+				if( elem->_id == id && elem->getParent()->_id == element->getParent()->_id && ( elem->_isOptional || elem->_status == eStatusSkip ) )
+					childIds.erase( id );
 			}
 		}
 		prev = prev->getPrevious();
