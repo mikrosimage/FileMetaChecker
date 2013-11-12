@@ -66,7 +66,7 @@ Element::Element( const std::shared_ptr< sr::SpecNode > node,
 	if( ! _parent.expired() )
 		_parent.lock()->_children.push_back( std::make_shared< Element >( *this ) );
 
-	LOG_ERROR( "ELEMENT: " << _id << ": " << &*this << " - Parent: " << &*_parent.lock() << " - Previous: " << &( *( _previous.lock().get() ) ) << " - SpecNode: " << &*_specNode.get() << " - Iteration: " << _iteration );
+	LOG_ERROR( "ELEMENT: " << _id << ": " << &*this << " - Parent: " << &*_parent.lock() << " - Previous: " << &( *( _previous.lock() ) ) << " - SpecNode: " << &*_specNode.get() << " - Iteration: " << _iteration );
 }
 
 std::shared_ptr< spec_reader::SpecNode > Element::next( )
@@ -90,11 +90,14 @@ std::shared_ptr< spec_reader::SpecNode > Element::next( )
 	}
 	
 	// Unordered Groups: if element valid and parent is unordered, go to the first child of the parent
-	if( _status == eStatusValid && _parent.use_count() != 0 && ( ! parent->_isOrdered ) )
+	if( _status == eStatusValid && _parent.use_count() != 0 && ( ! parent->_isOrdered ) && ( ! _isGroup || _checkedGroup ) )
+	{
+		// LOG_ERROR( "Element::next " << _id << ": Back to START!" );
 		return parent->_specNode->firstChild();
+	}
 	
 	// Groups: if element has a group not already checked and is valid or first time parsed, go to the first child
-	if( _specNode->isGroup() && ! _checkedGroup && ( _iteration == 1 || _status == eStatusValid ) )
+	if( _specNode->isGroup() && ! _checkedGroup && ( _iteration == 1 || _status == eStatusValid ) && _status != eStatusInvalidButSkip )
 	{
 		// LOG_ERROR( "Element::next " << _id << ": IsGroup" );
 		_checkedGroup = true;
