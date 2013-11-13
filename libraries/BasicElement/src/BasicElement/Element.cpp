@@ -18,8 +18,8 @@ Element::Element( const std::shared_ptr< sr::SpecNode > node,
 	, _id            ( node->getId() )
 	, _label         ( node->getLabel() )
 	, _uId           ( node->getUId() )
-	, _size          ( 0 )
-	, _iteration     ( 1 )
+	, _size          ( getElementSize( node->getId(), node->getType(), node->getValues() ) )
+	, _iteration     ( getElementIteration( node->getId(), node->getRepetitions(), previous, parent ) )
 	, _countExpr     ( node->getCount() )
 	, _requiredExpr  ( node->getRequirement() )
 	, _groupSizeExpr ( node->getGroupSize() )
@@ -42,26 +42,6 @@ Element::Element( const std::shared_ptr< sr::SpecNode > node,
 	, _data          ( nullptr )
 {
 	LOG_ERROR( "____________________" << _id <<  "____________________" );
-	initSize();
-	if( ! _repetExpr.empty() )
-	{
-		std::shared_ptr< Element > prev = previous;
-		while( prev != nullptr || ( parent != nullptr && prev->_id != parent->_id ) )
-		{
-			if( prev->_id == _id && ( prev->_status == eStatusValid || prev->_status == eStatusPassOver ) )
-			{
-				_iteration = prev->_iteration + 1;
-				// LOG_ERROR( "ELEMENT: >>>> prev: " << prev->_id << " @" << &*prev );
-				break;
-			}
-
-			// LOG_ERROR( "ELEMENT: prev: " << prev->_id << " @" << &*prev );
-			if( parent != nullptr && prev->_id == parent->_id )
-				break;
-
-			prev = prev->getPrevious();
-		}
-	}
 
 	if( ! _parent.expired() )
 		_parent.lock()->_children.push_back( std::make_shared< Element >( *this ) );
@@ -133,38 +113,66 @@ void Element::set( const char* data, const size_t& size )
 	std::memcpy( _data, data, _size );
 }
 
-void Element::initSize()
+size_t Element::getElementSize( const std::string& id, const EType type, const std::vector<std::string>& values )
 {
+	size_t size = 0;
 	try
 	{
-		if( ! _values.empty() )
+		if( ! values.empty() )
 		{
-			_size = _values.at( 0 ).size();
-			for( std::string value : _values )
-				if( value.size() != _size )
+			size = values.at( 0 ).size();
+			for( std::string value : values )
+				if( value.size() != size )
 					throw std::runtime_error( "Values must have the same size" );
 		}
 
-		switch( _type )
+		switch( type )
 		{
 			case eTypeInt8         :
-			case eTypeUInt8        : _size =  1; break;
+			case eTypeUInt8        : return 1; break;
 			case eTypeInt16        :
-			case eTypeUInt16       : _size =  2; break;
+			case eTypeUInt16       : return 2; break;
 			case eTypeInt32        :
 			case eTypeUInt32       :
-			case eTypeFloat        : _size =  4; break;
+			case eTypeFloat        : return 4; break;
 			case eTypeInt64        :
 			case eTypeUInt64       :
-			case eTypeDouble       : _size =  8; break;
-			case eTypeIeeeExtended : _size = 10; break;
+			case eTypeDouble       : return 8; break;
+			case eTypeIeeeExtended : return 10; break;
 			default: break;
 		}
 	}
 	catch( std::runtime_error e )
 	{
-		LOG_ERROR( "(" << _id << ") " << e.what() );
+		LOG_ERROR( "(" << id << ") " << e.what() );
 	}
+	return size;
+}
+
+size_t Element::getElementIteration( const std::string& id, const ExpressionList& repetExpr, const std::shared_ptr< Element >& previous, const std::shared_ptr< Element >& parent )
+{
+	size_t iteration = 1;
+
+	if( ! repetExpr.empty() )
+	{
+		std::shared_ptr< Element > prev = previous;
+		while( prev != nullptr || ( parent != nullptr && prev->_id != parent->_id ) )
+		{
+			if( prev->_id == id && ( prev->_status == eStatusValid || prev->_status == eStatusPassOver ) )
+			{
+				iteration = prev->_iteration + 1;
+				// LOG_ERROR( "ELEMENT: >>>> prev: " << prev->_id << " @" << &*prev );
+				break;
+			}
+
+			// LOG_ERROR( "ELEMENT: prev: " << prev->_id << " @" << &*prev );
+			if( parent != nullptr && prev->_id == parent->_id )
+				break;
+
+			prev = prev->getPrevious();
+		}
+	}
+	return iteration;
 }
 
 }

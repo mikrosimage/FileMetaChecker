@@ -46,7 +46,8 @@ public:
 	std::shared_ptr< spec_reader::SpecNode > getSpecNode()       { return _specNode; }
 
 protected:
-	void initSize();
+	static size_t getElementSize( const std::string& id, const EType type, const std::vector<std::string>& values );
+	static size_t getElementIteration( const std::string& id, const ExpressionList& repetExpr, const std::shared_ptr< Element >& previous, const std::shared_ptr< Element >& parent );
 
 protected:
 	std::weak_ptr< Element > _parent;
