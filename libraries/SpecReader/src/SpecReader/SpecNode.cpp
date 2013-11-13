@@ -13,9 +13,7 @@ namespace spec_reader
 
 size_t SpecNode::_globalIndex = 0;
 
-SpecNode::SpecNode( const Specification* spec,
-	                const bpt::ptree::const_iterator node,
-	                const SpecNode* parent )
+SpecNode::SpecNode( const Specification* spec, const TreeNodeIt node, const SpecNode* parent )
 	: _uId ( _globalIndex++ )
 	, _node( node )
 	, _parent( parent )
@@ -265,7 +263,7 @@ std::set< std::string > SpecNode::getChildrenNodes() const
 
 std::string SpecNode::getProperty( const std::string& prop ) const
 {
-	try 
+	try
 	{
 		return _node->second.get< std::string >( prop );
 	}

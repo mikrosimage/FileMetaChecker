@@ -18,9 +18,10 @@ class Specification;
 
 class SpecNode
 {
+	typedef boost::property_tree::ptree::const_iterator TreeNodeIt;
 public:
 	SpecNode( const Specification* spec,
-		      const boost::property_tree::ptree::const_iterator node, 
+		      const TreeNodeIt node,
 		      const SpecNode* parent = nullptr );
 
 	size_t getUId( ) const { return _uId; }
@@ -53,20 +54,17 @@ public:
 	std::set< std::string > getChildrenNodes() const;
 	
 protected:
-	boost::property_tree::ptree::const_iterator getIterator() const
-	{
-		return _node;
-	}
+	TreeNodeIt getIterator() const { return _node; }
 
 private:
 	std::string getProperty( const std::string& prop ) const;
 	std::string getProperty( const std::string& prop, const std::string& defaultValue ) const;
 
 private:
-	size_t _uId;
-	boost::property_tree::ptree::const_iterator _node;
-	const SpecNode*                             _parent;
-	const Specification*                        _specification;
+	size_t               _uId;
+	TreeNodeIt           _node;
+	const SpecNode*      _parent;
+	const Specification* _specification;
 	
 	static size_t _globalIndex;
 };
