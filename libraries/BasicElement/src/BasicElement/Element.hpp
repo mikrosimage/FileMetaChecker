@@ -61,7 +61,7 @@ public:
 	
 	const size_t        _uId;
 	size_t              _size;
-	size_t              _iteration;
+	const size_t        _iteration;
 	
 	const std::string   _countExpr;
 	const std::string   _requiredExpr;
