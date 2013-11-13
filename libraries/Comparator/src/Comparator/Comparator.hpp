@@ -29,14 +29,15 @@ namespace comparator
 
 class Comparator
 {
+	typedef std::shared_ptr< basic_element::Element > PtrElement;
+	typedef std::shared_ptr< spec_reader::SpecNode  > PtrSpecNode;
 public:
 	Comparator();
 	void check( spec_reader::Specification& spec, file_reader::FileReader& reader, report_generator::Report& report );
 
 private:
-	bool isInUnorderedGroup( const std::shared_ptr< basic_element::Element > element );
-	std::shared_ptr< basic_element::Element > getNextParent( const std::shared_ptr< basic_element::Element > element,
-		                                                     const std::shared_ptr< spec_reader::SpecNode  > node );
+	bool       isInUnorderedGroup( const PtrElement element );
+	PtrElement getNextParent     ( const PtrElement element, const PtrSpecNode node );
 	
 };
 

@@ -17,11 +17,11 @@ namespace comparator
 Comparator::Comparator()
 {
 }
-	
+
 void Comparator::check( spec_reader::Specification& spec, file_reader::FileReader& file, report_generator::Report& report )
 {
-	std::shared_ptr<  spec_reader::SpecNode > node = spec.getFirstNode();
-	std::shared_ptr< basic_element::Element > element( new basic_element::Element( node ) );
+	PtrSpecNode node = spec.getFirstNode();
+	PtrElement element( new basic_element::Element( node ) );
 
 	element_checker::Checker checker;
 	size_t size = checker.getSize( element );
@@ -41,7 +41,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 
 	while( ( node = element->next() ) != nullptr )	// if end of specification : stop
 	{
-		std::shared_ptr< basic_element::Element > previous = element;
+		PtrElement previous = element;
 		switch( element->_status )
 		{
 			case eStatusInvalidButOptional  :
@@ -83,7 +83,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 
 bool Comparator::isInUnorderedGroup( const std::shared_ptr< basic_element::Element > element )
 {
-	std::shared_ptr< basic_element::Element > parent = element->getParent();
+	PtrElement parent = element->getParent();
 	while( parent != nullptr )
 	{
 		if( ! parent->_isOrdered )
@@ -92,10 +92,9 @@ bool Comparator::isInUnorderedGroup( const std::shared_ptr< basic_element::Eleme
 	return false;
 }
 
-std::shared_ptr< basic_element::Element > Comparator::getNextParent( const std::shared_ptr< basic_element::Element > element,
-		                                                             const std::shared_ptr< spec_reader::SpecNode  > node )
+Comparator::PtrElement Comparator::getNextParent( const PtrElement element, const PtrSpecNode node )
 {
-	std::shared_ptr< basic_element::Element > parent = element->getParent();
+	PtrElement parent = element->getParent();
 	bool isLastInGroup = ( node->next() == nullptr && ( parent->_isOrdered || ( ! parent->_isOrdered && element->_status == eStatusInvalidButSkip ) ) );
 
 	if( element->_isGroup
@@ -127,5 +126,3 @@ std::shared_ptr< basic_element::Element > Comparator::getNextParent( const std::
 }
 
 }
-
-
