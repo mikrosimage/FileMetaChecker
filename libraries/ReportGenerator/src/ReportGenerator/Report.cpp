@@ -30,21 +30,22 @@ void Report::print()
 	{
 		switch( element->_status )
 		{
-			case eStatusSkip :
-			case eStatusInvalidButSkip :
+			case eStatusSkip               :
+			case eStatusInvalidButSkip     :
 			case eStatusInvalidButOptional :
-			case eStatusNotChecked :
+			case eStatusNotChecked         :
 				break;
 
-			case eStatusValid :
+			case eStatusValid    :
 			case eStatusPassOver :
 			{
 				print( element, common::details::kColorGreen );
 				break;
 			}
 
-			case eStatusInvalid :
-			case eStatusInvalidForUnordered :
+			case eStatusInvalid                  :
+			case eStatusInvalidForUnordered      :
+			case eStatusInvalidForIteration      :
 			case eStatusInvalidGroupForIteration :
 			{
 				print( element, common::details::kColorRed );
