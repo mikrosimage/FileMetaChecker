@@ -183,7 +183,6 @@ BOOST_AUTO_TEST_CASE( element_checker_test_checker_requirement )
 		BOOST_CHECK( ! elem2->_requiredExpr.empty() );
 		elem2->set( (const char*)&buff2, checker.getSize( elem2 ) );
 		checker.check( elem2 );
-		BOOST_CHECK_EQUAL( elem2->_isOptional, true );
 		BOOST_CHECK_EQUAL( elem2->_status, eStatusSkip );
 
 		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2 ) );

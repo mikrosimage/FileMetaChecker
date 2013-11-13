@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_repetition )
 		std::shared_ptr< basic_element::Element > elem5( new basic_element::Element( elem4->next(), elem4 ) );
 		elem5->set( (const char*)&buff3, 5 );
 		checker.check( elem5 );
-		BOOST_CHECK_EQUAL( elem5->_status, eStatusInvalid );
+		BOOST_CHECK_EQUAL( elem5->_status, eStatusInvalidButSkip );
 		BOOST_CHECK( elem5->_error.find( "repetition" ) == std::string::npos );
 
 		std::shared_ptr< basic_element::Element > elem6( new basic_element::Element( elem5->next(), elem5 ) );
@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_repetition )
 		std::shared_ptr< basic_element::Element > elem5( new basic_element::Element( elem4->next(), elem4 ) );
 		elem5->set( (const char*)&buff3, 5 );
 		checker.check( elem5 );
-		BOOST_CHECK_EQUAL( elem5->_status, eStatusInvalid );
+		BOOST_CHECK_EQUAL( elem5->_status, eStatusInvalidButSkip );
 		BOOST_CHECK( elem5->_error.find( "repetition" ) == std::string::npos );
 
 		std::shared_ptr< basic_element::Element > elem6( new basic_element::Element( elem5->next(), elem5 ) );
@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_repetition )
 		std::shared_ptr< basic_element::Element > elem5( new basic_element::Element( elem4->next(), elem4 ) );
 		elem5->set( (const char*)&buff3, 5 );
 		checker.check( elem5 );
-		BOOST_CHECK_EQUAL( elem5->_status, eStatusInvalid );
+		BOOST_CHECK_EQUAL( elem5->_status, eStatusInvalidButSkip );
 		BOOST_CHECK( elem5->_error.find( "repetition" ) == std::string::npos );
 
 		std::shared_ptr< basic_element::Element > elem6( new basic_element::Element( elem5->next(), elem5 ) );
@@ -224,7 +224,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_repetition )
 		std::shared_ptr< basic_element::Element > elem5( new basic_element::Element( elem4->next(), elem4 ) );
 		elem5->set( (const char*)&buff3, 5 );
 		checker.check( elem5 );
-		BOOST_CHECK_EQUAL( elem5->_status, eStatusInvalid );
+		BOOST_CHECK_EQUAL( elem5->_status, eStatusInvalidButSkip );
 		BOOST_CHECK( elem5->_error.find( "repetition" ) == std::string::npos );
 
 		std::shared_ptr< basic_element::Element > elem6( new basic_element::Element( elem5->next(), elem5 ) );
@@ -303,7 +303,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_repetition_invalid )
 		std::shared_ptr< basic_element::Element > elem4( new basic_element::Element( elem3->next(), elem3 ) );
 		elem4->set( (const char*)&buff3, 5 );
 		checker.check( elem4 );
-		BOOST_CHECK_EQUAL( elem4->_status, eStatusInvalid );
+		BOOST_CHECK_EQUAL( elem4->_status, eStatusInvalidForIteration );
 		BOOST_CHECK( elem4->_error.find( "repetition" ) != std::string::npos );
 
 		std::shared_ptr< basic_element::Element > elem5( new basic_element::Element( elem4->next(), elem4 ) );
@@ -343,7 +343,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_repetition_invalid )
 		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2 ) );
 		elem3->set( (const char*)&buff3, 5 );
 		checker.check( elem3 );
-		BOOST_CHECK_EQUAL( elem3->_status, eStatusInvalid );
+		BOOST_CHECK_EQUAL( elem3->_status, eStatusInvalidForIteration );
 		BOOST_CHECK( elem3->_error.find( "repetition" ) != std::string::npos );
 
 		std::shared_ptr< basic_element::Element > elem4( new basic_element::Element( elem3->next(), elem3 ) );
@@ -403,7 +403,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_repetition_invalid )
 		std::shared_ptr< basic_element::Element > elem7( new basic_element::Element( elem6->next(), elem6 ) );
 		elem7->set( (const char*)&buff3, 5 );
 		checker.check( elem7 );
-		BOOST_CHECK_EQUAL( elem7->_status, eStatusInvalid );
+		BOOST_CHECK_EQUAL( elem7->_status, eStatusInvalidForIteration );
 		BOOST_CHECK( elem7->_error.find( "repetition" ) != std::string::npos );
 
 		std::shared_ptr< basic_element::Element > elem8( new basic_element::Element( elem7->next(), elem7 ) );
@@ -463,7 +463,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_repetition_invalid )
 		std::shared_ptr< basic_element::Element > elem7( new basic_element::Element( elem6->next(), elem6 ) );
 		elem7->set( (const char*)&buff3, 5 );
 		checker.check( elem7 );
-		BOOST_CHECK_EQUAL( elem7->_status, eStatusInvalid );
+		BOOST_CHECK_EQUAL( elem7->_status, eStatusInvalidForIteration );
 		BOOST_CHECK( elem7->_error.find( "repetition" ) != std::string::npos );
 
 		std::shared_ptr< basic_element::Element > elem8( new basic_element::Element( elem7->next(), elem7 ) );

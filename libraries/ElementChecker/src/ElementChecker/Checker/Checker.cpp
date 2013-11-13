@@ -111,7 +111,6 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 	if( ! isRequirementValid( element ) )
 	{
 		LOG_ERROR( "CHECKER: (" << element->_id << ") requirement not valid, element skipped" );
-		element->_isOptional = true;
 		element->_status = eStatusSkip;
 		_elementList.push_back( element );
 		return;
@@ -142,6 +141,7 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 	if( status == eStatusInvalid && ! element->_repetExpr.empty() )
 	{
 		LOG_ERROR( "CHECKER: check Repetitions" );
+		element->_status = eStatusInvalidButSkip;
 		std::string errorMessage;
 		std::shared_ptr< basic_element::Element > previous = element->getPrevious();
 		if( ! isIterationValid( previous, errorMessage ) )
@@ -149,6 +149,7 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 			LOG_ERROR( element->_id << ": " << errorMessage );
 			element->_error += errorMessage;
 			_elementList.push_back( element );
+			element->_status = eStatusInvalidForIteration;
 		}
 		LOG_FATAL( "CHECKER: repetitions " << previous );
 		return;
