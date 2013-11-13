@@ -42,7 +42,6 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 	while( ( node = element->next() ) != nullptr )	// if end of specification : stop
 	{
 		std::shared_ptr< basic_element::Element > previous = element;
-
 		switch( element->_status )
 		{
 			case eStatusInvalidButOptional  :
@@ -67,7 +66,6 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 			size = file.getLength() - file.getPosition();
 		}
 
-		LOG_WARNING( "Size: " << size << "/" << file.getLength() - file.getPosition() );
 		char buffer[ size ];
 		if( ! file.readData( buffer, size ) )
 			throw std::runtime_error( "End of file, cannot read data" );
