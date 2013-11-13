@@ -85,7 +85,7 @@ public:
 	
 	const bool    _isGroup;
 	const bool    _isOrdered;
-	bool          _isOptional;
+	const bool    _isOptional;
 	const bool    _isBigEndian;
 	bool          _checkedGroup;
 
