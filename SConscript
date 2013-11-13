@@ -44,7 +44,7 @@ SConscript(
 				'libraries/ReportGenerator',
 				'libraries/Comparator',
 				# 'libraries/systemInfo',
-				# 'apps',
+				'apps',
 				'libraries',
 			], accept=['SConscript'] )
 	)
