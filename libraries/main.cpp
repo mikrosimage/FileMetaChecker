@@ -7,7 +7,7 @@
 
 int main( int argc, char** argv )
 {
-	Comparator c;
+	comparator::Comparator c;
 
 	// std::stringbuf buffer;
 	file_reader::FileReader f( NULL );
