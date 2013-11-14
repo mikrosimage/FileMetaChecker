@@ -4,12 +4,10 @@
 
 #include <iostream>
 
-namespace sr = spec_reader;
-
 namespace basic_element
 {
 
-Element::Element( const std::shared_ptr< sr::SpecNode > node,
+Element::Element( const std::shared_ptr< spec_reader::SpecNode > node,
 	              const std::shared_ptr< Element > previous,
 	              const std::shared_ptr< Element > parent )
 	: _parent        ( parent )
@@ -92,7 +90,7 @@ std::shared_ptr< spec_reader::SpecNode > Element::next( )
 		return _specNode;
 	}
 
-	std::shared_ptr< sr::SpecNode > nextNode = _specNode->next();
+	std::shared_ptr< spec_reader::SpecNode > nextNode = _specNode->next();
 
 	// Last Element: if their is no more SpecNode after and parent exists, go to the node after the parent
 	if( nextNode == nullptr && _parent.use_count() != 0 )
