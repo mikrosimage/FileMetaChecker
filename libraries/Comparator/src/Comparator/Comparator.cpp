@@ -78,7 +78,6 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 	}
 
 	report.init( checker.getElementList() );
-	report.print();		// @todelete
 }
 
 bool Comparator::isInUnorderedGroup( const std::shared_ptr< basic_element::Element > element )
@@ -95,7 +94,7 @@ bool Comparator::isInUnorderedGroup( const std::shared_ptr< basic_element::Eleme
 Comparator::PtrElement Comparator::getNextParent( const PtrElement element, const PtrSpecNode node )
 {
 	PtrElement parent = element->getParent();
-	bool isLastInGroup = ( node->next() == nullptr && ( parent->_isOrdered || ( ! parent->_isOrdered && element->_status == eStatusInvalidButSkip ) ) );
+	bool isLastInGroup = ( node->next() == nullptr && ( parent == nullptr || ( parent->_isOrdered || ( ! parent->_isOrdered && element->_status == eStatusInvalidButSkip ) ) ) );
 
 	if( element->_isGroup
 	 && ! element->_checkedGroup
