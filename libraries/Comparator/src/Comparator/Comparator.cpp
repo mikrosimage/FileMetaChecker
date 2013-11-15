@@ -65,7 +65,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 			LOG_WARNING( "Critical remaining file data size: " << size << "/" << file.getLength() - file.getPosition() );
 			size = file.getLength() - file.getPosition();
 		}
-
+		LOG_FATAL( "Size: " << size );
 		char buffer[ size ];
 		if( ! file.readData( buffer, size ) )
 			throw std::runtime_error( "End of file, cannot read data" );
@@ -74,10 +74,13 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 		checker.check( element );
 		LOG_WARNING( "COMPARATOR : " << element->_id << " << Prev: " << previous << " - " << statusMap.at( element->_status ) << " | " << element->_dispValue );
 
+		checkGroupSize( element, file );
+
 		parent = getNextParent( element, node );
 	}
 
 	report.init( checker.getElementList() );
+	// report.print();								// @todelete !
 }
 
 bool Comparator::isInUnorderedGroup( const std::shared_ptr< basic_element::Element > element )
@@ -122,6 +125,47 @@ Comparator::PtrElement Comparator::getNextParent( const PtrElement element, cons
 		parent = element->getParent();
 	}
 	return parent;
+}
+
+
+void Comparator::checkGroupSize( const PtrElement element, file_reader::FileReader& file )
+{
+	PtrElement parent   = element->getParent();
+	PtrElement previous = element->getPrevious();
+	
+	if( parent != nullptr && previous != nullptr && element->getSpecNode()->next() == nullptr && ! parent->_groupSizeExpr.empty() )
+	{
+		size_t groupSize = element->_size;
+
+		while( previous != nullptr || previous->_id != parent->_id )
+		{
+			groupSize += previous->_size;
+			if( previous->_id == parent->_id )
+				break;
+			previous = previous->getPrevious();
+		}
+
+		int sizeDiff = parent->_groupSize - groupSize;
+		if( sizeDiff != 0 )
+		{
+			if( sizeDiff > 0 )
+			{
+				std::stringstream errorMessage;
+				errorMessage << "Group size difference: " << sizeDiff << " missing bytes - ";
+				parent->_error = errorMessage.str();
+				throw std::runtime_error( errorMessage.str() );
+			}
+			if( sizeDiff < 0 )
+			{
+				std::stringstream warningMessage;
+				warningMessage << "Group size difference: " << abs( sizeDiff ) << " unexpected bytes - ";
+				parent->_warning += warningMessage.str();
+				file.goForward( abs( sizeDiff ) );
+				LOG_WARNING( warningMessage.str() << "go forward..." );
+			}
+		}
+	}
+	return;
 }
 
 }

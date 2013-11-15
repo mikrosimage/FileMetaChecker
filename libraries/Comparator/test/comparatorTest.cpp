@@ -52,6 +52,7 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_1 )
 										"label": "Value121",
 										"type": "ascii",
 										"values": "D4",
+										"groupSize": "6",
 										"group": [
 											{ "id": "value1211", "label": "Value1211", "type": "ascii", "values": "E5" },
 											{ "id": "value1212", "label": "Value1212", "type": "uint16" },
@@ -114,7 +115,7 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_1 )
 
 	std::string str = "A1";
 	str += "B2B2B2B2B2B2B2B2B2B2";
-	str += "C3D4EXF6H8";
+	str += "C3D4EXF600H8";
 	str += "I9I92I93I91";
 	str += "END";
 
@@ -248,5 +249,60 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_2 )
 
 	BOOST_CHECK_EQUAL( file.isEndOfFile(), true );
 }
+
+BOOST_AUTO_TEST_CASE( comparator_test_comparator_3 )
+{
+	LOG_INFO( "\n>>> comparator_test_comparator 3 <<<" );
+	std::string jsonString = R"*(
+			{
+				"header": [
+					{
+						"id": "value1",
+						"label": "Value1",
+						"type": "ascii",
+						"values": "A1",
+						"groupSize": "12",
+						"group": [
+							{ "id": "value11", "label": "Value11", "type": "ascii", "values": "S19" },
+							{ "id": "value12", "label": "Value12", "type": "ascii", "values": "T20" },
+							{ "id": "value13", "label": "Value13", "type": "ascii", "values": "U21" }
+						]
+					},
+					{
+						"id": "valueEnd",
+						"label": "ValueEnd",
+						"type": "ascii",
+						"values": "END"
+					}
+				]
+			}
+		)*";
+
+	spec_reader::Specification spec;
+	spec.setFromString( jsonString );
+	std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
+	BOOST_CHECK_EQUAL( node->getId(),                               "value1"   );
+	BOOST_CHECK_EQUAL( node->firstChild()->getId(),                 "value11"  );
+	BOOST_CHECK_EQUAL( node->firstChild()->next()->getId(),         "value12"  );
+	BOOST_CHECK_EQUAL( node->firstChild()->next()->next()->getId(), "value13"  );
+	BOOST_CHECK_EQUAL( node->next()->getId(),                       "valueEnd" );
+
+	Comparator comp;
+
+	std::stringbuf buffer;
+	file_reader::FileReader file( &buffer );
+
+	std::string str = "A1";
+	str += "S19T20U21";
+	str += "END";
+
+	buffer.sputn( str.c_str(), str.size() );
+	BOOST_CHECK_EQUAL( file.getLength(), str.size() );
+
+	report_generator::Report report;
+
+	BOOST_CHECK_THROW( comp.check( spec, file, report ), std::runtime_error );
+}
+
 
 BOOST_AUTO_TEST_SUITE_END()

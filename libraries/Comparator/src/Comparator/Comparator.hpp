@@ -38,7 +38,7 @@ public:
 private:
 	bool       isInUnorderedGroup( const PtrElement element );
 	PtrElement getNextParent     ( const PtrElement element, const PtrSpecNode node );
-	
+	void       checkGroupSize    ( const PtrElement element, file_reader::FileReader& file );
 };
 
 }
