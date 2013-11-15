@@ -1,10 +1,13 @@
 #include "Report.hpp"
 
 #include <iostream>
+#include <sstream>
 
 #include <BasicElement/Element.hpp>
 
 #include <Common/color.hpp>
+
+#include <rapidxml/rapidxml_print.hpp>
 
 namespace report_generator 
 {
@@ -74,8 +77,6 @@ void Report::print( const std::shared_ptr< basic_element::Element > element, con
 	if( ! element->_repetExpr.empty() ) comment += "Repeated ";
 	if( ! element->_isOrdered )         comment += "Unordered ";
 
-	// element->_error = "error : this is an error !";
-
 	std::cout
 		<< dispColor
 		<< std::setfill( ' ' ) << std::setw( 5 * ( count - 1 ) + 1 ) << ""
@@ -97,5 +98,94 @@ void Report::print( const std::shared_ptr< basic_element::Element > element, con
 		<< ( comment.empty() ? "- " : comment )
 		<< std::endl;
 }
+
+void addXmlNodeAttribute( rapidxml::xml_document<>& doc, rapidxml::xml_node<>* node, const std::string& attrName, const std::string& attrValue )
+{
+	std::string name  = attrName;
+	std::string value = attrValue;
+	node->append_attribute( doc.allocate_attribute( name.c_str(), value.c_str() ) );
+}
+
+
+void Report::writeXml()
+{
+	rapidxml::xml_document<> doc;
+	
+	rapidxml::xml_node<>* prevNode = nullptr;
+	rapidxml::xml_node<>* node     = nullptr;
+
+	for( std::shared_ptr< basic_element::Element > element : _elementList )
+	{
+		if( element->_status == eStatusSkip
+		 || element->_status == eStatusInvalidButSkip
+		 || element->_status == eStatusInvalidButOptional
+		 || element->_status == eStatusNotChecked         )
+			continue;
+
+		std::shared_ptr< basic_element::Element > parent   = element->getParent();
+		std::shared_ptr< basic_element::Element > previous = element->getPrevious();
+
+
+		// create xml node
+		std::string elementStr = kElement;
+		node = doc.allocate_node( rapidxml::node_element, elementStr.c_str() );
+
+		addXmlNodeAttribute( doc, node, kId,          element->_id                      );
+		addXmlNodeAttribute( doc, node, kLabel,       element->_label                   );
+		addXmlNodeAttribute( doc, node, kType,        typeStringMap.at( element->_type) );
+		
+		std::stringstream sizeSstr;
+		sizeSstr << element->_size;
+		addXmlNodeAttribute( doc, node, kSize,        sizeSstr.str()                    );
+		addXmlNodeAttribute( doc, node, kValue,       element->_dispValue               );
+		addXmlNodeAttribute( doc, node, kMap,         element->_mapValue                );
+		addXmlNodeAttribute( doc, node, kStatus,      statusMap.at( element->_status )  );
+
+		std::string endianStr = kEndianLittle;
+		if( element->_isBigEndian )
+			endianStr = kEndianBig;
+		addXmlNodeAttribute( doc, node, kEndian,      endianStr );
+
+		std::string optionStr = kFalse;
+		if( element->_isOptional )
+			optionStr = kTrue;
+		addXmlNodeAttribute( doc, node, kOptional,    optionStr );
+
+		std::string orderedStr = kFalse;
+		if( element->_isOrdered )
+			orderedStr = kTrue;
+		addXmlNodeAttribute( doc, node, kOrdered,     orderedStr );
+		addXmlNodeAttribute( doc, node, kDisplayType, displayTypeStringMap.at( element->_displayType ) );
+		addXmlNodeAttribute( doc, node, kError,       element->_error );
+		addXmlNodeAttribute( doc, node, kWarning,     element->_warning );
+		
+		// insert it in the xml doc
+		if( parent == nullptr )
+		{
+			doc.append_node( node );
+		}
+		else if( previous == parent && prevNode != nullptr )
+		{
+			prevNode->append_node( node );
+		}
+		else
+		{
+			rapidxml::xml_node<>* nodeParent = prevNode->parent();
+			std::string idStr = kId;
+			while( nodeParent != 0 && nodeParent->first_attribute( idStr.c_str() )->value() != parent->_id )
+			{
+				nodeParent = nodeParent->parent();
+			}
+			nodeParent->append_node( node );
+		}		
+
+		prevNode = node;
+
+	}
+	rapidxml::print( std::cout, doc, 0 );
+}
+
+
+
 
 }
