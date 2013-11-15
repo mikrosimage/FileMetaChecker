@@ -18,6 +18,7 @@ Element::Element( const std::shared_ptr< spec_reader::SpecNode > node,
 	, _uId           ( node->getUId() )
 	, _size          ( getElementSize( node->getId(), node->getType(), node->getValues() ) )
 	, _iteration     ( getElementIteration( node->getId(), node->getRepetitions(), previous, parent ) )
+	, _groupSize     ( 0 )
 	, _countExpr     ( node->getCount() )
 	, _requiredExpr  ( node->getRequirement() )
 	, _groupSizeExpr ( node->getGroupSize() )
