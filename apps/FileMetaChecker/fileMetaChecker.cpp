@@ -131,6 +131,7 @@ int main( int argc, char** argv )
 		comp.check( spec, file, report );
 
 		report.print();
+		report.writeXml();
 		fb->close();
 	}
 	catch( std::runtime_error e )
