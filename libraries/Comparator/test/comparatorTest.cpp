@@ -127,6 +127,8 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_1 )
 	comp.check( spec, file, report );
 
 	BOOST_CHECK_EQUAL( file.isEndOfFile(), true );
+
+	report.print();
 }
 
 BOOST_AUTO_TEST_CASE( comparator_test_comparator_2 )
@@ -248,6 +250,8 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_2 )
 	comp.check( spec, file, report );
 
 	BOOST_CHECK_EQUAL( file.isEndOfFile(), true );
+
+	report.print();
 }
 
 BOOST_AUTO_TEST_CASE( comparator_test_comparator_3 )

@@ -80,7 +80,6 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 	}
 
 	report.init( checker.getElementList() );
-	// report.print();								// @todelete !
 }
 
 bool Comparator::isInUnorderedGroup( const std::shared_ptr< basic_element::Element > element )
