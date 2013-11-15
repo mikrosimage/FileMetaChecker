@@ -1,0 +1,6 @@
+Import( 'project', 'libs' )
+
+project.ObjectLibrary(
+		'rapidxml',
+		includes  = ['.'],
+	)
