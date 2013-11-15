@@ -16,15 +16,15 @@ void Report::init( const std::vector< std::shared_ptr< basic_element::Element > 
 
 void Report::print()
 {
-	std::cout << std::setfill( '-' ) << std::setw( 201 ) << " " << std::endl;
+	std::cout << std::setfill( '-' ) << std::setw( 231 ) << " " << std::endl;
 	std::cout << "|" << std::setfill( ' ' ) << std::setw( 16 ) << "" << "Elements"  << std::setfill( ' ' ) << std::setw( 16 ) << "|"
 					 << std::setfill( ' ' ) << std::setw( 16 ) << "" << "Value"     << std::setfill( ' ' ) << std::setw( 16 ) << "|"
 					 << std::setfill( ' ' ) << std::setw(  2 ) << "" << "Iteration" << std::setfill( ' ' ) << std::setw(  2 ) << "|"
 					 << std::setfill( ' ' ) << std::setw( 11 ) << "" << "Status"    << std::setfill( ' ' ) << std::setw( 11 ) << "|"
-					 << std::setfill( ' ' ) << std::setw( 10 ) << "" << "Error"     << std::setfill( ' ' ) << std::setw( 11 ) << "|"
-					 << std::setfill( ' ' ) << std::setw( 10 ) << "" << "Warning"   << std::setfill( ' ' ) << std::setw( 11 ) << "|"
+					 << std::setfill( ' ' ) << std::setw( 16 ) << "" << "Error"     << std::setfill( ' ' ) << std::setw( 17 ) << "|"
+					 << std::setfill( ' ' ) << std::setw( 16 ) << "" << "Warning"   << std::setfill( ' ' ) << std::setw( 23 ) << "|"
 					 << std::setfill( ' ' ) << std::setw( 10 ) << "" << "Comment"   << std::setfill( ' ' ) << std::setw( 10 ) << "|" << std::endl;
-	std::cout << std::setfill( '-' ) << std::setw( 201 ) << " " << std::endl;
+	std::cout << std::setfill( '-' ) << std::setw( 231 ) << " " << std::endl;
 
 	for( std::shared_ptr< basic_element::Element > element : _elementList )
 	{
@@ -74,23 +74,27 @@ void Report::print( const std::shared_ptr< basic_element::Element > element, con
 	if( ! element->_repetExpr.empty() ) comment += "Repeated ";
 	if( ! element->_isOrdered )         comment += "Unordered ";
 
+	// element->_error = "error : this is an error !";
+
 	std::cout
 		<< dispColor
-		<< std::setfill( ' ' ) << std::setw( 5*count + 1 )
+		<< std::setfill( ' ' ) << std::setw( 5 * ( count - 1 ) + 1 ) << ""
 		<< element->_id
-		<< std::setfill( ' ' ) << std::setw( 5*( 8 - count ) + 36 )
-		<< element->_dispValue
-		<< std::setfill( ' ' ) << std::setw( 12 )
+		<< std::setfill( ' ' ) << std::setw( 5*( 9 - count ) - element->_id.size() ) << ""
+		<< element->_dispValue << " " << element->_mapValue
+		<< std::setfill( ' ' ) << std::setw( 47 - ( element->_dispValue.size() + element->_mapValue.size() ) )
 		<< element->_iteration
-		<< std::setfill( ' ' ) << std::setw( 28 )
+		<< std::setfill( ' ' ) << std::setw( 3 ) << ""
 		<< statusMap.at( element->_status )
-		<< std::setfill( ' ' ) << std::setw( 26 )
+		<< common::details::kColorRed
+		<< std::setfill( ' ' ) << std::setw( 28 - statusMap.at( element->_status ).size() ) << ""
 		<< element->_error
-		<< std::setfill( ' ' ) << std::setw( 28 )
+		<< common::details::kColorYellow
+		<< std::setfill( ' ' ) << std::setw( 38 - element->_error.size() ) << ""
 		<< element->_warning
-		<< std::setfill( ' ' ) << std::setw( 30 )
-		<< ( comment.empty() ? "- " : comment )
 		<< common::details::kColorStd
+		<< std::setfill( ' ' ) << std::setw( 46 - element->_warning.size() ) << ""
+		<< ( comment.empty() ? "- " : comment )
 		<< std::endl;
 }
 
