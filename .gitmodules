@@ -1,3 +1,6 @@
 [submodule "tools/sconsProject"]
 	path = tools/sconsProject
 	url = https://github.com/tuttleofx/sconsProject.git
+[submodule "tools/rapidxml"]
+	path = tools/rapidxml
+	url = git@github.com:valnoel/rapidxml.git
