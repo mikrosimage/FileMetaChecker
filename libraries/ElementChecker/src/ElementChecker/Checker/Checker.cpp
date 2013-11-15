@@ -47,6 +47,16 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 
 	element->_dispValue = Translator( element ).get( element->_displayType );
 
+	std::shared_ptr< basic_element::Element > parent   = element->getParent();
+	std::shared_ptr< basic_element::Element > previous = element->getPrevious();
+
+	if( parent != nullptr && previous != nullptr && element->getSpecNode()->next() == nullptr && ! parent->_groupSizeExpr.empty() )
+	{
+		ExpressionParser groupSizeParser( _elementList );
+		parent->_groupSize = groupSizeParser.getExpressionResult< size_t >( parent->_groupSizeExpr );
+		// LOG_TRACE( "Set " << element->_id << "'s parent (" << parent->_id << ") groupSize (" << parent->_groupSizeExpr << "): " << parent->_groupSize );
+	}
+
 	// if nothing to compare
 	if( element->_values.empty() && element->_rangeExpr.empty() && element->_map.empty() )
 	{
@@ -124,8 +134,6 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 		return;
 	}
 
-	std::shared_ptr< basic_element::Element > parent = element->getParent();
-
 	if( parent != nullptr && ! parent->_isOrdered && status == eStatusInvalid )
 	{
 		LOG_ERROR( "CHECKER: " << element->_id << ": Unordered group" );
@@ -158,8 +166,6 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 	LOG_ERROR( "CHECKER: " << element->_id << "'s status: " << status );
 	_elementList.push_back( element );
 
-	if( parent != nullptr && element->getPrevious() != nullptr && element->getSpecNode()->next() == nullptr && ! parent->_groupSizeExpr.empty() )
-		checkGroupSize( element );
 }
 
 size_t Checker::getSize( const std::shared_ptr< basic_element::Element > element )
@@ -265,36 +271,6 @@ void Checker::checkLastUnorderedElement( const std::shared_ptr< basic_element::E
 
 	if( childIds.size() != 0 )
 		parent->_status = eStatusInvalidForUnordered;
-}
-
-void Checker::checkGroupSize( const std::shared_ptr< basic_element::Element > element )
-{
-	std::shared_ptr< basic_element::Element > parent = element->getParent();
-	std::shared_ptr< basic_element::Element > prev   = element->getPrevious();
-	size_t groupSize = element->_size;
-
-	while( prev != nullptr || prev->_id != parent->_id )
-	{
-		groupSize += prev->_size;
-		if( prev->_id == parent->_id )
-			break;
-		prev = prev->getPrevious();
-	}
-
-	ExpressionParser groupSizeParser( _elementList );
-	size_t parentGroupSize = groupSizeParser.getExpressionResult< size_t >( parent->_groupSizeExpr );
-
-	int sizeDiff = parentGroupSize - groupSize;
-	if( sizeDiff != 0 )
-	{
-		std::stringstream warningMessage;
-		if( sizeDiff > 0 )
-			warningMessage << "Group size difference: " << sizeDiff << " missing bytes - ";
-		if( sizeDiff < 0 )
-			warningMessage << "Group size difference: " << abs( sizeDiff ) << " unexpected bytes - ";
-		LOG_WARNING( warningMessage.str() );
-		parent->_warning += warningMessage.str();
-	}
 }
 
 }
