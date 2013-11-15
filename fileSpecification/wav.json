@@ -12,8 +12,9 @@
 		{
 			"id": "chunkId",
 			"label": "File bloc id",
+			"type": "ascii",
 			"endian": "big",
-			"ascii": "RIFF"
+			"values": "RIFF"
 		},
 		{
 			"id": "chunkSize",
@@ -24,18 +25,21 @@
 		{
 			"id": "riffType",
 			"label": "Riff type id",
+			"type": "ascii",
 			"endian": "big",
-			"ascii": "WAVE"
+			"values": "WAVE"
 		},
 		{
 			"id": "specificWaveChunks",
 			"label": "Specific WAVE chunks",
+			"type": "ascii",
 			"ordered": false,
 			"group": [
 				{
 					"id": "fmtSubChunks",
 					"label": "Format sub-chunk",
-					"ascii": "fmt ",
+					"type": "ascii",
+					"values": "fmt ",
 					"endian": "big",
 					"optional": false,
 					"groupSize": "fmtSize + 4",
@@ -103,7 +107,8 @@
 				{
 					"id": "factSubChunks",
 					"label": "Fact sub-chunk",
-					"ascii": "fact",
+					"type": "ascii",
+					"values": "fact",
 					"endian": "big",
 					"groupSize": "factSize + 4",
 					"optional": true,
@@ -123,7 +128,7 @@
 						{
 							"id": "formatDependantData",
 							"label": "Format dependant data",
-							"type": "data",
+							"type": "raw",
 							"count": "factSize - 4"
 						}
 					]
@@ -131,7 +136,8 @@
 				{
 					"id": "dataSubChunks",
 					"label": "Data sub-chunk",
-					"ascii": "data",
+					"type": "ascii",
+					"values": "data",
 					"endian": "big",
 					"groupSize": "dataSize + 4",
 					"optional": false,
@@ -145,7 +151,7 @@
 						{
 							"id": "sampleData",
 							"label": "Sample data",
-							"type": "data",
+							"type": "raw",
 							"count": "dataSize"
 						}
 					]
@@ -153,7 +159,8 @@
 				{
 					"id": "wavlSubChunks",
 					"label": "WAVE list sub-chunk",
-					"ascii": "wavl",
+					"type": "ascii",
+					"values": "wavl",
 					"groupSize": "wavlSize + 4",
 					"optional": true,
 					"group": [
@@ -166,7 +173,7 @@
 						{
 							"id": "sampleData",
 							"label": "Sample data",
-							"type": "data",
+							"type": "raw",
 							"count": "wavlSize"
 						}
 					]
@@ -174,7 +181,8 @@
 				{
 					"id": "slntSubChunks",
 					"label": "Silent sub-chunk",
-					"ascii": "slnt",
+					"type": "ascii",
+					"values": "slnt",
 					"groupSize": "slntSize + 4",
 					"optional": true,
 					"group": [
@@ -195,7 +203,8 @@
 				{
 					"id": "cueSubChunks",
 					"label": "Cue sub-chunk",
-					"ascii": "cue ",
+					"type": "ascii",
+					"values": "cue ",
 					"groupSize": "cueSize + 4",
 					"optional": true,
 					"group": [
@@ -214,7 +223,7 @@
 						{
 							"id": "cuePointsList",
 							"label": "Cue points list",
-							"type": "data",
+							"type": "raw",
 							"count": "cueSize - 4",
 							"displayType": "ascii"
 						}
@@ -223,7 +232,8 @@
 				{
 					"id": "plstSubChunks",
 					"label": "Playlist sub-chunk",
-					"ascii": "plst",
+					"type": "ascii",
+					"values": "plst",
 					"groupSize": "plstSize + 4",
 					"optional": true,
 					"group": [
@@ -242,7 +252,7 @@
 						{
 							"id": "plstSegmentsList",
 							"label": "Playlist segments list",
-							"type": "data",
+							"type": "raw",
 							"count": "plstSize - 4"
 						}
 					]
@@ -250,7 +260,8 @@
 				{
 					"id": "listSubChunks",
 					"label": "Associated data list sub-chunk",
-					"ascii": "list",
+					"type": "ascii",
+					"values": "list",
 					"groupSize": "listSize + 4",
 					"optional": true,
 					"group": [
@@ -745,7 +756,7 @@
 						{
 							"id": "labelsAndNamesList",
 							"label": "Text labels and names list",
-							"type": "data",
+							"type": "raw",
 							"count": "listSize",
 							"displayType": "ascii"
 						}
@@ -754,7 +765,8 @@
 				{
 					"id": "lablSubChunks",
 					"label": "Label sub-chunk",
-					"ascii": [ "labl", "note" ],
+					"type": "ascii",
+					"values": [ "labl", "note" ],
 					"groupSize": "lablSize + 4",
 					"optional": true,
 					"group": [
@@ -768,14 +780,14 @@
 							"id": "cuePointId",
 							"label": "Cue point id",
 							"endian": "little",
-							"type": "data",
+							"type": "raw",
 							"count": "4",
 							"displayType": "hexa"
 						},
 						{
 							"id": "lablText",
 							"label": "Label text",
-							"type": "data",
+							"type": "raw",
 							"count": "lablSize - 4"
 						}
 					]
@@ -783,7 +795,8 @@
 				{
 					"id": "ltxtSubChunks",
 					"label": "Labeled text sub-chunk",
-					"ascii": "ltxt",
+					"type": "ascii",
+					"values": "ltxt",
 					"groupSize": "ltxtSize + 4",
 					"optional": true,
 					"group": [
@@ -797,7 +810,7 @@
 							"id": "cuePointId",
 							"label": "Cue point id",
 							"endian": "little",
-							"type": "data",
+							"type": "raw",
 							"count": "4",
 							"displayType": "hexa"
 						},
@@ -810,42 +823,42 @@
 						{
 							"id": "PurposeId",
 							"label": "Purpose id",
-							"type": "data",
+							"type": "raw",
 							"count": "4",
 							"displayType": "hexa"
 						},
 						{
 							"id": "countryId",
 							"label": "Country id",
-							"type": "data",
+							"type": "raw",
 							"count": "2",
 							"displayType": "hexa"
 						},
 						{
 							"id": "languageId",
 							"label": "Language id",
-							"type": "data",
+							"type": "raw",
 							"count": "2",
 							"displayType": "hexa"
 						},
 						{
 							"id": "dialectId",
 							"label": "Dialect id",
-							"type": "data",
+							"type": "raw",
 							"count": "2",
 							"displayType": "hexa"
 						},
 						{
 							"id": "pageCode",
 							"label": "Page code",
-							"type": "data",
+							"type": "raw",
 							"count": "2",
 							"displayType": "hexa"
 						},
 						{
 							"shortId": "labledText",
 							"id": "Labeled text",
-							"type": "data",
+							"type": "raw",
 							"count": "ltxtSize - 20"
 						}
 					]
@@ -853,7 +866,8 @@
 				{
 					"id": "smplSubChunks",
 					"label": "Sampler sub-chunk",
-					"ascii": "smpl",
+					"type": "ascii",
+					"values": "smpl",
 					"groupSize": "smplSize + 4",
 					"optional": true,
 					"group": [
@@ -866,7 +880,7 @@
 						{
 							"id": "manufacturerId",
 							"label": "Manufacturer id",
-							"type": "data",
+							"type": "raw",
 							"count": "4",
 							"displayType": "hexa"
 						},
@@ -895,7 +909,7 @@
 						{
 							"id": "midiPitchFraction",
 							"label": "MIDI pitch fraction",
-							"type": "data",
+							"type": "raw",
 							"count": "4",
 							"displayType": "hexa"
 						},
@@ -915,7 +929,7 @@
 						{
 							"id": "smpteOffset",
 							"label": "SMPTE offset",
-							"type": "data",
+							"type": "raw",
 							"count": "4",
 							"displayType": "hexa"
 						},
@@ -934,7 +948,7 @@
 						{
 							"id": "sampleLoopsList",
 							"label": "Sample loops list",
-							"type": "data",
+							"type": "raw",
 							"count": "smplSize - 36"
 						}
 					]
@@ -942,7 +956,8 @@
 				{
 					"id": "instSubChunks",
 					"label": "Instrument sub-chunk",
-					"ascii": "inst",
+					"type": "ascii",
+					"values": "inst",
 					"groupSize": "instSize + 4",
 					"optional": true,
 					"group": [
