@@ -11,6 +11,7 @@ qualityCheckFlags = {
 			],
 	}
 
+
 if project.env['mode'] == 'production' :
 	# In 'production' mode set a flag QUALITYCHECK_PRODUCTION
 	qualityCheckFlags['CPPDEFINES'].append( 'QUALITYCHECK_PRODUCTION' )
@@ -31,11 +32,10 @@ qualityCheck = project.ObjectLibrary( 'qualityCheckDefault', envFlags=qualityChe
 # Set this object library as a default library for all targets
 project.commonLibs.append( qualityCheck )
 
-
-
 ### Load all SConscript files (in the correct order)
 SConscript(
 		project.scanFiles( [
+				'3rdParty',
 				'libraries/Common',
 				'libraries/SpecReader',
 				'libraries/BasicElement',
@@ -45,7 +45,6 @@ SConscript(
 				'libraries/Comparator',
 				# 'libraries/systemInfo',
 				'apps',
-				'libraries',
 			], accept=['SConscript'] )
 	)
 
