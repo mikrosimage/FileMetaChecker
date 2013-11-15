@@ -13,7 +13,6 @@ static const std::string kStandard  = "standard";
 // node labels (left)
 static const std::string kId     = "id";
 static const std::string kLabel  = "label";
-
 static const std::string kType   = "type";
 static const std::string kCount  = "count";
 static const std::string kValues = "values";
@@ -66,13 +65,22 @@ static const std::string kSpecification  = "specification";
 static const std::string kElement        = "element";
 
 static const std::string kValue  = "value";
-static const std::string kData   = "data";
+static const std::string kSize   = "size";
 static const std::string kStatus = "status";
 
-static const std::string kUnknown  = "unknown";
-static const std::string kValid    = "valid";
-static const std::string kInvalid  = "invalid";
-static const std::string kPassOver = "pass over";
+static const std::string kDefault = "default";
+static const std::string kNumbers = "numbers";
+
+static const std::string kNotChecked               = "Not checked";
+static const std::string kValid                    = "Valid";
+static const std::string kInvalid                  = "Invalid";
+static const std::string kInvalidButOptional       = "Invalid but optional";
+static const std::string kInvalidForUnordered      = "Invalid for unordered";
+static const std::string kInvalidButSkip           = "Invalid but skip";
+static const std::string kInvalidForIteration      = "Invalid for iteration";
+static const std::string kInvalidGroupForIteration = "Invalid group for iteration";
+static const std::string kPassOver                 = "Pass over";
+static const std::string kSkip                     = "Skip";
 
 static const std::string kError    = "error";
 static const std::string kWarning  = "warning";
@@ -162,16 +170,45 @@ static const std::map< std::string, EDisplayType > displayTypeMap
 
 static const std::map< EStatus, std::string > statusMap
 {
-	{ eStatusNotChecked,               "Not checked"                 },
-	{ eStatusValid,                    "Valid"                       },
-	{ eStatusInvalid,                  "Invalid"                     },
-	{ eStatusInvalidButOptional,       "Invalid but optional"        },
-	{ eStatusInvalidForUnordered,      "Invalid for unordered"       },
-	{ eStatusInvalidButSkip,           "Invalid but skip"            },
-	{ eStatusInvalidForIteration,      "Invalid for iteration"       },
-	{ eStatusInvalidGroupForIteration, "Invalid group for iteration" },
-	{ eStatusPassOver,                 "Pass over"                   },
-	{ eStatusSkip,                     "Skip"                        },
+	{ eStatusNotChecked,               kNotChecked               },
+	{ eStatusValid,                    kValid                    },
+	{ eStatusInvalid,                  kInvalid                  },
+	{ eStatusInvalidButOptional,       kInvalidButOptional       },
+	{ eStatusInvalidForUnordered,      kInvalidForUnordered      },
+	{ eStatusInvalidButSkip,           kInvalidButSkip           },
+	{ eStatusInvalidForIteration,      kInvalidForIteration      },
+	{ eStatusInvalidGroupForIteration, kInvalidGroupForIteration },
+	{ eStatusPassOver,                 kPassOver                 },
+	{ eStatusSkip,                     kSkip                     },
+};
+
+static const std::map< EType, std::string > typeStringMap
+{
+	{ eTypeInt8,         kInt8          },
+	{ eTypeUInt8,        kUInt8         },
+	{ eTypeInt16,        kInt16         },
+	{ eTypeUInt16,       kUInt16        },
+	{ eTypeInt32,        kInt32         },
+	{ eTypeUInt32,       kUInt32        },
+	{ eTypeInt64,        kInt64         },
+	{ eTypeUInt64,       kUInt64        },
+	{ eTypeFloat,        kFloat         },
+	{ eTypeDouble,       kDouble        },
+	{ eTypeIeeeExtended, kIeeeExtended  },
+	{ eTypeAscii,        kAscii         },
+	{ eTypeHexa,         kHexa          },
+	{ eTypeRaw,          kRaw           },
+	{ eTypeExif,         kExif          },
+	{ eTypeKlv,          kKlv           },
+};
+
+static const std::map< EDisplayType, std::string > displayTypeStringMap
+{
+	{ eDisplayTypeDefault, kDefault  },
+	{ eDisplayTypeNumbers, kNumbers  },
+	{ eDisplayTypeAscii,   kAscii    },
+	{ eDisplayTypeHexa,    kHexa     },
+	{ eDisplayTypeRaw,     kRaw      },
 };
 
 #endif
