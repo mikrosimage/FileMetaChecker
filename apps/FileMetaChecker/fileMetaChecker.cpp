@@ -119,7 +119,7 @@ int main( int argc, char** argv )
 
 		fb->open( filePath, std::ios::in );
 		file_reader::FileReader file( fb );
-		fb->close();
+		LOG_INFO( common::details::kColorCyan  << "| File length: " << file.getPosition() << "/" << file.getLength() << common::details::kColorStd );
 
 		spec_reader::Specification spec;
 		spec.setFromFile( specPath );
@@ -131,10 +131,16 @@ int main( int argc, char** argv )
 		comp.check( spec, file, report );
 
 		report.print();
+		fb->close();
 	}
-	catch( ... )
+	catch( std::runtime_error e )
 	{
-		LOG_FATAL( "error" );
+		LOG_FATAL( "Runtime error: " << e.what() );
+		exit( -2 );
+	}
+	catch( std::exception e )
+	{
+		LOG_FATAL( "Error: " << e.what() );
 		exit( -2 );
 	}
 
