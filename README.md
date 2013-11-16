@@ -1,3 +1,4 @@
+![FileMetaChecker](https://github.com/mikrosimage/FileMetaChecker/resources/FileMetaCheckerLogo.png "FileMetaChecker")
 File Meta Checker
 =================
   
