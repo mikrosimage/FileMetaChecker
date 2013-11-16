@@ -6,6 +6,7 @@ Import( 'project', 'libs' )
 projectFlags = {
 		'LIBPATH': [project.inOutputLib()],
 		'CCFLAGS': project.CC['warning3'],
+		'CXXFLAGS' : [],
 		'CPPDEFINES':[
 			'BOOST_ALL_DYN_LINK',
 			],
