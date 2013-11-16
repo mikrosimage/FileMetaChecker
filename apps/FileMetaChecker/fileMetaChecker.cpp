@@ -86,12 +86,12 @@ int main( int argc, char** argv )
 	if( vm.count( "help" ) || filePath.empty() || specPath.empty() )
 	{
 		common::level = common::eLogInfo;
-		LOG_INFO( common::details::kColorBlue  << "Quality Check project"      << common::details::kColorStd << std::endl );
-		LOG_INFO( common::details::kColorBlue  << "NAME"                       << common::details::kColorStd );
-		LOG_INFO( common::details::kColorGreen << "\tFileMetaChecker"          << common::details::kColorStd << std::endl );
-		LOG_INFO( common::details::kColorBlue  << "SYNOPSIS"                   << common::details::kColorStd );
-		LOG_INFO( common::details::kColorGreen << "\tfmc [options] -i [files]" << common::details::kColorStd << std::endl );
-		LOG_INFO( common::details::kColorBlue  << "DESCRIPTION"                << common::details::kColorStd << std::endl );
+		LOG_INFO( common::details::kColorBlue  << "Quality Check project"                  << common::details::kColorStd << std::endl );
+		LOG_INFO( common::details::kColorBlue  << "NAME"                                   << common::details::kColorStd );
+		LOG_INFO( common::details::kColorGreen << "\tFileMetaChecker"                      << common::details::kColorStd << std::endl );
+		LOG_INFO( common::details::kColorBlue  << "SYNOPSIS"                               << common::details::kColorStd );
+		LOG_INFO( common::details::kColorGreen << "\tfileMetaChecker [options] -i [files]" << common::details::kColorStd << std::endl );
+		LOG_INFO( common::details::kColorBlue  << "DESCRIPTION"                            << common::details::kColorStd << std::endl );
 
 		LOG_INFO( "File quality analyze based on:" );
 		LOG_INFO( "    - system informations"      );
