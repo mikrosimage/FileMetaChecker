@@ -227,6 +227,18 @@ BOOST_AUTO_TEST_CASE( basic_element_next )
 	}
 }
 
+typedef std::shared_ptr< Element > ShPtrElement;
+
+inline ShPtrElement checkElement( ShPtrElement& elem, const std::string& nodeId, const std::shared_ptr< spec_reader::SpecNode >& node )
+{
+	ShPtrElement newElem( new Element( elem->next(), elem, elem ) );
+	BOOST_CHECK_EQUAL( newElem->_id, node->getId() );
+	BOOST_CHECK_EQUAL( newElem->getPrevious()->_uId, elem->_uId );
+	BOOST_CHECK_EQUAL( node->getId(), nodeId );
+	newElem->_status = eStatusValid;
+	return newElem;
+}
+
 BOOST_AUTO_TEST_CASE( basic_element_next_first_child_recursivity )
 {
 	LOG_INFO( "\n>>> basic_element_next_first_child_recursivity <<<" );
@@ -270,47 +282,18 @@ BOOST_AUTO_TEST_CASE( basic_element_next_first_child_recursivity )
 		spec_reader::Specification spec;
 		spec.setFromString( jsonString );
 		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
-		BOOST_CHECK_EQUAL( node->getId(),                                                           "value1"    );
-		BOOST_CHECK_EQUAL( node->firstChild()->getId(),                                             "value11"   );
-		BOOST_CHECK_EQUAL( node->firstChild()->next()->getId(),                                     "value12"   );
-		BOOST_CHECK_EQUAL( node->firstChild()->next()->firstChild()->getId(),                       "value121"  );
-		BOOST_CHECK_EQUAL( node->firstChild()->next()->firstChild()->firstChild()->getId(),         "value1211" );
-		BOOST_CHECK_EQUAL( node->firstChild()->next()->firstChild()->firstChild()->next()->getId(), "value1212" );
-		BOOST_CHECK_EQUAL( node->firstChild()->next()->next()->getId(),                             "value13"   );
 	
-		std::shared_ptr< Element > elem1( new Element( node ) );
+		ShPtrElement elem1( new Element( node ) );
 		BOOST_CHECK_EQUAL( elem1->_id, node->getId() );
+		BOOST_CHECK_EQUAL( node->getId(), "value1" );
 		elem1->_status = eStatusValid;
-		
-		std::shared_ptr< Element > elem2( new Element( elem1->next(), elem1, elem1 ) );
-		BOOST_CHECK_EQUAL( elem2->_id, node->firstChild()->getId() );
-		BOOST_CHECK_EQUAL( elem2->getPrevious()->_uId, elem1->_uId );
-		elem2->_status = eStatusValid;
 
-		std::shared_ptr< Element > elem3( new Element( elem2->next(), elem2, elem1 ) );
-		BOOST_CHECK_EQUAL( elem3->_id, node->firstChild()->next()->getId() );
-		BOOST_CHECK_EQUAL( elem3->getPrevious()->_uId, elem2->_uId );
-		elem3->_status = eStatusValid;
-
-		std::shared_ptr< Element > elem4( new Element( elem3->next(), elem3, elem3 ) );
-		BOOST_CHECK_EQUAL( elem4->_id, node->firstChild()->next()->firstChild()->getId() );
-		BOOST_CHECK_EQUAL( elem4->getPrevious()->_uId, elem3->_uId );
-		elem4->_status = eStatusValid;
-
-		std::shared_ptr< Element > elem5( new Element( elem4->next(), elem4, elem4 ) );
-		BOOST_CHECK_EQUAL( elem5->_id, node->firstChild()->next()->firstChild()->firstChild()->getId() );
-		BOOST_CHECK_EQUAL( elem5->getPrevious()->_uId, elem4->_uId );
-		elem5->_status = eStatusValid;
-
-		std::shared_ptr< Element > elem6( new Element( elem5->next(), elem5, elem4 ) );
-		BOOST_CHECK_EQUAL( elem6->_id, node->firstChild()->next()->firstChild()->firstChild()->next()->getId() );
-		BOOST_CHECK_EQUAL( elem6->getPrevious()->_uId, elem5->_uId );
-		elem6->_status = eStatusValid;
-
-		std::shared_ptr< Element > elem7( new Element( elem6->next(), elem6, elem1 ) );
-		BOOST_CHECK_EQUAL( elem7->_id, node->firstChild()->next()->next()->getId() );
-		BOOST_CHECK_EQUAL( elem7->getPrevious()->_uId, elem6->_uId );
-		elem7->_status = eStatusValid;
+		ShPtrElement elem2 = checkElement( elem1, "value11",   node->firstChild() );
+		ShPtrElement elem3 = checkElement( elem2, "value12",   node->firstChild()->next() );
+		ShPtrElement elem4 = checkElement( elem3, "value121",  node->firstChild()->next()->firstChild() );
+		ShPtrElement elem5 = checkElement( elem4, "value1211", node->firstChild()->next()->firstChild()->firstChild() );
+		ShPtrElement elem6 = checkElement( elem5, "value1212", node->firstChild()->next()->firstChild()->firstChild()->next() );
+		ShPtrElement elem7 = checkElement( elem6, "value13",   node->firstChild()->next()->next() );
 
 		BOOST_CHECK( elem7->next() == nullptr );
 	}
