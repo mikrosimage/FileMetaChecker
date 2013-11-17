@@ -92,7 +92,7 @@ public:
 	bool          _checkedGroup;
 
 	char*         _data;
-		
+
 };
 
 }

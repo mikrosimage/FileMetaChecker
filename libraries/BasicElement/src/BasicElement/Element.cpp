@@ -40,12 +40,10 @@ Element::Element( const std::shared_ptr< spec_reader::SpecNode > node,
 	, _checkedGroup  ( false )
 	, _data          ( nullptr )
 {
-	LOG_ERROR( "____________________" << _id <<  "____________________" );
-
 	if( ! _parent.expired() )
 		_parent.lock()->_children.push_back( std::make_shared< Element >( *this ) );
 
-	LOG_ERROR( "ELEMENT: " << _id << ": " << &*this << " - Parent: " << &*_parent.lock() << " - Previous: " << &( *( _previous.lock() ) ) << " - SpecNode: " << &*_specNode.get() << " - Iteration: " << _iteration );
+	LOG_TRACE( "[element] " << _id << ": " << &*this << " - Parent: " << &*_parent.lock() << " - Previous: " << &( *( _previous.lock() ) ) << " - SpecNode: " << &*_specNode.get() << " - Iteration: " << _iteration );
 }
 
 std::shared_ptr< spec_reader::SpecNode > Element::next( )
@@ -71,23 +69,23 @@ std::shared_ptr< spec_reader::SpecNode > Element::next( )
 	// Unordered Groups: if element valid and parent is unordered, go to the first child of the parent
 	if( _status == eStatusValid && _parent.use_count() != 0 && ( ! parent->_isOrdered ) && ( ! _isGroup || _checkedGroup ) )
 	{
-		// LOG_ERROR( "Element::next " << _id << ": Back to START!" );
+		LOG_TRACE( "[element] next is first child from parent of " << _id );
 		return parent->_specNode->firstChild();
 	}
 	
 	// Groups: if element has a group not already checked and is valid or first time parsed, go to the first child
 	if( _specNode->isGroup() && ! _checkedGroup && ( _iteration == 1 || _status == eStatusValid ) && _status != eStatusInvalidButSkip )
 	{
-		// LOG_ERROR( "Element::next " << _id << ": IsGroup" );
 		_checkedGroup = true;
 		std::shared_ptr< spec_reader::SpecNode > child( _specNode->firstChild() );
+		LOG_TRACE( "[element] next is first child of " << _id );
 		return child;
 	}
 	
 	// Repetition: if repeated element, go to the same SpecNode
 	if( ! _repetExpr.empty() && _status == eStatusValid )
 	{
-		// LOG_ERROR( ">>>>>>>>>>>>>> Element::next " << _id << ": Repeated: " << _iteration );
+		LOG_TRACE( "[element] next is same node " << _id << " ( repeted )" );
 		return _specNode;
 	}
 
@@ -96,11 +94,11 @@ std::shared_ptr< spec_reader::SpecNode > Element::next( )
 	// Last Element: if their is no more SpecNode after and parent exists, go to the node after the parent
 	if( nextNode == nullptr && _parent.use_count() != 0 )
 	{
-		// LOG_ERROR( "Element::next " << _id << ": last element -> parent's (" << _parent.lock()->_id << ") next !" );
+		LOG_TRACE( "[element] next is next of parent from " << _id );
 		return parent->next( );
 	}
 
-	// LOG_ERROR( ">>> Element::next " << _id << ": Next ! " << nextNode );
+	LOG_TRACE( "[element] next is next node of " << _id );
 	return nextNode;
 }
 
@@ -160,11 +158,11 @@ size_t Element::getElementIteration( const std::string& id, const ExpressionList
 			if( prev->_id == id && ( prev->_status == eStatusValid || prev->_status == eStatusPassOver ) )
 			{
 				iteration = prev->_iteration + 1;
-				// LOG_ERROR( "ELEMENT: >>>> prev: " << prev->_id << " @" << &*prev );
+				// LOG_TRACE( "ELEMENT: >>>> prev: " << prev->_id << " @" << &*prev );
 				break;
 			}
 
-			// LOG_ERROR( "ELEMENT: prev: " << prev->_id << " @" << &*prev );
+			// LOG_TRACE( "ELEMENT: prev: " << prev->_id << " @" << &*prev );
 			if( parent != nullptr && prev->_id == parent->_id )
 				break;
 
