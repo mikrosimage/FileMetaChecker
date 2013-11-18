@@ -229,9 +229,9 @@ BOOST_AUTO_TEST_CASE( basic_element_next )
 
 typedef std::shared_ptr< Element > ShPtrElement;
 
-inline ShPtrElement checkElement( ShPtrElement& elem, const std::string& nodeId, const std::shared_ptr< spec_reader::SpecNode >& node )
+inline ShPtrElement checkElement( ShPtrElement& elem, ShPtrElement& previous, ShPtrElement& parent, const std::string& nodeId, const std::shared_ptr< spec_reader::SpecNode >& node )
 {
-	ShPtrElement newElem( new Element( elem->next(), elem, elem ) );
+	ShPtrElement newElem( new Element( elem->next(), previous, parent ) );
 	BOOST_CHECK_EQUAL( newElem->_id, node->getId() );
 	BOOST_CHECK_EQUAL( newElem->getPrevious()->_uId, elem->_uId );
 	BOOST_CHECK_EQUAL( node->getId(), nodeId );
@@ -288,12 +288,12 @@ BOOST_AUTO_TEST_CASE( basic_element_next_first_child_recursivity )
 		BOOST_CHECK_EQUAL( node->getId(), "value1" );
 		elem1->_status = eStatusValid;
 
-		ShPtrElement elem2 = checkElement( elem1, "value11",   node->firstChild() );
-		ShPtrElement elem3 = checkElement( elem2, "value12",   node->firstChild()->next() );
-		ShPtrElement elem4 = checkElement( elem3, "value121",  node->firstChild()->next()->firstChild() );
-		ShPtrElement elem5 = checkElement( elem4, "value1211", node->firstChild()->next()->firstChild()->firstChild() );
-		ShPtrElement elem6 = checkElement( elem5, "value1212", node->firstChild()->next()->firstChild()->firstChild()->next() );
-		ShPtrElement elem7 = checkElement( elem6, "value13",   node->firstChild()->next()->next() );
+		ShPtrElement elem2 = checkElement( elem1, elem1, elem1, "value11",   node->firstChild() );
+		ShPtrElement elem3 = checkElement( elem2, elem2, elem2, "value12",   node->firstChild()->next() );
+		ShPtrElement elem4 = checkElement( elem3, elem3, elem3, "value121",  node->firstChild()->next()->firstChild() );
+		ShPtrElement elem5 = checkElement( elem4, elem4, elem4, "value1211", node->firstChild()->next()->firstChild()->firstChild() );
+		ShPtrElement elem6 = checkElement( elem5, elem5, elem4, "value1212", node->firstChild()->next()->firstChild()->firstChild()->next() );
+		ShPtrElement elem7 = checkElement( elem6, elem6, elem1, "value13",   node->firstChild()->next()->next() );
 
 		BOOST_CHECK( elem7->next() == nullptr );
 	}
