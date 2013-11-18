@@ -1,5 +1,4 @@
-![FileMetaChecker](https://github.com/mikrosimage/FileMetaChecker/resources/FileMetaCheckerLogo.png "FileMetaChecker")
-File Meta Checker
+![FileMetaChecker](resources/FileMetaCheckerLogo.png "FileMetaChecker")  File Meta Checker
 =================
   
 File Meta Checker is a tool to extract metadatas from various files as images, video, sound etc.  
