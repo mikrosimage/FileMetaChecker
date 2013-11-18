@@ -23,7 +23,7 @@ public:
 	void init( const std::vector< std::shared_ptr< basic_element::Element > >& elementList );
 	void print();
 	void print( const std::shared_ptr< basic_element::Element > element, const std::string& dispColor );
-	void writeXml();
+	void writeXml( const std::string& filename );
 	
 private:
 	std::vector< std::shared_ptr< basic_element::Element > > _elementList;

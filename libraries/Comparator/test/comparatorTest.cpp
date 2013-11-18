@@ -129,7 +129,6 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_1 )
 	BOOST_CHECK_EQUAL( file.isEndOfFile(), true );
 
 	report.print();
-	report.writeXml();
 }
 
 BOOST_AUTO_TEST_CASE( comparator_test_comparator_2 )
@@ -253,7 +252,7 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_2 )
 	BOOST_CHECK_EQUAL( file.isEndOfFile(), true );
 
 	report.print();
-	report.writeXml();
+	report.writeXml( "test.xml" );
 }
 
 BOOST_AUTO_TEST_CASE( comparator_test_comparator_3 )

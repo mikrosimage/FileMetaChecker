@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <fstream>
 
 #include <BasicElement/Element.hpp>
 
@@ -107,9 +108,14 @@ void addXmlNodeAttribute( rapidxml::xml_document<>& doc, rapidxml::xml_node<>* n
 }
 
 
-void Report::writeXml()
+void Report::writeXml( const std::string& filename )
 {
 	rapidxml::xml_document<> doc;
+
+	rapidxml::xml_node<>* declaration = doc.allocate_node( rapidxml::node_declaration );
+	declaration->append_attribute( doc.allocate_attribute( "version",  "1.0"   ) );
+	declaration->append_attribute( doc.allocate_attribute( "encoding", "utf-8" ) );
+	doc.append_node( declaration );
 	
 	rapidxml::xml_node<>* prevNode = nullptr;
 	rapidxml::xml_node<>* node     = nullptr;
@@ -180,12 +186,13 @@ void Report::writeXml()
 		}		
 
 		prevNode = node;
-
 	}
-	rapidxml::print( std::cout, doc, 0 );
+
+	// rapidxml::print( std::cout, doc, 0 );
+
+	std::ofstream file( filename );
+	file << doc;
+	file.close();
 }
-
-
-
 
 }
