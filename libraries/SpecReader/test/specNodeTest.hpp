@@ -1,7 +1,4 @@
 #include <map>
-#include <boost/property_tree/json_parser.hpp>
-
-namespace bpt = boost::property_tree;
 
 BOOST_AUTO_TEST_SUITE( spec_reader_test_specNode )
 
@@ -18,7 +15,9 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode )
 							"type": "type",
 							"displayType": "display",
 							"count": "123",
-							"required": true,
+							"required": "true",
+							"optional": false,
+							"endian": "little",
 							"groupSize": "size",
 							"group": [
 								"123"
@@ -39,6 +38,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode )
 		BOOST_CHECK_EQUAL( node.getCount(),       "123"               );
 		BOOST_CHECK_EQUAL( node.getRequirement(), "true"              );
 		BOOST_CHECK_EQUAL( node.isGroup(),        true                );
+		BOOST_CHECK_EQUAL( node.isOptional(),     false               );
 		BOOST_CHECK_EQUAL( node.getGroupSize(),   "size"              );
 	}
 	{
@@ -235,12 +235,9 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_range )
 				}
 			)*";
 
-		std::istringstream isstream( jsonString );
-		bpt::ptree tree;
-
-		bpt::read_json( isstream, tree );
-		
-		SpecNode node( nullptr, tree.get_child( "header" ).begin() );
+		Specification spec;
+		spec.setFromString( jsonString );
+		SpecNode node = *spec.getFirstNode();
 		BOOST_CHECK_EQUAL( node.getRange().at(0).first,  "value1" );
 		BOOST_CHECK_EQUAL( node.getRange().at(0).second, "" );
 		BOOST_CHECK_EQUAL( node.getRange().at(1).first,  "value2" );
@@ -447,13 +444,14 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 		Specification spec;
 		spec.setFromString( jsonString );
 		SpecNode node = *spec.getFirstNode();
+		std::vector< std::pair< std::string, std::string > > repet = node.getRepetitions();
+		BOOST_CHECK_EQUAL( node.getRepetitions().size(), 3 );
 		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).first,  "value1" );
 		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).second, "" );
 		BOOST_CHECK_EQUAL( node.getRepetitions().at(1).first,  "value2" );
 		BOOST_CHECK_EQUAL( node.getRepetitions().at(1).second, "value3" );
 		BOOST_CHECK_EQUAL( node.getRepetitions().at(2).first,  "value4" );
 		BOOST_CHECK_EQUAL( node.getRepetitions().at(2).second, "value4" );
-		BOOST_CHECK_EQUAL( node.getRepetitions().size(), 3 );
 	}
 	{
 		std::string jsonString = R"*(
@@ -479,6 +477,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 		Specification spec;
 		spec.setFromString( jsonString );
 		SpecNode node = *spec.getFirstNode();
+		BOOST_CHECK_EQUAL( node.getRepetitions().size(), 4 );
 		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).first,  "value1" );
 		BOOST_CHECK_EQUAL( node.getRepetitions().at(0).second, "" );
 		BOOST_CHECK_EQUAL( node.getRepetitions().at(1).first,  "value2" );
@@ -487,7 +486,6 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 		BOOST_CHECK_EQUAL( node.getRepetitions().at(2).second, "value4" );
 		BOOST_CHECK_EQUAL( node.getRepetitions().at(3).first,  "23" );
 		BOOST_CHECK_EQUAL( node.getRepetitions().at(3).second, "23" );
-		BOOST_CHECK_EQUAL( node.getRepetitions().size(), 4 );
 	}
 }
 
@@ -510,6 +508,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_map )
 
 		for( auto mapElem : testMap )
 			jsonString += " { \"" + mapElem.first + "\": \"" + mapElem.second + "\" },";
+		
 		jsonString.erase( jsonString.end() - 1, jsonString.end() );
 		
 		jsonString += R"*( ]
@@ -521,10 +520,12 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_map )
 		spec.setFromString( jsonString );
 		SpecNode node = *spec.getFirstNode();
 		
-		for( auto mapElem : testMap )
-			BOOST_CHECK_EQUAL( node.getMap()[ mapElem.first ],  mapElem.second );
+		std::map< std::string, std::string > map = node.getMap();
 
 		BOOST_CHECK_EQUAL( node.getMap().size(), 4 );
+		for( auto mapElem : testMap )
+			BOOST_CHECK_EQUAL( node.getMap().at( mapElem.first ),  mapElem.second );
+
 	}
 	
 	{

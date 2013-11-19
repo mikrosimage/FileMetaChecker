@@ -6,10 +6,72 @@
 #include <sstream>
 #include <stdexcept>
 
-namespace bpt = boost::property_tree;
-
 namespace spec_reader
 {
+
+namespace property_parser
+{
+	template< typename ValueType >
+	ValueType getProperty( const TreeNodeIt node, const std::string& prop );
+
+	template< >
+	std::string getProperty< std::string >( const TreeNodeIt node, const std::string& prop )
+	{
+		try
+		{
+			std::string propStr = prop;
+			if( node->HasMember( propStr.c_str() ) )
+				return node->FindMember( propStr.c_str() )->value.GetString();
+			throw std::runtime_error( "No such node (" + prop + ")" );
+		}
+		catch( std::runtime_error& e )
+		{
+			LOG_ERROR( e.what() );
+			throw;
+		}
+	}
+
+	template< typename ValueType >
+	ValueType getProperty( const TreeNodeIt node, const std::string& prop, const ValueType& defaultValue );
+
+	template< >
+	std::string getProperty< std::string >( const TreeNodeIt node, const std::string& prop, const std::string& defaultValue )
+	{
+		std::string propStr = prop;
+		if( node->HasMember( propStr.c_str() ) )
+			return node->FindMember( propStr.c_str() )->value.GetString();
+		else
+			return defaultValue; 
+	}
+
+	template< >
+	bool getProperty< bool >( const TreeNodeIt node, const std::string& prop, const bool& defaultValue )
+	{
+		std::string propStr = prop;
+		if( node->HasMember( propStr.c_str() ) )
+			return node->FindMember( propStr.c_str() )->value.GetBool();
+		else
+			return defaultValue; 
+	}
+
+	std::string valueToString( const rapidjson::Value* value )
+	{
+		std::string ret;
+		if( value->IsInt() )
+		{
+			ret = std::to_string( value->GetInt() );
+		}
+		if( value->IsDouble() )
+		{
+			ret = std::to_string( value->GetDouble() );
+		}
+		if( value->IsString() )
+		{
+			ret = value->GetString();
+		}
+		return ret;
+	}
+}
 
 size_t SpecNode::_globalIndex = 0;
 
@@ -24,19 +86,19 @@ SpecNode::SpecNode( const Specification* spec, const TreeNodeIt node, const Spec
 
 std::string SpecNode::getId() const
 {
-	return getProperty( kId );
+	return property_parser::getProperty< std::string >( _node, kId );
 }
 
 std::string SpecNode::getLabel() const
 {
-	return getProperty( kLabel );
+	return property_parser::getProperty< std::string >( _node, kLabel );
 }
 
 EType SpecNode::getType() const
 {
 	try
 	{
-		return typeMap.at( getProperty( kType ) );
+		return typeMap.at( property_parser::getProperty< std::string >( _node, kType ) );
 	}
 	catch( const std::out_of_range& oor )
 	{
@@ -49,7 +111,7 @@ EDisplayType SpecNode::getDisplayType() const
 {
 	try
 	{
-		return displayTypeMap.at( getProperty( kDisplayType, "" ) );
+		return displayTypeMap.at( property_parser::getProperty< std::string >( _node, kDisplayType, "" ) );
 	}
 	catch( const std::out_of_range& oor )
 	{
@@ -60,65 +122,54 @@ EDisplayType SpecNode::getDisplayType() const
 
 std::string SpecNode::getCount() const
 {
-	return getProperty( kCount, "" );
+	return property_parser::getProperty< std::string >( _node, kCount, "" );
 }
 
 std::string SpecNode::getRequirement() const
 {
-	return getProperty( kRequired, "" );
+	return property_parser::getProperty< std::string >( _node, kRequired, "" );
 }
 
 std::string SpecNode::getGroupSize() const
 {
-	return getProperty( kGroupSize, "" );
+	return property_parser::getProperty< std::string >( _node, kGroupSize, "" );
 }
 
 bool SpecNode::isGroup() const
 {
-	return _node->second.get_child_optional( kGroup );
+	std::string groupStr = kGroup;
+	return _node->HasMember( groupStr.c_str() );
 }
 
 bool SpecNode::isOrdered() const
 {
-	return ( getProperty( kOrdered, kTrue ) == kTrue );
+	return property_parser::getProperty< bool >( _node, kOrdered, true );
 }
 
 bool SpecNode::isOptional() const
 {
-	return ( getProperty( kOptional, kFalse ) == kTrue );
+	return property_parser::getProperty< bool >( _node, kOptional, false );
 }
 
-bool SpecNode::isBigEndian() const
+bool SpecNode::isBigEndian() const 
 {
-	return ( getProperty( kEndian, kEndianBig ) == kEndianBig );
-}
-
-size_t SpecNode::isRepeated() const
-{
-	if( _uId == 4 )
-		return 3;
-
-	if( _uId == 5 )
-		return 2;
-	
-	return 1;
+	return ( property_parser::getProperty< std::string >( _node, kEndian, kEndianBig ) == kEndianBig );
 }
 
 std::vector< std::string > SpecNode::getValues() const
 {
 	std::vector< std::string > values;
-	if( boost::optional< const bpt::ptree& > valuesNode = _node->second.get_child_optional( kValues ) )
+	std::string valuesStr = kValues;
+	if( _node->HasMember( valuesStr.c_str() ) )
 	{
-		std::string stringValue = _node->second.get< std::string >( kValues );
-		if( stringValue.empty() )
+		const rapidjson::Value* valuesNode = &_node->FindMember( valuesStr.c_str() )->value;
+		if( valuesNode->IsArray() )
 		{
-			for( const bpt::ptree::value_type& value : valuesNode.get( ) )
-				values.push_back( value.second.get_value< std::string >() );
+			for( rapidjson::Value::ConstValueIterator itr = valuesNode->Begin(); itr != valuesNode->End(); ++itr  )
+				values.push_back( property_parser::valueToString( itr ) );
 		}
 		else
-		{
-			values.push_back( stringValue );
-		}
+			values.push_back( property_parser::valueToString( valuesNode ) );
 	}
 	return values;
 }
@@ -126,17 +177,22 @@ std::vector< std::string > SpecNode::getValues() const
 std::vector< std::pair< std::string, std::string > > SpecNode::getRange() const
 {
 	std::vector< std::pair< std::string, std::string > > ranges;
-	if( boost::optional< const bpt::ptree& > rangeNode = _node->second.get_child_optional( kRange ) )
+	std::string rangeStr = kRange;
+	std::string minStr   = kMin;
+	std::string maxStr   = kMax;
+
+	if( _node->HasMember( rangeStr.c_str() ) )
 	{
-		for( const bpt::ptree::value_type& rangeElement : rangeNode.get() )
+		const rapidjson::Value* rangesNode = &_node->FindMember( rangeStr.c_str() )->value;
+		for( rapidjson::Value::ConstValueIterator itr = rangesNode->Begin(); itr != rangesNode->End(); ++itr  )
 		{
 			std::pair< std::string, std::string > range { "", "" };
-			if( rangeElement.second.get_child_optional( kMin ) )
-				range.first = rangeElement.second.get< std::string >( kMin );
-
-			if( rangeElement.second.get_child_optional( kMax ) )
-				range.second = rangeElement.second.get< std::string >( kMax );
-
+			if( itr->HasMember( minStr.c_str() ) )
+				range.first = property_parser::valueToString( &itr->FindMember( minStr.c_str() )->value );
+			
+			if( itr->HasMember( maxStr.c_str() ) )
+				range.second = property_parser::valueToString( &itr->FindMember( maxStr.c_str() )->value );
+			
 			if( range.first != "" || range.second != "" )
 				ranges.push_back( range );
 		}
@@ -147,33 +203,41 @@ std::vector< std::pair< std::string, std::string > > SpecNode::getRange() const
 std::vector< std::pair< std::string, std::string > > SpecNode::getRepetitions() const
 {
 	std::vector< std::pair< std::string, std::string > > repetitions;
-	if( boost::optional< const bpt::ptree& > repetitionNode = _node->second.get_child_optional( kRepetition ) )
+	std::string repetitionStr = kRepetition;
+	std::string minStr        = kMin;
+	std::string maxStr        = kMax;
+
+	if( _node->HasMember( repetitionStr.c_str() ) )
 	{
-		std::string repetitionExpr = _node->second.get< std::string >( kRepetition );
-		if( ! repetitionExpr.empty() )
+		const rapidjson::Value* repetitionsNode = &_node->FindMember( repetitionStr.c_str() )->value;
+
+		if( ! repetitionsNode->IsArray() )
 		{
-			repetitions.push_back( std::make_pair( repetitionExpr, repetitionExpr ) );
+			std::pair< std::string, std::string > repetitionPair { "", "" };
+			repetitionPair.first  = property_parser::valueToString( repetitionsNode );
+			repetitionPair.second = property_parser::valueToString( repetitionsNode );
+			repetitions.push_back( repetitionPair );
+			return repetitions;
 		}
-		else
+
+		for( rapidjson::Value::ConstValueIterator itr = repetitionsNode->Begin(); itr != repetitionsNode->End(); ++itr  )
 		{
-			for( const bpt::ptree::value_type& repetitionElement : repetitionNode.get() )
+			std::pair< std::string, std::string > repetitionRange { "", "" };
+			if( ! itr->IsObject() )
 			{
-				std::pair< std::string, std::string > repetition { "", "" };
-				if( ! repetitionElement.second.get_child_optional( kMin ) && ! repetitionElement.second.get_child_optional( kMax ) )
-				{
-					std::string repetitionExpr = repetitionElement.second.data();
-					repetition.first  = repetitionExpr;
-					repetition.second = repetitionExpr;
-				}
-
-				if( repetitionElement.second.get_child_optional( kMin ) )
-					repetition.first = repetitionElement.second.get< std::string >( kMin );
-
-				if( repetitionElement.second.get_child_optional( kMax ) )
-					repetition.second = repetitionElement.second.get< std::string >( kMax );
-
-				repetitions.push_back( repetition );
+				repetitionRange.first  = property_parser::valueToString( itr );
+				repetitionRange.second = property_parser::valueToString( itr );
+				repetitions.push_back( repetitionRange );
+				continue;
 			}
+
+			if( itr->HasMember( minStr.c_str() ) )
+				repetitionRange.first = property_parser::valueToString( &itr->FindMember( minStr.c_str() )->value );
+			
+			if( itr->HasMember( maxStr.c_str() ) )
+				repetitionRange.second = property_parser::valueToString( &itr->FindMember( maxStr.c_str() )->value );
+			
+			repetitions.push_back( repetitionRange );
 		}
 	}
 	return repetitions;
@@ -182,13 +246,17 @@ std::vector< std::pair< std::string, std::string > > SpecNode::getRepetitions() 
 std::map< std::string, std::string > SpecNode::getMap() const
 {
 	std::map< std::string, std::string > map;
+	std::string mapStr = kMap;
 
-	if( boost::optional< const bpt::ptree& > mapNode = _node->second.get_child_optional( kMap ) )
+	if( _node->HasMember( mapStr.c_str() ) )
 	{
-		for( const bpt::ptree::value_type& mapElements : mapNode.get() )
+		const rapidjson::Value* mapNode = &_node->FindMember( mapStr.c_str() )->value;
+
+		for( rapidjson::Value::ConstValueIterator itr = mapNode->Begin(); itr != mapNode->End(); ++itr  )
 		{
-			std::string index = mapElements.second.ordered_begin()->first;
-			map[ index ] = mapElements.second.get< std::string >( index );
+			std::string index = property_parser::valueToString( itr->Begin() );
+			std::string value = property_parser::valueToString( itr->End()   );
+			map[ index ] = value;
 		}
 	}
 	return map;
@@ -196,10 +264,11 @@ std::map< std::string, std::string > SpecNode::getMap() const
 
 std::shared_ptr< spec_reader::SpecNode > SpecNode::next() const
 {
-	bpt::ptree::const_iterator node = _node;
+	TreeNodeIt node = _node;
 	++node;
+	std::string groupStr = kGroup;
 
-	if( _parent != nullptr && _parent->getIterator()->second.get_child( kGroup ).end() == node )
+	if( _parent != nullptr && _parent->getIterator()->FindMember( groupStr.c_str() )->value.End() == node )
 	{
 		// LOG_WARNING( "SpecNode::next " << getId() << ": Last Element (group)" );
 		return nullptr;
@@ -222,7 +291,12 @@ std::shared_ptr< spec_reader::SpecNode > SpecNode::firstChild() const
 		// LOG_WARNING( "SpecNode::firstChild " << getId() );
 		if( ! isGroup() )
 			throw std::runtime_error( "SpecNode::firstChild: This node has no child." );
-		bpt::ptree::const_iterator node = _node->second.get_child( kGroup ).begin();
+
+		std::string groupStr = kGroup;
+		
+		const rapidjson::Value* groupNode = &_node->FindMember( groupStr.c_str() )->value;
+
+		TreeNodeIt node = groupNode->Begin();
 		return std::make_shared< SpecNode >( _specification, node, this );
 	}
 	catch( std::runtime_error& e )
@@ -232,12 +306,12 @@ std::shared_ptr< spec_reader::SpecNode > SpecNode::firstChild() const
 	}
 }
 
-size_t SpecNode::getChildrenNumber() const
-{
-	if( ! isGroup() )
-		return 0;
-	return _node->second.get_child( kGroup ).size();
-}
+// size_t SpecNode::getChildrenNumber() const
+// {
+// 	if( ! isGroup() )
+// 		return 0;
+// 	return _node->second.get_child( kGroup ).size();
+// }
 
 std::set< std::string > SpecNode::getChildrenNodes() const
 {
@@ -247,10 +321,14 @@ std::set< std::string > SpecNode::getChildrenNodes() const
 			throw std::runtime_error( "SpecNode::getChildrenNodes: This node has no child." );
 		
 		std::set< std::string > list;
-		for( const bpt::ptree::value_type& child : _node->second.get_child( kGroup ) )
-		{
-			list.insert( child.second.get< std::string >( kId ) );
-		}
+		std::string groupStr = kGroup;
+		std::string idStr    = kId;
+
+		const rapidjson::Value* groupNode = &_node->FindMember( groupStr.c_str() )->value;
+
+		for( rapidjson::Value::ConstValueIterator itr = groupNode->Begin(); itr != groupNode->End(); ++itr  )
+			list.insert( property_parser::valueToString( &itr->FindMember( idStr.c_str() )->value ) );
+
 		return list;
 	}
 	catch( std::runtime_error& e )
@@ -258,25 +336,6 @@ std::set< std::string > SpecNode::getChildrenNodes() const
 		LOG_ERROR( e.what() );
 		throw;
 	}
-}
-
-
-std::string SpecNode::getProperty( const std::string& prop ) const
-{
-	try
-	{
-		return _node->second.get< std::string >( prop );
-	}
-	catch( std::runtime_error& e )
-	{
-		LOG_ERROR( e.what() );
-		throw;
-	}
-}
-
-std::string SpecNode::getProperty( const std::string& prop, const std::string& defaultValue ) const
-{
-	return _node->second.get< std::string >( prop, defaultValue );
 }
 
 }

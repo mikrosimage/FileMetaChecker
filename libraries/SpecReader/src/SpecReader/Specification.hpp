@@ -1,9 +1,14 @@
 #ifndef _SPEC_READER_SPECIFICATION_HPP_
 #define _SPEC_READER_SPECIFICATION_HPP_
 
+#include <memory>
+
 #include "SpecNode.hpp"
 
-#include <memory>
+#include <iostream>
+#include <vector>
+
+#include <rapidjson/document.h>
 
 namespace spec_reader
 {
@@ -14,9 +19,8 @@ public:
 	Specification();
 	~Specification();
 
-	void setFromTree  ( const boost::property_tree::ptree&  spec );
-	bool setFromFile  ( const std::string& filepath );
 	void setFromString( const std::string& string );
+	bool setFromFile( const std::string& filepath );
 
 	std::string getId();
 	std::string getLabel();
@@ -24,10 +28,13 @@ public:
 	std::vector< std::string > getSupportedExtensions();
 
 	std::shared_ptr< SpecNode > getFirstNode();
-	boost::property_tree::ptree::const_iterator end() const;
+	rapidjson::Value::ConstValueIterator end() const;
+
+protected:
+	std::string getSpecInfo( const std::string& key );
 
 private:
-	boost::property_tree::ptree _specTree;
+	rapidjson::Document _specDoc;
 };
 
 }

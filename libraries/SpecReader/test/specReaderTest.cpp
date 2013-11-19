@@ -21,4 +21,5 @@ BOOST_AUTO_TEST_CASE( spec_reader_init )
 
 BOOST_AUTO_TEST_SUITE_END()
 
+#include "specificationTest.hpp"
 #include "specNodeTest.hpp"

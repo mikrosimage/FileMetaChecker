@@ -2,6 +2,7 @@
 #define _SPEC_READER_SPECNODE_HPP_
 
 #include <Common/common.hpp>
+#include <rapidjson/document.h>
 
 #include <set>
 #include <vector>
@@ -14,12 +15,15 @@
 namespace spec_reader
 {
 
+typedef rapidjson::Value::ConstValueIterator TreeNodeIt;
+
 class Specification;
 
 class SpecNode
 {
-	typedef boost::property_tree::ptree::const_iterator TreeNodeIt;
+
 public:
+	SpecNode(){}
 	SpecNode( const Specification* spec,
 		      const TreeNodeIt node,
 		      const SpecNode* parent = nullptr );
@@ -38,7 +42,6 @@ public:
 	bool   isOrdered()   const;
 	bool   isOptional()  const;
 	bool   isBigEndian() const;
-	size_t isRepeated()  const;
 
 	std::vector< std::string >                           getValues()      const;
 	std::vector< std::pair< std::string, std::string > > getRange()       const;
@@ -50,15 +53,11 @@ public:
 	std::shared_ptr< spec_reader::SpecNode > next      () const;
 	std::shared_ptr< spec_reader::SpecNode > firstChild() const;
 	
-	size_t getChildrenNumber() const;
+	// size_t getChildrenNumber() const;
 	std::set< std::string > getChildrenNodes() const;
 	
 protected:
 	TreeNodeIt getIterator() const { return _node; }
-
-private:
-	std::string getProperty( const std::string& prop ) const;
-	std::string getProperty( const std::string& prop, const std::string& defaultValue ) const;
 
 private:
 	size_t               _uId;

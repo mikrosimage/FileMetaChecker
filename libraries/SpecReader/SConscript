@@ -6,6 +6,7 @@ project.StaticLibrary(
 		includes  = ['src'],
 		libraries = [
 			libs.common,
+			libs.rapidjson,
 			libs.boost,
 			libs.boost_filesystem,
 		],

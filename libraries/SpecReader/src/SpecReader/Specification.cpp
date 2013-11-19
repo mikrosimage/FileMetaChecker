@@ -1,10 +1,9 @@
 #include "Specification.hpp"
 
-#include <boost/filesystem.hpp>
-#include <boost/property_tree/json_parser.hpp>
+#include <Common/common.hpp>
+#include <Common/log.hpp>
 
-namespace bpt = boost::property_tree;
-namespace bfs = boost::filesystem;
+#include <fstream>
 
 namespace spec_reader
 {
@@ -17,129 +16,89 @@ Specification::~Specification()
 {
 }
 
-void Specification::setFromTree( const bpt::ptree& spec )
+
+void Specification::setFromString( const std::string& string )
 {
-	_specTree = spec;
+	_specDoc.Parse<0>( string.c_str() );
 }
 
-bool Specification::setFromFile( const std::string& filepath )
+bool Specification::setFromFile( const std::string& filepath )	// @todo: tests !
 {
-	bfs::path path( filepath );
 	try
 	{
-		if( !exists( path ) )
-			throw std::runtime_error( " does not exist" );
-
-		if ( !is_regular( path ) )
-			throw std::runtime_error( " is not a regular file" );
-
-		if ( path.extension() != ".json" )
-			throw std::runtime_error( " - Invalid extension: '.json' expected" );
-
-		bpt::read_json( path.string(), _specTree );
-		return true;
+	    std::ifstream file( filepath );
+	    bool ret = false;
+		if( file.good() )
+		{
+			std::string content( ( std::istreambuf_iterator<char>( file ) ),
+			                       std::istreambuf_iterator<char>()       );
+			_specDoc.Parse<0>( content.c_str() );
+			file.close();
+			ret = true;
+		}
+		return ret;
 	}
-	catch( const bfs::filesystem_error& ex )
+	catch( const std::exception& ex )
 	{
-		std::cout << "Error: " <<  "Specification from file: " <<  ex.what() << std::endl;
-	}
-	catch( const std::runtime_error& ex )
-	{
-		std::cout << "Warning: " << "Specification from file: "<< path.string() <<  ex.what() << std::endl;
+		LOG_WARNING( "Specification from file: "<< filepath <<  ex.what() );
 	}
 	return false;
 }
 
-void Specification::setFromString( const std::string& string )
-{
-	std::istringstream isstream( string );
-	try
-	{
-		bpt::read_json( isstream, _specTree );
-	}
-	catch( const std::exception& ex )
-	{
-		std::cout << "Error: " <<  "Specification from String: " <<  ex.what() << std::endl;
-		throw;
-	}
-}
-
-
 std::string Specification::getId( )
 {
-	try
-	{
-		return _specTree.get< std::string >( kStandard + "." + kId );
-	}
-	catch( const std::runtime_error& e )
-	{
-		std::cout << "Error: " <<  e.what() << std::endl;
-		throw;
-	}
+	return getSpecInfo( kId );
 }
 
 std::string Specification::getLabel( )
 {
-	try
-	{
-		return _specTree.get< std::string >( kStandard + "." + kLabel );
-	}
-	catch( const std::runtime_error& e )
-	{
-		std::cout << "Error: " <<  e.what() << std::endl;
-		throw;
-	}
+	return getSpecInfo( kLabel );
 }
 
 std::string Specification::getType( )
 {
-	try
-	{
-		return _specTree.get< std::string >( kStandard + "." + kType );
-	}
-	catch( const std::runtime_error& e )
-	{
-		std::cout << "Error: " <<  e.what() << std::endl;
-		throw;
-	}
+	return getSpecInfo( kType );
 }
 
 std::vector< std::string > Specification::getSupportedExtensions( )
 {
+	std::vector< std::string > list;
+	std::string standardStr  = kStandard;
+	std::string extensionStr = kExtension;
+
+	for( rapidjson::Value::ConstValueIterator itr  = _specDoc[ standardStr.c_str() ][ extensionStr.c_str() ].Begin();
+		                                      itr != _specDoc[ standardStr.c_str() ][ extensionStr.c_str() ].End();
+		                                      ++itr )
+		list.push_back( std::string( itr->GetString() ) );
+	return list;
+}
+
+std::shared_ptr< spec_reader::SpecNode > Specification::getFirstNode()
+{
 	try
 	{
-		std::vector< std::string > list;
-		for( bpt::ptree::value_type& node : _specTree.get_child( kStandard + "." + kExtension ) )
-		{
-			list.push_back( node.second.data() );
-		}
-		return list;
+		std::string headerStr  = kHeader;
+		rapidjson::Value::ConstValueIterator begin = _specDoc.FindMember( headerStr.c_str() )->value.Begin();
+		return std::make_shared< spec_reader::SpecNode >( this, begin );
 	}
 	catch( const std::runtime_error& e )
 	{
-		std::cout << "Error: " <<  e.what() << std::endl;
+		LOG_ERROR( e.what() );
 		throw;
 	}
 }
 
-std::shared_ptr< SpecNode > Specification::getFirstNode()
+rapidjson::Value::ConstValueIterator Specification::end() const
 {
-	try
-	{
-		return std::make_shared< SpecNode >( this, _specTree.get_child( kHeader ).begin() );
-	}
-	catch( const std::runtime_error& e )
-	{
-		std::cout << "Error: " <<  e.what() << std::endl;
-		throw;
-	}
+	std::string headerStr  = kHeader;
+	return _specDoc.FindMember( headerStr.c_str() )->value.End();
 }
 
-bpt::ptree::const_iterator Specification::end() const
+std::string Specification::getSpecInfo( const std::string& key )
 {
-	bpt::ptree::const_iterator end = _specTree.get_child( kHeader ).end();
-	return end;
+	std::string standardStr = kStandard;
+	std::string keyStr = key;
+	return std::string( _specDoc[ standardStr.c_str() ][ keyStr.c_str() ].GetString() );
 }
 
 }
-
