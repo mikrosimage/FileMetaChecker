@@ -181,5 +181,59 @@ BOOST_AUTO_TEST_CASE( spec_reader_specification_from_file )
 }
 
 
+BOOST_AUTO_TEST_CASE( spec_reader_specification_errors )
+{
+	std::string jsonString = R"*(
+			{
+			    "standard":
+			    {
+			        "id": "test",
+			        "label": "Specification Test",
+			        "type": "file",
+			        "extension":
+			        [
+			            ".ext1",
+			            ".ext2",
+			            ".ext3"
+			        ]
+			    },
+			    "header":
+			    [
+			        {
+			            "id": "test1",
+			            "label": "Test 1",	// comments are forbidden !
+			            "type": "ascii"
+			        },
+			        {
+			            "id": "test2",
+			            "label": "Test 2",
+			            "type": "hexa"
+			        },
+			        {
+			            "id": "test3",
+			            "label": "Test 3",
+			            "type": "float"
+			        }
+			    ]
+			}
+		)*";
+
+	LOG_INFO( "\n>>> spec_reader_specification_errors <<<" );
+	{
+		Specification spec;
+		BOOST_CHECK_THROW( spec.setFromString( jsonString ), std::runtime_error );
+	}
+	{
+		std::ofstream specfile;
+		std::string specfilename = "test.json";
+		specfile.open( specfilename );
+		specfile << jsonString;
+		specfile.close();
+
+		Specification spec;
+		BOOST_CHECK_THROW( spec.setFromFile( specfilename ), std::runtime_error );
+	}
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
