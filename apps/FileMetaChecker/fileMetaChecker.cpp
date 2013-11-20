@@ -105,8 +105,8 @@ int main( int argc, char** argv )
 
 	try
 	{
-		LOG_INFO( common::details::kColorCyan  << std::setfill( '=' ) << std::setw( filePath.size() + 14 ) << common::details::kColorStd );
-		LOG_INFO( common::details::kColorCyan  << "| Check: " << filePath << common::details::kColorStd );
+		LOG_INFO( common::details::kColorCyan << std::setfill( '=' ) << std::setw( filePath.size() + 14 ) << common::details::kColorStd );
+		LOG_INFO( common::details::kColorCyan << "| Check: " << filePath << common::details::kColorStd );
 
 		report_generator::Report report;
 
@@ -119,16 +119,16 @@ int main( int argc, char** argv )
 
 		fb->open( filePath, std::ios::in );
 		file_reader::FileReader file( fb );
-		LOG_INFO( common::details::kColorCyan  << "| File length: " << file.getPosition() << "/" << file.getLength() << common::details::kColorStd );
+		LOG_INFO( common::details::kColorCyan << "| File length: " << file.getPosition() << "/" << file.getLength() << common::details::kColorStd );
 
+		LOG_INFO( common::details::kColorCyan << "| Open specification file..." << common::details::kColorStd );
 		spec_reader::Specification spec;
-		if( spec.setFromFile( specPath ) )
-			LOG_INFO( common::details::kColorGreen << "Specification file opened" << common::details::kColorStd );
-		else
+
+		if( ! spec.setFromFile( specPath ) )
 			throw std::runtime_error( "Cannot open specification file: " + specPath );
-		
-		LOG_INFO( common::details::kColorCyan  << "| Specification: " << spec.getId() << " (" << spec.getType() << ")" << common::details::kColorStd  );
-		LOG_INFO( common::details::kColorCyan  << std::setfill( '=' ) << std::setw( filePath.size() + 14 ) << common::details::kColorStd );
+
+		LOG_INFO( common::details::kColorCyan << "| Specification: " << spec.getId() << " (" << spec.getType() << ")" << common::details::kColorStd  );
+		LOG_INFO( common::details::kColorCyan << std::setfill( '=' ) << std::setw( filePath.size() + 14 ) << common::details::kColorStd );
 		
 		comparator::Comparator comp;
 		comp.check( spec, file, report );
