@@ -2,6 +2,7 @@
 
 #include <Common/common.hpp>
 #include <Common/log.hpp>
+#include <Common/color.hpp>
 
 #include <fstream>
 
@@ -22,7 +23,7 @@ void Specification::setFromString( const std::string& string )
 	_specDoc.Parse<0>( string.c_str() );
 }
 
-bool Specification::setFromFile( const std::string& filepath )	// @todo: tests !
+bool Specification::setFromFile( const std::string& filepath )
 {
 	try
 	{

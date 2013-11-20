@@ -122,7 +122,10 @@ int main( int argc, char** argv )
 		LOG_INFO( common::details::kColorCyan  << "| File length: " << file.getPosition() << "/" << file.getLength() << common::details::kColorStd );
 
 		spec_reader::Specification spec;
-		spec.setFromFile( specPath );
+		if( spec.setFromFile( specPath ) )
+			LOG_INFO( common::details::kColorGreen << "Specification file opened" << common::details::kColorStd );
+		else
+			throw std::runtime_error( "Cannot open specification file: " + specPath );
 		
 		LOG_INFO( common::details::kColorCyan  << "| Specification: " << spec.getId() << " (" << spec.getType() << ")" << common::details::kColorStd  );
 		LOG_INFO( common::details::kColorCyan  << std::setfill( '=' ) << std::setw( filePath.size() + 14 ) << common::details::kColorStd );

@@ -1,4 +1,6 @@
 
+#include <fstream>
+
 BOOST_AUTO_TEST_SUITE( spec_reader_test_specification )
 
 BOOST_AUTO_TEST_CASE( spec_reader_specification )
@@ -65,7 +67,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specification )
 		std::shared_ptr< SpecNode > node3 = node2->next();
 		BOOST_CHECK_EQUAL( node3->getId(), "value12" );
 		BOOST_CHECK_EQUAL( node3->getParent()->getId(), "value1" );
-		BOOST_CHECK_EQUAL( node2->getParent()->getUId(), node1->getUId() );
+		BOOST_CHECK_EQUAL( node3->getParent()->getUId(), node1->getUId() );
 
 		std::shared_ptr< SpecNode > childNode1 = node3->firstChild();
 		
@@ -99,6 +101,85 @@ BOOST_AUTO_TEST_CASE( spec_reader_specification )
 		BOOST_CHECK( node5 == nullptr );
 	}
 }
+
+BOOST_AUTO_TEST_CASE( spec_reader_specification_from_file )
+{
+	LOG_INFO( "\n>>> spec_reader_specification_from_file <<<" );
+	{
+		std::string jsonString = R"*(
+				{
+				    "standard":
+				    {
+				        "id": "test",
+				        "label": "Specification Test",
+				        "type": "file",
+				        "extension":
+				        [
+				            ".ext1",
+				            ".ext2",
+				            ".ext3"
+				        ]
+				    },
+				    "header":
+				    [
+				        {
+				            "id": "test1",
+				            "label": "Test 1",
+				            "type": "ascii"
+				        },
+				        {
+				            "id": "test2",
+				            "label": "Test 2",
+				            "type": "hexa"
+				        },
+				        {
+				            "id": "test3",
+				            "label": "Test 3",
+				            "type": "float"
+				        }
+				    ]
+				}
+			)*";
+
+		std::ofstream specfile;
+		std::string specfilename = "test.json";
+		specfile.open( specfilename );
+		specfile << jsonString;
+		specfile.close();
+
+		Specification spec;
+		spec.setFromFile( specfilename );
+		BOOST_CHECK_EQUAL( spec.getId(),    "test" );
+		BOOST_CHECK_EQUAL( spec.getLabel(), "Specification Test" );
+		BOOST_CHECK_EQUAL( spec.getType(),  "file" );
+		BOOST_CHECK_EQUAL( spec.getSupportedExtensions().size(), 3 );
+		BOOST_CHECK_EQUAL( spec.getSupportedExtensions().at(0),  ".ext1" );
+		BOOST_CHECK_EQUAL( spec.getSupportedExtensions().at(1),  ".ext2" );
+		BOOST_CHECK_EQUAL( spec.getSupportedExtensions().at(2),  ".ext3" );
+		std::shared_ptr< SpecNode > node1 = spec.getFirstNode();
+
+		BOOST_CHECK_EQUAL( node1->getId(),    "test1"    );
+		BOOST_CHECK_EQUAL( node1->getLabel(), "Test 1"   );
+		BOOST_CHECK_EQUAL( node1->getType(),  eTypeAscii );
+		BOOST_CHECK( node1->getParent() == nullptr );
+		
+		std::shared_ptr< SpecNode > node2 = node1->next();
+		BOOST_CHECK_EQUAL( node2->getId(),    "test2"    );
+		BOOST_CHECK_EQUAL( node2->getLabel(), "Test 2"   );
+		BOOST_CHECK_EQUAL( node2->getType(),  eTypeHexa  );
+		BOOST_CHECK( node2->getParent() == nullptr );
+		
+		std::shared_ptr< SpecNode > node3 = node2->next();
+		BOOST_CHECK_EQUAL( node3->getId(),    "test3"    );
+		BOOST_CHECK_EQUAL( node3->getLabel(), "Test 3"   );
+		BOOST_CHECK_EQUAL( node3->getType(),  eTypeFloat  );
+		BOOST_CHECK( node3->getParent() == nullptr );
+
+		std::shared_ptr< SpecNode > node4 = node3->next();
+		BOOST_CHECK( node4 == nullptr );
+	}
+}
+
 
 BOOST_AUTO_TEST_SUITE_END()
 
