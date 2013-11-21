@@ -15,3 +15,15 @@ qc = project.Program(
 	]
 )
 
+specChecker = project.Program(
+	target='specChecker',
+	dirs=['SpecChecker'],
+	includes=['SpecChecker'],
+	libraries = [
+		libs.boost_filesystem,
+		libs.boost_program_options,
+		libs.common,
+		libs.specReader,
+	]
+)
+
