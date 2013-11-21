@@ -20,8 +20,8 @@ Comparator::Comparator()
 
 void Comparator::check( spec_reader::Specification& spec, file_reader::FileReader& file, report_generator::Report& report )
 {
-	PtrSpecNode node = spec.getFirstNode();
-	PtrElement element( new basic_element::Element( node ) );
+	ShPtrSpecNode node = spec.getFirstNode();
+	ShPtrElement element( new basic_element::Element( node ) );
 
 	element_checker::Checker checker;
 	size_t size = checker.getSize( element );
@@ -41,7 +41,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 
 	while( ( node = element->next() ) != nullptr )	// if end of specification : stop
 	{
-		PtrElement previous = element;
+		ShPtrElement previous = element;
 		switch( element->_status )
 		{
 			case eStatusInvalidButOptional  :
@@ -84,7 +84,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 
 bool Comparator::isInUnorderedGroup( const std::shared_ptr< basic_element::Element > element )
 {
-	PtrElement parent = element->getParent();
+	ShPtrElement parent = element->getParent();
 	while( parent != nullptr )
 	{
 		if( ! parent->_isOrdered )
@@ -93,9 +93,9 @@ bool Comparator::isInUnorderedGroup( const std::shared_ptr< basic_element::Eleme
 	return false;
 }
 
-Comparator::PtrElement Comparator::getNextParent( const PtrElement element, const PtrSpecNode node )
+Comparator::ShPtrElement Comparator::getNextParent( const ShPtrElement element, const ShPtrSpecNode node )
 {
-	PtrElement parent = element->getParent();
+	ShPtrElement parent = element->getParent();
 	bool isLastInGroup = ( node->next() == nullptr && ( parent == nullptr || ( parent->_isOrdered || ( ! parent->_isOrdered && element->_status == eStatusInvalidButSkip ) ) ) );
 
 	if( element->_isGroup
@@ -125,11 +125,10 @@ Comparator::PtrElement Comparator::getNextParent( const PtrElement element, cons
 	return parent;
 }
 
-
-void Comparator::checkGroupSize( const PtrElement element, file_reader::FileReader& file )
+void Comparator::checkGroupSize( const ShPtrElement element, file_reader::FileReader& file )
 {
-	PtrElement parent   = element->getParent();
-	PtrElement previous = element->getPrevious();
+	ShPtrElement parent   = element->getParent();
+	ShPtrElement previous = element->getPrevious();
 	
 	if( parent != nullptr && previous != nullptr && element->getSpecNode()->next() == nullptr && ! parent->_groupSizeExpr.empty() )
 	{

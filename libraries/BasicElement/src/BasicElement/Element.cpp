@@ -7,9 +7,9 @@
 namespace basic_element
 {
 
-Element::Element( const std::shared_ptr< spec_reader::SpecNode > node,
-	              const std::shared_ptr< Element > previous,
-	              const std::shared_ptr< Element > parent )
+Element::Element( const ShPtrSpecNode node,
+	              const ShPtrElement  previous,
+	              const ShPtrElement  parent )
 	: _parent        ( parent )
 	, _previous      ( previous )
 	, _specNode      ( node )
@@ -46,13 +46,13 @@ Element::Element( const std::shared_ptr< spec_reader::SpecNode > node,
 	LOG_TRACE( "[element] " << _id << ": " << &*this << " - Parent: " << &*_parent.lock() << " - Previous: " << &( *( _previous.lock() ) ) << " - SpecNode: " << &*_specNode.get() << " - Iteration: " << _iteration );
 }
 
-std::shared_ptr< spec_reader::SpecNode > Element::next( )
+Element::ShPtrSpecNode Element::next( )
 {
 	// if element has been checked, back to the same SpecNode
 	if( _status == eStatusNotChecked )
 		return _specNode;
 
-	std::shared_ptr< Element > parent;
+	ShPtrElement  parent;
 	// if parent exists, copy it
 	if( _parent.use_count() != 0 )
 		parent = _parent.lock();
@@ -77,7 +77,7 @@ std::shared_ptr< spec_reader::SpecNode > Element::next( )
 	if( _specNode->isGroup() && ! _checkedGroup && ( _iteration == 1 || _status == eStatusValid ) && _status != eStatusInvalidButSkip )
 	{
 		_checkedGroup = true;
-		std::shared_ptr< spec_reader::SpecNode > child( _specNode->firstChild() );
+		ShPtrSpecNode child( _specNode->firstChild() );
 		LOG_TRACE( "[element] next is first child of " << _id );
 		return child;
 	}
@@ -89,7 +89,7 @@ std::shared_ptr< spec_reader::SpecNode > Element::next( )
 		return _specNode;
 	}
 
-	std::shared_ptr< spec_reader::SpecNode > nextNode = _specNode->next();
+	ShPtrSpecNode nextNode = _specNode->next();
 
 	// Last Element: if their is no more SpecNode after and parent exists, go to the node after the parent
 	if( nextNode == nullptr && _parent.use_count() != 0 )
@@ -146,13 +146,13 @@ size_t Element::getElementSize( const std::string& id, const EType type, const s
 	return size;
 }
 
-size_t Element::getElementIteration( const std::string& id, const ExpressionList& repetExpr, const std::shared_ptr< Element >& previous, const std::shared_ptr< Element >& parent )
+size_t Element::getElementIteration( const std::string& id, const ExpressionList& repetExpr, const ShPtrElement& previous, const ShPtrElement& parent )
 {
 	size_t iteration = 1;
 
 	if( ! repetExpr.empty() )
 	{
-		std::shared_ptr< Element > prev = previous;
+		ShPtrElement prev = previous;
 		while( prev != nullptr || ( parent != nullptr && prev->_id != parent->_id ) )
 		{
 			if( prev->_id == id && ( prev->_status == eStatusValid || prev->_status == eStatusPassOver ) )

@@ -6,32 +6,15 @@
 namespace element_checker
 {
 
-ExpressionParser::ExpressionParser()
-{
-	Py_Initialize();
-	_mainModule = bpy::import( "__main__" );
-	_mainNamespace = _mainModule.attr( "__dict__" );
-}
-
-
-ExpressionParser::ExpressionParser( const std::vector< std::shared_ptr< basic_element::Element > >& elementList )
+ExpressionParser::ExpressionParser( const std::vector< ShPtrElement >& elementList )
+	: _contextString( "" )
 {
 	Py_Initialize();
 	_mainModule = bpy::import( "__main__" );
 	_mainNamespace = _mainModule.attr( "__dict__" );
 
-	setVariables( elementList );
-}
-
-ExpressionParser::~ExpressionParser() 
-{
-	Py_Finalize();
-}
-
-void ExpressionParser::setVariables( const std::vector< std::shared_ptr< basic_element::Element > >& elementList )
-{
 	std::ostringstream oss;
-	for( std::shared_ptr< basic_element::Element > elem : elementList )
+	for( ShPtrElement elem : elementList )
 	{
 		if( elem->_iteration > 1 )
 			continue;
@@ -51,15 +34,19 @@ void ExpressionParser::setVariables( const std::vector< std::shared_ptr< basic_e
 			case eTypeIeeeExtended : oss << elem->_id << " = " << Translator( elem ).get< basic_element::ieeeExtended >() << std::endl; break;
 			default: oss << elem->_id << " = " << "True" << std::endl; break;
 		}
-		_contextString += oss.str();
 	}
+	_contextString += oss.str();
 }
 
+ExpressionParser::~ExpressionParser() 
+{
+	Py_Finalize();
+}
 
 template< typename ResultType >
 ResultType ExpressionParser::getExpressionResult( const std::string& expression )
 {
-	ResultType result = 0;
+	ResultType result {};
 	try
 	{
 		//LOG_TRACE( expression );
@@ -67,26 +54,6 @@ ResultType ExpressionParser::getExpressionResult( const std::string& expression 
 		bpy::exec( _contextString.c_str(), _mainNamespace );
 		bpy::object returnText = bpy::eval( expression.c_str(), _mainNamespace );
 		result = bpy::extract< ResultType >( returnText );
-	}
-	catch( const bpy::error_already_set& error )
-	{
-		printPythonError( error );
-		throw;
-	}
-	return result;
-}
-
-template< >
-std::string ExpressionParser::getExpressionResult<std::string>( const std::string& expression )
-{
-	std::string result = "";
-	try
-	{
-		// LOG_TRACE( expression );
-		// LOG_TRACE( _contextString.c_str() );
-		bpy::exec( _contextString.c_str(), _mainNamespace );
-		bpy::object returnText = bpy::eval( expression.c_str(), _mainNamespace );
-		result = bpy::extract< std::string >( returnText );
 	}
 	catch( const bpy::error_already_set& error )
 	{

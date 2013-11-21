@@ -12,20 +12,21 @@ namespace element_checker
 
 class Checker
 {
+	typedef std::shared_ptr< basic_element::Element > ShPtrElement;
 	
 public:
 	Checker();
 
-	void   check  ( const std::shared_ptr< basic_element::Element > element );
-	size_t getSize( const std::shared_ptr< basic_element::Element > element );
-	std::vector< std::shared_ptr< basic_element::Element > > getElementList() { return _elementList; }
+	void   check  ( const ShPtrElement element );
+	size_t getSize( const ShPtrElement element );
+	std::vector< ShPtrElement > getElementList() { return _elementList; }
 private:
-	bool isIterationValid         ( const std::shared_ptr< basic_element::Element > element, std::string& errorMessage );
-	bool isRequirementValid       ( const std::shared_ptr< basic_element::Element > element );
-	void checkLastUnorderedElement( const std::shared_ptr< basic_element::Element > element );
+	bool isIterationValid         ( const ShPtrElement element, std::string& errorMessage );
+	bool isRequirementValid       ( const ShPtrElement element );
+	void checkLastUnorderedElement( const ShPtrElement element );
 
 private:
-	std::vector< std::shared_ptr< basic_element::Element > > _elementList;
+	std::vector< ShPtrElement > _elementList;
 };
 
 }

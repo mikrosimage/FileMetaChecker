@@ -18,7 +18,7 @@ namespace element_checker
 namespace utils
 {
 	template< typename NumberType >
-	EStatus checkNumberElement( const std::shared_ptr< basic_element::Element > element )
+	EStatus checkNumberElement( const Checker::ShPtrElement element )
 	{
 		EStatus status = eStatusInvalid;
 		
@@ -40,7 +40,7 @@ Checker::Checker()
 {
 }
 
-void Checker::check( const std::shared_ptr< basic_element::Element > element )
+void Checker::check( const ShPtrElement element )
 {
 	if( element->_size == 0 && element->_countExpr.empty() )
 	{
@@ -49,8 +49,8 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 	
 	element->_dispValue = Translator( element ).get( element->_displayType );
 
-	std::shared_ptr< basic_element::Element > parent   = element->getParent();
-	std::shared_ptr< basic_element::Element > previous = element->getPrevious();
+	ShPtrElement parent   = element->getParent();
+	ShPtrElement previous = element->getPrevious();
 
 	if( parent != nullptr && previous != nullptr && element->getSpecNode()->next() == nullptr && ! parent->_groupSizeExpr.empty() )
 	{
@@ -153,7 +153,7 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 		LOG_TRACE( "[checker] check Repetitions" );
 		element->_status = eStatusInvalidButSkip;
 		std::string errorMessage;
-		std::shared_ptr< basic_element::Element > previous = element->getPrevious();
+		ShPtrElement previous = element->getPrevious();
 		if( ! isIterationValid( previous, errorMessage ) )
 		{
 			LOG_ERROR( "[checker] " << element->_id << ": " << errorMessage );
@@ -170,7 +170,7 @@ void Checker::check( const std::shared_ptr< basic_element::Element > element )
 
 }
 
-size_t Checker::getSize( const std::shared_ptr< basic_element::Element > element )
+size_t Checker::getSize( const ShPtrElement element )
 {
 	if( ! element->_countExpr.empty() && element->_size == 0 )
 	{
@@ -183,7 +183,7 @@ size_t Checker::getSize( const std::shared_ptr< basic_element::Element > element
 	return element->_size;
 }
 
-bool Checker::isIterationValid( const std::shared_ptr< basic_element::Element > element, std::string& errorMessage )
+bool Checker::isIterationValid( const ShPtrElement element, std::string& errorMessage )
 {
 	if( element->_repetExpr.empty() )
 		return true;
@@ -222,7 +222,7 @@ bool Checker::isIterationValid( const std::shared_ptr< basic_element::Element > 
 	return false;
 }
 
-bool Checker::isRequirementValid( const std::shared_ptr< basic_element::Element > element )
+bool Checker::isRequirementValid( const ShPtrElement element )
 {
 	if( element->_requiredExpr.empty() )
 		return true;
@@ -232,14 +232,14 @@ bool Checker::isRequirementValid( const std::shared_ptr< basic_element::Element 
 	return requirement;
 }
 
-void Checker::checkLastUnorderedElement( const std::shared_ptr< basic_element::Element > element )
+void Checker::checkLastUnorderedElement( const ShPtrElement element )
 {
 	//LOG_TRACE( "[checker] " << element->_id << ": Last element " << &*element << " <-" << &*element->getPrevious() );
 	if( element->getPrevious() == nullptr )
 		throw std::runtime_error( "[checker] Invalid tree" );
 
-	std::shared_ptr< basic_element::Element > parent = element->getParent();
-	std::shared_ptr< basic_element::Element > prev   = element->getPrevious();
+	ShPtrElement parent = element->getParent();
+	ShPtrElement prev   = element->getPrevious();
 	std::set< std::string > childIds = parent->getSpecNode()->getChildrenNodes();
 
 	while( prev->_id != parent->_id )

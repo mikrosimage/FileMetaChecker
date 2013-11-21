@@ -14,14 +14,12 @@ namespace element_checker
 
 class ExpressionParser
 {
+	typedef std::shared_ptr< basic_element::Element > ShPtrElement;
+	
 public:
-	ExpressionParser();
-
-	ExpressionParser( const std::vector< std::shared_ptr< basic_element::Element > >& elementList );
+	ExpressionParser( const std::vector< ShPtrElement >& elementList = std::vector< ShPtrElement >() );
 
 	~ExpressionParser();
-
-	void setVariables( const std::vector< std::shared_ptr< basic_element::Element > >& elementList );
 
 	template< typename ResultType >
 	ResultType getExpressionResult( const std::string& expression );

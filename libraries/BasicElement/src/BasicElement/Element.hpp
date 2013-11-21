@@ -31,29 +31,28 @@ typedef long double  ieeeExtended;    // 80 bits IEEE Standard 754 floating poin
 
 class Element
 {
-
+	typedef std::shared_ptr< basic_element::Element > ShPtrElement;
+	typedef std::shared_ptr< spec_reader::SpecNode  > ShPtrSpecNode;
 public:
-	Element( const std::shared_ptr< spec_reader::SpecNode > node, 
-		     const std::shared_ptr< Element > previous = std::shared_ptr< Element >(),
-		     const std::shared_ptr< Element > parent = nullptr );
+	Element( const ShPtrSpecNode node, const ShPtrElement previous = ShPtrElement(), const ShPtrElement parent = nullptr );
 	
-	std::shared_ptr< spec_reader::SpecNode > next( );
+	ShPtrSpecNode next( );
 
 	void  set( const char* data, const size_t& size );
 
-	std::shared_ptr< Element >               getParent()   const { return _parent.lock(); }
-	std::shared_ptr< Element >               getPrevious() const { return _previous.lock(); }
-	std::shared_ptr< spec_reader::SpecNode > getSpecNode()       { return _specNode; }
+	ShPtrElement  getParent()   const { return _parent.lock(); }
+	ShPtrElement  getPrevious() const { return _previous.lock(); }
+	ShPtrSpecNode getSpecNode()       { return _specNode; }
 
 protected:
 	static size_t getElementSize( const std::string& id, const EType type, const std::vector<std::string>& values );
-	static size_t getElementIteration( const std::string& id, const ExpressionList& repetExpr, const std::shared_ptr< Element >& previous, const std::shared_ptr< Element >& parent );
+	static size_t getElementIteration( const std::string& id, const ExpressionList& repetExpr, const ShPtrElement& previous, const ShPtrElement& parent );
 
 protected:
-	std::weak_ptr< Element > _parent;
-	std::weak_ptr< Element > _previous;
-	std::shared_ptr< spec_reader::SpecNode >  _specNode;
-	std::vector< std::shared_ptr< Element > > _children;
+	std::weak_ptr< Element >    _parent;
+	std::weak_ptr< Element >    _previous;
+	ShPtrSpecNode               _specNode;
+	std::vector< ShPtrElement > _children;
 
 public:
 	const std::string   _id;
