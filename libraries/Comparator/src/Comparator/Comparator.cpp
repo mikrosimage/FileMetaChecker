@@ -28,7 +28,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 
 	char buffer1[ size ];
 	if( ! file.readData( buffer1, size ) )
-		throw std::runtime_error( "End of file, cannot read data" );
+		throw std::runtime_error( "[comparator] End of file, cannot read data" );
 	element->set( buffer1, size );
 
 	checker.check( element );
@@ -37,7 +37,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 	if( element->_isGroup )
 		parent = element;
 
-	LOG_ERROR( element->_id << ": " << statusMap.at( element->_status ) << " | " << element->_dispValue );
+	LOG_INFO( "[comparator] check :" << element->_id << ": " << statusMap.at( element->_status ) << " | display type = " << element->_dispValue );
 
 	while( ( node = element->next() ) != nullptr )	// if end of specification : stop
 	{
@@ -49,7 +49,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 			case eStatusInvalidForIteration :
 			case eStatusSkip :
 			{
-				LOG_WARNING( "COMPARATOR : Go BACK in file" );
+				LOG_INFO( "[comparator] Go back in file (" << size << " bytes)" );
 				file.goBack( size );
 				previous = element->getPrevious();
 				break;
@@ -62,17 +62,17 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 
 		if( size > ( file.getLength() - file.getPosition() ) && ( isInUnorderedGroup( element ) || element->_isOptional ) )
 		{
-			LOG_WARNING( "Critical remaining file data size: " << size << "/" << file.getLength() - file.getPosition() );
+			//LOG_WARNING( "Critical remaining file data size: " << size << "/" << file.getLength() - file.getPosition() );
 			size = file.getLength() - file.getPosition();
 		}
-		LOG_FATAL( "Size: " << size );
+
 		char buffer[ size ];
 		if( ! file.readData( buffer, size ) )
-			throw std::runtime_error( "End of file, cannot read data" );
+			throw std::runtime_error( "[comparator] End of file, cannot read data" );
 		element->set( buffer, size );
 
 		checker.check( element );
-		LOG_WARNING( "COMPARATOR : " << element->_id << " << Prev: " << previous << " - " << statusMap.at( element->_status ) << " | " << element->_dispValue );
+		LOG_INFO( "[comparator] checked : " << element->_id << " << Previous: " << previous << " - " << statusMap.at( element->_status ) << " | " << element->_dispValue );
 
 		checkGroupSize( element, file );
 
@@ -104,24 +104,23 @@ Comparator::PtrElement Comparator::getNextParent( const PtrElement element, cons
 	 && element->_status != eStatusInvalidButSkip
 	 && element->_status != eStatusInvalidForIteration )
 	{
-		LOG_WARNING( "COMPARATOR::getNextParent -  CASE 1" );
+		LOG_TRACE( "[comparator] return parent as current element with id " << element->_id );
 		parent = element;
 	}
 	else if( isLastInGroup && element->getParent() != nullptr )
 	{
-		LOG_WARNING( "COMPARATOR::getNextParent -  CASE 2" );
 		parent = element->getParent();
 		while( parent->getSpecNode()->next() == nullptr && parent->getParent() != nullptr )
 		{
-			LOG_WARNING( "parent of  : " << parent->_id );
 			parent = parent->getParent();
 		}
 		parent = parent->getParent();
+		LOG_TRACE( "[comparator] return parent with id " << parent->_id );
 	}
 	else
 	{
-		LOG_WARNING( "COMPARATOR::getNextParent -  CASE 3" );
 		parent = element->getParent();
+		LOG_TRACE( "[comparator] return parent with id " << parent->_id );
 	}
 	return parent;
 }
@@ -150,17 +149,17 @@ void Comparator::checkGroupSize( const PtrElement element, file_reader::FileRead
 			if( sizeDiff > 0 )
 			{
 				std::stringstream errorMessage;
-				errorMessage << "Group size difference: " << sizeDiff << " missing bytes - ";
+				errorMessage << "[comparator] Group size difference: " << sizeDiff << " missing bytes - ";
 				parent->_error = errorMessage.str();
 				throw std::runtime_error( errorMessage.str() );
 			}
 			if( sizeDiff < 0 )
 			{
 				std::stringstream warningMessage;
-				warningMessage << "Group size difference: " << abs( sizeDiff ) << " unexpected bytes - ";
+				warningMessage << "[comparator] Group size difference: " << abs( sizeDiff ) << " unexpected bytes - ";
 				parent->_warning += warningMessage.str();
 				file.goForward( abs( sizeDiff ) );
-				LOG_WARNING( warningMessage.str() << "go forward..." );
+				//LOG_WARNING( warningMessage.str() << "go forward..." );
 			}
 		}
 	}
