@@ -15,18 +15,20 @@ namespace report_generator
 
 class Report
 {
-public:
-	Report()
-	{
-	}
+	typedef std::shared_ptr< basic_element::Element > ShPtrElement;
 	
-	void init( const std::vector< std::shared_ptr< basic_element::Element > >& elementList );
+public:
+	Report( const std::vector< ShPtrElement >& elementList = std::vector< ShPtrElement >() );
+	
+	void add( const ShPtrElement element );
+	void add( const std::vector< ShPtrElement >& elementList );
+	
 	void print();
-	void print( const std::shared_ptr< basic_element::Element > element, const std::string& dispColor );
+	void print( const ShPtrElement element, const std::string& dispColor );
 	void writeXml( const std::string& filename );
 	
 private:
-	std::vector< std::shared_ptr< basic_element::Element > > _elementList;
+	std::vector< ShPtrElement > _elementList;
 
 };
 

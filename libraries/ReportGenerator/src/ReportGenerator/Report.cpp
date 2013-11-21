@@ -13,9 +13,22 @@
 namespace report_generator 
 {
 
-void Report::init( const std::vector< std::shared_ptr< basic_element::Element > >& elementList )
+Report::Report( const std::vector< ShPtrElement >& elementList )
 {
-	_elementList = elementList;
+	add( elementList );
+}
+
+void Report::add( const ShPtrElement element )
+{
+	_elementList.push_back( element );
+}
+
+void Report::add( const std::vector< ShPtrElement >& elementList )
+{
+	for( auto element : elementList )
+	{
+		_elementList.push_back( element );
+	}
 }
 
 void Report::print()
@@ -30,7 +43,7 @@ void Report::print()
 					 << std::setfill( ' ' ) << std::setw( 10 ) << "" << "Comment"   << std::setfill( ' ' ) << std::setw( 10 ) << "|" << std::endl;
 	std::cout << std::setfill( '-' ) << std::setw( 231 ) << " " << std::endl;
 
-	for( std::shared_ptr< basic_element::Element > element : _elementList )
+	for( ShPtrElement element : _elementList )
 	{
 		switch( element->_status )
 		{
@@ -59,7 +72,7 @@ void Report::print()
 	}
 }
 
-void Report::print( const std::shared_ptr< basic_element::Element > element, const std::string& dispColor )
+void Report::print( const ShPtrElement element, const std::string& dispColor )
 {
 	size_t count = 0;
 	std::shared_ptr< basic_element::Element > elemCopy( element );

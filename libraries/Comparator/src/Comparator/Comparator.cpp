@@ -79,7 +79,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 		parent = getNextParent( element, node );
 	}
 
-	report.init( checker.getElementList() );
+	report.add( checker.getElementList() );
 }
 
 bool Comparator::isInUnorderedGroup( const std::shared_ptr< basic_element::Element > element )
