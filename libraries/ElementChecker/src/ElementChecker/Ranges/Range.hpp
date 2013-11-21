@@ -22,7 +22,8 @@ public:
 
 	bool isInRange( const ValueType& value );
 
-	ValueType fromString( const std::string& value );
+	// helper to set value from string
+	static ValueType fromString( const std::string& value );
 
 private:
 	ValueType _min;
