@@ -6,7 +6,7 @@
 namespace element_checker
 {
 
-ExpressionParser::ExpressionParser() 
+ExpressionParser::ExpressionParser()
 {
 	Py_Initialize();
 	_mainModule = bpy::import( "__main__" );
@@ -38,8 +38,8 @@ void ExpressionParser::setVariables( const std::vector< std::shared_ptr< basic_e
 
 		switch( elem->_type )
 		{
-			case eTypeInt8         : oss << elem->_id << " = " << Translator( elem ).get< basic_element::int8         >() << std::endl; break;
-			case eTypeUInt8        : oss << elem->_id << " = " << Translator( elem ).get< basic_element::uint8        >() << std::endl; break;
+			case eTypeInt8         : oss << elem->_id << " = " << (short)Translator( elem ).get< basic_element::int8         >() << std::endl; break;
+			case eTypeUInt8        : oss << elem->_id << " = " << (short)Translator( elem ).get< basic_element::uint8        >() << std::endl; break;
 			case eTypeInt16        : oss << elem->_id << " = " << Translator( elem ).get< basic_element::int16        >() << std::endl; break;
 			case eTypeUInt16       : oss << elem->_id << " = " << Translator( elem ).get< basic_element::uint16       >() << std::endl; break;
 			case eTypeInt32        : oss << elem->_id << " = " << Translator( elem ).get< basic_element::int32        >() << std::endl; break;
@@ -62,8 +62,8 @@ ResultType ExpressionParser::getExpressionResult( const std::string& expression 
 	ResultType result = 0;
 	try
 	{
-		// LOG_TRACE( expression );
-		// LOG_TRACE( _contextString.c_str() );
+		//LOG_TRACE( expression );
+		//LOG_TRACE( _contextString.c_str() );
 		bpy::exec( _contextString.c_str(), _mainNamespace );
 		bpy::object returnText = bpy::eval( expression.c_str(), _mainNamespace );
 		result = bpy::extract< ResultType >( returnText );
