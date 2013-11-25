@@ -7,8 +7,8 @@
 #include <ReportGenerator/Report.hpp>
 
 #include <boost/test/unit_test.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
+// #include <boost/property_tree/ptree.hpp>
+// #include <boost/property_tree/json_parser.hpp>
 
 using namespace boost::unit_test;
 namespace bpt = boost::property_tree;
@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_1 )
 										"label": "Value121",
 										"type": "ascii",
 										"values": "D4",
-										"groupSize": "6",
+										"groupSize": "4",
 										"group": [
 											{ "id": "value1211", "label": "Value1211", "type": "ascii", "values": "E5" },
 											{ "id": "value1212", "label": "Value1212", "type": "uint16" },

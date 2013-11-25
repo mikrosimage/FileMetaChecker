@@ -32,14 +32,13 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 	element->set( buffer1, size );
 
 	checker.check( element );
-	
+	LOG_TRACE( "[comparator] checked :" << element->_id << ": " << statusMap.at( element->_status ) << " | display type = " << element->_dispValue );
+
 	std::shared_ptr< basic_element::Element > parent;
-	if( element->_isGroup )
-		parent = element;
+	parent = getNextParent( element, node );
+	report.add( element );
 
-	LOG_INFO( "[comparator] check :" << element->_id << ": " << statusMap.at( element->_status ) << " | display type = " << element->_dispValue );
-
-	while( ( node = element->next() ) != nullptr )	// if end of specification : stop
+	while( ( node = element->next() ) != nullptr && ! file.isEndOfFile() )	// if end of specification : stop
 	{
 		ShPtrElement previous = element;
 		switch( element->_status )
@@ -49,7 +48,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 			case eStatusInvalidForIteration :
 			case eStatusSkip :
 			{
-				LOG_INFO( "[comparator] Go back in file (" << size << " bytes)" );
+				LOG_TRACE( "[comparator] Go back in file (" << size << " bytes)" );
 				file.goBack( size );
 				previous = element->getPrevious();
 				break;
@@ -62,7 +61,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 
 		if( size > ( file.getLength() - file.getPosition() ) && ( isInUnorderedGroup( element ) || element->_isOptional ) )
 		{
-			//LOG_WARNING( "Critical remaining file data size: " << size << "/" << file.getLength() - file.getPosition() );
+			LOG_TRACE( ">>> [comparator] Critical remaining file data size: " << size << "/" << file.getLength() - file.getPosition() );
 			size = file.getLength() - file.getPosition();
 		}
 
@@ -72,14 +71,16 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 		element->set( buffer, size );
 
 		checker.check( element );
-		LOG_INFO( "[comparator] checked : " << element->_id << " << Previous: " << previous << " - " << statusMap.at( element->_status ) << " | " << element->_dispValue );
+		LOG_TRACE( "[comparator] checked : " << element->_id << " @ " << element << " << Previous: " << previous << " << Parent: " << parent << " - " << statusMap.at( element->_status ) << " | " << element->_dispValue );
 
 		checkGroupSize( element, file );
 
+		report.add( element );
+		report.update( parent );
 		parent = getNextParent( element, node );
 	}
-
-	report.add( checker.getElementList() );
+	if( ! file.isEndOfFile() )
+		LOG_WARNING( "Did not reach the end of file, remaining " << file.getLength() - file.getPosition() << " bytes." );
 }
 
 bool Comparator::isInUnorderedGroup( const std::shared_ptr< basic_element::Element > element )
@@ -104,7 +105,7 @@ Comparator::ShPtrElement Comparator::getNextParent( const ShPtrElement element, 
 	 && element->_status != eStatusInvalidButSkip
 	 && element->_status != eStatusInvalidForIteration )
 	{
-		LOG_TRACE( "[comparator] return parent as current element with id " << element->_id );
+		LOG_TRACE( "[comparator] return parent: current element (id = " << element->_id << ")" );
 		parent = element;
 	}
 	else if( isLastInGroup && element->getParent() != nullptr )
@@ -115,13 +116,18 @@ Comparator::ShPtrElement Comparator::getNextParent( const ShPtrElement element, 
 			parent = parent->getParent();
 		}
 		parent = parent->getParent();
-		LOG_TRACE( "[comparator] return parent with id " << parent->_id );
 	}
 	else
 	{
 		parent = element->getParent();
-		LOG_TRACE( "[comparator] return parent with id " << parent->_id );
 	}
+
+	if( parent != nullptr )
+	{
+		LOG_TRACE( "[comparator] return parent: id = " << parent->_id );
+	}
+	else
+		LOG_TRACE( "[comparator] return a null parent" );
 	return parent;
 }
 
@@ -134,11 +140,13 @@ void Comparator::checkGroupSize( const ShPtrElement element, file_reader::FileRe
 	{
 		size_t groupSize = element->_size;
 
-		while( previous != nullptr || previous->_id != parent->_id )
+		while( previous != nullptr || ( previous != nullptr && previous->_id != parent->_id ) )
 		{
-			groupSize += previous->_size;
+			LOG_TRACE( "[comparator] \tGroupSize Loop: from " << element->_id << " to " << previous->_id << " ?= parent " << parent->_id << " >> " << groupSize << "/" << parent->_groupSize << " (" << parent->_groupSizeExpr << ")");
 			if( previous->_id == parent->_id )
 				break;
+			groupSize += previous->_size;
+			std::string prevStr = previous->_id; // @todelete! 
 			previous = previous->getPrevious();
 		}
 
@@ -148,17 +156,17 @@ void Comparator::checkGroupSize( const ShPtrElement element, file_reader::FileRe
 			if( sizeDiff > 0 )
 			{
 				std::stringstream errorMessage;
-				errorMessage << "[comparator] Group size difference: " << sizeDiff << " missing bytes - ";
+				errorMessage << "[comparator] Group size difference: " << sizeDiff << " missing bytes ";
 				parent->_error = errorMessage.str();
 				throw std::runtime_error( errorMessage.str() );
 			}
 			if( sizeDiff < 0 )
 			{
 				std::stringstream warningMessage;
-				warningMessage << "[comparator] Group size difference: " << abs( sizeDiff ) << " unexpected bytes - ";
+				warningMessage << "[comparator] Group size difference: " << abs( sizeDiff ) << " unexpected bytes ";
 				parent->_warning += warningMessage.str();
 				file.goForward( abs( sizeDiff ) );
-				//LOG_WARNING( warningMessage.str() << "go forward..." );
+				LOG_WARNING( warningMessage.str() << "go forward..." );
 			}
 		}
 	}
