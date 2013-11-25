@@ -170,6 +170,7 @@ BOOST_AUTO_TEST_CASE( report_generator_test_report )
 	BOOST_CHECK_EQUAL( report.get( elem1->_id )->_error, elem1->_error  );
 	BOOST_CHECK_EQUAL( report.get( elem1->_id    )->_uId, elem1->_uId  );
 	BOOST_CHECK_EQUAL( report.get( elem1->_id, 2 )->_uId, elem2->_uId );
+	BOOST_CHECK( report.get( "other" ) == nullptr );
 
 	report.print();
 }

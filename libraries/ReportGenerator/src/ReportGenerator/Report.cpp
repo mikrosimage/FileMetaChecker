@@ -44,6 +44,8 @@ Report::ShPtrElement Report::get( const std::string& elementId, const size_t& it
 
 void Report::update( const ShPtrElement newElement )
 {
+	if( newElement == nullptr )
+		return;
 	for( auto element : _elementList )
 	{
 		if( element->_uId == newElement->_uId )
