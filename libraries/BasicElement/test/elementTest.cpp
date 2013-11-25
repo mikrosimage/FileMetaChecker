@@ -251,33 +251,38 @@ BOOST_AUTO_TEST_CASE( basic_element_next_first_child_recursivity )
 					"label": "Value1",
 					"type": "ascii",
 					"group": [
-					{
-						"id": "value11",
-						"label": "Value11",
-						"type": "ascii"
-					},
-					{
-						"id": "value12",
-						"label": "Value12",
-						"type": "ascii",
-						"group": [
 						{
-							"id": "value121",
-							"label": "Value121",
+							"id": "value11",
+							"label": "Value11",
+							"type": "ascii"
+						},
+						{
+							"id": "value12",
+							"label": "Value12",
 							"type": "ascii",
 							"group": [
-							{ "id": "value1211", "label": "Value1211", "type": "ascii" },
-							{ "id": "value1212", "label": "Value1212", "type": "ascii" }
+							{
+								"id": "value121",
+								"label": "Value121",
+								"type": "ascii",
+								"group": [
+								{ "id": "value1211", "label": "Value1211", "type": "ascii" },
+								{ "id": "value1212", "label": "Value1212", "type": "ascii" }
+								]
+							} ]
+						},
+						{
+							"id": "value13",
+							"label": "Value13",
+							"type": "ascii",
+							"group": [
+								{ "id": "value131", "label": "Value131", "type": "ascii" }
 							]
-						} ]
-					},
-					{
-						"id": "value13",
-						"label": "Value13",
-						"type": "ascii"
-					} ]
-				} ]
-			} )*";
+						} 
+					]
+				} 
+			]
+		} )*";
 
 		spec_reader::Specification spec;
 		spec.setFromString( jsonString );
@@ -289,13 +294,16 @@ BOOST_AUTO_TEST_CASE( basic_element_next_first_child_recursivity )
 		elem1->_status = eStatusValid;
 
 		ShPtrElement elem2 = checkElement( elem1, elem1, elem1, "value11",   node->firstChild() );
-		ShPtrElement elem3 = checkElement( elem2, elem2, elem2, "value12",   node->firstChild()->next() );
+		ShPtrElement elem3 = checkElement( elem2, elem2, elem1, "value12",   node->firstChild()->next() );
 		ShPtrElement elem4 = checkElement( elem3, elem3, elem3, "value121",  node->firstChild()->next()->firstChild() );
 		ShPtrElement elem5 = checkElement( elem4, elem4, elem4, "value1211", node->firstChild()->next()->firstChild()->firstChild() );
 		ShPtrElement elem6 = checkElement( elem5, elem5, elem4, "value1212", node->firstChild()->next()->firstChild()->firstChild()->next() );
 		ShPtrElement elem7 = checkElement( elem6, elem6, elem1, "value13",   node->firstChild()->next()->next() );
+		ShPtrElement elem8 = checkElement( elem7, elem7, elem7, "value131",  node->firstChild()->next()->next()->firstChild() );
 
-		BOOST_CHECK( elem7->next() == nullptr );
+		BOOST_CHECK( elem8->next() == nullptr );
+		BOOST_CHECK( node->firstChild()->next()->next()->firstChild()->next() == nullptr );
+		BOOST_CHECK( node->next() == nullptr );
 	}
 }
 
@@ -800,6 +808,84 @@ BOOST_AUTO_TEST_CASE( basic_element_next_optional )
 		elem3->_status = eStatusValid;
 
 		BOOST_CHECK( elem3->next() == nullptr );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( basic_element_get_children )
+{
+	LOG_INFO( "\n>>> basic_element_get_children <<<" );
+	{
+		std::string jsonString = R"*(
+			{
+				"header": [
+				{
+					"id": "value1",
+					"label": "Value1",
+					"type": "ascii",
+					"group": [
+						{
+							"id": "value11",
+							"label": "Value11",
+							"type": "ascii"
+						},
+						{
+							"id": "value12",
+							"label": "Value12",
+							"type": "ascii",
+							"group": [
+							{
+								"id": "value121",
+								"label": "Value121",
+								"type": "ascii",
+								"group": [
+								{ "id": "value1211", "label": "Value1211", "type": "ascii" },
+								{ "id": "value1212", "label": "Value1212", "type": "ascii" }
+								]
+							} ]
+						},
+						{
+							"id": "value13",
+							"label": "Value13",
+							"type": "ascii",
+							"group": [
+								{ "id": "value131", "label": "Value131", "type": "ascii" }
+							]
+						} 
+					]
+				} 
+			]
+		} )*";
+
+		spec_reader::Specification spec;
+		spec.setFromString( jsonString );
+		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
+	
+		ShPtrElement elem1( new Element( node ) );
+		BOOST_CHECK_EQUAL( elem1->_id, node->getId() );
+		BOOST_CHECK_EQUAL( node->getId(), "value1" );
+		elem1->_status = eStatusValid;
+
+		ShPtrElement elem2 = checkElement( elem1, elem1, elem1, "value11",   node->firstChild() );
+		ShPtrElement elem3 = checkElement( elem2, elem2, elem1, "value12",   node->firstChild()->next() );
+		ShPtrElement elem4 = checkElement( elem3, elem3, elem3, "value121",  node->firstChild()->next()->firstChild() );
+		ShPtrElement elem5 = checkElement( elem4, elem4, elem4, "value1211", node->firstChild()->next()->firstChild()->firstChild() );
+		ShPtrElement elem6 = checkElement( elem5, elem5, elem4, "value1212", node->firstChild()->next()->firstChild()->firstChild()->next() );
+		ShPtrElement elem7 = checkElement( elem6, elem6, elem1, "value13",   node->firstChild()->next()->next() );
+		ShPtrElement elem8 = checkElement( elem7, elem7, elem7, "value131",  node->firstChild()->next()->next()->firstChild() );
+
+		BOOST_CHECK( elem8->next() == nullptr );
+		BOOST_CHECK( node->firstChild()->next()->next()->firstChild()->next() == nullptr );
+		// BOOST_CHECK_EQUAL( node->getIterator() + 1,  spec.end() );
+		BOOST_CHECK( node->next() == nullptr );
+
+		BOOST_CHECK_EQUAL( elem1->getChildren().size(), 3 );
+		BOOST_CHECK_EQUAL( elem2->getChildren().size(), 0 );
+		BOOST_CHECK_EQUAL( elem3->getChildren().size(), 1 );
+		BOOST_CHECK_EQUAL( elem4->getChildren().size(), 2 );
+		BOOST_CHECK_EQUAL( elem5->getChildren().size(), 0 );
+		BOOST_CHECK_EQUAL( elem6->getChildren().size(), 0 );
+		BOOST_CHECK_EQUAL( elem7->getChildren().size(), 1 );
+		BOOST_CHECK_EQUAL( elem8->getChildren().size(), 0 );
 	}
 }
 
