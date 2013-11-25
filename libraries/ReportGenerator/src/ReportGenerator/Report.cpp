@@ -31,6 +31,29 @@ void Report::add( const std::vector< ShPtrElement >& elementList )
 	}
 }
 
+Report::ShPtrElement Report::get( const std::string& elementId, const size_t& iteration )
+{
+	for( auto element : _elementList )
+	{
+		if( element->_id == elementId && element->_iteration == iteration )
+			return element;
+	}
+	return nullptr;
+}
+
+
+void Report::update( const ShPtrElement newElement )
+{
+	for( auto element : _elementList )
+	{
+		if( element->_uId == newElement->_uId )
+		{
+			element = newElement;
+			return;
+		}
+	}
+}
+
 void Report::print()
 {
 	std::cout << std::setfill( '-' ) << std::setw( 231 ) << " " << std::endl;

@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <memory>
 #include <vector>
+#include <Common/common.hpp>
 
 namespace basic_element
 {
@@ -22,6 +23,8 @@ public:
 	
 	void add( const ShPtrElement element );
 	void add( const std::vector< ShPtrElement >& elementList );
+	ShPtrElement get( const std::string& elementId, const size_t& iteration = 1 );
+	void update( const ShPtrElement newElement );
 	
 	void print();
 	void print( const ShPtrElement element, const std::string& dispColor );
