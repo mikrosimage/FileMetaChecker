@@ -48,7 +48,8 @@ void Checker::check( const ShPtrElement element )
 		LOG_WARNING( "[checker] " << element->_id << ": Null data size !" );
 	}
 	
-	element->_dispValue = Translator( element ).get( element->_displayType );
+	if( element->_type != eTypeRaw || element->_displayType != eDisplayTypeDefault )
+		element->_dispValue = Translator( element ).get( element->_displayType );
 
 	ShPtrElement parent   = element->getParent();
 	ShPtrElement previous = element->getPrevious();
@@ -120,19 +121,26 @@ void Checker::check( const ShPtrElement element )
 		}
 	}
 
+
+	
 	if( ! isRequirementValid( element ) )
 	{
 		LOG_INFO( "[checker] " << element->_id << " : requirement not valid -> skipped" );
 		element->_status = eStatusSkip;
 		_exprParser->addElementToContext( element );
+		if( element->getSpecNode()->next() == nullptr && parent != nullptr && ! parent->_isOrdered )
+			checkLastUnorderedElement( element );
 		return;
 	}
 
+	
 	if( element->_isOptional && status == eStatusInvalid && element->_iteration == 1 )
 	{
 		LOG_INFO( "[checker] " << element->_id << " : invalid but optional -> invalid but skipped" );
 		element->_status = eStatusInvalidButOptional;
 		_exprParser->addElementToContext( element );
+		if( element->getSpecNode()->next() == nullptr && parent != nullptr && ! parent->_isOrdered )
+			checkLastUnorderedElement( element );
 		return;
 	}
 
@@ -230,7 +238,7 @@ bool Checker::isRequirementValid( const ShPtrElement element )
 
 void Checker::checkLastUnorderedElement( const ShPtrElement element )
 {
-	//LOG_TRACE( "[checker] " << element->_id << ": Last element " << &*element << " <-" << &*element->getPrevious() );
+	// LOG_TRACE( "[checker] " << element->_id << ": Last element " << element << " <-" << element->getPrevious() );
 	if( element->getPrevious() == nullptr )
 		throw std::runtime_error( "[checker] Invalid tree" );
 
