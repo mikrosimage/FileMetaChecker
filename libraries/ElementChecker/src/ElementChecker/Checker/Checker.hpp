@@ -9,6 +9,7 @@
 
 namespace element_checker
 {
+class ExpressionParser;
 
 class Checker
 {
@@ -19,14 +20,13 @@ public:
 
 	void   check  ( const ShPtrElement element );
 	size_t getSize( const ShPtrElement element );
-	std::vector< ShPtrElement > getElementList() { return _elementList; }
 private:
 	bool isIterationValid         ( const ShPtrElement element, std::string& errorMessage );
 	bool isRequirementValid       ( const ShPtrElement element );
 	void checkLastUnorderedElement( const ShPtrElement element );
 
 private:
-	std::vector< ShPtrElement > _elementList;
+	ExpressionParser* _exprParser;
 };
 
 }

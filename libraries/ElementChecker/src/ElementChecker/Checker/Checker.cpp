@@ -37,6 +37,7 @@ namespace utils
 }
 
 Checker::Checker()
+	: _exprParser( new ExpressionParser )
 {
 }
 
@@ -54,8 +55,7 @@ void Checker::check( const ShPtrElement element )
 
 	if( parent != nullptr && previous != nullptr && element->getSpecNode()->next() == nullptr && ! parent->_groupSizeExpr.empty() )
 	{
-		ExpressionParser groupSizeParser( _elementList );
-		parent->_groupSize = groupSizeParser.getExpressionResult< size_t >( parent->_groupSizeExpr );
+		parent->_groupSize = _exprParser->getExpressionResult< size_t >( parent->_groupSizeExpr );
 		// LOG_TRACE( "Set " << element->_id << "'s parent (" << parent->_id << ") groupSize (" << parent->_groupSizeExpr << "): " << parent->_groupSize );
 	}
 
@@ -63,10 +63,10 @@ void Checker::check( const ShPtrElement element )
 	if( element->_values.empty() && element->_rangeExpr.empty() && element->_map.empty() )
 	{
 		element->_status = eStatusPassOver;
-		_elementList.push_back( element );
+		_exprParser->addElementToContext( element );
 		return;
 	}
-	
+
 	EStatus status = eStatusInvalid;
 
 	switch( element->_type )
@@ -124,7 +124,7 @@ void Checker::check( const ShPtrElement element )
 	{
 		LOG_INFO( "[checker] " << element->_id << " : requirement not valid -> skipped" );
 		element->_status = eStatusSkip;
-		_elementList.push_back( element );
+		_exprParser->addElementToContext( element );
 		return;
 	}
 
@@ -132,7 +132,7 @@ void Checker::check( const ShPtrElement element )
 	{
 		LOG_INFO( "[checker] " << element->_id << " : invalid but optional -> invalid but skipped" );
 		element->_status = eStatusInvalidButOptional;
-		_elementList.push_back( element );
+		_exprParser->addElementToContext( element );
 		return;
 	}
 
@@ -158,7 +158,7 @@ void Checker::check( const ShPtrElement element )
 		{
 			LOG_ERROR( "[checker] " << element->_id << ": " << errorMessage );
 			element->_error += errorMessage;
-			_elementList.push_back( element );
+			_exprParser->addElementToContext( element );
 			element->_status = eStatusInvalidForIteration;
 		}
 		LOG_TRACE( "[checker] repetitions " << previous );
@@ -166,7 +166,7 @@ void Checker::check( const ShPtrElement element )
 	}
 
 	LOG_INFO( "[checker] " << element->_id << " : return status = " << status );
-	_elementList.push_back( element );
+	_exprParser->addElementToContext( element );
 
 }
 
@@ -174,8 +174,7 @@ size_t Checker::getSize( const ShPtrElement element )
 {
 	if( ! element->_countExpr.empty() && element->_size == 0 )
 	{
-		ExpressionParser sizeParser( _elementList );
-		element->_size = sizeParser.getExpressionResult< size_t >( element->_countExpr );
+		element->_size = _exprParser->getExpressionResult< size_t >( element->_countExpr );
 		//LOG_TRACE( "COUNT: " << element->_id << "'s size: " << element->_size );
 	}
 	if( element->_type == eTypeHexa )
@@ -193,8 +192,7 @@ bool Checker::isIterationValid( const ShPtrElement element, std::string& errorMe
 	{
 		if( repetPair.first == repetPair.second )
 		{
-			ExpressionParser repetParser( _elementList );
-			size_t repetNumber = repetParser.getExpressionResult< size_t >( repetPair.first );
+			size_t repetNumber = _exprParser->getExpressionResult< size_t >( repetPair.first );
 			LOG_TRACE( "[checker] repetition : " << element->_iteration << " / " << repetNumber );
 			if( element->_iteration == repetNumber )
 				return true;
@@ -202,14 +200,13 @@ bool Checker::isIterationValid( const ShPtrElement element, std::string& errorMe
 		}
 		else
 		{
-			ExpressionParser repetParser( _elementList );
 			size_t repetMin = 0;
 			size_t repetMax = 0;
 
 			if( ! repetPair.first.empty() )
-				repetMin = repetParser.getExpressionResult< size_t >( repetPair.first );
+				repetMin = _exprParser->getExpressionResult< size_t >( repetPair.first );
 			if( ! repetPair.second.empty() )
-				repetMax = repetParser.getExpressionResult< size_t >( repetPair.second );
+				repetMax = _exprParser->getExpressionResult< size_t >( repetPair.second );
 
 			LOG_TRACE( "[checker] repetitions : " << element->_iteration << " / [" << repetMin << ", " << repetMax << "]" );
 			if( repetMin <= element->_iteration )
@@ -227,8 +224,7 @@ bool Checker::isRequirementValid( const ShPtrElement element )
 	if( element->_requiredExpr.empty() )
 		return true;
 
-	ExpressionParser conditionParser( _elementList );
-	bool requirement = conditionParser.getExpressionResult< bool >( element->_requiredExpr );
+	bool requirement = _exprParser->getExpressionResult< bool >( element->_requiredExpr );
 	return requirement;
 }
 
@@ -255,26 +251,35 @@ void Checker::checkLastUnorderedElement( const ShPtrElement element )
 				{
 					LOG_ERROR( "(" << prev->_id << ") " << errorMessage );
 					prev->_error += errorMessage;
-					_elementList.push_back( prev );
+					_exprParser->addElementToContext( prev );
 					prev->getParent()->_status = eStatusInvalidGroupForIteration;
 				}
 
 				childIds.erase( id );
 			}
 
-			for( auto elem : _elementList )
+			for( ShPtrElement child : parent->getChildren() )
 			{
-				if( elem->_id == id && elem->getParent()->_id == element->getParent()->_id && ( elem->_isOptional || elem->_status == eStatusSkip ) )
+				if( child->_id == id && ( child->_isOptional || child->_status == eStatusSkip ) )
+				{
 					childIds.erase( id );
+					break;
+				}
 			}
 		}
 		prev = prev->getPrevious();
 	}
 
-	LOG_TRACE( "[checker] " << element->_id << ": End of unordered group, remaining children: " << childIds.size() );
 
 	if( childIds.size() != 0 )
+	{
+		LOG_WARNING( "[checker] " << element->_id << ": End of unordered group, remaining children: " << childIds.size() );
 		parent->_status = eStatusInvalidForUnordered;
+	}
+	else
+	{
+		LOG_TRACE( "[checker] " << element->_id << ": End of unordered group, remaining children: " << childIds.size() );
+	}
 }
 
 }

@@ -33,7 +33,8 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_data )
 
 		checker.check( elem );
 		BOOST_CHECK_EQUAL( elem->_status, eStatusPassOver );
-		BOOST_CHECK_EQUAL( checker.getElementList().size(), 1 );
+		BOOST_CHECK( node->next() == nullptr );
+		BOOST_CHECK( elem->next() == nullptr );
 	}
 	{
 		spec_reader::Specification spec;
@@ -47,7 +48,8 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_data )
 
 		checker.check( elem );
 		BOOST_CHECK_EQUAL( elem->_status, eStatusValid );
-		BOOST_CHECK_EQUAL( checker.getElementList().size(), 2 );
+		BOOST_CHECK( node->next() == nullptr );
+		BOOST_CHECK( elem->next() == nullptr );
 	}
 	{
 		spec_reader::Specification spec;
@@ -61,7 +63,8 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_data )
 
 		checker.check( elem );
 		BOOST_CHECK_EQUAL( elem->_status, eStatusValid );
-		BOOST_CHECK_EQUAL( checker.getElementList().size(), 3 );
+		BOOST_CHECK( node->next() == nullptr );
+		BOOST_CHECK( elem->next() == nullptr );
 	}
 	{
 		spec_reader::Specification spec;
@@ -76,7 +79,8 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_data )
 		checker.check( elem );
 		BOOST_CHECK_EQUAL( elem->_status, eStatusInvalid );
 		BOOST_CHECK( elem->_error.find( "Invalid value" ) != std::string::npos );
-		BOOST_CHECK_EQUAL( checker.getElementList().size(), 4 );
+		BOOST_CHECK( node->next() == nullptr );
+		BOOST_CHECK( elem->next() == nullptr );
 	}
 }
 
@@ -113,7 +117,6 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_number )
 		checker.check( elem );
 		BOOST_CHECK_EQUAL( elem->_type, eTypeUInt32 );
 		BOOST_CHECK_EQUAL( elem->_status, eStatusPassOver );
-		BOOST_CHECK_EQUAL( checker.getElementList().size(), 1 );
 	}
 
 	{
@@ -129,7 +132,6 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_number )
 		checker.check( elem );
 		BOOST_CHECK_EQUAL( elem->_type, eTypeUInt32 );
 		BOOST_CHECK_EQUAL( elem->_status, eStatusValid );
-		BOOST_CHECK_EQUAL( checker.getElementList().size(), 2 );
 	}
 
 	{
@@ -145,7 +147,6 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_number )
 		checker.check( elem );
 		BOOST_CHECK_EQUAL( elem->_type, eTypeUInt32 );
 		BOOST_CHECK_EQUAL( elem->_status, eStatusValid );
-		BOOST_CHECK_EQUAL( checker.getElementList().size(), 3 );
 	}
 
 	{
@@ -161,7 +162,6 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_number )
 		checker.check( elem );
 		BOOST_CHECK_EQUAL( elem->_type, eTypeUInt32 );
 		BOOST_CHECK_EQUAL( elem->_status, eStatusInvalid );
-		BOOST_CHECK_EQUAL( checker.getElementList().size(), 4 );
 	}
 }
 
