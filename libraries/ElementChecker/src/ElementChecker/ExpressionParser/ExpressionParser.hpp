@@ -21,6 +21,8 @@ public:
 
 	~ExpressionParser();
 
+	void addElementToContext( const ShPtrElement elem );
+
 	template< typename ResultType >
 	ResultType getExpressionResult( const std::string& expression );
 

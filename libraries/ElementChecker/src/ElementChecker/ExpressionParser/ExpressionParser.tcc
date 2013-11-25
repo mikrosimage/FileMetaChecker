@@ -13,34 +13,37 @@ ExpressionParser::ExpressionParser( const std::vector< ShPtrElement >& elementLi
 	_mainModule = bpy::import( "__main__" );
 	_mainNamespace = _mainModule.attr( "__dict__" );
 
-	std::ostringstream oss;
 	for( ShPtrElement elem : elementList )
-	{
-		if( elem->_iteration > 1 )
-			continue;
-
-		switch( elem->_type )
-		{
-			case eTypeInt8         : oss << elem->_id << " = " << (short)Translator( elem ).get< basic_element::int8         >() << std::endl; break;
-			case eTypeUInt8        : oss << elem->_id << " = " << (short)Translator( elem ).get< basic_element::uint8        >() << std::endl; break;
-			case eTypeInt16        : oss << elem->_id << " = " << Translator( elem ).get< basic_element::int16        >() << std::endl; break;
-			case eTypeUInt16       : oss << elem->_id << " = " << Translator( elem ).get< basic_element::uint16       >() << std::endl; break;
-			case eTypeInt32        : oss << elem->_id << " = " << Translator( elem ).get< basic_element::int32        >() << std::endl; break;
-			case eTypeUInt32       : oss << elem->_id << " = " << Translator( elem ).get< basic_element::uint32       >() << std::endl; break;
-			case eTypeInt64        : oss << elem->_id << " = " << Translator( elem ).get< basic_element::int64        >() << std::endl; break;
-			case eTypeUInt64       : oss << elem->_id << " = " << Translator( elem ).get< basic_element::uint64       >() << std::endl; break;
-			case eTypeFloat        : oss << elem->_id << " = " << Translator( elem ).get< float                       >() << std::endl; break;
-			case eTypeDouble       : oss << elem->_id << " = " << Translator( elem ).get< double                      >() << std::endl; break;
-			case eTypeIeeeExtended : oss << elem->_id << " = " << Translator( elem ).get< basic_element::ieeeExtended >() << std::endl; break;
-			default: oss << elem->_id << " = " << "True" << std::endl; break;
-		}
-	}
-	_contextString += oss.str();
+		addElementToContext( elem );
 }
 
 ExpressionParser::~ExpressionParser() 
 {
 	Py_Finalize();
+}
+
+void ExpressionParser::addElementToContext( const ShPtrElement elem )
+{
+	if( elem->_iteration > 1 )
+		return;
+
+	std::ostringstream oss;
+	switch( elem->_type )
+	{
+		case eTypeInt8         : oss << elem->_id << " = " << (short) Translator( elem ).get< basic_element::int8  >() << std::endl; break;
+		case eTypeUInt8        : oss << elem->_id << " = " << (short) Translator( elem ).get< basic_element::uint8 >() << std::endl; break;
+		case eTypeInt16        : oss << elem->_id << " = " << Translator( elem ).get< basic_element::int16         >() << std::endl; break;
+		case eTypeUInt16       : oss << elem->_id << " = " << Translator( elem ).get< basic_element::uint16        >() << std::endl; break;
+		case eTypeInt32        : oss << elem->_id << " = " << Translator( elem ).get< basic_element::int32         >() << std::endl; break;
+		case eTypeUInt32       : oss << elem->_id << " = " << Translator( elem ).get< basic_element::uint32        >() << std::endl; break;
+		case eTypeInt64        : oss << elem->_id << " = " << Translator( elem ).get< basic_element::int64         >() << std::endl; break;
+		case eTypeUInt64       : oss << elem->_id << " = " << Translator( elem ).get< basic_element::uint64        >() << std::endl; break;
+		case eTypeFloat        : oss << elem->_id << " = " << Translator( elem ).get< float                        >() << std::endl; break;
+		case eTypeDouble       : oss << elem->_id << " = " << Translator( elem ).get< double                       >() << std::endl; break;
+		case eTypeIeeeExtended : oss << elem->_id << " = " << Translator( elem ).get< basic_element::ieeeExtended  >() << std::endl; break;
+		default: oss << elem->_id << " = " << "True" << std::endl; break;
+	}
+	_contextString += oss.str();
 }
 
 template< typename ResultType >
