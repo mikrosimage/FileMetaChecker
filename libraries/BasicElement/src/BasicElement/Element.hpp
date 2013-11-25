@@ -43,6 +43,7 @@ public:
 	ShPtrElement  getParent()   const { return _parent.lock(); }
 	ShPtrElement  getPrevious() const { return _previous.lock(); }
 	ShPtrSpecNode getSpecNode()       { return _specNode; }
+	std::vector< ShPtrElement > getChildren() { return _children; }
 
 protected:
 	static size_t getElementSize( const std::string& id, const EType type, const std::vector<std::string>& values );
