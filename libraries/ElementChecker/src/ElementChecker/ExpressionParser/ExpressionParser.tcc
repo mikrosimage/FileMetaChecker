@@ -41,6 +41,8 @@ void ExpressionParser::addElementToContext( const ShPtrElement elem )
 		case eTypeFloat        : oss << elem->_id << " = " << Translator( elem ).get< float                        >() << std::endl; break;
 		case eTypeDouble       : oss << elem->_id << " = " << Translator( elem ).get< double                       >() << std::endl; break;
 		case eTypeIeeeExtended : oss << elem->_id << " = " << Translator( elem ).get< basic_element::ieeeExtended  >() << std::endl; break;
+		case eTypeAscii        : oss << elem->_id << " = '" << Translator( elem ).get( eDisplayTypeAscii ) << "'" << std::endl; break;
+		case eTypeHexa         : oss << elem->_id << " = '" << Translator( elem ).get( eDisplayTypeHexa  ) << "'" << std::endl; break;
 		default: oss << elem->_id << " = " << "True" << std::endl; break;
 	}
 	_contextString += oss.str();
@@ -52,8 +54,8 @@ ResultType ExpressionParser::getExpressionResult( const std::string& expression 
 	ResultType result {};
 	try
 	{
-		//LOG_TRACE( expression );
-		//LOG_TRACE( _contextString.c_str() );
+		// LOG_TRACE( expression );
+		// LOG_TRACE( _contextString.c_str() );
 		bpy::exec( _contextString.c_str(), _mainNamespace );
 		bpy::object returnText = bpy::eval( expression.c_str(), _mainNamespace );
 		result = bpy::extract< ResultType >( returnText );
