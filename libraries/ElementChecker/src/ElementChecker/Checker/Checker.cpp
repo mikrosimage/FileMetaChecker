@@ -48,8 +48,7 @@ void Checker::check( const ShPtrElement element )
 		LOG_WARNING( "[checker] " << element->_id << ": Null data size !" );
 	}
 	
-	if( element->_type != eTypeRaw || element->_displayType != eDisplayTypeDefault )
-		element->_dispValue = Translator( element ).get( element->_displayType );
+	element->_dispValue = Translator( element ).get( element->_displayType );
 
 	ShPtrElement parent   = element->getParent();
 	ShPtrElement previous = element->getPrevious();
