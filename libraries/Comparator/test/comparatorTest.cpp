@@ -202,6 +202,12 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_2 )
 								]
 							},
 							{
+								"id": "value16",
+								"label": "Value16",
+								"type": "hexa",
+								"values": "533230"
+							},
+							{
 								"id": "valueEnd",
 								"label": "ValueEnd",
 								"type": "ascii",
@@ -230,7 +236,8 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_2 )
 	BOOST_CHECK_EQUAL( node->firstChild()->next()->firstChild()->getId(),                               "value151"  );
 	BOOST_CHECK_EQUAL( node->firstChild()->next()->firstChild()->next()->getId(),                       "value152"  );
 	BOOST_CHECK_EQUAL( node->firstChild()->next()->firstChild()->next()->next()->getId(),               "value153"  );
-	BOOST_CHECK_EQUAL( node->firstChild()->next()->next()->getId(),                                     "valueEnd"  );
+	BOOST_CHECK_EQUAL( node->firstChild()->next()->next()->getId(),                                     "value16"   );
+	BOOST_CHECK_EQUAL( node->firstChild()->next()->next()->next()->getId(),                             "valueEnd"  );
 
 	Comparator comp;
 
@@ -240,6 +247,7 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_2 )
 	std::string str = "A1";
 	str += "J10K11M1314O15P16Q17Q173Q172Q1721";
 	str += "R18R182R183R181R18R183R181";
+	str += "S20";
 	str += "END";
 
 	buffer.sputn( str.c_str(), str.size() );
