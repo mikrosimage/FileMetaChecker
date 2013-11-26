@@ -45,7 +45,9 @@ void Checker::check( const ShPtrElement element )
 {
 	if( element->_size == 0 && element->_countExpr.empty() )
 	{
-		LOG_WARNING( "[checker] " << element->_id << ": Null data size !" );
+		std::string warning = "Null data size ";
+		LOG_WARNING( "[checker] " << element->_id << ": " << warning );
+		element->_warning += warning;
 	}
 	
 	element->_dispValue = Translator( element ).get( element->_displayType );
