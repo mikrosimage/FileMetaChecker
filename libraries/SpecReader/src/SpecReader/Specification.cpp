@@ -26,9 +26,9 @@ void Specification::setFromString( const std::string& string )
 		if( _specDoc.HasParseError() )
 			throw std::runtime_error( std::string( _specDoc.GetParseError() ) + "  @char:# " + std::to_string( _specDoc.GetErrorOffset() ) );
 	}
-	catch( const std::exception& ex )
+	catch( const std::runtime_error& ex )
 	{
-		LOG_ERROR( "Specification from string: "<<  ex.what() );
+		LOG_ERROR( "[specification] set: "<<  ex.what() );
 		throw;
 	}
 }
@@ -43,9 +43,7 @@ bool Specification::setFromFile( const std::string& filepath )
 		{
 			std::string content( ( std::istreambuf_iterator<char>( file ) ),
 			                       std::istreambuf_iterator<char>()       );
-			_specDoc.Parse<0>( content.c_str() );
-			if( _specDoc.HasParseError() )
-				throw std::runtime_error( std::string( _specDoc.GetParseError() ) + "  @char:# " + std::to_string( _specDoc.GetErrorOffset() ) );
+			setFromString( content );
 			file.close();
 			ret = true;
 		}
@@ -53,7 +51,7 @@ bool Specification::setFromFile( const std::string& filepath )
 	}
 	catch( const std::exception& ex )
 	{
-		LOG_ERROR( "Specification from file ("<< filepath << "): "<<  ex.what() );
+		LOG_ERROR( "[specification] set from file ("<< filepath << "): "<<  ex.what() );
 		throw;
 	}
 	return false;
