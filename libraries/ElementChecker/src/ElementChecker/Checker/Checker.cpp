@@ -99,6 +99,15 @@ void Checker::check( const ShPtrElement element )
 				if( value == orig || value == lowCase || value == upCase )
 					status = eStatusValid;
 			
+			element->_mapValue = Map< std::string >( element->_map ).getLabel( orig );
+			if( element->_mapValue.empty() )
+				element->_mapValue = Map< std::string >( element->_map ).getLabel( lowCase );
+			if( element->_mapValue.empty() )
+				element->_mapValue = Map< std::string >( element->_map ).getLabel( upCase );
+			
+			if( ! element->_mapValue.empty() && status == eStatusInvalid )
+				status = eStatusPassOver;
+
 			if( status == eStatusInvalid )
 				element->_error += "Invalid value - ";
 			break;
@@ -179,13 +188,13 @@ void Checker::check( const ShPtrElement element )
 
 size_t Checker::getSize( const ShPtrElement element )
 {
+	if( element->_type == eTypeHexa )
+		element->_size = element->_size >> 1;
 	if( ! element->_countExpr.empty() && element->_size == 0 )
 	{
 		element->_size = _exprParser->getExpressionResult< size_t >( element->_countExpr );
 		//LOG_TRACE( "COUNT: " << element->_id << "'s size: " << element->_size );
 	}
-	if( element->_type == eTypeHexa )
-		return element->_size >> 1;
 	return element->_size;
 }
 
