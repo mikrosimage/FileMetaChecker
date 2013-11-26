@@ -120,9 +120,15 @@ void Report::print( const ShPtrElement element, const std::string& dispColor )
 		<< dispColor
 		<< std::setfill( ' ' ) << std::setw( 5 * ( count - 1 ) + 1 ) << ""
 		<< element->_id
-		<< std::setfill( ' ' ) << std::setw( 5*( 9 - count ) - element->_id.size() ) << ""
-		<< element->_dispValue << " " << element->_mapValue
-		<< std::setfill( ' ' ) << std::setw( 47 - ( element->_dispValue.size() + element->_mapValue.size() ) )
+		<< std::setfill( ' ' ) << std::setw( 5*( 9 - count ) - element->_id.size() ) << "";
+	
+	if( element->_type != eTypeRaw || element->_displayType != eDisplayTypeDefault )
+		std::cout << element->_dispValue << " " << element->_mapValue
+		          << std::setfill( ' ' ) << std::setw( 47 - ( element->_dispValue.size() + element->_mapValue.size() ) );
+	else
+		std::cout << std::setfill( ' ' ) << std::setw( 47 ) << "";
+		
+	std::cout
 		<< element->_iteration
 		<< std::setfill( ' ' ) << std::setw( 3 ) << ""
 		<< statusMap.at( element->_status )
