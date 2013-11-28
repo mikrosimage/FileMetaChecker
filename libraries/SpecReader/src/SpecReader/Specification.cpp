@@ -1,4 +1,5 @@
 #include "Specification.hpp"
+#include "SpecChecker.hpp"
 
 #include <Common/common.hpp>
 #include <Common/log.hpp>
@@ -28,7 +29,7 @@ void Specification::setFromString( const std::string& string )
 	}
 	catch( const std::runtime_error& ex )
 	{
-		LOG_ERROR( "[specification] set: "<<  ex.what() );
+		LOG_ERROR( "[specification] set from string: "<<  ex.what() );
 		throw;
 	}
 }
@@ -37,16 +38,12 @@ bool Specification::setFromFile( const std::string& filepath )
 {
 	try
 	{
-	    std::ifstream file( filepath );
-	    bool ret = false;
-		if( file.good() )
-		{
-			std::string content( ( std::istreambuf_iterator<char>( file ) ),
-			                       std::istreambuf_iterator<char>()       );
-			setFromString( content );
-			file.close();
-			ret = true;
-		}
+	    bool ret = true;
+		SpecChecker( &_specDoc, filepath ).check();
+
+		if( _specDoc.HasParseError() )
+			ret = false;
+
 		return ret;
 	}
 	catch( const std::exception& ex )
