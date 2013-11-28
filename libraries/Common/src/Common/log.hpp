@@ -8,6 +8,9 @@
 namespace common
 {
 
+/**
+ * Log display levels definition
+ */
 enum ELogLevel
 {
 	eLogTrace = 0,

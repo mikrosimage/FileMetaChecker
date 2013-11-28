@@ -4,13 +4,13 @@
 #include <string>
 #include <map>
 
-// standard definition labels
+// Standard definition labels
 static const std::string kExtension = "extension";
 static const std::string kFooter    = "footer";
 static const std::string kHeader    = "header";
 static const std::string kStandard  = "standard";
 
-// node labels (left)
+// Node labels (left)
 static const std::string kId     = "id";
 static const std::string kLabel  = "label";
 static const std::string kType   = "type";
@@ -21,27 +21,26 @@ static const std::string kRange  = "range";
 static const std::string kMin    = "min";
 static const std::string kMax    = "max";
 
+static const std::string kGroup       = "group";
+static const std::string kGroupSize   = "groupSize";
+static const std::string kRepetition  = "repeated";
+static const std::string kRequired    = "required";
+static const std::string kEndian      = "endian";
+static const std::string kOptional    = "optional";
+static const std::string kOrdered     = "ordered";
+static const std::string kDisplayType = "displayType";
 
-static const std::string kGroup         = "group";
-static const std::string kGroupSize     = "groupSize";
-static const std::string kRepetition    = "repeated";
-static const std::string kRequired      = "required";
-static const std::string kEndian        = "endian";
-static const std::string kOptional      = "optional";
-static const std::string kOrdered       = "ordered";
-static const std::string kDisplayType   = "displayType";
+static const std::string kFile        = "file";
 
-static const std::string kFile  = "file";
+// Node labels (right)
+static const std::string kTrue         = "true";
+static const std::string kFalse        = "false";
+static const std::string kEndianBig    = "big";
+static const std::string kEndianLittle = "little";
 
-// node values (right)
-static const std::string kTrue   = "true";
-static const std::string kFalse  = "false";
-static const std::string kEndianBig     = "big";
-static const std::string kEndianLittle  = "little";
-
-static const std::string kAscii  = "ascii";
-static const std::string kHexa   = "hexa";
-static const std::string kRaw    = "raw";
+static const std::string kAscii   = "ascii";
+static const std::string kHexa    = "hexa";
+static const std::string kRaw     = "raw";
 
 static const std::string kInt8    =  "int8";
 static const std::string kUInt8   = "uint8";
@@ -57,20 +56,19 @@ static const std::string kDouble  = "double";
 
 static const std::string kIeeeExtended  = "ieeeExtended";
 
-static const std::string kExif = "exif";
-static const std::string kKlv  = "klv";
+static const std::string kExif  = "exif";
+static const std::string kKlv   = "klv";
 
 static const std::string kNull  = "null";
 
-// report definitions
-
+// Report definitions
 static const std::string kValidator      = "fileValidator";
 static const std::string kSpecification  = "specification";
 static const std::string kElement        = "element";
 
-static const std::string kValue  = "value";
-static const std::string kSize   = "size";
-static const std::string kStatus = "status";
+static const std::string kValue   = "value";
+static const std::string kSize    = "size";
+static const std::string kStatus  = "status";
 
 static const std::string kDefault = "default";
 static const std::string kNumbers = "numbers";
@@ -89,6 +87,9 @@ static const std::string kSkip                     = "Skip";
 static const std::string kError    = "error";
 static const std::string kWarning  = "warning";
 
+/**
+ * Element types definition
+ */
 enum EType
 {
 	eTypeUnknown = 0,
@@ -110,6 +111,9 @@ enum EType
 	eTypeKlv,
 };
 
+/**
+ * Element display types definition
+ */
 enum EDisplayType
 {
 	eDisplayTypeDefault = 0,
@@ -119,6 +123,9 @@ enum EDisplayType
 	eDisplayTypeRaw,
 };
 
+/**
+ * Element status definition
+ */
 enum EStatus
 {
 	eStatusNotChecked = 0,
@@ -133,6 +140,9 @@ enum EStatus
 	eStatusSkip,
 };
 
+/**
+ * String to Element types map
+ */
 static const std::map< std::string, EType > typeMap
 {
 	{ kInt8,         eTypeInt8         },
@@ -153,6 +163,9 @@ static const std::map< std::string, EType > typeMap
 	{ kKlv,          eTypeKlv          },
 };
 
+/**
+ * String to Element display types map
+ */
 static const std::map< std::string, EDisplayType > displayTypeMap
 {
 	{ "",            eDisplayTypeDefault },
@@ -172,6 +185,9 @@ static const std::map< std::string, EDisplayType > displayTypeMap
 	{ kRaw,          eDisplayTypeRaw     },
 };
 
+/**
+ * Element status to string map
+ */
 static const std::map< EStatus, std::string > statusMap
 {
 	{ eStatusNotChecked,               kNotChecked               },
@@ -186,6 +202,9 @@ static const std::map< EStatus, std::string > statusMap
 	{ eStatusSkip,                     kSkip                     },
 };
 
+/**
+ * Element types to string map
+ */
 static const std::map< EType, std::string > typeStringMap
 {
 	{ eTypeInt8,         kInt8          },
@@ -206,6 +225,9 @@ static const std::map< EType, std::string > typeStringMap
 	{ eTypeKlv,          kKlv           },
 };
 
+/**
+ * Element display types to string map
+ */
 static const std::map< EDisplayType, std::string > displayTypeStringMap
 {
 	{ eDisplayTypeDefault, kDefault  },
