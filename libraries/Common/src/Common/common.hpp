@@ -31,6 +31,8 @@ static const std::string kOptional      = "optional";
 static const std::string kOrdered       = "ordered";
 static const std::string kDisplayType   = "displayType";
 
+static const std::string kFile  = "file";
+
 // node values (right)
 static const std::string kTrue   = "true";
 static const std::string kFalse  = "false";
@@ -57,6 +59,8 @@ static const std::string kIeeeExtended  = "ieeeExtended";
 
 static const std::string kExif = "exif";
 static const std::string kKlv  = "klv";
+
+static const std::string kNull  = "null";
 
 // report definitions
 
