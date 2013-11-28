@@ -10,32 +10,32 @@ namespace basic_element
 Element::Element( const ShPtrSpecNode node,
 	              const ShPtrElement  previous,
 	              const ShPtrElement  parent )
-	: _parent        ( parent )
+	: _parent        ( parent   )
 	, _previous      ( previous )
 	, _specNode      ( node )
-	, _id            ( node->getId() )
+	, _id            ( node->getId()    )
 	, _label         ( node->getLabel() )
-	, _uId           ( node->getUId() )
-	, _size          ( getElementSize( node->getId(), node->getType(), node->getValues() ) )
+	, _uId           ( node->getUId()   )
+	, _size          ( getElementSize( node->getId(), node->getType(), node->getValues() )            )
 	, _iteration     ( getElementIteration( node->getId(), node->getRepetitions(), previous, parent ) )
 	, _groupSize     ( 0 )
-	, _countExpr     ( node->getCount() )
+	, _countExpr     ( node->getCount()       )
 	, _requiredExpr  ( node->getRequirement() )
-	, _groupSizeExpr ( node->getGroupSize() )
-	, _values        ( node->getValues() )
-	, _map           ( node->getMap() )
+	, _groupSizeExpr ( node->getGroupSize()   )
+	, _values        ( node->getValues()      )
+	, _map           ( node->getMap()         )
 	, _mapValue      ( "" )
 	, _dispValue     ( "" )
-	, _rangeExpr     ( node->getRange() )
+	, _rangeExpr     ( node->getRange()       )
 	, _repetExpr     ( node->getRepetitions() )
-	, _type          ( node->getType() )
+	, _type          ( node->getType()        )
 	, _displayType   ( node->getDisplayType() )
 	, _status        ( eStatusNotChecked )
 	, _error         ( "" )
 	, _warning       ( "" )
-	, _isGroup       ( node->isGroup() )
-	, _isOrdered     ( node->isOrdered() )
-	, _isOptional    ( node->isOptional() )
+	, _isGroup       ( node->isGroup()     )
+	, _isOrdered     ( node->isOrdered()   )
+	, _isOptional    ( node->isOptional()  )
 	, _isBigEndian   ( node->isBigEndian() )
 	, _checkedGroup  ( false )
 	, _data          ( nullptr )
@@ -43,7 +43,10 @@ Element::Element( const ShPtrSpecNode node,
 	if( ! _parent.expired() )
 		_parent.lock()->_children.push_back( std::make_shared< Element >( *this ) );
 
-	LOG_TRACE( "[element] " << _id << ": " << &*this << " - Parent: " << &*_parent.lock() << " - Previous: " << &( *( _previous.lock() ) ) << " - SpecNode: " << &*_specNode.get() << " - Iteration: " << _iteration );
+	LOG_TRACE( "[element] Create new Element " << _id << " :"       );
+	LOG_TRACE(" [element]   - Parent   : " << _parent.lock()->_id   );
+	LOG_TRACE(" [element]   - Previous : " << _previous.lock()->_id );
+	LOG_TRACE(" [element]   - Iteration: " << _iteration            );
 }
 
 Element::ShPtrSpecNode Element::next( )
@@ -57,9 +60,10 @@ Element::ShPtrSpecNode Element::next( )
 	if( _parent.use_count() != 0 )
 		parent = _parent.lock();
 	
-	// Optional: if element optional & invalid, got to the next SpecNode
+	// Optional: if element optional & invalid, go to the next SpecNode
 	if( _isOptional && _status == eStatusInvalidButOptional )
 	{
+		LOG_TRACE( "[element] Next: next node of " << _id<< " ( optional )" );
 		if( _specNode->next() != nullptr )
 			return _specNode->next();
 		if( parent != nullptr )
@@ -69,7 +73,7 @@ Element::ShPtrSpecNode Element::next( )
 	// Unordered Groups: if element valid and parent is unordered, go to the first child of the parent
 	if( _status == eStatusValid && _parent.use_count() != 0 && ( ! parent->_isOrdered ) && ( ! _isGroup || _checkedGroup ) )
 	{
-		LOG_TRACE( "[element] next is first child from parent of " << _id );
+		LOG_TRACE( "[element] Next: " << _id << "'s parent first child ( unordered group )" );
 		return parent->_specNode->firstChild();
 	}
 	
@@ -78,14 +82,14 @@ Element::ShPtrSpecNode Element::next( )
 	{
 		_checkedGroup = true;
 		ShPtrSpecNode child( _specNode->firstChild() );
-		LOG_TRACE( "[element] next is first child of " << _id );
+		LOG_TRACE( "[element] Next: first child of " << _id << " ( group )" );
 		return child;
 	}
 	
 	// Repetition: if repeated element, go to the same SpecNode
 	if( ! _repetExpr.empty() && _status == eStatusValid )
 	{
-		LOG_TRACE( "[element] next is same node " << _id << " ( repeted )" );
+		LOG_TRACE( "[element] Next: same node " << _id << " ( repetition )" );
 		return _specNode;
 	}
 
@@ -94,11 +98,11 @@ Element::ShPtrSpecNode Element::next( )
 	// Last Element: if their is no more SpecNode after and parent exists, go to the node after the parent
 	if( nextNode == nullptr && _parent.use_count() != 0 )
 	{
-		LOG_TRACE( "[element] next is next of parent from " << _id );
+		LOG_TRACE( "[element] Next: "<< _id << "'s parent next node ( end of group )" );
 		return parent->next( );
 	}
 
-	LOG_TRACE( "[element] next is next node of " << _id );
+	LOG_TRACE( "[element] Next: next node of " << _id );
 	return nextNode;
 }
 
@@ -126,22 +130,22 @@ size_t Element::getElementSize( const std::string& id, const EType type, const s
 		switch( type )
 		{
 			case eTypeInt8         :
-			case eTypeUInt8        : return 1; break;
+			case eTypeUInt8        : return  1;
 			case eTypeInt16        :
-			case eTypeUInt16       : return 2; break;
+			case eTypeUInt16       : return  2;
 			case eTypeInt32        :
 			case eTypeUInt32       :
-			case eTypeFloat        : return 4; break;
+			case eTypeFloat        : return  4;
 			case eTypeInt64        :
 			case eTypeUInt64       :
-			case eTypeDouble       : return 8; break;
-			case eTypeIeeeExtended : return 10; break;
+			case eTypeDouble       : return  8;
+			case eTypeIeeeExtended : return 10;
 			default: break;
 		}
 	}
 	catch( std::runtime_error e )
 	{
-		LOG_ERROR( "(" << id << ") " << e.what() );
+		LOG_ERROR( "[element] " << e.what() << " (" << id << ")" );
 	}
 	return size;
 }
@@ -149,25 +153,22 @@ size_t Element::getElementSize( const std::string& id, const EType type, const s
 size_t Element::getElementIteration( const std::string& id, const ExpressionList& repetExpr, const ShPtrElement& previous, const ShPtrElement& parent )
 {
 	size_t iteration = 1;
-
-	if( ! repetExpr.empty() )
+	if( repetExpr.empty() )
+		return iteration;
+	
+	ShPtrElement prev = previous;
+	while( prev != nullptr || ( parent != nullptr && prev->_id != parent->_id ) )
 	{
-		ShPtrElement prev = previous;
-		while( prev != nullptr || ( parent != nullptr && prev->_id != parent->_id ) )
+		if( prev->_id == id && ( prev->_status == eStatusValid || prev->_status == eStatusPassOver ) )
 		{
-			if( prev->_id == id && ( prev->_status == eStatusValid || prev->_status == eStatusPassOver ) )
-			{
-				iteration = prev->_iteration + 1;
-				// LOG_TRACE( "ELEMENT: >>>> prev: " << prev->_id << " @" << &*prev );
-				break;
-			}
-
-			// LOG_TRACE( "ELEMENT: prev: " << prev->_id << " @" << &*prev );
-			if( parent != nullptr && prev->_id == parent->_id )
-				break;
-
-			prev = prev->getPrevious();
+			iteration = prev->_iteration + 1;
+			break;
 		}
+
+		if( parent != nullptr && prev->_id == parent->_id )
+			break;
+
+		prev = prev->getPrevious();
 	}
 	return iteration;
 }

@@ -16,33 +16,72 @@ namespace spec_reader
 namespace basic_element
 {
 
-typedef std::vector< std::pair< std::string, std::string > > ExpressionList;
+/**
+ * Define number types:
+ */
+typedef          char       int8;     /**<   Signed 1-byte  integer */
+typedef unsigned char      uint8;     /**< Unsigned 1-byte  integer */
+typedef          short      int16;    /**<   Signed 2-bytes integer */
+typedef unsigned short     uint16;    /**< Unsigned 2-bytes integer */
+typedef          int        int32;    /**<   Signed 4-bytes integer */
+typedef unsigned int       uint32;    /**< Unsigned 4-bytes integer */
+typedef   signed long long  int64;    /**<   Signed 8-bytes integer */
+typedef unsigned long long uint64;    /**< Unsigned 8-bytes integer */
+typedef long double  ieeeExtended;    /**< 10 bytes IEEE Standard 754 floating point */
 
-typedef          char       int8;
-typedef unsigned char      uint8;
-typedef          short      int16;
-typedef unsigned short     uint16;
-typedef          int        int32;
-typedef unsigned int       uint32;
-typedef   signed long long  int64;
-typedef unsigned long long uint64;
-
-typedef long double  ieeeExtended;    // 80 bits IEEE Standard 754 floating point
-
+/**
+ *  Basic element, storing all the information of a file segment.
+ */
 class Element
 {
+	typedef std::vector< std::pair< std::string, std::string > > ExpressionList;
 	typedef std::shared_ptr< basic_element::Element > ShPtrElement;
 	typedef std::shared_ptr< spec_reader::SpecNode  > ShPtrSpecNode;
 public:
+	
+	/**
+	 * Element's constructor.
+	 * @param node     Bound SpecNode reference.
+	 * @param previous Previous Element reference.
+	 * @param parent   Parent Element reference.
+	 */
 	Element( const ShPtrSpecNode node, const ShPtrElement previous = ShPtrElement(), const ShPtrElement parent = nullptr );
 	
+	/**
+	 * Get the next specification node.
+	 * @return Next SpecNode reference.
+	 */
 	ShPtrSpecNode next( );
 
+	/**
+	 * Set raw data from buffer.
+	 * @param[in] data Data buffer to copy from.
+	 * @param[in] size Buffer size (in bytes).
+	 */
 	void  set( const char* data, const size_t& size );
 
+	/**
+	 * Get the current Element parent.
+	 * @return Parent Element reference.
+	 */
 	ShPtrElement  getParent()   const { return _parent.lock(); }
+
+	/**
+	 * Get the previous Element.
+	 * @return Previous Element reference.
+	 */
 	ShPtrElement  getPrevious() const { return _previous.lock(); }
+
+	/**
+	 * Get the bound specification node.
+	 * @return Bound SpecNode reference.
+	 */
 	ShPtrSpecNode getSpecNode()       { return _specNode; }
+
+	/**
+	 * Get the current Element children.
+	 * @return Vector of children references.
+	 */
 	std::vector< ShPtrElement > getChildren() { return _children; }
 
 protected:
