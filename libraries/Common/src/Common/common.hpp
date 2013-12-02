@@ -5,10 +5,10 @@
 #include <map>
 
 // Standard definition labels
-static const std::string kExtension = "extension";
-static const std::string kFooter    = "footer";
-static const std::string kHeader    = "header";
-static const std::string kStandard  = "standard";
+static const std::string kExtensions  = "extensions";
+static const std::string kFooter      = "footer";
+static const std::string kContent     = "content";
+static const std::string kDescription = "description";
 
 // Node labels (left)
 static const std::string kId     = "id";
