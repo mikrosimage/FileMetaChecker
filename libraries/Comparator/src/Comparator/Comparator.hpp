@@ -27,13 +27,26 @@ namespace report_generator
 namespace comparator
 {
 
+/**
+ *  Comparator, check orchestrator.
+ */
 class Comparator
 {
 	typedef std::shared_ptr< basic_element::Element > ShPtrElement;
 	typedef std::shared_ptr< spec_reader::SpecNode  > ShPtrSpecNode;
 	
 public:
+	/**
+	 * Comparator's constructor.
+	 */
 	Comparator();
+
+	/**
+	 * Compare an input file to a specification, and write a report.
+	 * @param spec   Specification used as the comparison reference.
+	 * @param reader FileReader, to extract raw data from the file checked.
+	 * @param report Report to fill, and print or write.
+	 */
 	void check( spec_reader::Specification& spec, file_reader::FileReader& reader, report_generator::Report& report );
 
 private:
