@@ -12,7 +12,7 @@ namespace element_checker
 class ExpressionParser;
 
 /**
- *  Basic element Checker. Compare raw datas to expected values, and set Elements status.
+ *  Basic element Checker. Compare raw data to expected values, and set Elements status.
  */
 class Checker
 {
