@@ -19,10 +19,9 @@ namespace property_parser
 	{
 		try
 		{
-			std::string propStr = prop;
-			if( node->HasMember( propStr.c_str() ) )
-				return node->FindMember( propStr.c_str() )->value.GetString();
-			throw std::runtime_error( "No such node (" + prop + ")" );
+			if( ! node->HasMember( std::string( prop ).c_str() ) )
+				throw std::runtime_error( "[specnode] No such node (" + prop + ")" );
+			return node->FindMember( std::string( prop ).c_str() )->value.GetString();
 		}
 		catch( std::runtime_error& e )
 		{
@@ -37,38 +36,31 @@ namespace property_parser
 	template< >
 	std::string getProperty< std::string >( const TreeNodeIt node, const std::string& prop, const std::string& defaultValue )
 	{
-		std::string propStr = prop;
-		if( node->HasMember( propStr.c_str() ) )
-			return node->FindMember( propStr.c_str() )->value.GetString();
-		else
+		if( ! node->HasMember( std::string( prop ).c_str() ) )
 			return defaultValue; 
+		return node->FindMember( std::string( prop ).c_str() )->value.GetString();
 	}
 
 	template< >
 	bool getProperty< bool >( const TreeNodeIt node, const std::string& prop, const bool& defaultValue )
 	{
-		std::string propStr = prop;
-		if( node->HasMember( propStr.c_str() ) )
-			return node->FindMember( propStr.c_str() )->value.GetBool();
-		else
+		if( ! node->HasMember( std::string( prop ).c_str() ) )
 			return defaultValue; 
+		return node->FindMember( std::string( prop ).c_str() )->value.GetBool();
 	}
 
 	std::string valueToString( const rapidjson::Value* value )
 	{
 		std::string ret;
 		if( value->IsInt() )
-		{
 			ret = std::to_string( value->GetInt() );
-		}
+
 		if( value->IsDouble() )
-		{
 			ret = std::to_string( value->GetDouble() );
-		}
+
 		if( value->IsString() )
-		{
 			ret = value->GetString();
-		}
+
 		return ret;
 	}
 }
@@ -81,7 +73,6 @@ SpecNode::SpecNode( const Specification* spec, const TreeNodeIt node, const Spec
 	, _parent( parent )
 	, _specification( spec )
 {
-	// LOG_FATAL( "SPECNODE: " << &*this << " # parent:" << &*_parent );
 }
 
 std::string SpecNode::getId() const
@@ -102,7 +93,7 @@ EType SpecNode::getType() const
 	}
 	catch( const std::out_of_range& oor )
 	{
-		LOG_WARNING( "Unknown type" );
+		LOG_WARNING( "[specnode] Unknown type" );
 		return eTypeUnknown;
 	}
 }
@@ -115,7 +106,7 @@ EDisplayType SpecNode::getDisplayType() const
 	}
 	catch( const std::out_of_range& oor )
 	{
-		LOG_WARNING( "Unknown displayType" );
+		LOG_WARNING( "[specnode] Unknown displayType" );
 		return eDisplayTypeDefault;
 	}
 }
@@ -137,8 +128,7 @@ std::string SpecNode::getGroupSize() const
 
 bool SpecNode::isGroup() const
 {
-	std::string groupStr = kGroup;
-	return _node->HasMember( groupStr.c_str() );
+	return _node->HasMember( std::string( kGroup ).c_str() );
 }
 
 bool SpecNode::isOrdered() const
@@ -159,145 +149,47 @@ bool SpecNode::isBigEndian() const
 std::vector< std::string > SpecNode::getValues() const
 {
 	std::vector< std::string > values;
-	std::string valuesStr = kValues;
-	if( _node->HasMember( valuesStr.c_str() ) )
+	if( ! _node->HasMember( std::string( kValues ).c_str() ) )
+		return values;
+
+	const rapidjson::Value* valuesNode = &_node->FindMember( std::string( kValues ).c_str() )->value;
+	if( ! valuesNode->IsArray() )
 	{
-		const rapidjson::Value* valuesNode = &_node->FindMember( valuesStr.c_str() )->value;
-		if( valuesNode->IsArray() )
-		{
-			for( rapidjson::Value::ConstValueIterator itr = valuesNode->Begin(); itr != valuesNode->End(); ++itr  )
-				values.push_back( property_parser::valueToString( itr ) );
-		}
-		else
-			values.push_back( property_parser::valueToString( valuesNode ) );
+		values.push_back( property_parser::valueToString( valuesNode ) );
+		return values;
 	}
+
+	for( rapidjson::Value::ConstValueIterator itr = valuesNode->Begin(); itr != valuesNode->End(); ++itr  )
+		values.push_back( property_parser::valueToString( itr ) );
 	return values;
 }
 
 std::vector< std::pair< std::string, std::string > > SpecNode::getRange() const
 {
-	std::vector< std::pair< std::string, std::string > > ranges;
-	std::string rangeStr = kRange;
-	std::string minStr   = kMin;
-	std::string maxStr   = kMax;
-
-	if( _node->HasMember( rangeStr.c_str() ) )
+	try
 	{
-		const rapidjson::Value* rangesNode = &_node->FindMember( rangeStr.c_str() )->value;
+		std::vector< std::pair< std::string, std::string > > ranges;
+		if( ! _node->HasMember( std::string( kRange ).c_str() ) )
+			return ranges;
+
+		const rapidjson::Value* rangesNode = &_node->FindMember( std::string( kRange ).c_str() )->value;
+
+		if( ! rangesNode->IsArray() )
+			throw std::runtime_error( "[specnode] Invalid range definition" );
+
 		for( rapidjson::Value::ConstValueIterator itr = rangesNode->Begin(); itr != rangesNode->End(); ++itr  )
 		{
 			std::pair< std::string, std::string > range { "", "" };
-			if( itr->HasMember( minStr.c_str() ) )
-				range.first = property_parser::valueToString( &itr->FindMember( minStr.c_str() )->value );
+			if( itr->HasMember( std::string( kMin ).c_str() ) )
+				range.first = property_parser::valueToString( &itr->FindMember( std::string( kMin ).c_str() )->value );
 			
-			if( itr->HasMember( maxStr.c_str() ) )
-				range.second = property_parser::valueToString( &itr->FindMember( maxStr.c_str() )->value );
+			if( itr->HasMember( std::string( kMax ).c_str() ) )
+				range.second = property_parser::valueToString( &itr->FindMember( std::string( kMax ).c_str() )->value );
 			
 			if( range.first != "" || range.second != "" )
 				ranges.push_back( range );
 		}
-	}
-	return ranges;
-}
-
-std::vector< std::pair< std::string, std::string > > SpecNode::getRepetitions() const
-{
-	std::vector< std::pair< std::string, std::string > > repetitions;
-	std::string repetitionStr = kRepetition;
-	std::string minStr        = kMin;
-	std::string maxStr        = kMax;
-
-	if( _node->HasMember( repetitionStr.c_str() ) )
-	{
-		const rapidjson::Value* repetitionsNode = &_node->FindMember( repetitionStr.c_str() )->value;
-
-		if( ! repetitionsNode->IsArray() )
-		{
-			std::pair< std::string, std::string > repetitionPair { "", "" };
-			repetitionPair.first  = property_parser::valueToString( repetitionsNode );
-			repetitionPair.second = property_parser::valueToString( repetitionsNode );
-			repetitions.push_back( repetitionPair );
-			return repetitions;
-		}
-
-		for( rapidjson::Value::ConstValueIterator itr = repetitionsNode->Begin(); itr != repetitionsNode->End(); ++itr  )
-		{
-			std::pair< std::string, std::string > repetitionRange { "", "" };
-			if( ! itr->IsObject() )
-			{
-				repetitionRange.first  = property_parser::valueToString( itr );
-				repetitionRange.second = property_parser::valueToString( itr );
-				repetitions.push_back( repetitionRange );
-				continue;
-			}
-
-			if( itr->HasMember( minStr.c_str() ) )
-				repetitionRange.first = property_parser::valueToString( &itr->FindMember( minStr.c_str() )->value );
-			
-			if( itr->HasMember( maxStr.c_str() ) )
-				repetitionRange.second = property_parser::valueToString( &itr->FindMember( maxStr.c_str() )->value );
-			
-			repetitions.push_back( repetitionRange );
-		}
-	}
-	return repetitions;
-}
-
-std::map< std::string, std::string > SpecNode::getMap() const
-{
-	std::map< std::string, std::string > map;
-	std::string mapStr = kMap;
-
-	if( _node->HasMember( mapStr.c_str() ) )
-	{
-		const rapidjson::Value* mapNode = &_node->FindMember( mapStr.c_str() )->value;
-
-		for( rapidjson::Value::ConstValueIterator itr = mapNode->Begin(); itr != mapNode->End(); ++itr  )
-		{
-			std::string index = property_parser::valueToString( itr->Begin() );
-			std::string value = property_parser::valueToString( itr->End()   );
-			map[ index ] = value;
-		}
-	}
-	return map;
-}
-
-std::shared_ptr< spec_reader::SpecNode > SpecNode::next() const
-{
-	TreeNodeIt node = _node;
-	++node;
-	std::string groupStr = kGroup;
-
-	if( _parent != nullptr && _parent->getIterator()->FindMember( groupStr.c_str() )->value.End() == node )
-	{
-		// LOG_WARNING( "SpecNode::next " << getId() << ": Last Element (group)" );
-		return nullptr;
-	}
-
-	if( node == _specification->end() )
-	{
-		// LOG_WARNING( "SpecNode::next " << getId() << ": Last Element (specification)" );
-		return nullptr;
-	}
-	
-	// LOG_WARNING( "SpecNode::next " << getId() << ": Next" );
-	return std::make_shared< SpecNode >( _specification, node, _parent );
-}
-
-std::shared_ptr< spec_reader::SpecNode > SpecNode::firstChild() const
-{
-	try
-	{
-		// LOG_WARNING( "SpecNode::firstChild " << getId() );
-		if( ! isGroup() )
-			throw std::runtime_error( "SpecNode::firstChild: This node has no child." );
-
-		std::string groupStr = kGroup;
-		
-		const rapidjson::Value* groupNode = &_node->FindMember( groupStr.c_str() )->value;
-
-		TreeNodeIt node = groupNode->Begin();
-		return std::make_shared< SpecNode >( _specification, node, this );
+		return ranges;
 	}
 	catch( std::runtime_error& e )
 	{
@@ -306,12 +198,100 @@ std::shared_ptr< spec_reader::SpecNode > SpecNode::firstChild() const
 	}
 }
 
-// size_t SpecNode::getChildrenNumber() const
-// {
-// 	if( ! isGroup() )
-// 		return 0;
-// 	return _node->second.get_child( kGroup ).size();
-// }
+std::vector< std::pair< std::string, std::string > > SpecNode::getRepetitions() const
+{
+	std::vector< std::pair< std::string, std::string > > repetitions;
+
+	if( ! _node->HasMember( std::string( kRepetition ).c_str() ) )
+		return repetitions;
+
+	const rapidjson::Value* repetitionsNode = &_node->FindMember( std::string( kRepetition ).c_str() )->value;
+
+	if( ! repetitionsNode->IsArray() )
+	{
+		std::pair< std::string, std::string > repetitionPair { "", "" };
+		repetitionPair.first  = property_parser::valueToString( repetitionsNode );
+		repetitionPair.second = property_parser::valueToString( repetitionsNode );
+		repetitions.push_back( repetitionPair );
+		return repetitions;
+	}
+
+	for( rapidjson::Value::ConstValueIterator itr = repetitionsNode->Begin(); itr != repetitionsNode->End(); ++itr  )
+	{
+		std::pair< std::string, std::string > repetitionRange { "", "" };
+		if( ! itr->IsObject() )
+		{
+			repetitionRange.first  = property_parser::valueToString( itr );
+			repetitionRange.second = property_parser::valueToString( itr );
+			repetitions.push_back( repetitionRange );
+			continue;
+		}
+
+		if( itr->HasMember( std::string( kMin ).c_str() ) )
+			repetitionRange.first = property_parser::valueToString( &itr->FindMember( std::string( kMin ).c_str() )->value );
+		
+		if( itr->HasMember( std::string( kMax ).c_str() ) )
+			repetitionRange.second = property_parser::valueToString( &itr->FindMember( std::string( kMax ).c_str() )->value );
+		
+		repetitions.push_back( repetitionRange );
+	}
+	return repetitions;
+}
+
+std::map< std::string, std::string > SpecNode::getMap() const
+{
+	std::map< std::string, std::string > map;
+
+	if( ! _node->HasMember( std::string( kMap ).c_str() ) )
+		return map;
+
+	const rapidjson::Value* mapNode = &_node->FindMember( std::string( kMap ).c_str() )->value;
+
+	for( rapidjson::Value::ConstValueIterator itr = mapNode->Begin(); itr != mapNode->End(); ++itr  )
+	{
+		std::string index = property_parser::valueToString( itr->Begin() );
+		std::string value = property_parser::valueToString( itr->End()   );
+		map[ index ] = value;
+	}
+	return map;
+}
+
+std::shared_ptr< spec_reader::SpecNode > SpecNode::next() const
+{
+	TreeNodeIt node = _node;
+	++node;
+	if( _parent != nullptr && _parent->getIterator()->FindMember( std::string( kGroup ).c_str() )->value.End() == node )
+	{
+		LOG_TRACE( "[specnode] " << getId() << ": Last Element (group)" );
+		return nullptr;
+	}
+
+	if( node == _specification->end() )
+	{
+		LOG_TRACE( "[specnode] " << getId() << ": Last Element (specification)" );
+		return nullptr;
+	}
+	
+	LOG_TRACE( "[specnode] " << getId() << ": Next" );
+	return std::make_shared< SpecNode >( _specification, node, _parent );
+}
+
+std::shared_ptr< spec_reader::SpecNode > SpecNode::firstChild() const
+{
+	try
+	{
+		if( ! isGroup() )
+			throw std::runtime_error( "[specnode] firstChild: This node has no child." );
+
+		const rapidjson::Value* groupNode = &_node->FindMember( std::string( kGroup ).c_str() )->value;
+		return std::make_shared< SpecNode >( _specification, groupNode->Begin(), this );
+	}
+	catch( std::runtime_error& e )
+	{
+		LOG_ERROR( e.what() );
+		throw;
+	}
+}
 
 std::set< std::string > SpecNode::getChildrenNodes() const
 {
@@ -321,13 +301,10 @@ std::set< std::string > SpecNode::getChildrenNodes() const
 			throw std::runtime_error( "SpecNode::getChildrenNodes: This node has no child." );
 		
 		std::set< std::string > list;
-		std::string groupStr = kGroup;
-		std::string idStr    = kId;
-
-		const rapidjson::Value* groupNode = &_node->FindMember( groupStr.c_str() )->value;
+		const rapidjson::Value* groupNode = &_node->FindMember( std::string( kGroup ).c_str() )->value;
 
 		for( rapidjson::Value::ConstValueIterator itr = groupNode->Begin(); itr != groupNode->End(); ++itr  )
-			list.insert( property_parser::valueToString( &itr->FindMember( idStr.c_str() )->value ) );
+			list.insert( property_parser::valueToString( &itr->FindMember( std::string( kId ).c_str() )->value ) );
 
 		return list;
 	}
