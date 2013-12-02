@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_CASE( basic_element_element )
 {
 	LOG_INFO( "\n>>> basic_element_element <<<" );
 	std::string jsonString = R"*(
-		{ "header": [
+		{ "content": [
 			{
 				"id": "id",
 				"label": "label",
@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE( basic_element_type )
 	{
 
 		std::string jsonString = R"*(
-			{ "header": [
+			{ "content": [
 				{
 					"id": "id",
 					"label": "label",
@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE( basic_element_type )
 	}
 	{
 		std::string jsonString = R"*(
-			{ "header": [
+			{ "content": [
 				{
 					"id": "id",
 					"label": "label",
@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE( basic_element_type )
 	}
 	{
 		std::string jsonString = R"*(
-			{ "header": [
+			{ "content": [
 				{
 					"id": "id",
 					"label": "label",
@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_CASE( basic_element_type )
 	}
 	{
 		std::string jsonString = R"*(
-			{ "header": [
+			{ "content": [
 				{
 					"id": "id",
 					"label": "label",
@@ -165,7 +165,7 @@ BOOST_AUTO_TEST_CASE( basic_element_type )
 	}
 	{
 		std::string jsonString = R"*(
-			{ "header": [
+			{ "content": [
 				{
 					"id": "id",
 					"label": "label",
@@ -190,7 +190,7 @@ BOOST_AUTO_TEST_CASE( basic_element_next )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{ "id": "value1", "label": "Value1", "type": "ascii" },
 						{ "id": "value2", "label": "Value2", "type": "ascii" },
 						{ "id": "value3", "label": "Value3", "type": "ascii" },
@@ -245,7 +245,7 @@ BOOST_AUTO_TEST_CASE( basic_element_next_first_child_recursivity )
 	{
 		std::string jsonString = R"*(
 			{
-				"header": [
+				"content": [
 				{
 					"id": "value1",
 					"label": "Value1",
@@ -313,7 +313,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data_unordered_group )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{ "id": "value1",
 						  "label": "Value1",
 						  "type": "ascii",
@@ -393,7 +393,7 @@ BOOST_AUTO_TEST_CASE( basic_element_next_repetition_one )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{ "id": "value1", "label": "Value1", "type": "ascii" },
 						{ "id": "value2", "label": "Value2", "type": "ascii", "repeated": "3" },
 						{ "id": "value3", "label": "Value3", "type": "ascii" },
@@ -451,7 +451,7 @@ BOOST_AUTO_TEST_CASE( basic_element_next_repetition_first )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{ "id": "value1", "label": "Value1", "type": "ascii", "repeated": "3" },
 						{ "id": "value2", "label": "Value2", "type": "ascii" }
 					]
@@ -497,7 +497,7 @@ BOOST_AUTO_TEST_CASE( basic_element_next_repetition_last )
 	{
 		std::string jsonString = R"*(
 		{
-			"header": [
+			"content": [
 			{ "id": "value1", "label": "Value1", "type": "ascii" },
 			{ "id": "value2", "label": "Value2", "type": "ascii", "repeated": "3" } ]
 		} )*";
@@ -541,7 +541,7 @@ BOOST_AUTO_TEST_CASE( basic_element_next_repetition_group )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{ "id": "value1",
 						  "label": "Value1",
 						  "type": "ascii",
@@ -614,7 +614,7 @@ BOOST_AUTO_TEST_CASE( basic_element_next_repetition_group )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{ "id": "value1",
 						  "label": "Value1",
 						  "type": "ascii",
@@ -699,7 +699,7 @@ BOOST_AUTO_TEST_CASE( basic_element_next_optional )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{ "id": "value1", "label": "Value1", "type": "ascii" },
 						{ "id": "value2", "label": "Value2", "type": "ascii", "optional": true },
 						{ "id": "value3", "label": "Value3", "type": "ascii" },
@@ -738,7 +738,7 @@ BOOST_AUTO_TEST_CASE( basic_element_next_optional )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{ "id": "value1", "label": "Value1", "type": "ascii" },
 						{ "id": "value2", "label": "Value2", "type": "ascii", "group": [
 							{ "id": "value21", "label": "Value21", "type": "ascii", "optional": true }
@@ -778,7 +778,7 @@ BOOST_AUTO_TEST_CASE( basic_element_next_optional )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{ "id": "value1", "label": "Value1", "type": "ascii" },
 						{ "id": "value2", "label": "Value2", "type": "ascii", "optional": true, "group": [
 							{ "id": "value21", "label": "Value21", "type": "ascii" }
@@ -817,7 +817,7 @@ BOOST_AUTO_TEST_CASE( basic_element_get_children )
 	{
 		std::string jsonString = R"*(
 			{
-				"header": [
+				"content": [
 				{
 					"id": "value1",
 					"label": "Value1",

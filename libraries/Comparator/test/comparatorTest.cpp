@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_1 )
 	LOG_INFO( "\n>>> comparator_test_comparator 1 <<<" );
 	std::string jsonString = R"*(
 			{
-				"header": [
+				"content": [
 					{
 						"id": "value1",
 						"label": "Value1",
@@ -136,7 +136,7 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_2 )
 	LOG_INFO( "\n>>> comparator_test_comparator 2 <<<" );
 	std::string jsonString = R"*(
 			{
-				"header": [
+				"content": [
 					{
 						"id": "value1",
 						"label": "Value1",
@@ -268,7 +268,7 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_3 )
 	LOG_INFO( "\n>>> comparator_test_comparator 3 <<<" );
 	std::string jsonString = R"*(
 			{
-				"header": [
+				"content": [
 					{
 						"id": "value1",
 						"label": "Value1",

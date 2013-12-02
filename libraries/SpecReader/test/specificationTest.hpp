@@ -9,16 +9,16 @@ BOOST_AUTO_TEST_CASE( spec_reader_specification )
 	{
 		std::string jsonString = R"*(
 				{
-					"standard": {
+					"description": {
 						"label": "Specification",
 						"id": "specification",
 						"type": "file",
-						"extension": [
+						"extensions": [
 							".spc",
 							".spec"
 						]
 					},
-					"header": [
+					"content": [
 						{ "id": "value1",
 						  "label": "Value1",
 						  "type": "ascii",
@@ -108,19 +108,19 @@ BOOST_AUTO_TEST_CASE( spec_reader_specification_from_file )
 	{
 		std::string jsonString = R"*(
 				{
-				    "standard":
+				    "description":
 				    {
 				        "id": "test",
 				        "label": "Specification Test",
 				        "type": "file",
-				        "extension":
+				        "extensions":
 				        [
 				            ".ext1",
 				            ".ext2",
 				            ".ext3"
 				        ]
 				    },
-				    "header":
+				    "content":
 				    [
 				        {
 				            "id": "test1",
@@ -185,19 +185,19 @@ BOOST_AUTO_TEST_CASE( spec_reader_specification_errors )
 {
 	std::string jsonString = R"*(
 			{
-			    "standard":
+			    "description":
 			    {
 			        "id": "test",
 			        "label": "Specification Test",
 			        "type": "file",
-			        "extension":
+			        "extensions":
 			        [
 			            ".ext1",
 			            ".ext2",
 			            ".ext3"
 			        ]
 			    },
-			    "header":
+			    "content":
 			    [
 			        {
 			            "id": "test1",

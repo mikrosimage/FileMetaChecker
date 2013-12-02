@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE( report_generator_test_report )
 	LOG_INFO( "\n>>> report_generator_report <<<" );
 	std::string jsonString = R"*(
 			{
-				"header": [
+				"content": [
 					{
 						"id": "value1",
 						"label": "Value1",

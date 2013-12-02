@@ -8,7 +8,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{ 
 							"id": "id",
 							"label": "label",
@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{
 							"key": "value"
 						}
@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_values )
 
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{
 							"values": "value"
 						}
@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_values )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{ 
 							"values": [
 								"value1",
@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_range )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{
 							"range": [
 								{
@@ -138,7 +138,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_range )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{
 							"range": [
 								{
@@ -160,7 +160,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_range )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{
 							"range": [
 								{
@@ -189,7 +189,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_range )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{
 							"range": [
 								{
@@ -216,7 +216,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_range )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{
 							"range": [
 								{
@@ -254,7 +254,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{
 							"repeated": 5
 						}
@@ -272,7 +272,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{
 							"repeated": "value"
 						}
@@ -290,7 +290,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{
 							"repeated": [
 								{
@@ -313,7 +313,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{
 							"repeated": [
 								{
@@ -335,7 +335,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{
 							"repeated": [
 								{
@@ -364,7 +364,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{
 							"repeated": [
 								{
@@ -391,7 +391,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{
 							"repeated": [
 								{
@@ -424,7 +424,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{
 							"repeated": [
 								{
@@ -456,7 +456,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{
 							"repeated": [
 								{
@@ -502,7 +502,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_map )
 		
 		std::string jsonString = R"*(
 			{
-				"header": [
+				"content": [
 					{
 						"map": [ )*";
 
@@ -531,7 +531,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_map )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{
 							"map": []
 						}
@@ -548,7 +548,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_map )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{
 							"unknownKey": "noValue"
 						}
@@ -565,7 +565,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_map )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{
 						}
 					]
@@ -585,7 +585,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_next )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{ "id": "value1" },
 						{ "id": "value2" },
 						{ "id": "value3" },
@@ -611,7 +611,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_children )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{ 
 							"id": "value1",
 							"group": [
@@ -643,7 +643,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_firstchild )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{ "id": "value1", "label": "Value1", "type": "ascii" },
 						{ "id": "value2", "label": "Value2", "type": "ascii" },
 						{ "id": "value3", "label": "Value3", "type": "ascii" },
@@ -692,7 +692,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_next_first_child_recursivity )
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{ "id": "value1",
 						  "label": "Value1",
 						  "type": "ascii",

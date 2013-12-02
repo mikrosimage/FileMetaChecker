@@ -7,7 +7,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_data )
 	
 	std::string jsonStringBegin = R"*(
 				{
-					"header": [
+					"content": [
 						{ 
 							"id": "id",
 							"label": "label",
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_number )
 	
 	std::string jsonStringBegin = R"*(
 				{
-					"header": [
+					"content": [
 						{ 
 							"id": "id",
 							"label": "label",
