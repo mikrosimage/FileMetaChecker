@@ -7,7 +7,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_1 )
 	LOG_INFO( ">>> element_checker_translator_1 <<<" );
 	std::string jsonString = R"*(
 			{
-				"header": [
+				"content": [
 					{ 
 						"id": "id",
 						"label": "label",
@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 		LOG_INFO( "\t>>> translator_2_1 <<<" );
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{ 
 							"id": "id",
 							"label": "label",
@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 		LOG_INFO( "\t>>> translator_2_2 <<<" );
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{ 
 							"id": "id",
 							"label": "label",
@@ -171,7 +171,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 		LOG_INFO( "\t>>> translator_2_3 <<<" );
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{ 
 							"id": "id",
 							"label": "label",
@@ -209,7 +209,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 		LOG_INFO( "\t>>> translator_2_4 <<<" );
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{ 
 							"id": "id",
 							"label": "label",
@@ -247,7 +247,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 		LOG_INFO( "\t>>> translator_2_5 <<<" );
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{ 
 							"id": "id",
 							"label": "label",

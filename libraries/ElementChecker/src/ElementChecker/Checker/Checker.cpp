@@ -20,19 +20,15 @@ namespace utils
 	template< typename NumberType >
 	EStatus checkNumberElement( const Checker::ShPtrElement element )
 	{
-		EStatus status = eStatusInvalid;
-		
-		if( element->_rangeExpr.empty() )
-			status = eStatusPassOver;
-
 		NumberType value = Translator( element ).get< NumberType >();
-		
-		if( Ranges< NumberType >( element->_rangeExpr ).isInRanges( value ) )
-			status = eStatusValid;
-		
+
 		element->_mapValue = Map< NumberType >( element->_map ).getLabel( value );
 		
-		return status;
+		if( element->_rangeExpr.empty() )
+			return eStatusPassOver;
+		if( Ranges< NumberType >( element->_rangeExpr ).isInRanges( value ) )
+			return eStatusValid;
+		return eStatusInvalid;
 	}
 }
 
@@ -47,7 +43,7 @@ void Checker::check( const ShPtrElement element )
 	{
 		std::string warning = "Null data size ";
 		LOG_WARNING( "[checker] " << element->_id << ": " << warning );
-		element->_warning += warning;
+		element->_warning += "[checker] " + warning;
 	}
 	
 	element->_dispValue = Translator( element ).get( element->_displayType );
@@ -58,7 +54,7 @@ void Checker::check( const ShPtrElement element )
 	if( parent != nullptr && previous != nullptr && element->getSpecNode()->next() == nullptr && ! parent->_groupSizeExpr.empty() )
 	{
 		parent->_groupSize = _exprParser->getExpressionResult< size_t >( parent->_groupSizeExpr );
-		// LOG_TRACE( "Set " << element->_id << "'s parent (" << parent->_id << ") groupSize (" << parent->_groupSizeExpr << "): " << parent->_groupSize );
+		LOG_TRACE( "[checker] set " << element->_id << "'s parent (" << parent->_id << ") groupSize (" << parent->_groupSizeExpr << "): " << parent->_groupSize );
 	}
 
 	// if nothing to compare
@@ -111,7 +107,7 @@ void Checker::check( const ShPtrElement element )
 				status = eStatusPassOver;
 
 			if( status == eStatusInvalid )
-				element->_error += "Invalid value - ";
+				element->_error += "[checker] Invalid value ";
 			break;
 		}
 
@@ -135,7 +131,7 @@ void Checker::check( const ShPtrElement element )
 	
 	if( ! isRequirementValid( element ) )
 	{
-		LOG_INFO( "[checker] " << element->_id << " : requirement not valid -> skipped" );
+		LOG_TRACE( "[checker] " << element->_id << " : requirement not valid -> skipped" );
 		element->_status = eStatusSkip;
 		_exprParser->addElementToContext( element );
 		if( element->getSpecNode()->next() == nullptr && parent != nullptr && ! parent->_isOrdered )
@@ -146,7 +142,7 @@ void Checker::check( const ShPtrElement element )
 	
 	if( element->_isOptional && status == eStatusInvalid && element->_iteration == 1 )
 	{
-		LOG_INFO( "[checker] " << element->_id << " : invalid but optional -> invalid but skipped" );
+		LOG_TRACE( "[checker] " << element->_id << " : invalid but optional -> invalid but skipped" );
 		element->_status = eStatusInvalidButOptional;
 		_exprParser->addElementToContext( element );
 		if( element->getSpecNode()->next() == nullptr && parent != nullptr && ! parent->_isOrdered )
@@ -156,7 +152,7 @@ void Checker::check( const ShPtrElement element )
 
 	if( parent != nullptr && ! parent->_isOrdered && status == eStatusInvalid )
 	{
-		LOG_INFO( "[checker] " << element->_id << " : unordered group -> invalid but skipped" );
+		LOG_TRACE( "[checker] " << element->_id << " : unordered group -> invalid but skipped" );
 		element->_status = eStatusInvalidButSkip;
 		if( element->getSpecNode()->next() == nullptr )
 			checkLastUnorderedElement( element );
@@ -183,7 +179,7 @@ void Checker::check( const ShPtrElement element )
 		return;
 	}
 
-	LOG_INFO( "[checker] " << element->_id << " : return status = " << status );
+	LOG_TRACE( "[checker] " << element->_id << " : return status = " << status );
 	_exprParser->addElementToContext( element );
 
 }
@@ -195,7 +191,7 @@ size_t Checker::getSize( const ShPtrElement element )
 	if( ! element->_countExpr.empty() && element->_size == 0 )
 	{
 		element->_size = _exprParser->getExpressionResult< size_t >( element->_countExpr );
-		//LOG_TRACE( "COUNT: " << element->_id << "'s size: " << element->_size );
+		LOG_TRACE( "[checker] get " << element->_id << "'s size: " << element->_size );
 	}
 	return element->_size;
 }
@@ -206,6 +202,7 @@ bool Checker::isIterationValid( const ShPtrElement element, std::string& errorMe
 		return true;
 
 	std::stringstream error;
+	error << element->_id << ": ";
 	for( std::pair< std::string, std::string > repetPair : element->_repetExpr )
 	{
 		if( repetPair.first == repetPair.second )
@@ -233,7 +230,8 @@ bool Checker::isIterationValid( const ShPtrElement element, std::string& errorMe
 			error << element->_iteration << " / [" << repetMin << ", " << repetMax << "]";
 		}
 	}
-	errorMessage = "[checker] Out of repetition range (" + error.str() + ") - ";
+	errorMessage = "[checker] Out of repetition range (" + error.str() + ") ";
+	LOG_ERROR( errorMessage );
 	return false;
 }
 
@@ -248,7 +246,6 @@ bool Checker::isRequirementValid( const ShPtrElement element )
 
 void Checker::checkLastUnorderedElement( const ShPtrElement element )
 {
-	// LOG_TRACE( "[checker] " << element->_id << ": Last element " << element << " <-" << element->getPrevious() );
 	if( element->getPrevious() == nullptr )
 		throw std::runtime_error( "[checker] Invalid tree" );
 

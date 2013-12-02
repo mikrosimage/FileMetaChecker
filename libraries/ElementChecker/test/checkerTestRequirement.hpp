@@ -5,7 +5,7 @@ BOOST_AUTO_TEST_CASE( element_checker_test_checker_requirement )
 {
 	std::string jsonStringFirst = R"*(
 			{
-				"header": [
+				"content": [
 					{ "id": "value1", "label": "Value1",
 		)*";
 	std::string jsonStringSecond = R"*(

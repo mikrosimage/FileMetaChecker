@@ -5,7 +5,7 @@ BOOST_AUTO_TEST_CASE( element_checker_test_checker_map )
 {
 	std::string jsonString = R"*(
 			{
-				"header": [
+				"content": [
 					{ "id": "value1", "label": "Value1", "type": "ascii", "values": "WAVE1" },
 					{ "id": "value2", "label": "Value2", "type": "uint32", "map": [
 						{ "1": "First Label"  },
@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE( element_checker_test_checker_map_hexa )
 {
 	std::string jsonString = R"*(
 			{
-				"header": [
+				"content": [
 					{ "id": "value1", "label": "Value1", "type": "ascii", "values": "WAVE1" },
 					{ "id": "value2", "label": "Value2", "type": "hexa", "count": "2", "map": [
 						{ "0123": "First Label"  },

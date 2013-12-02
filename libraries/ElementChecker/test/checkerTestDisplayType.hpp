@@ -5,7 +5,7 @@ BOOST_AUTO_TEST_CASE( element_checker_test_checker_display_type )
 {
 	std::string jsonString = R"*(
 			{
-				"header": [
+				"content": [
 					{ "id": "value1", "label": "Value1", "type": "raw", "count": "5", "displayType": "ascii" },
 					{ "id": "value2", "label": "Value2", "type": "raw", "count": "5", "displayType": "uint8" },
 					{ "id": "value3", "label": "Value3", "type": "raw", "count": "3" },

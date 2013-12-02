@@ -5,7 +5,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_groupSize )
 {
 	std::string jsonString = R"*(
 			{
-				"header": [
+				"content": [
 					{ "id": "value1", "label": "size of value2", "type": "uint32" },
 					{ "id": "value2", "label": "Value2", "type": "ascii", "values": "WAVE2",
 					  "groupSize": "value1",
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_groupSize_2 )
 {
 	std::string jsonString = R"*(
 			{
-				"header": [
+				"content": [
 					{ "id": "value1", "label": "Value1", "type": "ascii", "values": "WAVE1" },
 					{ "id": "value2", "label": "Value2", "type": "ascii", "values": "WAVE2",
 					  "groupSize": "value21",

@@ -5,7 +5,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_optional )
 {
 	std::string jsonString = R"*(
 			{
-				"header": [
+				"content": [
 					{ "id": "value1", "label": "Value1", "type": "ascii", "values": "WAVE1" },
 					{ "id": "value2", "label": "Value2", "type": "ascii", "values": "WAVE2", "optional": true },
 					{ "id": "value3", "label": "Value3", "type": "ascii", "values": "WAVE3" }
@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_optional_repeated )
 {
 	std::string jsonString = R"*(
 			{
-				"header": [
+				"content": [
 					{ "id": "value1", "label": "Value1", "type": "ascii", "values": "WAVE1" },
 					{ "id": "value2", "label": "Value2", "type": "ascii", "values": "WAVE2", "optional": true, "repeated": "2" },
 					{ "id": "value3", "label": "Value3", "type": "ascii", "values": "WAVE3" }
@@ -195,7 +195,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_optional_group )
 {
 	std::string jsonStringBegin = R"*(
 			{
-				"header": [
+				"content": [
 					{ "id": "value1", "label": "Value1", "type": "ascii", "values": "WAVE1" },
 					{ "id": "value2", "label": "Value2", "type": "ascii", "values": "WAVE2",
 					)*";

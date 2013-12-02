@@ -11,14 +11,30 @@ namespace element_checker
 {
 class ExpressionParser;
 
+/**
+ *  Basic element Checker. Compare raw datas to expected values, and set Elements status.
+ */
 class Checker
 {
 	typedef std::shared_ptr< basic_element::Element > ShPtrElement;
 	
 public:
+	/**
+	 * Checker's constructor.
+	 */
 	Checker();
 
+	/**
+	 * Check an Element.
+	 * @param element Element reference to be checked.
+	 */
 	void   check  ( const ShPtrElement element );
+
+	/**
+	 * Get the Element size.
+	 * @param element Element reference.
+	 * @return        Element's size.
+	 */
 	size_t getSize( const ShPtrElement element );
 private:
 	bool isIterationValid         ( const ShPtrElement element, std::string& errorMessage );

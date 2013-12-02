@@ -5,7 +5,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_unordered_group )
 {
 	std::string jsonString = R"*(
 			{
-				"header": [
+				"content": [
 					{ "id": "value1",
 					  "label": "Value1",
 					  "type": "ascii",
@@ -162,7 +162,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_unordered_group_and_repetitions )
 {
 	std::string jsonString = R"*(
 			{
-				"header": [
+				"content": [
 					{ "id": "value1",
 					  "label": "Value1",
 					  "type": "ascii",
@@ -368,7 +368,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_unordered_group_and_repetitions_2 
 {
 	std::string jsonStringBegin = R"*(
 				{
-					"header": [
+					"content": [
 						{
 							"id": "value1",
 							"label": "Value1",
@@ -616,7 +616,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_unordered_group_and_optional )
 {
 	std::string jsonStringBegin = R"*(
 				{
-					"header": [
+					"content": [
 						{
 							"id": "value1",
 							"label": "Value1",

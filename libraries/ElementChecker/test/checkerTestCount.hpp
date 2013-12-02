@@ -5,7 +5,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_count )
 {
 	std::string jsonStringBegin = R"*(
 				{
-					"header": [
+					"content": [
 						{
 							"id": "value1",
 							"label": "Value1",
