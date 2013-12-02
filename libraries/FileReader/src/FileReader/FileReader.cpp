@@ -10,10 +10,13 @@ FileReader::FileReader( std::streambuf* inStream )
 
 size_t FileReader::getLength()
 {
-	size_t position = _fileBuffer.tellg();
+	size_t currentPosition, length;
+	currentPosition = _fileBuffer.tellg();
+
 	_fileBuffer.seekg( 0, _fileBuffer.end );
-	size_t length = _fileBuffer.tellg();
-	_fileBuffer.seekg( position, _fileBuffer.beg );
+	length = _fileBuffer.tellg();
+	
+	_fileBuffer.seekg( currentPosition, _fileBuffer.beg );
 	return length;
 }
 

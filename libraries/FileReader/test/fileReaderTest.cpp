@@ -16,7 +16,6 @@ BOOST_AUTO_TEST_SUITE( fileReader_tests_suite01 )
 BOOST_AUTO_TEST_CASE( fileReader_init )
 {
 	common::level = common::eLogTrace;
-	// LOG_INFO( common::level );
 }
 
 BOOST_AUTO_TEST_CASE( fileReader_test_streambuffer )
