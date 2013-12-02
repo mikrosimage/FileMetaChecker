@@ -51,19 +51,21 @@ void Checker::check( const ShPtrElement element )
 	ShPtrElement parent   = element->getParent();
 	ShPtrElement previous = element->getPrevious();
 
+	// if nothing to compare
+	if( element->_values.empty() && element->_rangeExpr.empty() && element->_map.empty() )
+	{
+		element->_status = eStatusPassOver;
+		_exprParser->addElementToContext( element );
+	}
+
 	if( parent != nullptr && previous != nullptr && element->getSpecNode()->next() == nullptr && ! parent->_groupSizeExpr.empty() )
 	{
 		parent->_groupSize = _exprParser->getExpressionResult< size_t >( parent->_groupSizeExpr );
 		LOG_TRACE( "[checker] set " << element->_id << "'s parent (" << parent->_id << ") groupSize (" << parent->_groupSizeExpr << "): " << parent->_groupSize );
 	}
 
-	// if nothing to compare
-	if( element->_values.empty() && element->_rangeExpr.empty() && element->_map.empty() )
-	{
-		element->_status = eStatusPassOver;
-		_exprParser->addElementToContext( element );
+	if( element->_status != eStatusNotChecked )
 		return;
-	}
 
 	EStatus status = eStatusInvalid;
 
@@ -126,8 +128,6 @@ void Checker::check( const ShPtrElement element )
 			break;
 		}
 	}
-
-
 	
 	if( ! isRequirementValid( element ) )
 	{
