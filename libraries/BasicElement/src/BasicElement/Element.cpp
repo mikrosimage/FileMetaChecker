@@ -114,6 +114,17 @@ void Element::set( const char* data, const size_t& size )
 	std::memcpy( _data, data, _size );
 }
 
+std::string Element::getPropertiesFlag()
+{
+	std::string props;
+	props += ( _isBigEndian         ) ? "B" : "l";
+	props += ( _isOptional          ) ? "O" : ".";
+	props += ( _isGroup             ) ? "G" : ".";
+	props += ( ! _isOrdered         ) ? "U" : ".";
+	props += ( ! _repetExpr.empty() ) ? "R" : ".";
+	return props;
+}
+
 size_t Element::getElementSize( const std::string& id, const EType type, const std::vector<std::string>& values )
 {
 	size_t size = 0;

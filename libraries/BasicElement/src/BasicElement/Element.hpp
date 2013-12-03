@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <iostream>
+#include <sstream>
 
 namespace spec_reader
 {
@@ -84,6 +86,7 @@ public:
 	 */
 	std::vector< ShPtrElement > getChildren() { return _children; }
 
+	std::string getPropertiesFlag();
 protected:
 	static size_t getElementSize( const std::string& id, const EType type, const std::vector<std::string>& values );
 	static size_t getElementIteration( const std::string& id, const ExpressionList& repetExpr, const ShPtrElement& previous, const ShPtrElement& parent );
@@ -133,6 +136,27 @@ public:
 	char*         _data;
 
 };
+
+static std::string getPropertyLegend()
+{
+	std::stringstream legend;
+	legend << "========= LEGEND =========" << std::endl;
+	legend << " v = value                " << std::endl;
+	legend << " i = iteration            " << std::endl;
+	legend << " s = status               " << std::endl;
+	legend << " E = Error                " << std::endl;
+	legend << " W = Warning              " << std::endl;
+	legend                                 << std::endl;
+	legend << "=== ELEMENT PROPRETIES ===" << std::endl;
+	legend << "B.... = Big endian        " << std::endl;
+	legend << "l.... = little endian     " << std::endl;
+	legend << ".O... = Optional          " << std::endl;
+	legend << "..G.. = Group             " << std::endl;
+	legend << "...U. = Unordered         " << std::endl;
+	legend << "....R = Repeated          " << std::endl;
+	legend                                 << std::endl;
+	return legend.str();
+}
 
 }
 
