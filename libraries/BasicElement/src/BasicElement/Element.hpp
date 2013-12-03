@@ -137,7 +137,7 @@ public:
 
 };
 
-static std::string getPropertyLegend()
+static std::string getPropertiesLegend()
 {
 	std::stringstream legend;
 	legend << "========= LEGEND =========" << std::endl;
@@ -147,7 +147,7 @@ static std::string getPropertyLegend()
 	legend << " E = Error                " << std::endl;
 	legend << " W = Warning              " << std::endl;
 	legend                                 << std::endl;
-	legend << "=== ELEMENT PROPRETIES ===" << std::endl;
+	legend << "=== ELEMENT PROPERTIES ===" << std::endl;
 	legend << "B.... = Big endian        " << std::endl;
 	legend << "l.... = little endian     " << std::endl;
 	legend << ".O... = Optional          " << std::endl;
