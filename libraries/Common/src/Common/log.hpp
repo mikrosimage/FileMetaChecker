@@ -30,5 +30,10 @@ static ELogLevel level = eLogWarning;
 #define LOG_ERROR( ... )   if( common::level <= common::eLogError   ) std::cout << common::details::kColorRed     << "Error: "   << __VA_ARGS__ << common::details::kColorStd << std::endl
 #define LOG_FATAL( ... )   if( common::level <= common::eLogFatal   ) std::cout << common::details::kColorBoldRed << "Fatal: "   << __VA_ARGS__ << common::details::kColorStd << std::endl
 
+#define LOG( ... )              std::cout << __VA_ARGS__
+
+#define LOG_COLOR( color, ... ) LOG( color << __VA_ARGS__ << common::details::kColorStd )
+
+#define LOG_ENDL()              std::cout << std::endl
 
 #endif
