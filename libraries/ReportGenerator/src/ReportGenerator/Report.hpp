@@ -15,6 +15,20 @@ namespace report_generator
 {
 
 /**
+ * Report display levels definition
+ */
+enum EReportDisplayLevel
+{
+	eReportDisplayID = 0,
+	eReportDisplayValue,
+	eReportDisplayStatus,
+	eReportDisplayIteration,
+	eReportDisplayComments,
+};
+
+static EReportDisplayLevel verbosity = eReportDisplayComments;
+
+/**
  *  Report generator, to print or write the comparison results.
  */
 class Report

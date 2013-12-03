@@ -75,7 +75,8 @@ void Report::print( const ShPtrElement element )
 	if( ! isPrintable( element ) )
 		return;
 	
-	LOG( element->getPropertiesFlag() << " | " );
+	if( verbosity == eReportDisplayComments )
+		LOG( element->getPropertiesFlag() << " | " );
 
 	std::string color;
 	switch( element->_status )
@@ -89,13 +90,22 @@ void Report::print( const ShPtrElement element )
 		default: return;
 	}
 	
-	LOG( "s: " );
-	LOG_COLOR( color, tabulation( 14, shortStatusMap.at( element->_status ) ) );
-	LOG( ".i: " << element->_iteration << " " );
-	LOG( "." );
-	LOG_COLOR( color, tabulation( getDisplayOffset( element ) ) << element->_id );
+	if( verbosity >= eReportDisplayStatus )
+	{
+		LOG( "s: " );
+		LOG_COLOR( color, tabulation( 14, shortStatusMap.at( element->_status ) ) );
+	}
 
-	if( ( element->_type != eTypeRaw || element->_displayType != eDisplayTypeDefault ) && ! element->_dispValue.empty() )
+	if( verbosity >= eReportDisplayIteration )
+		LOG( ".i: " << element->_iteration << " " );
+	
+	if( verbosity >= eReportDisplayID )
+	{
+		LOG( "." );
+		LOG_COLOR( color, tabulation( getDisplayOffset( element ) ) << element->_id );
+	}
+
+	if( verbosity >= eReportDisplayValue && ( element->_type != eTypeRaw || element->_displayType != eDisplayTypeDefault ) && ! element->_dispValue.empty() )
 	{
 		LOG( " => v: " );
 		LOG_COLOR( color, element->_dispValue );
@@ -105,13 +115,13 @@ void Report::print( const ShPtrElement element )
 
 	if( ! element->_error.empty() )
 	{
-		LOG( " | " );
+		LOG( " >> " );
 		LOG_COLOR( common::details::kColorRed, "E: " << element->_error );
 	}
 
 	if( ! element->_warning.empty() )
 	{
-		LOG( " | " );
+		LOG( " >> " );
 		LOG_COLOR( common::details::kColorYellow, "W: " << element->_warning );
 	}
 
