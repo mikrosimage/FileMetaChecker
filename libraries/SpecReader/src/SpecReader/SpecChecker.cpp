@@ -39,6 +39,9 @@ void SpecChecker::check()
 void SpecChecker::checkSubFile( rapidjson::Value::Member* member )
 {
 	LOG_TRACE( "[speccheker] checkSubFile" );
+	if( member == nullptr )
+		throw std::runtime_error( "[speccheker] Invalid specification file: must contain a content field" );
+
 	for( rapidjson::Value::ValueIterator node = member->value.Begin(); node != member->value.End(); ++node )
 	{
 		for( rapidjson::Value::ConstMemberIterator itr = node->MemberBegin(); itr != node->MemberEnd(); ++itr )
