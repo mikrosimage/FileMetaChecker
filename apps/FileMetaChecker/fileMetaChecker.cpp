@@ -34,7 +34,7 @@ int main( int argc, char** argv )
 		// ( "color",         "display the output with colors"                                                                  )
 		( "verbose,v",     bpo::value<int>()->default_value( 1 ),      "verbose level (trace, debug, warning, error, fatal)" )
 		// ( "script",        "format the output such as it could be dump in a file"                                            )
-		// ( "display-level", bpo::value<bool>()->default_value( false ), "display verbose level before each message."          )
+		( "display-level,d", bpo::value<int>()->default_value( 5 ), "report display verbosity level." )
 	;
 
 	// Default option
@@ -65,12 +65,22 @@ int main( int argc, char** argv )
 
 	switch( vm[ "verbose" ].as< int >() )
 	{
-		case 0 :  common::level = common::eLogTrace;   break;
-		case 1 :  common::level = common::eLogInfo;    break;
-		case 2 :  common::level = common::eLogWarning; break;
-		case 3 :  common::level = common::eLogError;   break;
-		case 4 :  common::level = common::eLogFatal;   break;
-		default : common::level = common::eLogWarning;    break;
+		case 0  : common::level = common::eLogTrace;   break;
+		case 1  : common::level = common::eLogInfo;    break;
+		case 2  : common::level = common::eLogWarning; break;
+		case 3  : common::level = common::eLogError;   break;
+		case 4  : common::level = common::eLogFatal;   break;
+		default : common::level = common::eLogWarning; break;
+	}
+
+	switch( vm[ "display-level" ].as< int >() )
+	{
+		case 0  : report_generator::verbosity = report_generator::eReportDisplayID;        break;
+		case 1  : report_generator::verbosity = report_generator::eReportDisplayValue;     break;
+		case 2  : report_generator::verbosity = report_generator::eReportDisplayStatus;    break;
+		case 3  : report_generator::verbosity = report_generator::eReportDisplayIteration; break;
+		case 4  : report_generator::verbosity = report_generator::eReportDisplayComments;  break;
+		default : report_generator::verbosity = report_generator::eReportDisplayComments;  break;
 	}
 
 	if( vm.count( "input" ) )
@@ -130,10 +140,11 @@ int main( int argc, char** argv )
 		LOG_INFO( common::details::kColorCyan << "| Specification: " << spec.getId() << " (" << spec.getType() << ")" << common::details::kColorStd  );
 		LOG_INFO( common::details::kColorCyan << std::setfill( '=' ) << std::setw( filePath.size() + 14 ) << common::details::kColorStd );
 		
+		report.printHelper();
+
 		comparator::Comparator comp;
 		comp.check( spec, file, report );
 
-		report.print();
 		report.writeXml( filePath + ".xml" );
 		fb->close();
 	}
