@@ -73,14 +73,16 @@ int main( int argc, char** argv )
 		default : common::level = common::eLogWarning; break;
 	}
 
+	report_generator::EReportDisplayLevel displayLevel;
 	switch( vm[ "display-level" ].as< int >() )
 	{
-		case 0  : report_generator::verbosity = report_generator::eReportDisplayID;        break;
-		case 1  : report_generator::verbosity = report_generator::eReportDisplayValue;     break;
-		case 2  : report_generator::verbosity = report_generator::eReportDisplayStatus;    break;
-		case 3  : report_generator::verbosity = report_generator::eReportDisplayIteration; break;
-		case 4  : report_generator::verbosity = report_generator::eReportDisplayComments;  break;
-		default : report_generator::verbosity = report_generator::eReportDisplayComments;  break;
+		case 0  : displayLevel = report_generator::eReportDisplayNone;      break;
+		case 1  : displayLevel = report_generator::eReportDisplayID;        break;
+		case 2  : displayLevel = report_generator::eReportDisplayValue;     break;
+		case 3  : displayLevel = report_generator::eReportDisplayStatus;    break;
+		case 4  : displayLevel = report_generator::eReportDisplayIteration; break;
+		case 5  : displayLevel = report_generator::eReportDisplayComments;  break;
+		default : displayLevel = report_generator::eReportDisplayComments;  break;
 	}
 
 	if( vm.count( "input" ) )
@@ -119,6 +121,7 @@ int main( int argc, char** argv )
 		LOG_INFO( common::details::kColorCyan << "| Check: " << filePath << common::details::kColorStd );
 
 		report_generator::Report report;
+		report.setPrintVerbosity( displayLevel );
 
 		// FileSystemInfo fileSystemInfo( path );
 		// LOG_INFO( fileSystemInfo );
