@@ -19,14 +19,13 @@ namespace report_generator
  */
 enum EReportDisplayLevel
 {
-	eReportDisplayID = 0,
+	eReportDisplayNone = 0,
+	eReportDisplayID,
 	eReportDisplayValue,
 	eReportDisplayStatus,
 	eReportDisplayIteration,
 	eReportDisplayComments,
 };
-
-static EReportDisplayLevel verbosity = eReportDisplayComments;
 
 /**
  *  Report generator, to print or write the comparison results.
@@ -43,6 +42,12 @@ public:
 	 */
 	Report( const std::vector< ShPtrElement >& elementList = std::vector< ShPtrElement >() );
 	
+	/**
+	 * Set the display log report level.
+	 * @param level Display log level.
+	 */
+	void setPrintVerbosity( const EReportDisplayLevel level );
+
 	/**
 	 * Add an Element to the list.
 	 * @param element Element reference to add.
@@ -100,6 +105,7 @@ protected:
 
 private:
 	std::vector< ShPtrElement > _elementList;
+	EReportDisplayLevel _verbosity;
 
 };
 

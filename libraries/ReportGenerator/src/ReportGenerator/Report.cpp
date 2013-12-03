@@ -15,8 +15,14 @@ namespace report_generator
 {
 
 Report::Report( const std::vector< ShPtrElement >& elementList )
+	: _verbosity( eReportDisplayComments )
 {
 	add( elementList );
+}
+
+void Report::setPrintVerbosity( const EReportDisplayLevel level )
+{
+	_verbosity = level;
 }
 
 void Report::add( const ShPtrElement element )
@@ -59,11 +65,14 @@ void Report::update( const ShPtrElement newElement )
 
 void Report::printHelper()
 {
-	LOG_COLOR( common::details::kColorBoldWhite, basic_element::getPropertyLegend() );
+	if( _verbosity > eReportDisplayNone )
+		LOG_COLOR( common::details::kColorBoldWhite, basic_element::getPropertiesLegend() );
 }
 
 void Report::print()
 {
+	if( _verbosity == eReportDisplayNone )
+		return;
 	for( ShPtrElement element : _elementList )
 	{
 		print( element );
@@ -72,10 +81,10 @@ void Report::print()
 
 void Report::print( const ShPtrElement element )
 {
-	if( ! isPrintable( element ) )
+	if( ! isPrintable( element ) || _verbosity == eReportDisplayNone )
 		return;
 	
-	if( verbosity == eReportDisplayComments )
+	if( _verbosity == eReportDisplayComments )
 		LOG( element->getPropertiesFlag() << " | " );
 
 	std::string color;
@@ -90,22 +99,22 @@ void Report::print( const ShPtrElement element )
 		default: return;
 	}
 	
-	if( verbosity >= eReportDisplayStatus )
+	if( _verbosity >= eReportDisplayStatus )
 	{
 		LOG( "s: " );
 		LOG_COLOR( color, tabulation( 14, shortStatusMap.at( element->_status ) ) );
 	}
 
-	if( verbosity >= eReportDisplayIteration )
+	if( _verbosity >= eReportDisplayIteration )
 		LOG( ".i: " << element->_iteration << " " );
 	
-	if( verbosity >= eReportDisplayID )
+	if( _verbosity >= eReportDisplayID )
 	{
 		LOG( "." );
 		LOG_COLOR( color, tabulation( getDisplayOffset( element ) ) << element->_id );
 	}
 
-	if( verbosity >= eReportDisplayValue && ( element->_type != eTypeRaw || element->_displayType != eDisplayTypeDefault ) && ! element->_dispValue.empty() )
+	if( _verbosity >= eReportDisplayValue && ( element->_type != eTypeRaw || element->_displayType != eDisplayTypeDefault ) && ! element->_dispValue.empty() )
 	{
 		LOG( " => v: " );
 		LOG_COLOR( color, element->_dispValue );
