@@ -56,6 +56,11 @@ public:
 	void update( const ShPtrElement newElement );
 	
 	/**
+	 * Print the report legend.
+	 */
+	void printHelper();
+
+	/**
 	 * Print every printable Elements of the list.
 	 */
 	void print();
@@ -63,9 +68,8 @@ public:
 	/**
 	 * Print one Element of the list.
 	 * @param element   Element reference to print.
-	 * @param dispColor Color to set to the Element display.
 	 */
-	void print( const ShPtrElement element, const std::string& dispColor );
+	void print( const ShPtrElement element );
 
 	/**
 	 * Write the Elements from the list in a XML file.
@@ -73,6 +77,13 @@ public:
 	 */
 	void writeXml( const std::string& filename );
 	
+protected:
+	size_t getDisplayOffset( const ShPtrElement element );
+	std::string tabulation( size_t tabNum );
+	std::string tabulation( size_t tabNum, const std::string& str );
+	bool isPrintable( const ShPtrElement element );
+
+
 private:
 	std::vector< ShPtrElement > _elementList;
 
