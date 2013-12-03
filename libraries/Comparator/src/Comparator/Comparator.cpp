@@ -85,6 +85,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 		}
 		else
 			LOG_TRACE( "[comparator] next parent: null" );
+		report.print( element );
 	}
 
 	if( ! file.isEndOfFile() )

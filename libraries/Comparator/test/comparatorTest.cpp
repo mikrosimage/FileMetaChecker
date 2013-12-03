@@ -123,12 +123,12 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_1 )
 	BOOST_CHECK_EQUAL( file.getLength(), str.size() );
 
 	report_generator::Report report;
+	report.printHelper();
 
 	comp.check( spec, file, report );
 
 	BOOST_CHECK_EQUAL( file.isEndOfFile(), true );
 
-	report.print();
 }
 
 BOOST_AUTO_TEST_CASE( comparator_test_comparator_2 )
@@ -254,12 +254,12 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_2 )
 	BOOST_CHECK_EQUAL( file.getLength(), str.size() );
 
 	report_generator::Report report;
+	report.printHelper();
 
 	comp.check( spec, file, report );
 
 	BOOST_CHECK_EQUAL( file.isEndOfFile(), true );
 
-	report.print();
 	report.writeXml( "test.xml" );
 }
 
