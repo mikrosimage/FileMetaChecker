@@ -106,7 +106,7 @@ void Report::print( const ShPtrElement element )
 	}
 
 	if( _verbosity >= eReportDisplayIteration )
-		LOG( ".i: " << element->_iteration << " " );
+		LOG( ".i: " << std::setfill( ' ' ) << std::setw( 4 ) << element->_iteration << " " );
 	
 	if( _verbosity >= eReportDisplayID )
 	{
