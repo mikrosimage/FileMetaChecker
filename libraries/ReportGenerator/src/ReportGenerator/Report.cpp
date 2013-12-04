@@ -119,7 +119,7 @@ void Report::print( const ShPtrElement element )
 		LOG( " => v: " );
 		LOG_COLOR( color, element->_dispValue );
 		if( ! element->_mapValue.empty() )
-			LOG_COLOR( color, " (" << element->_dispValue << ")" );
+			LOG_COLOR( color, " (" << element->_mapValue << ")" );
 	}
 
 	if( ! element->_error.empty() )
