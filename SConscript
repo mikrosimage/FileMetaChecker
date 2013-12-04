@@ -49,4 +49,3 @@ SConscript(
 			], accept=['SConscript'] )
 	)
 
-
