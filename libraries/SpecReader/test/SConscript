@@ -1,0 +1,13 @@
+Import( 'project', 'libs' )
+
+project.UnitTest(
+	target = "TestSpecification",
+	dirs = ['.'],
+	libraries = [
+		libs.common,
+		libs.specReader,
+		libs.boost_unit_test_framework,
+	]
+)
+
+

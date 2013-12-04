@@ -22,3 +22,4 @@ Tested compilers
 
 - Linux
  + GCC 4.6.2 on OpenSUSE 12.1 64bits
+

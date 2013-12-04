@@ -9,9 +9,9 @@ from sconsProject import SConsProject
 
 
 class FileMetaChecker( SConsProject ):
-	'''
-	The project compilation object.
-	'''
+        '''
+        The project compilation object.
+        '''
 
 #______________________________________________________________________________#
 
@@ -24,3 +24,4 @@ Export({'libs':project.libs})
 project.begin()
 project.SConscript()
 project.end()
+

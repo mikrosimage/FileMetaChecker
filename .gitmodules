@@ -1,3 +1,9 @@
 [submodule "tools/sconsProject"]
 	path = tools/sconsProject
 	url = https://github.com/tuttleofx/sconsProject.git
+[submodule "3rdParty/rapidxml"]
+	path = 3rdParty/rapidxml
+	url = https://github.com/valnoel/rapidxml.git
+[submodule "3rdParty/rapidjson"]
+	path = 3rdParty/rapidjson
+	url = https://github.com/MarcAntoine-Arnaud/rapidjson.git

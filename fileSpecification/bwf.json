@@ -1,0 +1,1181 @@
+{
+	"standard": {
+		"label": "Broadcast Wave Format",
+		"id": "bwf",
+		"type": "audio",
+		"extension": [
+			".wav",
+			".wave"
+		]
+	},
+	"header": [
+		{
+			"id": "chunkId",
+			"label": "File bloc id",
+			"endian": "big",
+			"ascii": [ "RIFF", "RF64" ]
+		},
+		{
+			"id": "chunkSize",
+			"label": "File size",
+			"type": "uint32",
+			"endian": "little",
+			"map": [
+				{ "4294967295": "RF64 format" }
+			]
+		},
+		{
+			"id": "riffType",
+			"label": "Riff type id",
+			"endian": "big",
+			"ascii": "WAVE"
+		},
+		{
+			"id": "specificBwfChunks",
+			"label": "Specific BWF chunks",
+			"ordered": false,
+			"group": [
+				// {
+				//     "id": "junkSubChunks",
+				//     "label": "JUNK sub-chunk",
+				//     "ascii": "junk",
+				//     "endian": "big",
+				//     "optional": true,
+				//     "required": "chunkId == 'RIFF'",
+				//     "groupSize": "junkSize + 4",
+				//     "group": [
+				//         {
+				//             "id": "junkSize",
+				//             "label": "Sub-chunk size",
+				//             "type": "uint32",
+				//             "endian": "little"
+				//         },
+				//         {
+				//             "id": "dummyBytes",
+				//             "label": "Dummy bytes",
+				//             "type": "data",
+				//             "count": "junkSize"
+				//         }
+				//     ]
+				// },
+				// {
+				//     "id": "ds64SubChunks",
+				//     "label": "Size64 sub-chunk",
+				//     "ascii": "ds64",
+				//     "endian": "big",
+				//     "optional": true,
+				//     "required": "chunkId == 'RIFF'",
+				//     "groupSize": "junkSize + 4",
+				//     "group": [
+				//         {
+				//             "id": "junkSize",
+				//             "label": "Sub-chunk size",
+				//             "type": "uint32",
+				//             "endian": "little"
+				//         },
+				//         {
+				//             "id": "dummyBytes",
+				//             "label": "Dummy bytes",
+				//             "type": "data",
+				//             "count": "junkSize"
+				//         }
+				//     ]
+				// },
+				{
+					"id": "bextSubChunks",
+					"label": "Broadcast Audio Extension sub-chunk",
+					"ascii": "bext",
+					"endian": "big",
+					"optional": false,
+					"groupSize": "bextSize + 4",
+					"group": [
+						{
+							"id": "bextSize",
+							"label": "Sub-chunk size",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "description",
+							"label": "Sound sequence description",
+							"endian": "big",
+							"type": "data",
+							"count": "256",
+							"displayType": "ascii"
+						},
+						{
+							"id": "originatorName",
+							"label": "Originator name",
+							"endian": "big",
+							"type": "data",
+							"count": "32",
+							"displayType": "ascii"
+						},
+						{
+							"id": "originatorRef",
+							"label": "Originator reference",
+							"endian": "big",
+							"type": "data",
+							"count": "32",
+							"displayType": "ascii"
+						},
+						{
+							"id": "originationDate",
+							"label": "Origination date",
+							"endian": "big",
+							"type": "data",
+							"count": "10",
+							"displayType": "ascii"
+						},
+						{
+							"id": "originationTime",
+							"label": "Origination time",
+							"endian": "big",
+							"type": "data",
+							"count": "8",
+							"displayType": "ascii"
+						},
+						{
+							"id": "timeReferenceLow",
+							"label": "Time Reference Low",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "timeReferenceHigh",
+							"label": "Time Reference High",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "version",
+							"label": "Version",
+							"type": "uint16",
+							"endian": "little"
+						},
+						{
+							"id": "umid",
+							"label": "SMPTE Unique Material Identifier",
+							"endian": "big",
+							"type": "data",
+							"count": "64"
+							// "displayType": "hexa"
+						},
+						{
+							"id": "LoudnessValue",
+							"label": "Integrated Loudness value (LUFS)",
+							"type": "int16",
+							"endian": "little"
+						},
+						{
+							"id": "LoudnessRange",
+							"label": "Loudness Range (LU)",
+							"type": "int16",
+							"endian": "little"
+						},
+						{
+							"id": "MaxTruePeakLevel",
+							"label": "Maximum True Peak Level (dBTP)",
+							"type": "int16",
+							"endian": "little"
+						},
+						{
+							"id": "MaxMomentaryLoudness",
+							"label": "Momentary Loudness Level Highest value (LUFS)",
+							"type": "int16",
+							"endian": "little"
+						},
+						{
+							"id": "MaxShortTermLoudness",
+							"label": "Short-Term Loudness Level Highest value (LUFS)",
+							"type": "int16",
+							"endian": "little"
+						},
+						{
+							"id": "reserved",
+							"label": "Reserved",
+							"type": "data",
+							"count": "180"
+						},
+						{
+							"id": "codingHistory",
+							"label": "Coding History",
+							"type": "data",
+							"count": "bextSize - 602",
+							"displayType": "ascii"
+						}
+					]
+				},
+				{
+					"id": "fmtSubChunks",
+					"label": "Format sub-chunk",
+					"ascii": "fmt ",
+					"endian": "big",
+					"optional": true,
+					"groupSize": "fmtSize + 4",
+					"group": [
+						{
+							"id": "fmtSize",
+							"label": "Sub-chunk size",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "wFormatTag",
+							"label": "Compression code",
+							"type": "uint16",
+							"endian": "little",
+							"map": [
+								{ "0": "unknown" },
+								{ "1": "PCM/uncompressed" },
+								{ "2": "Microsoft ADPCM" },
+								{ "6": "ITU G.711 a-law" },
+								{ "7": "ITU G.711 µ-law" },
+								{ "17": "IMA ADPCM" },
+								{ "20": "ITU G.723 ADPCM" },
+								{ "49": "GSM 6.10" },
+								{ "64": "ITU G.721 ADPCM" },
+								{ "80": "MPEG" },
+								{ "65536": "Experimental" }
+							]
+						},
+						{
+							"id": "nChannels",
+							"label": "Number of channels",
+							"type": "uint16",
+							"endian": "little"
+						},
+						{
+							"id": "nSamplesPerSec",
+							"label": "Sample rate",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "nAvgBytesPerSec",
+							"label": "Bytes per second",
+							"type": "uint32",
+							"endian": "little",
+							"expr": "sampleRate * blockAlign"
+						},
+						{
+							"id": "nBlockAlign",
+							"label": "Byte per block",
+							"type": "uint16",
+							"endian": "little",
+							"expr": "bitsPerSample / 8 * numChannels"
+						},
+						{
+							"id": "wBitsPerSample",
+							"label": "Bits per sample",
+							"type": "uint16",
+							"endian": "little",
+							"required": "wFormatTag == 1"
+						}
+						// ,
+						// {
+						//     "id": "cbSize",
+						//     "label": "MPEG1 section size",
+						//     "type": "uint16",
+						//     "endian": "little"
+						//     // "hexa": "0016"
+						//     "required": "wFormatTag == 80"
+						// }
+						// ,
+						// {
+						//     "id": "fwHeadLayer",
+						//     "label": "MPEG audio layer",
+						//     "type": "uint16",
+						//     "endian": "little",
+						//     "map" : [
+						//         { "1": "Layer 1" },
+						//         { "2": "Layer 2" },
+						//         { "4": "Layer 3" }
+						//     ],
+						//     "required": "cbSize == 22 and wFormatTag == 80"
+						// },
+						// {
+						//     "id": "dwHeadBitrate",
+						//     "label": "Total bits per second",
+						//     "type": "uint32",
+						//     "endian": "little",
+						//     "required": "cbSize == 22 and wFormatTag == 80"
+						// },
+						// {
+						//     "id": "fwHeadMode",
+						//     "label": "Stream mode",
+						//     "type": "uint16",
+						//     "endian": "little",
+						//     "map" : [
+						//         { "1": "Stereo" },
+						//         { "2": "Joint-stereo" },
+						//         { "4": "Dual-channel" },
+						//         { "8": "Single channel" }
+						//     ],
+						//     "required": "cbSize == 22 and wFormatTag == 80"
+						// },
+						// {
+						//     "id": "fwHeadModeExt",
+						//     "label": "Extra parameters for JS coding",
+						//     "type": "uint16",
+						//     "endian": "little",
+						//     "map" : [
+						//         { "1": "Sub–bands 4–31 in intensity stereo (Layer 1&2) | No intensity or MS–stereo coding (Layer 3)" },
+						//         { "2": "Sub–bands 8–31 in intensity stereo (Layer 1&2) | Intensity stereo (Layer 3)" },
+						//         { "4": "Sub–bands 12–31 in intensity stereo (Layer 1&2) | MS–stereo (Layer 3)" },
+						//         { "8": "Sub–bands 16–31 in intensity stereo (Layer 1&2) | Both intensity and MS–stereo coding (Layer 3)" }
+						//     ],
+						//     "required": "cbSize == 22 and wFormatTag == 80"
+						// },
+						// {
+						//     "id": "wHeadEmphasis",
+						//     "label": "Emphasis",
+						//     "type": "uint16",
+						//     "endian": "little",
+						//     "map" : [
+						//         { "1": "No emphasis" },
+						//         { "2": "50/15 ms emphasis" },
+						//         { "4": "Reserved" },
+						//         { "8": "CCITT J.17" }
+						//     ],
+						//     "required": "cbSize == 22 and wFormatTag == 80"
+						// },
+						// {
+						//     "id": "fwHeadFlags",
+						//     "label": "MPEG flags",
+						//     "type": "uint16",
+						//     "endian": "little",
+						//     "map" : [
+						//         {  "1": "Sets the private bit" },
+						//         {  "2": "Sets the copyright bit" },
+						//         {  "4": "Sets the original/home bit" },
+						//         {  "8": "Sets the protection bit, and inserts a 16-bit error protection code into each frame." }
+						//         { "10": "Sets the ID bit to 1, defining the stream as an MPEG–1 audio stream" }
+						//     ],
+						//     "required": "cbSize == 22 and wFormatTag == 80"
+						// },
+						// {
+						//     "id": "dwPTSLow",
+						//     "label": "Presentation Time Stamp Low",
+						//     "type": "uint32",
+						//     "endian": "little",
+						//     "required": "cbSize == 22 and wFormatTag == 80"
+						// },
+						// {
+						//     "id": "dwPTSHigh",
+						//     "label": "Presentation Time Stamp High",
+						//     "type": "uint32",
+						//     "endian": "little",
+						//     "required": "cbSize == 22 and wFormatTag == 80"
+						// }
+						// ,
+						// {
+						//     "id": "else",
+						//     "label": "If cbSize != 22",
+						//     "type": "data",
+						//     "count": "fmtSize - 18",
+						//     "required": "cbSize != 22 and wFormatTag == 80"
+						// }
+					]
+				},
+				{
+					"id": "factSubChunks",
+					"label": "Fact sub-chunk",
+					"ascii": "fact",
+					"endian": "big",
+					"groupSize": "factSize + 4",
+					"optional": true,
+					"group": [
+						{
+							"id": "factSize",
+							"label": "SubChunk size",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "dataSamples",
+							"label": "Data samples number",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "formatDependantData",
+							"label": "Format dependant data",
+							"type": "data",
+							"count": "factSize - 4"
+						}
+					]
+				},
+				{
+					"id": "mextSubChunks",
+					"label": "MPEG Audio Extension sub-chunk",
+					"ascii": "mext",
+					"endian": "big",
+					"groupSize": "mextSize + 4",
+					"optional": true,
+					"group": [
+						{
+							"id": "mextSize",
+							"label": "SubChunk size",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "SoundInfo",
+							"label": "Sound Information",
+							"type": "uint16",
+							"endian": "little",
+							// "bits": ["???"]
+							"map": [
+								{  "0": "Non homogeneous sound data | No free format audio frame" },
+								{  "1": "Homogeneous sound data | Padding bit is used in the file so may alternate between '0' or '1' | No free format audio frame" },
+								{  "3": "Homogeneous sound data | Padding bit is set to ’0’ in the whole file | No free format audio frame" },
+								{  "5": "Homogeneous sound data | Padding bit is used in the file so may alternate between '0' or '1' | The file contains a sequence of frames with padding bit set to '0' and sample frequency equal to 22.05 or 44.1 kHz | No free format audio frame" },
+								{  "7": "Homogeneous sound data | Padding bit is set to ’0’ in the whole file | The file contains a sequence of frames with padding bit set to '0' and sample frequency equal to 22.05 or 44.1 kHz | No free format audio frame" },
+								{  "8": "Non homogeneous sound data | Free format is used" },
+								{  "9": "Homogeneous sound data | Free format is used" },
+								{ "11": "Homogeneous sound data | Padding bit is set to ’0’ in the whole file | Free format is used" },
+								{ "13": "Homogeneous sound data | Padding bit is used in the file so may alternate between '0' or '1' | The file contains a sequence of frames with padding bit set to '0' and sample frequency equal to 22.05 or 44.1 kHz | Free format is used" },
+								{ "15": "Homogeneous sound data | Padding bit is set to ’0’ in the whole file | The file contains a sequence of frames with padding bit set to '0' and sample frequency equal to 22.05 or 44.1 kHz | Free format is used" }
+							]
+						},
+						{
+							"id": "frameSize",
+							"label": "Nominal size of the frame",
+							"type": "uint16",
+							"endian": "little"
+						},
+						{
+							"id": "ancillaryDataLength",
+							"label": "Ancillary data length",
+							"type": "uint16",
+							"endian": "little"
+						},
+						{
+							"id": "ancillaryDataDef",
+							"label": "Ancillary data type",
+							"type": "uint16",
+							"endian": "little",
+							// "bits": ["???"]
+							"map": [
+								{  "1": "Energy of left channel present in ancillary data" },
+								{  "2": "A private byte is free for internal use in ancillary data" },
+								{  "3": "A private byte is free for internal use in ancillary data | Energy of left channel present in ancillary data" },
+								{  "4": "Energy of right channel present in ancillary data" },
+								{  "5": "Energy of right channel present in ancillary data | Energy of left channel present in ancillary data" },
+								{  "6": "Energy of right channel present in ancillary data | A private byte is free for internal use in ancillary data" },
+								{  "7": "Energy of right channel present in ancillary data | A private byte is free for internal use in ancillary data | Energy of left channel present in ancillary data" }
+							]
+						},
+						{
+							"id": "reserved",
+							"label": "Reserved",
+							"type": "data",
+							"count": "4"
+						}
+					]
+				},
+				{
+					"id": "qltySubChunks",
+					"label": "Quality sub-chunk",
+					"ascii": "qlty",
+					"endian": "big",
+					"groupSize": "qltySize + 4",
+					"optional": true,
+					"group": [
+						{
+							"id": "qltySize",
+							"label": "SubChunk size",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "fileSecurityReport",
+							"label": "FileSecurityCode of quality report",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "fileSecurityWave",
+							"label": "FileSecurityCode of BWF wave data",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "qualityData",
+							"label": "Quality chunk data",
+							"type": "data",
+							"count": "qltySize - 8",
+							"displayType": "ascii"
+						}
+					]
+				},
+				{
+					"id": "levlSubChunks",
+					"label": "Level sub-chunk",
+					"ascii": "levl",
+					"endian": "big",
+					"groupSize": "levlSize + 4",
+					"optional": true,
+					"group": [
+						{
+							"id": "levlSize",
+							"label": "SubChunk size",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "version",
+							"label": "Version Information",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "format",
+							"label": "Peak point format",
+							"type": "uint32",
+							"endian": "little",
+							"map": [
+								{ "1": "Uint8 : 1 byte" },
+								{ "2": "Uint16 : 2 bytes" }
+							]
+						},
+						{
+							"id": "pointsPerValue",
+							"label": "Points per value",
+							"type": "uint32",
+							"endian": "little",
+							"map": [
+								{ "1": "Only positive peak point" },
+								{ "2": "Positive and negative peak point" }
+							]
+						},
+						{
+							"id": "blockSize",
+							"label": "Frames per value",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "peakChannels",
+							"label": "Number of channels",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "numPeakFrames",
+							"label": "Number of peak frames",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "posPeakOfPeaks",
+							"label": "Audio sample frame index",
+							"type": "uint32",
+							"endian": "little",
+							"map": [
+								{ "4294967295": "Unknown" }
+							]
+						},
+						{
+							"id": "offsetToPeak",
+							"label": "Offset to peak",
+							"type": "uint32",
+							"endian": "little"
+						},
+						// {
+						//     "id": "timestamp",
+						//     "label": "Time stamp of the peak data",
+						//     "type": "data",     // ascii !
+						//     "count": "28"
+						// },
+						{
+							"id": "timestamp",
+							"label": "Time stamp of the peak data",
+							"group": [
+								{
+									"id": "year",
+									"type": "data",
+									"count": "4",
+									"displayType": "ascii"
+								},
+								{
+									"id": "separator",
+									"ascii": ":"
+								},
+								{
+									"id": "month",
+									"type": "data",
+									"count": "2",
+									"displayType": "ascii"
+								},
+								{
+									"id": "separator",
+									"ascii": ":"
+								},
+								{
+									"id": "day",
+									"type": "data",
+									"count": "2",
+									"displayType": "ascii"
+								},
+								{
+									"id": "separator",
+									"ascii": ":"
+								},
+								{
+									"id": "hour",
+									"type": "data",
+									"count": "2",
+									"displayType": "ascii"
+								},
+								{
+									"id": "separator",
+									"ascii": ":"
+								},
+								{
+									"id": "minute",
+									"type": "data",
+									"count": "2",
+									"displayType": "ascii"
+								},
+								{
+									"id": "separator",
+									"ascii": ":"
+								},
+								{
+									"id": "second",
+									"type": "data",
+									"count": "2",
+									"displayType": "ascii"
+								},
+								{
+									"id": "separator",
+									"ascii": ":"
+								},
+								{
+									"id": "millisecond",
+									"type": "data",
+									"count": "3",
+									"displayType": "ascii"
+								}
+							]
+						},
+						{
+							"id": "reserved",
+							"label": "Reserved",
+							"type": "data",
+							"count": "60"
+						},
+						{
+							"id": "peakEnvelopeData",
+							"label": "Peak point data",
+							"type": "data",
+							"count": "levlSize - 120"
+						}
+					]
+				},
+				{
+					"id": "linkSubChunks",
+					"label": "Link sub-chunk",
+					"ascii": "link",
+					"endian": "big",
+					"groupSize": "linkSize + 4",
+					"optional": true,
+					"group": [
+						{
+							"id": "linkSize",
+							"label": "Subchunk size",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "xmlData",
+							"label": "XML data",
+							"type": "data",     // xml !
+							"count": "linkSize",
+							"displayType": "ascii"
+						}
+					]
+				},
+				{
+					"id": "axmlSubChunks",
+					"label": "AXML sub-chunk",
+					"ascii": "axml",
+					"endian": "big",
+					"groupSize": "axmlSize + 4",
+					"optional": true,
+					"group": [
+						{
+							"id": "axmlSize",
+							"label": "Subchunk size",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "xmlData",
+							"label": "XML data",
+							"type": "data",     // xml !
+							"count": "axmlSize",
+							"displayType": "ascii"
+						}
+					]
+				},
+				{
+					"id": "dbmdSubChunks",
+					"label": "Digital audio Metadata sub-chunk",
+					"ascii": "dbmd",
+					"endian": "big",
+					"groupSize": "dbmdSize + 4",
+					"optional": true,
+					"group": [
+						{
+							"id": "dbmdSize",
+							"label": "Subchunk size",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "version",
+							"label": "Version",
+							"type": "uint32",
+							"endian": "little"
+						},
+						// {
+						//     "id": "metadataSegments",
+						//     "label": "Metadata Segments",
+						//     "ordered": false,
+						//     "group": [
+						{
+							"id": "metadataSegmentId",
+							"label": "Metadata Segment Id",
+							"type": "uint8",
+							"endian": "little",
+							"map": [
+								{ "0": "None (end of a subframe)" },
+								{ "1": "Dolby E Metadata" },
+								{ "3": "Dolby Digital Metadata" },
+								{ "7": "Dolby Digital Plus Metadata" },
+								{ "8": "Audio Info" }
+							]
+						},
+						{
+							"id": "metadataSegmentData",
+							"label": "Metadata segment data",
+							"type": "data",
+							"count": "dbmdSize - 5"
+						}
+						//         {
+						//             "id": "padding",
+						//             "label": "Padding",
+						//             "type": "uint8",
+						//             "endian": "little",
+						//             "optional": true
+						//         },
+						//         {
+						//             "id": "metadataSegment",
+						//             "label": "Padding",
+						//             "type": "uint8",
+						//             "endian": "little",
+						//             "optional": true
+						//         }
+						//     ]
+						// }
+					]
+
+				},
+				{
+					"id": "dataSubChunks",
+					"label": "Data sub-chunk",
+					"ascii": "data",
+					"endian": "big",
+					"groupSize": "dataSize + 4",
+					"optional": true,
+					"group": [
+						{
+							"id": "dataSize",
+							"label": "Subchunk size",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "sampleData",
+							"label": "Sample data",
+							"type": "data",
+							"count": "dataSize"
+						}
+					]
+				},
+				{
+					"id": "wavlSubChunks",
+					"label": "WAVE list sub-chunk",
+					"ascii": "wavl",
+					"groupSize": "wavlSize + 4",
+					"optional": true,
+					"group": [
+						{
+							"id": "wavlSize",
+							"label": "Subchunk size",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "sampleData",
+							"label": "Sample data",
+							"type": "data",
+							"count": "wavlSize"
+						}
+					]
+				},
+				{
+					"id": "slntSubChunks",
+					"label": "Silent sub-chunk",
+					"ascii": "slnt",
+					"groupSize": "slntSize + 4",
+					"optional": true,
+					"group": [
+						{
+							"id": "slntSize",
+							"label": "Silent bloc size",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "silentSamples",
+							"label": "Silent samples number",
+							"type": "uint32",
+							"endian": "little"
+						}
+					]
+				},
+				{
+					"id": "cueSubChunks",
+					"label": "Cue sub-chunk",
+					"ascii": "cue ",
+					"groupSize": "cueSize + 4",
+					"optional": true,
+					"group": [
+						{
+							"id": "cueSize",
+							"label": "Cue bloc size",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "cuePoints",
+							"label": "Cue points number",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "cuePointsList",
+							"label": "Cue points list",
+							"type": "data",
+							"count": "cueSize - 4"
+						}
+					]
+				},
+				{
+					"id": "plstSubChunks",
+					"label": "Playlist sub-chunk",
+					"ascii": "plst",
+					"groupSize": "plstSize + 4",
+					"optional": true,
+					"group": [
+						{
+							"id": "plstSize",
+							"label": "Playlist bloc size",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "plstSegments",
+							"label": "Playlist segments number",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "plstSegmentsList",
+							"label": "Playlist segments list",
+							"type": "data",
+							"count": "plstSize - 4"
+						}
+					]
+				},
+				{
+					"id": "listSubChunks",
+					"label": "Associated data list sub-chunk",
+					"ascii": "list",
+					"groupSize": "listSize + 4",
+					"optional": true,
+					"group": [
+						{
+							"id": "listSize",
+							"label": "Associated data list bloc size",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "typeId",
+							"label": "Associated data list type id",
+							"ascii": "adtl"
+						},
+						{
+							"id": "labelsAndNamesList",
+							"label": "Text labels and names list",
+							"type": "data",
+							"count": "listSize - 4"
+						}
+					]
+				},
+				{
+					"id": "lablSubChunks",
+					"label": "Label sub-chunk",
+					"ascii": "labl",
+					"groupSize": "lablSize + 4",
+					"optional": true,
+					"group": [
+						{
+							"id": "lablSize",
+							"label": "Label bloc size",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "cuePointId",
+							"label": "Cue point id",
+							"endian": "little",
+							"type": "data",
+							"count": "4",
+							"displayType": "hexa"
+						},
+						{
+							"id": "lablText",
+							"label": "Label text",
+							"type": "data",
+							"count": "lablSize - 4"
+						}
+					]
+				},
+				{
+					"id": "ltxtSubChunks",
+					"label": "Labeled text sub-chunk",
+					"ascii": "ltxt",
+					"groupSize": "ltxtSize + 4",
+					"optional": true,
+					"group": [
+						{
+							"id": "ltxtSize",
+							"label": "Labeled text bloc size",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "cuePointId",
+							"label": "Cue point id",
+							"endian": "little",
+							"type": "data",
+							"count": "4",
+							"displayType": "hexa"
+						},
+						{
+							"id": "sampleLength",
+							"label": "Sample length",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "PurposeId",
+							"label": "Purpose id",
+							"type": "data",
+							"count": "4",
+							"displayType": "hexa"
+						},
+						{
+							"id": "countryId",
+							"label": "Country id",
+							"type": "data",
+							"count": "2",
+							"displayType": "hexa"
+						},
+						{
+							"id": "languageId",
+							"label": "Language id",
+							"type": "data",
+							"count": "2",
+							"displayType": "hexa"
+						},
+						{
+							"id": "dialectId",
+							"label": "Dialect id",
+							"type": "data",
+							"count": "2",
+							"displayType": "hexa"
+						},
+						{
+							"id": "pageCode",
+							"label": "Page code",
+							"type": "data",
+							"count": "2",
+							"displayType": "hexa"
+						},
+						{
+							"shortId": "labledText",
+							"id": "Labeled text",
+							"type": "data",
+							"count": "ltxtSize - 20"
+						}
+					]
+				},
+				{
+					"id": "smplSubChunks",
+					"label": "Sampler sub-chunk",
+					"ascii": "smpl",
+					"groupSize": "smplSize + 4",
+					"optional": true,
+					"group": [
+						{
+							"id": "smplSize",
+							"label": "Sampler bloc size",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "manufacturerId",
+							"label": "Manufacturer id",
+							"type": "data",
+							"count": "4",
+							"displayType": "hexa"
+						},
+						{
+							"id": "productId",
+							"label": "Product id",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "samplePeriod",
+							"label": "Sample period",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "midiUnitNote",
+							"label": "MIDI unit note",
+							"type": "uint32",
+							"endian": "little",
+							"interval": [
+								0,
+								127
+							]
+						},
+						{
+							"id": "midiPitchFraction",
+							"label": "MIDI pitch fraction",
+							"type": "data",
+							"count": "4",
+							"displayType": "hexa"
+						},
+						{
+							"id": "smpteFormat",
+							"label": "SMPTE format",
+							"type": "uint32",
+							"endian": "little",
+							"map": [
+								{  "0": "no SMPTE offset"},
+								{ "24": "24 frames per second"},
+								{ "25": "25 frames per second"},
+								{ "29": "30 frames per second with frame dropping (30 drop)"},
+								{ "30": "30 frames per second"}
+							]
+						},
+						{
+							"id": "smpteOffset",
+							"label": "SMPTE offset",
+							"type": "data",
+							"count": "4",
+							"displayType": "hexa"
+						},
+						{
+							"id": "numSampleLoops",
+							"label": "Sample loops number",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "samplerDataSize",
+							"label": "Sampler data size",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "sampleLoopsList",
+							"label": "Sample loops list",
+							"type": "data",
+							"count": "smplSize - 36"
+						}
+					]
+				},
+				{
+					"id": "instSubChunks",
+					"label": "Instrument sub-chunk",
+					"ascii": "inst",
+					"groupSize": "instSize + 4",
+					"optional": true,
+					"group": [
+						{
+							"id": "instSize",
+							"label": "Instrument bloc size",
+							"type": "uint32",
+							"endian": "little"
+						},
+						{
+							"id": "unshiftedNote",
+							"label": "Unshifted note",
+							"type": "uint8",
+							"endian": "little"
+						},
+						{
+							"id": "fineTune",
+							"label": "Fine tune",
+							"type": "int8",
+							"endian": "little",
+							"range": [
+								{ "min": "-50", "max": "50" }
+							]
+						},
+						{
+							"id": "gain",
+							"label": "Gain",
+							"type": "int8",
+							"endian": "little",
+							"range": [
+								{ "min": "-64", "max": "64" }
+							]
+						},
+						{
+							"id": "lowVelocity",
+							"label": "Low velocity",
+							"type": "uint8",
+							"endian": "little",
+							"range": [
+								{ "min": "1", "max": "127" }
+							]
+						},
+						{
+							"id": "highVelocity",
+							"label": "High velocity",
+							"type": "uint8",
+							"endian": "little",
+							"range": [
+								{ "min": "1", "max": "127" }
+							]
+						}
+					]
+				}
+			]
+		}
+		
+
+	]
+}

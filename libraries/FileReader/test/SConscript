@@ -1,0 +1,13 @@
+Import( 'project', 'libs' )
+
+project.UnitTest(
+	target = project.getDirs([-1]),
+	dirs = ['.'],
+	libraries = [
+		libs.common,
+		libs.fileReader,
+		libs.boost_unit_test_framework,
+	]
+)
+
+
