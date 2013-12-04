@@ -2,6 +2,7 @@
 
 #include <Comparator/Comparator.hpp>
 #include <Common/log.hpp>
+#include <BasicElement/Element.hpp>
 #include <SpecReader/Specification.hpp>
 #include <FileReader/FileReader.hpp>
 #include <ReportGenerator/Report.hpp>
@@ -67,7 +68,13 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_1 )
 										"id": "value122",
 										"label": "Value122",
 										"type": "ascii",
-										"values": "H8",
+										"values": "H8"
+									},
+									{
+										"id": "value123",
+										"label": "Value123",
+										"type": "ascii",
+										"values": "H85",
 										"optional": true
 									}
 								]
@@ -96,6 +103,7 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_1 )
 			}
 		)*";
 
+
 	spec_reader::Specification spec;
 	spec.setFromString( jsonString );
 	std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
@@ -115,7 +123,7 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_1 )
 
 	std::string str = "A1";
 	str += "B2B2B2B2B2B2B2B2B2B2";
-	str += "C3D4EXF600H8";
+	str += "C3D4EXF6H8";
 	str += "I9I92I93I91";
 	str += "END";
 
@@ -126,6 +134,25 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_1 )
 	report.printHelper();
 
 	comp.check( spec, file, report );
+
+	BOOST_CHECK_EQUAL( report.get( "value1"      )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value11",  1 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value11",  2 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value11",  3 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value11",  4 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value11",  5 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value11",  6 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value11",  7 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value11",  8 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value11",  9 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value11", 10 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value12"     )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value121"    )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value1211"   )->_status, eStatusInvalid  );
+	BOOST_CHECK_EQUAL( report.get( "value1212"   )->_status, eStatusPassOver );
+	BOOST_CHECK_EQUAL( report.get( "value122"    )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value13"     )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "valueEnd"    )->_status, eStatusValid    );
 
 	BOOST_CHECK_EQUAL( file.isEndOfFile(), true );
 
@@ -154,6 +181,7 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_2 )
 										"label": "Value141",
 										"type": "ascii",
 										"values": "K11",
+										"groupSize": "14",
 										"group": [
 											{ "id": "value1411", "label": "Value1411", "type": "ascii", "values": "L12", "optional": true, "group": [
 													{ "id": "value14131", "label": "Value14131", "type": "ascii", "values": "lTwelve1" },
@@ -245,7 +273,9 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_2 )
 	file_reader::FileReader file( &buffer );
 
 	std::string str = "A1";
-	str += "J10K11M1314O15P16Q17Q173Q172Q1721";
+	str += "J10";
+	str += "K11M1314O15P16000";
+	str += "Q17Q173Q172Q1721";
 	str += "R18R182R183R181R18R183R181";
 	str += "S20";
 	str += "END";
@@ -317,5 +347,58 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_3 )
 	BOOST_CHECK_THROW( comp.check( spec, file, report ), std::runtime_error );
 }
 
+BOOST_AUTO_TEST_CASE( comparator_test_comparator_4 )
+{
+	LOG_INFO( "\n>>> comparator_test_comparator 4 <<<" );
+	std::string jsonString = R"*(
+			{
+				"content": [
+					{
+						"id": "value1",
+						"label": "Value1",
+						"type": "ascii",
+						"values": "A1",
+						"groupSize": "6",
+						"group": [
+							{ "id": "value11", "label": "Value11", "type": "ascii", "values": "S19" },
+							{ "id": "value12", "label": "Value12", "type": "ascii", "values": "T20" },
+							{ "id": "value13", "label": "Value13", "type": "ascii", "values": "U21" }
+						]
+					},
+					{
+						"id": "valueEnd",
+						"label": "ValueEnd",
+						"type": "ascii",
+						"values": "END"
+					}
+				]
+			}
+		)*";
+
+	spec_reader::Specification spec;
+	spec.setFromString( jsonString );
+	std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
+	BOOST_CHECK_EQUAL( node->getId(),                               "value1"   );
+	BOOST_CHECK_EQUAL( node->firstChild()->getId(),                 "value11"  );
+	BOOST_CHECK_EQUAL( node->firstChild()->next()->getId(),         "value12"  );
+	BOOST_CHECK_EQUAL( node->firstChild()->next()->next()->getId(), "value13"  );
+	BOOST_CHECK_EQUAL( node->next()->getId(),                       "valueEnd" );
+
+	Comparator comp;
+
+	std::stringbuf buffer;
+	file_reader::FileReader file( &buffer );
+
+	std::string str = "A1";
+	str += "S19T20U21";
+	str += "END";
+
+	buffer.sputn( str.c_str(), str.size() );
+	BOOST_CHECK_EQUAL( file.getLength(), str.size() );
+
+	report_generator::Report report;
+
+	BOOST_CHECK_THROW( comp.check( spec, file, report ), std::runtime_error );
+}
 
 BOOST_AUTO_TEST_SUITE_END()

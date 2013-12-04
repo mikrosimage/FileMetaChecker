@@ -37,23 +37,18 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 	std::shared_ptr< basic_element::Element > parent;
 	parent = getNextParent( element, node );
 	report.add( element );
+	report.print( element );
 
-	while( ( node = element->next() ) != nullptr && ! file.isEndOfFile() )
+	while( ( node = element->next() ) != nullptr )
 	{
+		// LOG_FATAL( node->getId() );
 		ShPtrElement previous = element;
-		switch( element->_status )
+		
+		if( skipElementCheck( previous ) )
 		{
-			case eStatusInvalidButOptional  :
-			case eStatusInvalidButSkip      :
-			case eStatusInvalidForIteration :
-			case eStatusSkip :
-			{
-				LOG_TRACE( "[comparator] Go back in file (" << size << " bytes)" );
-				file.goBack( size );
-				previous = element->getPrevious();
-				break;
-			}
-			default: break;
+			LOG_TRACE( "[comparator] Go back in file (" << size << " bytes)" );
+			file.goBack( size );
+			previous = element->getPrevious();
 		}
 
 		element = std::make_shared< basic_element::Element >( node, previous, parent );
@@ -63,6 +58,8 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 		{
 			LOG_TRACE( "[comparator] Critical remaining file data size: " << size << "/" << file.getLength() - file.getPosition() );
 			size = file.getLength() - file.getPosition();
+			if( size == 0 )
+				break;
 		}
 
 		char buffer[ size ];
@@ -71,7 +68,12 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 		element->set( buffer, size );
 
 		checker.check( element );
-		LOG_TRACE( "[comparator] checked: " << element->_id << " = " << element->_dispValue << " (" << statusMap.at( element->_status ) << ") @ " << element << " << Previous: " << previous << " << Parent: " << parent );
+		LOG_TRACE( "[comparator] checked: " << element->_id << " = " << element->_dispValue << " (" << statusMap.at( element->_status ) << ") @ " << element << " << Previous: " << previous << " << Parent: " );
+		// LOG_COLOR( common::details::kColorMagenta, "[comparator] checked: " << element->_id << " = " << element->_dispValue << " (" << statusMap.at( element->_status ) << ") @ " << element << " << Previous: " << previous << " << Parent: " << parent << std::endl );
+
+		// if( ! skipElementCheck( element ) && parent != nullptr )
+		// 	parent->_childrenSize += element->_size;
+		updateParentSize( element );
 
 		checkGroupSize( element, file );
 
@@ -92,7 +94,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 		LOG_WARNING( "Did not reach the end of file, remaining " << file.getLength() - file.getPosition() << " bytes." );
 }
 
-bool Comparator::isInUnorderedGroup( const std::shared_ptr< basic_element::Element > element )
+bool Comparator::isInUnorderedGroup( const ShPtrElement element )
 {
 	ShPtrElement parent = element->getParent();
 	while( parent != nullptr )
@@ -101,6 +103,30 @@ bool Comparator::isInUnorderedGroup( const std::shared_ptr< basic_element::Eleme
 			return true;
 	}
 	return false;
+}
+
+bool Comparator::skipElementCheck( const ShPtrElement element )
+{
+	switch( element->_status )
+	{
+		case eStatusInvalidButOptional  :
+		case eStatusInvalidButSkip      :
+		case eStatusInvalidForIteration :
+		case eStatusSkip                : return true;
+		default: break;
+	}
+	return false;
+}
+
+void Comparator::updateParentSize( const ShPtrElement element )
+{
+	ShPtrElement parent = element->getParent();
+	while( ! skipElementCheck( element ) && parent != nullptr )
+	{
+		parent->_childrenSize += element->_size;
+		// LOG_COLOR( common::details::kColorBlue, "[comparator] " << parent->_id << "'s children size : " << parent->_childrenSize << std::endl );
+		parent = parent->getParent();
+	}
 }
 
 Comparator::ShPtrElement Comparator::getNextParent( const ShPtrElement element, const ShPtrSpecNode node )
@@ -126,43 +152,48 @@ Comparator::ShPtrElement Comparator::getNextParent( const ShPtrElement element, 
 
 void Comparator::checkGroupSize( const ShPtrElement element, file_reader::FileReader& file )
 {
-	ShPtrElement parent   = element->getParent();
-	ShPtrElement previous = element->getPrevious();
-	
-	if( parent != nullptr && previous != nullptr && element->getSpecNode()->next() == nullptr && ! parent->_groupSizeExpr.empty() )
+	try 
 	{
-		size_t groupSize = element->_size;
+		if( element->getSpecNode()->next() != nullptr || element->_isGroup )
+			return;
 
-		while( previous != nullptr || ( previous != nullptr && previous->_id != parent->_id ) )
+		ShPtrElement parent = element->getParent();
+		while(  parent != nullptr )
 		{
-			LOG_TRACE( "[comparator] \tGroupSize Loop: from " << element->_id << " to " << previous->_id << " ?= parent " << parent->_id << " >> " << groupSize << "/" << parent->_groupSize << " (" << parent->_groupSizeExpr << ")");
-			if( previous->_id == parent->_id )
-				break;
-			groupSize += previous->_size;
-			previous = previous->getPrevious();
-		}
+			if( parent->_groupSizeExpr.empty() )
+			{
+				parent = parent->getParent();
+				continue;
+			}
 
-		int sizeDiff = parent->_groupSize - groupSize;
-		if( sizeDiff != 0 )
-		{
-			if( sizeDiff > 0 )
+			int sizeDiff = parent->_childrenSize - parent->_specGroupSize;
+			LOG_TRACE( "[comparator] group size difference (" << parent->_id << ") : " << parent->_specGroupSize << " - " << parent->_childrenSize << " = "<< sizeDiff );
+			if( sizeDiff != 0 )
 			{
-				std::stringstream errorMessage;
-				errorMessage << "[comparator] Group size difference: " << sizeDiff << " missing bytes ";
-				parent->_error = errorMessage.str();
-				throw std::runtime_error( errorMessage.str() );
+				if( sizeDiff > 0 )
+				{
+					std::stringstream errorMessage;
+					errorMessage << "[comparator] Group size difference: " << sizeDiff << " missing bytes ";
+					parent->_error = errorMessage.str();
+					throw std::runtime_error( errorMessage.str() );
+				}
+				if( sizeDiff < 0 )
+				{
+					std::stringstream warningMessage;
+					warningMessage << "[comparator] Group size difference: " << abs( sizeDiff ) << " unexpected bytes ";
+					parent->_warning += warningMessage.str();
+					file.goForward( abs( sizeDiff ) );
+					LOG_WARNING( warningMessage.str() << ": go forward..." );
+				}
 			}
-			if( sizeDiff < 0 )
-			{
-				std::stringstream warningMessage;
-				warningMessage << "[comparator] Group size difference: " << abs( sizeDiff ) << " unexpected bytes ";
-				parent->_warning += warningMessage.str();
-				file.goForward( abs( sizeDiff ) );
-				LOG_WARNING( warningMessage.str() << ": go forward..." );
-			}
+			parent = parent->getParent();
 		}
 	}
-	return;
+	catch( std::runtime_error& e )
+	{
+		LOG_ERROR( e.what() );
+		throw;
+	}
 }
 
 }
