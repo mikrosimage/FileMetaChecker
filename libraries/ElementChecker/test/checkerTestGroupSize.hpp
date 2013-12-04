@@ -14,7 +14,8 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_groupSize )
 						  "group": [
 							{ "id": "value21", "label": "Value21", "type": "ascii", "values": "WAVE4" },
 							{ "id": "value22", "label": "Value22", "type": "ascii", "values": "WAVE5" },
-							{ "id": "value23", "label": "Value23", "type": "ascii", "values": "WAVE6" }
+							{ "id": "value23", "label": "Value23", "type": "ascii", "values": "WAVE6" },
+							{ "id": "value24", "label": "Value24", "type": "ascii", "values": "WAVE7" }
 						] },
 						{ "id": "value3", "label": "Value3", "type": "ascii", "values": "WAVE3" }
 					]
@@ -27,6 +28,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_groupSize )
 		const char buff4[5] { 'W', 'A', 'V', 'E', '4' };
 		const char buff5[5] { 'W', 'A', 'V', 'E', '5' };
 		const char buff6[5] { 'W', 'A', 'V', 'E', '6' };
+		const char buff7[5] { 'W', 'A', 'V', 'E', '7' };
 		
 		spec_reader::Specification spec;
 		spec.setFromString( jsonString );
@@ -69,14 +71,20 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_groupSize )
 		checker.check( elem5 );
 		BOOST_CHECK_EQUAL( elem5->_status, eStatusValid );
 
-		std::shared_ptr< basic_element::Element > elem6( new basic_element::Element( elem5->next(), elem5 ) );
-		BOOST_CHECK_EQUAL( elem6->_id, node->next()->next()->getId() );
-		elem6->set( (const char*)&buff3, checker.getSize( elem6 ) );
+		std::shared_ptr< basic_element::Element > elem6( new basic_element::Element( elem5->next(), elem5, elem2 ) );
+		BOOST_CHECK_EQUAL( elem6->_id, node->next()->firstChild()->next()->next()->next()->getId() );
+		elem6->set( (const char*)&buff7, checker.getSize( elem6 ) );
 		checker.check( elem6 );
 		BOOST_CHECK_EQUAL( elem6->_status, eStatusValid );
 
-		BOOST_CHECK( elem6->next() == nullptr );
-		BOOST_CHECK_EQUAL( elem2->_groupSize, 20 );
+		std::shared_ptr< basic_element::Element > elem7( new basic_element::Element( elem6->next(), elem6 ) );
+		BOOST_CHECK_EQUAL( elem7->_id, node->next()->next()->getId() );
+		elem7->set( (const char*)&buff3, checker.getSize( elem7 ) );
+		checker.check( elem7 );
+		BOOST_CHECK_EQUAL( elem7->_status, eStatusValid );
+
+		BOOST_CHECK( elem7->next() == nullptr );
+		BOOST_CHECK_EQUAL( elem2->_specGroupSize, 20 );
 	}
 }
 
@@ -103,7 +111,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_groupSize_2 )
 		const char buff1[5] { 'W', 'A', 'V', 'E', '1' };
 		const char buff2[5] { 'W', 'A', 'V', 'E', '2' };
 		const char buff3[5] { 'W', 'A', 'V', 'E', '3' };
-		const char buff4[4] { 0x00, 0x00, 0x00, 0x14 };
+		const char buff4[4] { 0x00, 0x00, 0x00, 0x0e };
 		const char buff5[5] { 'W', 'A', 'V', 'E', '5' };
 		const char buff6[5] { 'W', 'A', 'V', 'E', '6' };
 		spec_reader::Specification spec;
@@ -134,7 +142,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_groupSize_2 )
 		elem3->set( (const char*)&buff4, checker.getSize( elem3 ) );
 		checker.check( elem3 );
 		BOOST_CHECK_EQUAL( elem3->_status, eStatusPassOver );
-		BOOST_CHECK_EQUAL( elem3->_dispValue, "20" );
+		BOOST_CHECK_EQUAL( elem3->_dispValue, "14" );
 
 		std::shared_ptr< basic_element::Element > elem4( new basic_element::Element( elem3->next(), elem3, elem2 ) );
 		BOOST_CHECK_EQUAL( elem4->_id, node->next()->firstChild()->next()->getId() );
@@ -155,7 +163,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_groupSize_2 )
 		BOOST_CHECK_EQUAL( elem6->_status, eStatusValid );
 
 		BOOST_CHECK( elem6->next() == nullptr );
-		BOOST_CHECK_EQUAL( elem2->_groupSize, 20 );
+		BOOST_CHECK_EQUAL( elem2->_specGroupSize, 14 );
 	}
 }
 
@@ -219,7 +227,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_groupSize_3 )
 		BOOST_CHECK_EQUAL( elem4->_status, eStatusValid );
 
 		BOOST_CHECK( elem4->next() == nullptr );
-		BOOST_CHECK_EQUAL( elem2->_groupSize, 4 );
+		BOOST_CHECK_EQUAL( elem2->_specGroupSize, 4 );
 	}
 }
 

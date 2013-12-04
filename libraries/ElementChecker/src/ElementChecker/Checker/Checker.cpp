@@ -55,17 +55,22 @@ void Checker::check( const ShPtrElement element )
 	if( element->_values.empty() && element->_rangeExpr.empty() && element->_map.empty() )
 	{
 		element->_status = eStatusPassOver;
+		if( ! isRequirementValid( element ) )
+			element->_status = eStatusSkip;
 		_exprParser->addElementToContext( element );
 	}
 
 	if( parent != nullptr && previous != nullptr && element->getSpecNode()->next() == nullptr && ! parent->_groupSizeExpr.empty() )
 	{
-		parent->_groupSize = _exprParser->getExpressionResult< size_t >( parent->_groupSizeExpr );
-		LOG_TRACE( "[checker] set " << element->_id << "'s parent (" << parent->_id << ") groupSize (" << parent->_groupSizeExpr << "): " << parent->_groupSize );
+		parent->_specGroupSize = _exprParser->getExpressionResult< size_t >( parent->_groupSizeExpr );
+		LOG_TRACE( "[checker] set " << element->_id << "'s parent (" << parent->_id << ") groupSize (" << parent->_groupSizeExpr << "): " << parent->_specGroupSize );
 	}
 
 	if( element->_status != eStatusNotChecked )
+	{
+		LOG_TRACE( "[checker] " << element->_id << " : pre return status = " << statusMap.at( element->_status ) );
 		return;
+	}
 
 	EStatus status = eStatusInvalid;
 
@@ -179,7 +184,7 @@ void Checker::check( const ShPtrElement element )
 		return;
 	}
 
-	LOG_TRACE( "[checker] " << element->_id << " : return status = " << status );
+	LOG_TRACE( "[checker] " << element->_id << " : return status = " << statusMap.at( status ) );
 	_exprParser->addElementToContext( element );
 
 }
