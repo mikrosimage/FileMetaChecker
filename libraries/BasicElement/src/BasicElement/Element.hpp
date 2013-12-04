@@ -104,7 +104,8 @@ public:
 	const size_t        _uId;
 	size_t              _size;
 	const size_t        _iteration;
-	size_t              _groupSize;
+	size_t              _specGroupSize;
+	size_t              _childrenSize;
 	
 	const std::string   _countExpr;
 	const std::string   _requiredExpr;

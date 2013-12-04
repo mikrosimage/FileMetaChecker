@@ -18,7 +18,8 @@ Element::Element( const ShPtrSpecNode node,
 	, _uId           ( node->getUId()   )
 	, _size          ( getElementSize( node->getId(), node->getType(), node->getValues() )            )
 	, _iteration     ( getElementIteration( node->getId(), node->getRepetitions(), previous, parent ) )
-	, _groupSize     ( 0 )
+	, _specGroupSize ( 0 )
+	, _childrenSize  ( 0 )
 	, _countExpr     ( node->getCount()       )
 	, _requiredExpr  ( node->getRequirement() )
 	, _groupSizeExpr ( node->getGroupSize()   )
@@ -44,8 +45,10 @@ Element::Element( const ShPtrSpecNode node,
 		_parent.lock()->_children.push_back( std::make_shared< Element >( *this ) );
 
 	LOG_TRACE( "[element] Create new Element " << _id << " :"       );
-	LOG_TRACE(" [element]   - Parent   : " << _parent.lock()->_id   );
-	LOG_TRACE(" [element]   - Previous : " << _previous.lock()->_id );
+	if( ! _parent.expired() )
+		LOG_TRACE(" [element]   - Parent   : " << _parent.lock()->_id   );
+	if( ! _previous.expired() )
+		LOG_TRACE(" [element]   - Previous : " << _previous.lock()->_id );
 	LOG_TRACE(" [element]   - Iteration: " << _iteration            );
 }
 
