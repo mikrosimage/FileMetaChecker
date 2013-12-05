@@ -1,0 +1,16 @@
+Import( 'project', 'libs' )
+
+project.StaticLibrary(
+		'specReader',
+		dirs      = ['src'],
+		includes  = ['src'],
+		libraries = [
+			libs.common,
+			libs.rapidjson,
+			libs.boost,
+			libs.boost_filesystem,
+		],
+		shared = True
+	)
+
+

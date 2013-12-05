@@ -16,13 +16,13 @@
 	},
 	"header": [
 		{
-			"id": "magicNumber",
-			"label": "Magic number",
+			"id": "startOfImage",
+			"label": "Start Of Image",
 			"hexa": "ffd8"
 		},
 		{
 			"id": "segments",
-			"label": "JFIF segments",
+			"label": "Segments",
 			"ordered": false,
 			"group": [
 				{
@@ -37,8 +37,8 @@
 							"type": "uint16"
 						},
 						{
-							"id": "id",
-							"label": "Identifier",
+							"id": "jfifId",
+							"label": "JFIF Identifier",
 							"hexa": "4a46494600"
 						},
 						{
@@ -92,7 +92,7 @@
 				{
 					"id": "app1Marker",
 					"label": "App1 Segment marker",
-					"hexa": "ffed",
+					"hexa": "ffe1",
 					"optional": true,
 					"groupSize": "app1SegmentLength",
 					"group": [
@@ -102,11 +102,14 @@
 							"type": "uint16"
 						},
 						{
-							"id": "app1SegmentData",
-							"label": "App1 Segment Data",
-							"type": "data",
-							"count": "app1SegmentLength - 2",
-							"displayType": "ascii"
+							"id": "exifId",
+							"label": "EXIF Identifier",
+							"hexa": "457869660000"
+						},
+						{
+							"id": "exifMetadatas",
+							"label": "Exif Metadatas",
+							"type":  "exif"
 						}
 					]
 				},
@@ -135,12 +138,18 @@
 							"id": "appXSegmentData",
 							"label": "AppX Segment Data",
 							"type": "data",
-							"count": "appXSegmentLength - 2",
+							"count": "appXSegmentLength - 3",
 							"displayType": "ascii"
 						}
+						
 					]
 				}
 			]
+		},
+		{
+			"id": "endOfImage",
+			"label": "End Of Image",
+			"hexa": "ffd9"
 		}
 	]
 }

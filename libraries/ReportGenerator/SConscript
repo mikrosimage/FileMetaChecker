@@ -1,0 +1,15 @@
+Import( 'project', 'libs' )
+
+project.StaticLibrary(
+		'reportGenerator',
+		dirs      = ['src'],
+		includes  = ['src'],
+		libraries = [
+			libs.rapidxml,
+			libs.common,
+			libs.basicElement,
+			],
+		shared = True
+	)
+
+

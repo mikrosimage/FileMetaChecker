@@ -1,35 +1,29 @@
 Import( 'project', 'libs' )
 
-mikSystemInfo = project.Program(
-	target='miksi',
-	dirs=['mikSystemInfo'],
-	includes=['mikSystemInfo'],
+qc = project.Program(
+	target='fileMetaChecker',
+	dirs=['FileMetaChecker'],
+	includes=['FileMetaChecker'],
 	libraries = [
 		libs.boost_filesystem,
 		libs.boost_program_options,
-		libs.boost_thread,
-		libs.boost_log,
 		libs.common,
-		libs.report,
-		libs.systemInfo,
+		libs.fileReader,
+		libs.specReader,
+		libs.reportGenerator,
+		libs.comparator,
 	]
 )
 
-
-qc = project.Program(
-	target='mikqc',
-	dirs=['mikQualityCheck'],
-	includes=['mikQualityCheck'],
+specChecker = project.Program(
+	target='specChecker',
+	dirs=['SpecChecker'],
+	includes=['SpecChecker'],
 	libraries = [
 		libs.boost_filesystem,
 		libs.boost_program_options,
-		libs.boost_thread,
-		libs.boost_log,
 		libs.common,
-		libs.report,
-		libs.analyser,
-		libs.extractor,
-		libs.systemInfo,
+		libs.specReader,
 	]
 )
 

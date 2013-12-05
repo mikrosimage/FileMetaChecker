@@ -12,8 +12,9 @@
 		{
 			"id": "chunkId",
 			"label": "File bloc id",
+			"type": "ascii",
 			"endian": "big",
-			"ascii": "RIFF"
+			"values": "RIFF"
 		},
 		{
 			"id": "chunkSize",
@@ -24,18 +25,21 @@
 		{
 			"id": "riffType",
 			"label": "Riff type id",
+			"type": "ascii",
 			"endian": "big",
-			"ascii": "WAVE"
+			"values": "WAVE"
 		},
 		{
 			"id": "specificWaveChunks",
 			"label": "Specific WAVE chunks",
+			"type": "ascii",					// @todo: change to "empty" type
 			"ordered": false,
 			"group": [
 				{
 					"id": "fmtSubChunks",
 					"label": "Format sub-chunk",
-					"ascii": "fmt ",
+					"type": "ascii",
+					"values": "fmt ",
 					"endian": "big",
 					"optional": false,
 					"groupSize": "fmtSize + 4",
@@ -101,7 +105,8 @@
 				{
 					"id": "factSubChunks",
 					"label": "Fact sub-chunk",
-					"ascii": "fact",
+					"type": "ascii",
+					"values": "fact",
 					"endian": "big",
 					"groupSize": "factSize + 4",
 					"optional": true,
@@ -121,7 +126,7 @@
 						{
 							"id": "formatDependantData",
 							"label": "Format dependant data",
-							"type": "data",
+							"type": "raw",
 							"count": "factSize - 4"
 						}
 					]
@@ -129,7 +134,8 @@
 				{
 					"id": "dataSubChunks",
 					"label": "Data sub-chunk",
-					"ascii": "data",
+					"type": "ascii",
+					"values": "data",
 					"endian": "big",
 					"groupSize": "dataSize + 4",
 					"optional": false,
@@ -143,7 +149,7 @@
 						{
 							"id": "sampleData",
 							"label": "Sample data",
-							"type": "data",
+							"type": "raw",
 							"count": "dataSize"
 						}
 					]
@@ -151,7 +157,8 @@
 				{
 					"id": "wavlSubChunks",
 					"label": "WAVE list sub-chunk",
-					"ascii": "wavl",
+					"type": "ascii",
+					"values": "wavl",
 					"groupSize": "wavlSize + 4",
 					"optional": true,
 					"group": [
@@ -164,7 +171,7 @@
 						{
 							"id": "sampleData",
 							"label": "Sample data",
-							"type": "data",
+							"type": "raw",
 							"count": "wavlSize"
 						}
 					]
@@ -172,7 +179,8 @@
 				{
 					"id": "slntSubChunks",
 					"label": "Silent sub-chunk",
-					"ascii": "slnt",
+					"type": "ascii",
+					"values": "slnt",
 					"groupSize": "slntSize + 4",
 					"optional": true,
 					"group": [
@@ -193,7 +201,8 @@
 				{
 					"id": "cueSubChunks",
 					"label": "Cue sub-chunk",
-					"ascii": "cue ",
+					"type": "ascii",
+					"values": "cue ",
 					"groupSize": "cueSize + 4",
 					"optional": true,
 					"group": [
@@ -212,7 +221,7 @@
 						{
 							"id": "cuePointsList",
 							"label": "Cue points list",
-							"type": "data",
+							"type": "raw",
 							"count": "cueSize - 4",
 							"displayType": "ascii"
 						}
@@ -221,7 +230,8 @@
 				{
 					"id": "plstSubChunks",
 					"label": "Playlist sub-chunk",
-					"ascii": "plst",
+					"type": "ascii",
+					"values": "plst",
 					"groupSize": "plstSize + 4",
 					"optional": true,
 					"group": [
@@ -240,7 +250,7 @@
 						{
 							"id": "plstSegmentsList",
 							"label": "Playlist segments list",
-							"type": "data",
+							"type": "raw",
 							"count": "plstSize - 4"
 						}
 					]
@@ -248,7 +258,8 @@
 				{
 					"id": "listSubChunks",
 					"label": "Associated data list sub-chunk",
-					"ascii": "list",
+					"type": "ascii",
+					"values": "list",
 					"groupSize": "listSize + 4",
 					"optional": true,
 					"group": [
@@ -258,10 +269,512 @@
 							"type": "uint32",
 							"endian": "little"
 						},
+						// ============================= TO BE VALIDATED ==================================
+						// 	"id": "list",
+						// 	"label": "Associated data list",
+						// 	"type": "ascii",					// @todo: change to "empty" type
+						// 	"groupSize": "listSize",
+						// 	"ordered": false,
+						// 	"group": [
+						// 		{
+						// 			"id": "associatedDataId",
+						// 			"label": "Associated data list type id",
+						// 			"ascii": "adtl",
+						// 			// "groupSize": "listSize - 4",
+						// 			"optional": true,
+						// 			"ordered": false,
+						// 			"group": [
+						// 				{
+						// 					"id": "lablSubChunks",
+						// 					"label": "Label sub-chunk",
+						// 					"type": "ascii",
+						// 					"values": [ "labl", "note" ],
+						// 					"groupSize": "lablSize + 4",
+						// 					"optional": true,
+						// 					"group": [
+						// 						{
+						// 							"id": "lablSize",
+						// 							"label": "Label bloc size",
+						// 							"type": "uint32",
+						// 							"endian": "little"
+						// 						},
+						// 						{
+						// 							"id": "cuePointId",
+						// 							"label": "Cue point id",
+						// 							"endian": "little",
+						// 							"type": "raw",
+						// 							"count": "4",
+						// 							"displayType": "hexa"
+						// 						},
+						// 						{
+						// 							"id": "lablText",
+						// 							"label": "Label text",
+						// 							"type": "raw",
+						// 							"count": "lablSize - 4"
+						// 							// "displayType": "ascii"
+						// 						}
+						// 					]
+						// 				},
+						// 				{
+						// 					"id": "ltxtSubChunks",
+						// 					"label": "Labeled text sub-chunk",
+						// 					"type": "ascii",
+						// 					"values": "ltxt",
+						// 					"groupSize": "ltxtSize + 4",
+						// 					"optional": true,
+						// 					"group": [
+						// 						{
+						// 							"id": "ltxtSize",
+						// 							"label": "Labeled text bloc size",
+						// 							"type": "uint32",
+						// 							"endian": "little"
+						// 						},
+						// 						{
+						// 							"id": "cuePointId",
+						// 							"label": "Cue point id",
+						// 							"endian": "little",
+						// 							"type": "raw",
+						// 							"count": "4",
+						// 							"displayType": "hexa"
+						// 						},
+						// 						{
+						// 							"id": "sampleLength",
+						// 							"label": "Sample length",
+						// 							"type": "uint32",
+						// 							"endian": "little"
+						// 						},
+						// 						{
+						// 							"id": "PurposeId",
+						// 							"label": "Purpose id",
+						// 							"type": "raw",
+						// 							"count": "4",
+						// 							"displayType": "hexa"
+						// 						},
+						// 						{
+						// 							"id": "countryId",
+						// 							"label": "Country id",
+						// 							"type": "raw",
+						// 							"count": "2",
+						// 							"displayType": "hexa"
+						// 						},
+						// 						{
+						// 							"id": "languageId",
+						// 							"label": "Language id",
+						// 							"type": "raw",
+						// 							"count": "2",
+						// 							"displayType": "hexa"
+						// 						},
+						// 						{
+						// 							"id": "dialectId",
+						// 							"label": "Dialect id",
+						// 							"type": "raw",
+						// 							"count": "2",
+						// 							"displayType": "hexa"
+						// 						},
+						// 						{
+						// 							"id": "pageCode",
+						// 							"label": "Page code",
+						// 							"type": "raw",
+						// 							"count": "2",
+						// 							"displayType": "hexa"
+						// 						},
+						// 						{
+						// 							"shortId": "labledText",
+						// 							"id": "Labeled text",
+						// 							"type": "raw",
+						// 							"count": "ltxtSize - 20",
+						// 							"displayType": "ascii"
+						// 						}
+						// 					]
+						// 				}
+						// 			]
+						// 		},
+						// 		{
+						// 			"id": "infoId",
+						// 			"label": "Text Information list type id",
+						// 			"type": "ascii",
+						// 			"values": "info",
+						// 			// "groupSize": "listSize - 4",
+						// 			"optional": true,
+						// 			"ordered": false,
+						// 			"group": [
+						// 				{
+						// 					"id": "artistInfo",
+						// 					"label": "Artist Info",
+						// 					"type": "ascii",
+						// 					"values": "iart",
+						// 					"groupSize": "iartSize + 4",
+						// 					"optional": true,
+						// 					"group": [
+						// 						{
+						// 							"id": "iartSize",
+						// 							"label": "Artist Info size",
+						// 							"type": "uint32",
+						// 							"endian": "little"
+						// 						},
+						// 						{
+						// 							"id": "iartText",
+						// 							"label": "Artist Info text",
+						// 							"type": "raw",
+						// 							"count": "iartSize",
+						// 							"displayType": "ascii"
+						// 						}
+						// 					]
+						// 				},
+						// 				{
+						// 					"id": "commissionerInfo",
+						// 					"label": "Commissioner Info",
+						// 					"type": "ascii",
+						// 					"values": "icms",
+						// 					"groupSize": "icmsSize + 4",
+						// 					"optional": true,
+						// 					"group": [
+						// 						{
+						// 							"id": "icmsSize",
+						// 							"label": "Commissioner Info size",
+						// 							"type": "uint32",
+						// 							"endian": "little"
+						// 						},
+						// 						{
+						// 							"id": "icmsText",
+						// 							"label": "Commissioner Info text",
+						// 							"type": "raw",
+						// 							"count": "icmsSize",
+						// 							"displayType": "ascii"
+						// 						}
+						// 					]
+						// 				},
+						// 				{
+						// 					"id": "commentsInfo",
+						// 					"label": "Comments Info",
+						// 					"type": "ascii",
+						// 					"values": "icmt",
+						// 					"groupSize": "icmtSize + 4",
+						// 					"optional": true,
+						// 					"group": [
+						// 						{
+						// 							"id": "icmtSize",
+						// 							"label": "Comments Info size",
+						// 							"type": "uint32",
+						// 							"endian": "little"
+						// 						},
+						// 						{
+						// 							"id": "icmtText",
+						// 							"label": "Comments Info text",
+						// 							"type": "raw",
+						// 							"count": "icmtSize",
+						// 							"displayType": "ascii"
+						// 						}
+						// 					]
+						// 				},
+						// 				{
+						// 					"id": "copyrightInfo",
+						// 					"label": "Copyright Info",
+						// 					"type": "ascii",
+						// 					"values": "icop",
+						// 					"groupSize": "icopSize + 4",
+						// 					"optional": true,
+						// 					"group": [
+						// 						{
+						// 							"id": "icopSize",
+						// 							"label": "Copyright Info size",
+						// 							"type": "uint32",
+						// 							"endian": "little"
+						// 						},
+						// 						{
+						// 							"id": "icopText",
+						// 							"label": "Copyright Info text",
+						// 							"type": "raw",
+						// 							"count": "icopSize",
+						// 							"displayType": "ascii"
+						// 						}
+						// 					]
+						// 				},
+						// 				{
+						// 					"id": "creationDateInfo",
+						// 					"label": "Creation Date Info",
+						// 					"type": "ascii",
+						// 					"values": "icrd",
+						// 					"groupSize": "icrdSize + 4",
+						// 					"optional": true,
+						// 					"group": [
+						// 						{
+						// 							"id": "icrdSize",
+						// 							"label": "Creation Date Info size",
+						// 							"type": "uint32",
+						// 							"endian": "little"
+						// 						},
+						// 						{
+						// 							"id": "icrdText",
+						// 							"label": "Creation Date Info text",
+						// 							"type": "raw",
+						// 							"count": "icrdSize",
+						// 							"displayType": "ascii"
+						// 						}
+						// 					]
+						// 				},
+						// 				{
+						// 					"id": "engineerInfo",
+						// 					"label": "Engineer Info",
+						// 					"type": "ascii",
+						// 					"values": "ieng",
+						// 					"groupSize": "iengSize + 4",
+						// 					"optional": true,
+						// 					"group": [
+						// 						{
+						// 							"id": "iengSize",
+						// 							"label": "Engineer Info size",
+						// 							"type": "uint32",
+						// 							"endian": "little"
+						// 						},
+						// 						{
+						// 							"id": "iengText",
+						// 							"label": "Engineer Info text",
+						// 							"type": "raw",
+						// 							"count": "iengSize",
+						// 							"displayType": "ascii"
+						// 						}
+						// 					]
+						// 				},
+						// 				{
+						// 					"id": "genreInfo",
+						// 					"label": "Genre Info",
+						// 					"type": "ascii",
+						// 					"values": "ignr",
+						// 					"groupSize": "ignrSize + 4",
+						// 					"optional": true,
+						// 					"group": [
+						// 						{
+						// 							"id": "ignrSize",
+						// 							"label": "Genre Info size",
+						// 							"type": "uint32",
+						// 							"endian": "little"
+						// 						},
+						// 						{
+						// 							"id": "ignrText",
+						// 							"label": "Genre Info text",
+						// 							"type": "raw",
+						// 							"count": "ignrSize",
+						// 							"displayType": "ascii"
+						// 						}
+						// 					]
+						// 				},
+						// 				{
+						// 					"id": "keywordsInfo",
+						// 					"label": "Keywords Info",
+						// 					"type": "ascii",
+						// 					"values": "ikey",
+						// 					"groupSize": "ikeySize + 4",
+						// 					"optional": true,
+						// 					"group": [
+						// 						{
+						// 							"id": "ikeySize",
+						// 							"label": "Keywords Info size",
+						// 							"type": "uint32",
+						// 							"endian": "little"
+						// 						},
+						// 						{
+						// 							"id": "ikeyText",
+						// 							"label": "Keywords Info text",
+						// 							"type": "raw",
+						// 							"count": "ikeySize",
+						// 							"displayType": "ascii"
+						// 						}
+						// 					]
+						// 				},
+						// 				{
+						// 					"id": "mediumInfo",
+						// 					"label": "Medium Info",
+						// 					"type": "ascii",
+						// 					"values": "imed",
+						// 					"groupSize": "imedSize + 4",
+						// 					"optional": true,
+						// 					"group": [
+						// 						{
+						// 							"id": "imedSize",
+						// 							"label": "Medium Info size",
+						// 							"type": "uint32",
+						// 							"endian": "little"
+						// 						},
+						// 						{
+						// 							"id": "imedText",
+						// 							"label": "Medium Info text",
+						// 							"type": "raw",
+						// 							"count": "imedSize",
+						// 							"displayType": "ascii"
+						// 						}
+						// 					]
+						// 				},
+						// 				{
+						// 					"id": "titleInfo",
+						// 					"label": "Title Info",
+						// 					"type": "ascii",
+						// 					"values": "inam",
+						// 					"groupSize": "inamSize + 4",
+						// 					"optional": true,
+						// 					"group": [
+						// 						{
+						// 							"id": "inamSize",
+						// 							"label": "Title Info size",
+						// 							"type": "uint32",
+						// 							"endian": "little"
+						// 						},
+						// 						{
+						// 							"id": "inamText",
+						// 							"label": "Title Info text",
+						// 							"type": "raw",
+						// 							"count": "inamSize",
+						// 							"displayType": "ascii"
+						// 						}
+						// 					]
+						// 				},
+						// 				{
+						// 					"id": "origTitleInfo",
+						// 					"label": "Original Title Info",
+						// 					"type": "ascii",
+						// 					"values": "iprd",
+						// 					"groupSize": "iprdSize + 4",
+						// 					"optional": true,
+						// 					"group": [
+						// 						{
+						// 							"id": "iprdSize",
+						// 							"label": "Original Title Info size",
+						// 							"type": "uint32",
+						// 							"endian": "little"
+						// 						},
+						// 						{
+						// 							"id": "iprdText",
+						// 							"label": "Original Title Info text",
+						// 							"type": "raw",
+						// 							"count": "iprdSize",
+						// 							"displayType": "ascii"
+						// 						}
+						// 					]
+						// 				},
+						// 				{
+						// 					"id": "subjectInfo",
+						// 					"label": "Subject Info",
+						// 					"type": "ascii",
+						// 					"values": "isbj",
+						// 					"groupSize": "isbjSize + 4",
+						// 					"optional": true,
+						// 					"group": [
+						// 						{
+						// 							"id": "isbjSize",
+						// 							"label": "Subject Info size",
+						// 							"type": "uint32",
+						// 							"endian": "little"
+						// 						},
+						// 						{
+						// 							"id": "isbjText",
+						// 							"label": "Subject Info text",
+						// 							"type": "raw",
+						// 							"count": "isbjSize",
+						// 							"displayType": "ascii"
+						// 						}
+						// 					]
+						// 				},
+						// 				{
+						// 					"id": "softwareInfo",
+						// 					"label": "Software Info",
+						// 					"type": "ascii",
+						// 					"values": "isft",
+						// 					"groupSize": "isftSize + 4",
+						// 					"optional": true,
+						// 					"group": [
+						// 						{
+						// 							"id": "isftSize",
+						// 							"label": "Software Info size",
+						// 							"type": "uint32",
+						// 							"endian": "little"
+						// 						},
+						// 						{
+						// 							"id": "isftText",
+						// 							"label": "Software Info text",
+						// 							"type": "raw",
+						// 							"count": "isftSize",
+						// 							"displayType": "ascii"
+						// 						}
+						// 					]
+						// 				},
+						// 				{
+						// 					"id": "sourceInfo",
+						// 					"label": "Source Info",
+						// 					"type": "ascii",
+						// 					"values": "isrc",
+						// 					"groupSize": "isrcSize + 4",
+						// 					"optional": true,
+						// 					"group": [
+						// 						{
+						// 							"id": "isrcSize",
+						// 							"label": "Source Info size",
+						// 							"type": "uint32",
+						// 							"endian": "little"
+						// 						},
+						// 						{
+						// 							"id": "isrcText",
+						// 							"label": "Source Info text",
+						// 							"type": "raw",
+						// 							"count": "isrcSize",
+						// 							"displayType": "ascii"
+						// 						}
+						// 					]
+						// 				},
+						// 				{
+						// 					"id": "sourceFormInfo",
+						// 					"label": "Source Form Info",
+						// 					"type": "ascii",
+						// 					"values": "isrf",
+						// 					"groupSize": "isrfSize + 4",
+						// 					"optional": true,
+						// 					"group": [
+						// 						{
+						// 							"id": "isrfSize",
+						// 							"label": "Source Form Info size",
+						// 							"type": "uint32",
+						// 							"endian": "little"
+						// 						},
+						// 						{
+						// 							"id": "isrfText",
+						// 							"label": "Source Form Info text",
+						// 							"type": "raw",
+						// 							"count": "isrfSize",
+						// 							"displayType": "ascii"
+						// 						}
+						// 					]
+						// 				},
+						// 				{
+						// 					"id": "technicianInfo",
+						// 					"label": "Technician Info",
+						// 					"type": "ascii",
+						// 					"values": "itch",
+						// 					"groupSize": "itchSize + 4",
+						// 					"optional": true,
+						// 					"group": [
+						// 						{
+						// 							"id": "itchSize",
+						// 							"label": "Technician Info size",
+						// 							"type": "uint32",
+						// 							"endian": "little"
+						// 						},
+						// 						{
+						// 							"id": "itchText",
+						// 							"label": "Technician Info text",
+						// 							"type": "raw",
+						// 							"count": "itchSize",
+						// 							"displayType": "ascii"
+						// 						}
+						// 					]
+						// 				}
+						// 			]
+						// 		}
+						// 	]
+						// },
+						// ===============================================================
 						{
 							"id": "labelsAndNamesList",
 							"label": "Text labels and names list",
-							"type": "data",
+							"type": "raw",
 							"count": "listSize",
 							"displayType": "ascii"
 						}
@@ -270,7 +783,8 @@
 				{
 					"id": "lablSubChunks",
 					"label": "Label sub-chunk",
-					"ascii": [ "labl", "note" ],
+					"type": "ascii",
+					"values": [ "labl", "note" ],
 					"groupSize": "lablSize + 4",
 					"optional": true,
 					"group": [
@@ -284,14 +798,14 @@
 							"id": "cuePointId",
 							"label": "Cue point id",
 							"endian": "little",
-							"type": "data",
+							"type": "raw",
 							"count": "4",
 							"displayType": "hexa"
 						},
 						{
 							"id": "lablText",
 							"label": "Label text",
-							"type": "data",
+							"type": "raw",
 							"count": "lablSize - 4"
 						}
 					]
@@ -299,7 +813,8 @@
 				{
 					"id": "ltxtSubChunks",
 					"label": "Labeled text sub-chunk",
-					"ascii": "ltxt",
+					"type": "ascii",
+					"values": "ltxt",
 					"groupSize": "ltxtSize + 4",
 					"optional": true,
 					"group": [
@@ -313,7 +828,7 @@
 							"id": "cuePointId",
 							"label": "Cue point id",
 							"endian": "little",
-							"type": "data",
+							"type": "raw",
 							"count": "4",
 							"displayType": "hexa"
 						},
@@ -326,42 +841,42 @@
 						{
 							"id": "PurposeId",
 							"label": "Purpose id",
-							"type": "data",
+							"type": "raw",
 							"count": "4",
 							"displayType": "hexa"
 						},
 						{
 							"id": "countryId",
 							"label": "Country id",
-							"type": "data",
+							"type": "raw",
 							"count": "2",
 							"displayType": "hexa"
 						},
 						{
 							"id": "languageId",
 							"label": "Language id",
-							"type": "data",
+							"type": "raw",
 							"count": "2",
 							"displayType": "hexa"
 						},
 						{
 							"id": "dialectId",
 							"label": "Dialect id",
-							"type": "data",
+							"type": "raw",
 							"count": "2",
 							"displayType": "hexa"
 						},
 						{
 							"id": "pageCode",
 							"label": "Page code",
-							"type": "data",
+							"type": "raw",
 							"count": "2",
 							"displayType": "hexa"
 						},
 						{
 							"shortId": "labledText",
 							"id": "Labeled text",
-							"type": "data",
+							"type": "raw",
 							"count": "ltxtSize - 20"
 						}
 					]
@@ -369,7 +884,8 @@
 				{
 					"id": "smplSubChunks",
 					"label": "Sampler sub-chunk",
-					"ascii": "smpl",
+					"type": "ascii",
+					"values": "smpl",
 					"groupSize": "smplSize + 4",
 					"optional": true,
 					"group": [
@@ -382,7 +898,7 @@
 						{
 							"id": "manufacturerId",
 							"label": "Manufacturer id",
-							"type": "data",
+							"type": "raw",
 							"count": "4",
 							"displayType": "hexa"
 						},
@@ -411,7 +927,7 @@
 						{
 							"id": "midiPitchFraction",
 							"label": "MIDI pitch fraction",
-							"type": "data",
+							"type": "raw",
 							"count": "4",
 							"displayType": "hexa"
 						},
@@ -431,7 +947,7 @@
 						{
 							"id": "smpteOffset",
 							"label": "SMPTE offset",
-							"type": "data",
+							"type": "raw",
 							"count": "4",
 							"displayType": "hexa"
 						},
@@ -450,7 +966,7 @@
 						{
 							"id": "sampleLoopsList",
 							"label": "Sample loops list",
-							"type": "data",
+							"type": "raw",
 							"count": "smplSize - 36"
 						}
 					]
@@ -458,7 +974,8 @@
 				{
 					"id": "instSubChunks",
 					"label": "Instrument sub-chunk",
-					"ascii": "inst",
+					"type": "ascii",
+					"values": "inst",
 					"groupSize": "instSize + 4",
 					"optional": true,
 					"group": [

@@ -8,17 +8,17 @@ sys.path.append('tools')
 from sconsProject import SConsProject
 
 
-class QualityCheck( SConsProject ):
-	'''
-	The project compilation object.
-	'''
+class FileMetaChecker( SConsProject ):
+        '''
+        The project compilation object.
+        '''
 
 
 
 #______________________________________________________________________________#
 
 # Create the object available in all SConscripts
-project = QualityCheck()
+project = FileMetaChecker()
 Export('project')
 Export({'libs':project.libs})
 
@@ -26,3 +26,4 @@ Export({'libs':project.libs})
 project.begin()
 project.SConscript()
 project.end()
+
