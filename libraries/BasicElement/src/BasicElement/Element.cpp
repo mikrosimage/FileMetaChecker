@@ -16,8 +16,6 @@ Element::Element( const ShPtrSpecNode node,
 	, _id            ( node->getId()    )
 	, _label         ( node->getLabel() )
 	, _uId           ( node->getUId()   )
-	, _size          ( getElementSize( node->getId(), node->getType(), node->getValues() )            )
-	, _iteration     ( getElementIteration( node->getId(), node->getRepetitions(), previous, parent ) )
 	, _specGroupSize ( 0 )
 	, _childrenSize  ( 0 )
 	, _countExpr     ( node->getCount()       )
@@ -31,6 +29,8 @@ Element::Element( const ShPtrSpecNode node,
 	, _repetExpr     ( node->getRepetitions() )
 	, _type          ( node->getType()        )
 	, _displayType   ( node->getDisplayType() )
+	, _size          ( getElementSize( _id, _type, _values )            )
+	, _iteration     ( getElementIteration( _id, _repetExpr, previous, parent ) )
 	, _status        ( eStatusNotChecked )
 	, _error         ( "" )
 	, _warning       ( "" )
@@ -64,9 +64,9 @@ Element::ShPtrSpecNode Element::next( )
 		parent = _parent.lock();
 	
 	// Optional: if element optional & invalid, go to the next SpecNode
-	if( _isOptional && _status == eStatusInvalidButOptional )
+	if( ( _isOptional && _status == eStatusInvalidButOptional ) || _status == eStatusSkip )
 	{
-		LOG_TRACE( "[element] Next: next node of " << _id<< " ( optional )" );
+		LOG_TRACE( "[element] Next: next node of " << _id<< " ( optional / skip )" << std::endl);
 		if( _specNode->next() != nullptr )
 			return _specNode->next();
 		if( parent != nullptr )
