@@ -246,6 +246,7 @@ bool Checker::isRequirementValid( const ShPtrElement element )
 		return true;
 
 	bool requirement = _exprParser->getExpressionResult< bool >( element->_requiredExpr );
+	LOG_TRACE(  "[checker] " << element->_id << ": requirement = " << requirement );
 	return requirement;
 }
 
