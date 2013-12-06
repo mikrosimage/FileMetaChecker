@@ -12,9 +12,9 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_1 )
 						"id": "id",
 						"label": "label",
 						"type": "type",
-						"displayType": "display",
-						"count": "123",
-						"required": true,
+						"display": "display",
+						"size": "123",
+						"requirement": true,
 						"groupSize": "size",
 						"group": [
 							"123"

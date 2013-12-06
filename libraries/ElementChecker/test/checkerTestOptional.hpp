@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_optional_repeated )
 			{
 				"content": [
 					{ "id": "value1", "label": "Value1", "type": "ascii", "values": "WAVE1" },
-					{ "id": "value2", "label": "Value2", "type": "ascii", "values": "WAVE2", "optional": true, "repeated": "2" },
+					{ "id": "value2", "label": "Value2", "type": "ascii", "values": "WAVE2", "optional": true, "repetition": "2" },
 					{ "id": "value3", "label": "Value3", "type": "ascii", "values": "WAVE3" }
 				]
 			}
@@ -314,7 +314,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_optional_group )
 	}
 	LOG_INFO( "\n>>> element_checker_checker_optional_group repeated group <<<" );
 	{
-		std::string jsonStringOption = R"*( "repeated": "2", )*";
+		std::string jsonStringOption = R"*( "repetition": "2", )*";
 
 		spec_reader::Specification spec;
 		spec.setFromString( jsonStringBegin + jsonStringOption + jsonStringEnd );

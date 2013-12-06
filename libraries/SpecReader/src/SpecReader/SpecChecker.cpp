@@ -11,29 +11,38 @@
 namespace spec_reader
 {
 
-SpecChecker::SpecChecker( rapidjson::Document* document, const std::string& filepath )
+SpecChecker::SpecChecker( const std::string& filepath )
 	: _filepath ( filepath )
-	, _document ( document )
+	, _document ( new rapidjson::Document )
 {
 }
 
-void SpecChecker::check()
+bool SpecChecker::check()
 {
-	LOG_TRACE( "[speccheker] filepath: " << _filepath );
-	std::ifstream file( _filepath );
+	try
+	{
+		LOG_TRACE( "[speccheker] filepath: " << _filepath );
+		std::ifstream file( _filepath );
 
-	if( ! file.good() )
-		throw std::runtime_error( "[specchecker] Invalid specification file" );
+		if( ! file.good() )
+			throw std::runtime_error( "[specchecker] Invalid specification file" );
 
-	std::string content( ( std::istreambuf_iterator<char>( file ) ), std::istreambuf_iterator<char>() );
-	_document->Parse<0>( content.c_str() );
-	file.close();
+		std::string content( ( std::istreambuf_iterator<char>( file ) ), std::istreambuf_iterator<char>() );
+		_document->Parse<0>( content.c_str() );
+		file.close();
 
-	if(  _document->HasParseError() )
-		throw std::runtime_error( std::string( _document->GetParseError() ) + "  @char:# " + std::to_string( _document->GetErrorOffset() ) );
-	
-	LOG_TRACE( "[speccheker] _document OK !" );
-	checkSubFile( _document->FindMember( std::string( kContent ).c_str() ) );
+		if(  _document->HasParseError() )
+			throw std::runtime_error( std::string( _document->GetParseError() ) + "  @char:# " + std::to_string( _document->GetErrorOffset() ) );
+		
+		LOG_TRACE( "[speccheker] _document OK !" );
+		checkSubFile( _document->FindMember( std::string( kContent ).c_str() ) );
+		return true;
+	}
+	catch( std::runtime_error& e )
+	{
+		LOG_ERROR( e.what() );
+		return false;
+	}
 }
 
 void SpecChecker::checkSubFile( rapidjson::Value::Member* member )
@@ -85,7 +94,7 @@ void SpecChecker::checkSubFile( rapidjson::Value::Member* member )
 
 void SpecChecker::includeExtNode( rapidjson::Value::Member* member, rapidjson::Value::ConstValueIterator subNode )
 {
-	LOG_TRACE( "[speccheker] includeExtNode" );
+	LOG_TRACE( "[speccheker] includeExtNode " << member->name.GetString() << std::endl );
 	rapidjson::Value object( rapidjson::kObjectType );
 
 	for( rapidjson::Value::ConstMemberIterator itr = subNode->MemberBegin(); itr != subNode->MemberEnd(); ++itr )
@@ -109,7 +118,22 @@ void SpecChecker::includeExtNode( rapidjson::Value::Member* member, rapidjson::V
 				{
 					if( child->GetType() != rapidjson::kObjectType )
 					{
-						object.FindMember( itr->name.GetString() )->value.PushBack( child, _document->GetAllocator() );
+						switch( child->GetType() )
+						{	
+							case rapidjson::kNullType   : object.FindMember( itr->name.GetString() )->value.PushBack( std::string( kNull ).c_str(), _document->GetAllocator() ); break;
+							case rapidjson::kFalseType  :
+							case rapidjson::kTrueType   : object.FindMember( itr->name.GetString() )->value.PushBack( child->GetBool(), _document->GetAllocator() );              break;
+							case rapidjson::kStringType : object.FindMember( itr->name.GetString() )->value.PushBack( child->GetString(), _document->GetAllocator() );            break;
+							case rapidjson::kNumberType :
+							{
+								if( itr->value.IsInt() )
+									object.FindMember( itr->name.GetString() )->value.PushBack( child->GetInt(), _document->GetAllocator() );
+								if( itr->value.IsDouble() )
+									object.FindMember( itr->name.GetString() )->value.PushBack( child->GetDouble(), _document->GetAllocator() );
+								break;
+							}
+							default: break;
+						}
 					}
 					else
 					{
@@ -135,5 +159,22 @@ void SpecChecker::includeExtNode( rapidjson::Value::Member* member, rapidjson::V
 	}
 	member->value.PushBack( object, _document->GetAllocator() );
 }
+
+std::string SpecChecker::getSpecString()
+{
+	try
+	{
+		rapidjson::StringBuffer strbuf;
+		rapidjson::Writer< rapidjson::StringBuffer > writer( strbuf );
+		_document->Accept( writer );
+		return strbuf.GetString();
+	}
+	catch( const std::exception& e )
+	{
+		LOG_ERROR( "[speccheker] displaySpec : " << e.what() );
+		throw;
+	}
+}
+
 
 }

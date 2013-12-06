@@ -231,7 +231,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specification_errors )
 		specfile.close();
 
 		Specification spec;
-		BOOST_CHECK_THROW( spec.setFromFile( specfilename ), std::runtime_error );
+		BOOST_CHECK_EQUAL( spec.setFromFile( specfilename ), false );
 	}
 }
 

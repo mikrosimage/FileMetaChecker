@@ -17,12 +17,12 @@ namespace spec_reader
 class SpecChecker
 {
 public:
+	
 	/**
 	 * SpecChecker's constructor.
-	 * @param document RapidJson document reference.
 	 * @param filepath JSON file path.
 	 */
-	SpecChecker( rapidjson::Document* document, const std::string& filepath );
+	SpecChecker( const std::string& filepath );
 
 	/**
 	 * SpecChecker's destructor.
@@ -34,7 +34,12 @@ public:
 	/**
 	 * Checks the JSON document, and links with JSON subfiles.
 	 */
-	void check();
+	bool check();
+
+	/**
+	 * Get the content of the specification document as a string.
+	 */
+	std::string getSpecString();
 
 private:
 	void checkSubFile  ( rapidjson::Value::Member* member );

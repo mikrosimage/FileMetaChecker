@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_1 )
 								"label": "Value11",
 								"type": "ascii",
 								"values": "B2",
-								"repeated": "10"
+								"repetition": "10"
 							},
 							{
 								"id": "value12",
@@ -218,9 +218,9 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_2 )
 								"label": "Value15",
 								"type": "ascii",
 								"values": "R18",
-								"required": "value1413 == 12596",
+								"requirement": "value1413 == 12596",
 								"ordered": false,
-								"repeated": [
+								"repetition": [
 									{ "min":"2" }
 								],
 								"group": [

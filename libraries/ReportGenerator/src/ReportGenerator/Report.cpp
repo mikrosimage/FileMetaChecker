@@ -107,6 +107,9 @@ void Report::print( const ShPtrElement element )
 
 	if( _verbosity >= eReportDisplayIteration )
 		LOG( ".i: " << std::setfill( ' ' ) << std::setw( 4 ) << element->_iteration << " " );
+
+	if( _verbosity >= eReportDisplayType )
+		LOG( ".t: " << std::setfill( ' ' ) << std::setw( 12 ) << typeStringMap.at( element->_type ) << " " );
 	
 	if( _verbosity >= eReportDisplayID )
 	{
@@ -120,6 +123,8 @@ void Report::print( const ShPtrElement element )
 		LOG_COLOR( color, element->_dispValue );
 		if( ! element->_mapValue.empty() )
 			LOG_COLOR( color, " (" << element->_mapValue << ")" );
+		if( element->_specGroupSize != 0 )
+			LOG( " ( group size: " << element->_specGroupSize << " )" << std::endl );
 	}
 
 	if( ! element->_error.empty() )

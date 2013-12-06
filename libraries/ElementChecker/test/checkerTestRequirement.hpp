@@ -11,7 +11,7 @@ BOOST_AUTO_TEST_CASE( element_checker_test_checker_requirement )
 	std::string jsonStringSecond = R"*(
 					},
 					{ "id": "value2", "label": "Value2", "type": "ascii", "values": "WAVE2", 
-					  "required":
+					  "requirement":
 		)*";
 	std::string jsonStringEnd = R"*(
 					},

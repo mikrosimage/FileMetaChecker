@@ -14,7 +14,7 @@ static const std::string kDescription = "description";
 static const std::string kId     = "id";
 static const std::string kLabel  = "label";
 static const std::string kType   = "type";
-static const std::string kCount  = "count";
+static const std::string kSize   = "size";
 static const std::string kValues = "values";
 static const std::string kMap    = "map";
 static const std::string kRange  = "range";
@@ -23,12 +23,12 @@ static const std::string kMax    = "max";
 
 static const std::string kGroup       = "group";
 static const std::string kGroupSize   = "groupSize";
-static const std::string kRepetition  = "repeated";
-static const std::string kRequired    = "required";
+static const std::string kRepetition  = "repetition";
+static const std::string kRequirement = "requirement";
 static const std::string kEndian      = "endian";
 static const std::string kOptional    = "optional";
 static const std::string kOrdered     = "ordered";
-static const std::string kDisplayType = "displayType";
+static const std::string kDisplayType = "display";
 
 static const std::string kFile        = "file";
 
@@ -37,6 +37,8 @@ static const std::string kTrue         = "true";
 static const std::string kFalse        = "false";
 static const std::string kEndianBig    = "big";
 static const std::string kEndianLittle = "little";
+
+static const std::string kUnknown = "unknown";
 
 static const std::string kAscii   = "ascii";
 static const std::string kHexa    = "hexa";
@@ -67,7 +69,6 @@ static const std::string kSpecification  = "specification";
 static const std::string kElement        = "element";
 
 static const std::string kValue   = "value";
-static const std::string kSize    = "size";
 static const std::string kStatus  = "status";
 
 static const std::string kDefault = "default";
@@ -233,6 +234,7 @@ static const std::map< EStatus, std::string > shortStatusMap
  */
 static const std::map< EType, std::string > typeStringMap
 {
+	{ eTypeUnknown,      kUnknown       },
 	{ eTypeInt8,         kInt8          },
 	{ eTypeUInt8,        kUInt8         },
 	{ eTypeInt16,        kInt16         },

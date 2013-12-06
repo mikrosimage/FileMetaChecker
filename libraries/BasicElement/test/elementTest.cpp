@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE( basic_element_element )
 				"id": "id",
 				"label": "label",
 				"type": "ascii",
-				"displayType": "raw"
+				"display": "raw"
 			}
 		  ]
 		}
@@ -395,7 +395,7 @@ BOOST_AUTO_TEST_CASE( basic_element_next_repetition_one )
 				{
 					"content": [
 						{ "id": "value1", "label": "Value1", "type": "ascii" },
-						{ "id": "value2", "label": "Value2", "type": "ascii", "repeated": "3" },
+						{ "id": "value2", "label": "Value2", "type": "ascii", "repetition": "3" },
 						{ "id": "value3", "label": "Value3", "type": "ascii" },
 						{ "id": "value4", "label": "Value4", "type": "ascii" }
 					]
@@ -452,7 +452,7 @@ BOOST_AUTO_TEST_CASE( basic_element_next_repetition_first )
 		std::string jsonString = R"*(
 				{
 					"content": [
-						{ "id": "value1", "label": "Value1", "type": "ascii", "repeated": "3" },
+						{ "id": "value1", "label": "Value1", "type": "ascii", "repetition": "3" },
 						{ "id": "value2", "label": "Value2", "type": "ascii" }
 					]
 				}
@@ -499,7 +499,7 @@ BOOST_AUTO_TEST_CASE( basic_element_next_repetition_last )
 		{
 			"content": [
 			{ "id": "value1", "label": "Value1", "type": "ascii" },
-			{ "id": "value2", "label": "Value2", "type": "ascii", "repeated": "3" } ]
+			{ "id": "value2", "label": "Value2", "type": "ascii", "repetition": "3" } ]
 		} )*";
 
 		spec_reader::Specification spec;
@@ -545,7 +545,7 @@ BOOST_AUTO_TEST_CASE( basic_element_next_repetition_group )
 						{ "id": "value1",
 						  "label": "Value1",
 						  "type": "ascii",
-						  "repeated": "2",
+						  "repetition": "2",
 						  "group": [
 								{ "id": "value11",
 								  "label": "Value11",
@@ -618,7 +618,7 @@ BOOST_AUTO_TEST_CASE( basic_element_next_repetition_group )
 						{ "id": "value1",
 						  "label": "Value1",
 						  "type": "ascii",
-						  "repeated": "2",
+						  "repetition": "2",
 						  "group": [
 								{ "id": "value11",
 								  "label": "Value11",

@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE( report_generator_test_report )
 								"label": "Value11",
 								"type": "ascii",
 								"values": "B2",
-								"repeated": "2"
+								"repetition": "2"
 							},
 							{
 								"id": "value12",

@@ -6,9 +6,9 @@ BOOST_AUTO_TEST_CASE( element_checker_test_checker_display_type )
 	std::string jsonString = R"*(
 			{
 				"content": [
-					{ "id": "value1", "label": "Value1", "type": "raw", "count": "5", "displayType": "ascii" },
-					{ "id": "value2", "label": "Value2", "type": "raw", "count": "5", "displayType": "uint8" },
-					{ "id": "value3", "label": "Value3", "type": "raw", "count": "3" },
+					{ "id": "value1", "label": "Value1", "type": "raw", "size": "5", "display": "ascii" },
+					{ "id": "value2", "label": "Value2", "type": "raw", "size": "5", "display": "uint8" },
+					{ "id": "value3", "label": "Value3", "type": "raw", "size": "3" },
 					{ "id": "value4", "label": "Value4", "type": "ascii", "values": "WAVE4" }
 				]
 			}

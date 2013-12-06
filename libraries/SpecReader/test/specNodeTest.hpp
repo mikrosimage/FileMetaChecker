@@ -13,9 +13,9 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode )
 							"id": "id",
 							"label": "label",
 							"type": "type",
-							"displayType": "display",
-							"count": "123",
-							"required": "true",
+							"display": "display",
+							"size": "123",
+							"requirement": "true",
 							"optional": false,
 							"endian": "little",
 							"groupSize": "size",
@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode )
 
 		BOOST_CHECK_THROW( node.getId(),    std::runtime_error );
 		BOOST_CHECK_THROW( node.getLabel(), std::runtime_error );
-		BOOST_CHECK_THROW( node.getType(),  std::runtime_error );
+		BOOST_CHECK_EQUAL( node.getType(),  eTypeUnknown       );
 	}
 }
 
@@ -256,7 +256,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 				{
 					"content": [
 						{
-							"repeated": 5
+							"repetition": 5
 						}
 					]
 				}
@@ -274,7 +274,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 				{
 					"content": [
 						{
-							"repeated": "value"
+							"repetition": "value"
 						}
 					]
 				}
@@ -292,7 +292,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 				{
 					"content": [
 						{
-							"repeated": [
+							"repetition": [
 								{
 									"min": "value1",
 									"max": "value2"
@@ -315,7 +315,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 				{
 					"content": [
 						{
-							"repeated": [
+							"repetition": [
 								{
 									"min": "value1"
 								}
@@ -337,7 +337,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 				{
 					"content": [
 						{
-							"repeated": [
+							"repetition": [
 								{
 									"min": "value1",
 									"max": "value2"
@@ -366,7 +366,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 				{
 					"content": [
 						{
-							"repeated": [
+							"repetition": [
 								{
 									"max": "value1"
 								},
@@ -393,7 +393,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 				{
 					"content": [
 						{
-							"repeated": [
+							"repetition": [
 								{
 									"min": "value1"
 								},
@@ -426,7 +426,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 				{
 					"content": [
 						{
-							"repeated": [
+							"repetition": [
 								{
 									"min": "value1"
 								},
@@ -458,7 +458,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode_get_repetition )
 				{
 					"content": [
 						{
-							"repeated": [
+							"repetition": [
 								{
 									"min": "value1"
 								},

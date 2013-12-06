@@ -1,5 +1,6 @@
 #include <Common/log.hpp>
 
+#include <SpecReader/SpecChecker.hpp>
 #include <SpecReader/Specification.hpp>
 #include <FileReader/FileReader.hpp>
 #include <ReportGenerator/Report.hpp>
@@ -78,10 +79,11 @@ int main( int argc, char** argv )
 	{
 		case 0  : displayLevel = report_generator::eReportDisplayNone;      break;
 		case 1  : displayLevel = report_generator::eReportDisplayID;        break;
-		case 2  : displayLevel = report_generator::eReportDisplayValue;     break;
-		case 3  : displayLevel = report_generator::eReportDisplayStatus;    break;
-		case 4  : displayLevel = report_generator::eReportDisplayIteration; break;
-		case 5  : displayLevel = report_generator::eReportDisplayComments;  break;
+		case 2  : displayLevel = report_generator::eReportDisplayType;      break;
+		case 3  : displayLevel = report_generator::eReportDisplayValue;     break;
+		case 4  : displayLevel = report_generator::eReportDisplayStatus;    break;
+		case 5  : displayLevel = report_generator::eReportDisplayIteration; break;
+		case 6  : displayLevel = report_generator::eReportDisplayComments;  break;
 		default : displayLevel = report_generator::eReportDisplayComments;  break;
 	}
 
@@ -132,16 +134,21 @@ int main( int argc, char** argv )
 
 		fb->open( filePath, std::ios::in );
 		file_reader::FileReader file( fb );
-		LOG_INFO( common::details::kColorCyan << "| File length: " << file.getPosition() << "/" << file.getLength() << common::details::kColorStd );
 
+		LOG_INFO( common::details::kColorCyan << "| File length: " << file.getPosition() << "/" << file.getLength() << common::details::kColorStd );
 		LOG_INFO( common::details::kColorCyan << "| Open specification file..." << common::details::kColorStd );
+
 		spec_reader::Specification spec;
 
-		if( ! spec.setFromFile( specPath ) )
+		spec_reader::SpecChecker specChecker( specPath );
+		if( ! specChecker.check() )
 			throw std::runtime_error( "Cannot open specification file: " + specPath );
 
-		LOG_INFO( common::details::kColorCyan << "| Specification: " << spec.getId() << " (" << spec.getType() << ")" << common::details::kColorStd  );
+		spec.setFromString( specChecker.getSpecString() );
+
+		LOG_INFO( common::details::kColorCyan << "| Specification OK: " << spec.getId() << " (" << spec.getType() << ")" << common::details::kColorStd  );
 		LOG_INFO( common::details::kColorCyan << std::setfill( '=' ) << std::setw( filePath.size() + 14 ) << common::details::kColorStd );
+		// LOG( specChecker.getSpecString() << std::endl );
 		
 		report.printHelper();
 
@@ -153,12 +160,12 @@ int main( int argc, char** argv )
 	}
 	catch( std::runtime_error e )
 	{
-		LOG_FATAL( "Runtime error: " << e.what() );
+		LOG_FATAL( "[filemetachecker] Runtime error: " << e.what() );
 		exit( -2 );
 	}
 	catch( std::exception e )
 	{
-		LOG_FATAL( "Error: " << e.what() );
+		LOG_FATAL( "[filemetachecker] Error: " << e.what() );
 		exit( -2 );
 	}
 

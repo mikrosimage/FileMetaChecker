@@ -100,20 +100,18 @@ protected:
 public:
 	const std::string   _id;
 	const std::string   _label;
-	
+
 	const size_t        _uId;
-	size_t              _size;
-	const size_t        _iteration;
 	size_t              _specGroupSize;
 	size_t              _childrenSize;
 	
 	const std::string   _countExpr;
 	const std::string   _requiredExpr;
 	const std::string   _groupSizeExpr;
-	
+
 	const std::vector< std::string >           _values;
 	const std::map< std::string, std::string > _map;
-
+	
 	std::string   _mapValue;
 	std::string   _dispValue;
 	
@@ -123,6 +121,9 @@ public:
 	const EType         _type;
 	const EDisplayType  _displayType;
 	
+	size_t        _size;
+	const size_t  _iteration;
+
 	EStatus       _status;
 	
 	std::string   _error;
@@ -143,6 +144,7 @@ static std::string getPropertiesLegend()
 	std::stringstream legend;
 	legend << "========= LEGEND =========" << std::endl;
 	legend << " v = value                " << std::endl;
+	legend << " t = type                " << std::endl;
 	legend << " i = iteration            " << std::endl;
 	legend << " s = status               " << std::endl;
 	legend << " E = Error                " << std::endl;

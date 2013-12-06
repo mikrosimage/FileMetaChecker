@@ -177,7 +177,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_unordered_group_and_repetitions )
 							  "label": "Value12",
 							  "type": "ascii",
 							  "values": "WAVE2",
-							  "repeated": "2" },
+							  "repetition": "2" },
 							{ "id": "value13",
 							  "label": "Value13",
 							  "type": "ascii",
@@ -387,7 +387,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_unordered_group_and_repetitions_2 
 									"label": "Value12",
 									"type": "ascii",
 									"values": "WAVE2",
-									"repeated": )*";
+									"repetition": )*";
 
 	std::string jsonStringEnd = R"*(
 								},

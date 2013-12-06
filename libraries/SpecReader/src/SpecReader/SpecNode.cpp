@@ -60,7 +60,6 @@ namespace property_parser
 
 		if( value->IsString() )
 			ret = value->GetString();
-
 		return ret;
 	}
 }
@@ -89,7 +88,7 @@ EType SpecNode::getType() const
 {
 	try
 	{
-		return typeMap.at( property_parser::getProperty< std::string >( _node, kType ) );
+		return typeMap.at( property_parser::getProperty< std::string >( _node, kType, "" ) );
 	}
 	catch( const std::out_of_range& oor )
 	{
@@ -113,12 +112,12 @@ EDisplayType SpecNode::getDisplayType() const
 
 std::string SpecNode::getCount() const
 {
-	return property_parser::getProperty< std::string >( _node, kCount, "" );
+	return property_parser::getProperty< std::string >( _node, kSize, "" );
 }
 
 std::string SpecNode::getRequirement() const
 {
-	return property_parser::getProperty< std::string >( _node, kRequired, "" );
+	return property_parser::getProperty< std::string >( _node, kRequirement, "" );
 }
 
 std::string SpecNode::getGroupSize() const

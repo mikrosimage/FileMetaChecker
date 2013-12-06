@@ -15,7 +15,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_count )
 							"id": "value2",
 							"label": "Value2",
 							"type": "raw",
-							"count": )*";
+							"size": )*";
 
 	std::string jsonStringEnd = R"*(
 						},
