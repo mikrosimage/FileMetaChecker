@@ -21,6 +21,7 @@ enum EReportDisplayLevel
 {
 	eReportDisplayNone = 0,
 	eReportDisplayID,
+	eReportDisplayType,
 	eReportDisplayValue,
 	eReportDisplayStatus,
 	eReportDisplayIteration,
