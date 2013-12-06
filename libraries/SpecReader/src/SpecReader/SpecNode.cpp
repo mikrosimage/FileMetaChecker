@@ -112,12 +112,12 @@ EDisplayType SpecNode::getDisplayType() const
 
 std::string SpecNode::getCount() const
 {
-	return property_parser::getProperty< std::string >( _node, kCount, "" );
+	return property_parser::getProperty< std::string >( _node, kSize, "" );
 }
 
 std::string SpecNode::getRequirement() const
 {
-	return property_parser::getProperty< std::string >( _node, kRequired, "" );
+	return property_parser::getProperty< std::string >( _node, kRequirement, "" );
 }
 
 std::string SpecNode::getGroupSize() const

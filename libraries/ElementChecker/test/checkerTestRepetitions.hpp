@@ -17,7 +17,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_repetition )
 							"label": "Value2",
 							"type": "ascii",
 							"values": "WAVE2",
-							"repeated": )*";
+							"repetition": )*";
 						
 
 	std::string jsonStringEnd = R"*(
@@ -252,7 +252,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_repetition_invalid )
 							"label": "Value2",
 							"type": "ascii",
 							"values": "WAVE2",
-							"repeated": )*";
+							"repetition": )*";
 						
 
 	std::string jsonStringEnd = R"*(
