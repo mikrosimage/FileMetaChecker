@@ -38,6 +38,8 @@ static const std::string kFalse        = "false";
 static const std::string kEndianBig    = "big";
 static const std::string kEndianLittle = "little";
 
+static const std::string kUnknown = "unknown";
+
 static const std::string kAscii   = "ascii";
 static const std::string kHexa    = "hexa";
 static const std::string kRaw     = "raw";
@@ -233,6 +235,7 @@ static const std::map< EStatus, std::string > shortStatusMap
  */
 static const std::map< EType, std::string > typeStringMap
 {
+	{ eTypeUnknown,      kUnknown       },
 	{ eTypeInt8,         kInt8          },
 	{ eTypeUInt8,        kUInt8         },
 	{ eTypeInt16,        kInt16         },
