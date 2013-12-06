@@ -1,9 +1,12 @@
 #include "Specification.hpp"
-#include "SpecChecker.hpp"
 
 #include <Common/common.hpp>
 #include <Common/log.hpp>
 #include <Common/color.hpp>
+
+// #include <rapidjson/allocators.h>
+// #include <rapidjson/stringbuffer.h>
+// #include <rapidjson/writer.h>
 
 #include <fstream>
 
@@ -38,9 +41,19 @@ bool Specification::setFromFile( const std::string& filepath )
 {
 	try
 	{
-		SpecChecker( &_specDoc, filepath ).check();
+		std::ifstream file( filepath );
+		if( ! file.good() )
+			throw std::runtime_error( "[specification] Invalid specification file" );
+
+		std::string content( ( std::istreambuf_iterator<char>( file ) ), std::istreambuf_iterator<char>() );
+		_specDoc.Parse<0>( content.c_str() );
+		file.close();
+
 		if( _specDoc.HasParseError() )
+		{
+			LOG_ERROR( std::string( _specDoc.GetParseError() ) + "  @char:# " + std::to_string( _specDoc.GetErrorOffset() ) );
 			return false;
+		}
 		return true;
 	}
 	catch( const std::exception& ex )

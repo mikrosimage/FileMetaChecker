@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode )
 
 		BOOST_CHECK_THROW( node.getId(),    std::runtime_error );
 		BOOST_CHECK_THROW( node.getLabel(), std::runtime_error );
-		BOOST_CHECK_THROW( node.getType(),  std::runtime_error );
+		BOOST_CHECK_EQUAL( node.getType(),  eTypeUnknown       );
 	}
 }
 

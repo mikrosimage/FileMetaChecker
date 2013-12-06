@@ -60,7 +60,6 @@ namespace property_parser
 
 		if( value->IsString() )
 			ret = value->GetString();
-
 		return ret;
 	}
 }
@@ -89,7 +88,7 @@ EType SpecNode::getType() const
 {
 	try
 	{
-		return typeMap.at( property_parser::getProperty< std::string >( _node, kType ) );
+		return typeMap.at( property_parser::getProperty< std::string >( _node, kType, "" ) );
 	}
 	catch( const std::out_of_range& oor )
 	{
