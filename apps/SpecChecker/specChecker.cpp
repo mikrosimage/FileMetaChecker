@@ -1,6 +1,7 @@
 #include <Common/log.hpp>
 
 #include <SpecReader/Specification.hpp>
+#include <SpecReader/SpecChecker.hpp>
 
 #include <iomanip>
 #include <string>
@@ -107,13 +108,15 @@ int main( int argc, char** argv )
 
 	try
 	{
-		spec_reader::Specification spec;
+		spec_reader::SpecChecker specChecker( specPath );
 
-		if( ! spec.setFromFile( specPath ) )
+		if( ! specChecker.check() )
 			throw std::runtime_error( "Cannot open specification file: " + specPath );
 
+		spec_reader::Specification spec;
+		spec.setFromString( specChecker.getSpecString() );
+
 		LOG_INFO( common::details::kColorCyan << "Specification: " << spec.getId() << " (" << spec.getType() << ")" << common::details::kColorStd << std::endl );
-		
 		checkNodes( spec.getFirstNode() );
 	}
 	catch( std::runtime_error e )
