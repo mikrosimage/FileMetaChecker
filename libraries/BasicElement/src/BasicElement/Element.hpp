@@ -144,6 +144,7 @@ static std::string getPropertiesLegend()
 	std::stringstream legend;
 	legend << "========= LEGEND =========" << std::endl;
 	legend << " v = value                " << std::endl;
+	legend << " t = type                " << std::endl;
 	legend << " i = iteration            " << std::endl;
 	legend << " s = status               " << std::endl;
 	legend << " E = Error                " << std::endl;
