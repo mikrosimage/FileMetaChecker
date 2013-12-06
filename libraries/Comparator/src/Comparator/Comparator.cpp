@@ -101,6 +101,7 @@ bool Comparator::isInUnorderedGroup( const ShPtrElement element )
 	{
 		if( ! parent->_isOrdered )
 			return true;
+		parent = parent->getParent();
 	}
 	return false;
 }
@@ -133,7 +134,7 @@ Comparator::ShPtrElement Comparator::getNextParent( const ShPtrElement element, 
 {
 	ShPtrElement parent = element->getParent();
 	bool isLastInGroup = ( node->next() == nullptr && ( parent == nullptr || ( parent->_isOrdered || ( ! parent->_isOrdered && element->_status == eStatusInvalidButSkip ) ) ) );
-	bool isNotSkipped = ( element->_status != eStatusInvalidButOptional && element->_status != eStatusInvalidButSkip && element->_status != eStatusInvalidForIteration );
+	bool isNotSkipped = ( element->_status != eStatusInvalidButOptional && element->_status != eStatusInvalidButSkip && element->_status != eStatusInvalidForIteration && element->_status != eStatusSkip );
 
 	if( element->_isGroup && ! element->_checkedGroup && isNotSkipped )
 		return element;
