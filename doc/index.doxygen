@@ -1,0 +1,22 @@
+/** @mainpage FileMetaChecker
+ *
+ * FileMetaChecker is a tool to extract metadatas from various files as images, video, sound, etc.
+ * It is based on libraryless extractor, only a human readable specification describe the standard.
+ *   
+ * Compilation
+ *    
+ * - `git clone https://github.com/mikrosimage/FileMetaChecker.git`  
+ * - `git submodule update -i`  
+ * - `scons`  
+ *   
+ * and to launch unittest  
+ * - `scons unittest`  
+ *   
+ * Tested compilers
+ * - Linux + GCC 4.6.2 on OpenSUSE 12.1 64bits
+ * - Linux + GCC 4.8.1 on OpenSUSE 12.1 64bits
+ *
+ * This generated documentation is useful for developers who want to:
+ *  - participate to the project developpement
+ *
+ */
