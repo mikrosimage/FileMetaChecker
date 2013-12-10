@@ -133,6 +133,7 @@ public:
 	const bool    _isOrdered;
 	const bool    _isOptional;
 	const bool    _isBigEndian;
+	const bool    _isCaseSensitive;
 	bool          _checkedGroup;
 
 
