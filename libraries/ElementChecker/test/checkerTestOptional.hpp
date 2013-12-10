@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_optional )
 		elem2->set( buff3, checker.getSize( elem2 ) );
 		checker.check( elem2 );
 		BOOST_CHECK_EQUAL( elem2->_isOptional, true );
-		BOOST_CHECK_EQUAL( elem2->_status, eStatusInvalidButOptional );
+		BOOST_CHECK_EQUAL( elem2->_status, eStatusSkip );
 
 		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2 ) );
 		BOOST_CHECK_EQUAL( elem3->_id, node->next()->next()->getId() );
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_optional_repeated )
 		elem2->set( buff3, checker.getSize( elem2 ) );
 		checker.check( elem2 );
 		BOOST_CHECK_EQUAL( elem2->_isOptional, true );
-		BOOST_CHECK_EQUAL( elem2->_status, eStatusInvalidButOptional );
+		BOOST_CHECK_EQUAL( elem2->_status, eStatusSkip );
 
 		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2 ) );
 		BOOST_CHECK_EQUAL( elem3->_id, node->next()->next()->getId() );
@@ -137,7 +137,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_optional_repeated )
 		elem4->set( buff3, checker.getSize( elem4 ) );
 		checker.check( elem4 );
 		BOOST_CHECK_EQUAL( elem4->_isOptional, true );
-		BOOST_CHECK_EQUAL( elem4->_status, eStatusInvalidButSkip );
+		BOOST_CHECK_EQUAL( elem4->_status, eStatusSkip );
 		BOOST_CHECK( elem3->_error.empty() );
 
 		std::shared_ptr< basic_element::Element > elem5( new basic_element::Element( elem4->next(), elem4 ) );
@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_optional_repeated )
 		elem3->set( buff3, checker.getSize( elem3 ) );
 		checker.check( elem3 );
 		BOOST_CHECK_EQUAL( elem3->_isOptional, true );
-		BOOST_CHECK_EQUAL( elem3->_status, eStatusInvalidForIteration );
+		BOOST_CHECK_EQUAL( elem3->_status, eStatusInvalid );
 		BOOST_CHECK( ! elem3->_error.empty() );
 
 		std::shared_ptr< basic_element::Element > elem4( new basic_element::Element( elem3->next(), elem3 ) );
@@ -246,7 +246,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_optional_group )
 		elem2->set( buff3, checker.getSize( elem2 ) );
 		checker.check( elem2 );
 		BOOST_CHECK_EQUAL( elem2->_isOptional, true );
-		BOOST_CHECK_EQUAL( elem2->_status, eStatusInvalidButOptional );
+		BOOST_CHECK_EQUAL( elem2->_status, eStatusSkip );
 
 		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2 ) );
 		BOOST_CHECK_EQUAL( elem3->_id, node->next()->next()->getId() );
@@ -296,7 +296,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_optional_group )
 		elem4->set( buff6, checker.getSize( elem4 ) );
 		checker.check( elem4 );
 		BOOST_CHECK_EQUAL( elem4->_isOptional, true );
-		BOOST_CHECK_EQUAL( elem4->_status, eStatusInvalidButOptional );
+		BOOST_CHECK_EQUAL( elem4->_status, eStatusSkip );
 
 		std::shared_ptr< basic_element::Element > elem5( new basic_element::Element( elem4->next(), elem4, elem2 ) );
 		BOOST_CHECK_EQUAL( elem5->_id, node->next()->firstChild()->next()->next()->getId() );
@@ -352,7 +352,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_optional_group )
 		elem4->set( buff6, checker.getSize( elem4 ) );
 		checker.check( elem4 );
 		BOOST_CHECK_EQUAL( elem4->_isOptional, true );
-		BOOST_CHECK_EQUAL( elem4->_status, eStatusInvalidButOptional );
+		BOOST_CHECK_EQUAL( elem4->_status, eStatusSkip );
 
 		std::shared_ptr< basic_element::Element > elem5( new basic_element::Element( elem4->next(), elem4, elem2 ) );
 		BOOST_CHECK_EQUAL( elem5->_id, node->next()->firstChild()->next()->next()->getId() );
@@ -389,7 +389,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_optional_group )
 		BOOST_CHECK_EQUAL( elem10->_id, node->next()->getId() );
 		elem10->set( buff3, checker.getSize( elem10 ) );
 		checker.check( elem10 );
-		BOOST_CHECK_EQUAL( elem10->_status, eStatusInvalidButSkip );
+		BOOST_CHECK_EQUAL( elem10->_status, eStatusSkip );
 
 		std::shared_ptr< basic_element::Element > elem11( new basic_element::Element( elem10->next(), elem10 ) );
 		BOOST_CHECK_EQUAL( elem11->_id, node->next()->next()->getId() );

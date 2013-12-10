@@ -39,40 +39,12 @@ Checker::Checker()
 
 void Checker::check( const ShPtrElement element )
 {
-	if( element->_data.size() == 0 && element->_countExpr.empty() )
-	{
-		std::string warning = "Null data size ";
-		// LOG_WARNING( "[checker] " << element->_id << ": " << warning );
-		element->_warning.push_back( "[checker] " + warning );
-	}
-	
-	element->_dispValue = Translator( element ).get( element->_displayType );
-
 	ShPtrElement parent   = element->getParent();
 	ShPtrElement previous = element->getPrevious();
-
-	// if nothing to compare
-	if( element->_values.empty() && element->_rangeExpr.empty() && element->_map.empty() )
-	{
-		element->_status = eStatusPassOver;
-		if( ! isRequirementValid( element ) )
-			element->_status = eStatusSkip;
-		_exprParser->addElementToContext( element );
-	}
-
-	if( parent != nullptr && previous != nullptr && element->getSpecNode()->next() == nullptr && ! parent->_groupSizeExpr.empty() )
-	{
-		parent->_specGroupSize = _exprParser->getExpressionResult< size_t >( parent->_groupSizeExpr );
-		LOG_TRACE( "[checker] set " << element->_id << "'s parent (" << parent->_id << ") groupSize (" << parent->_groupSizeExpr << "): " << parent->_specGroupSize );
-	}
-
-	if( element->_status != eStatusNotChecked )
-	{
-		LOG_TRACE( "[checker] " << element->_id << " : pre return status = " << statusMap.at( element->_status ) );
-		return;
-	}
-
+	
 	EStatus status = eStatusInvalid;
+	
+	element->_dispValue = Translator( element ).get( element->_displayType );
 
 	switch( element->_type )
 	{
@@ -93,24 +65,20 @@ void Checker::check( const ShPtrElement element )
 		case eTypeAscii :
 		case eTypeHexa  :
 		{
-			status = eStatusInvalid;
 			std::string orig = Translator( element ).get();
 			std::string lowCase = orig;
-			std::string upCase  = orig;
 			std::transform( lowCase.begin(), lowCase.end(), lowCase.begin(), ::tolower );
-			std::transform(  upCase.begin(),  upCase.end(),  upCase.begin(), ::toupper );
-
+		
 			for( std::string value : element->_values )
-				if( value == orig || value == lowCase || value == upCase )
+				if( value == orig || ( ! element->_isCaseSensitive && value == lowCase ) )
 					status = eStatusValid;
-			
+
 			element->_mapValue = Map< std::string >( element->_map ).getLabel( orig );
-			if( element->_mapValue.empty() )
+			if( element->_mapValue.empty() && ! element->_isCaseSensitive )
 				element->_mapValue = Map< std::string >( element->_map ).getLabel( lowCase );
-			if( element->_mapValue.empty() )
-				element->_mapValue = Map< std::string >( element->_map ).getLabel( upCase );
-			
-			if( ! element->_mapValue.empty() && status == eStatusInvalid )
+
+			if( ( element->_values.empty() && ! element->_mapValue.empty() ) ||
+				( element->_values.empty() && element->_mapValue.empty() && element->_map.empty() ) )
 				status = eStatusPassOver;
 
 			if( status == eStatusInvalid )
@@ -128,63 +96,72 @@ void Checker::check( const ShPtrElement element )
 	if( ! isRequirementValid( element ) )
 	{
 		LOG_TRACE( "[checker] " << element->_id << " : requirement not valid -> skipped" );
-		element->_status = eStatusSkip;
-		_exprParser->addElementToContext( element );
-		if( element->getSpecNode()->next() == nullptr && parent != nullptr && ! parent->_isOrdered )
-			checkLastUnorderedElement( element );
-		return;
+		status = eStatusSkip;
 	}
-
 	
 	if( element->_isOptional && status == eStatusInvalid && element->_iteration == 1 )
 	{
 		LOG_TRACE( "[checker] " << element->_id << " : invalid but optional -> invalid but skipped" );
-		element->_status = eStatusInvalidButOptional;
-		_exprParser->addElementToContext( element );
-		if( element->getSpecNode()->next() == nullptr && parent != nullptr && ! parent->_isOrdered )
-			checkLastUnorderedElement( element );
-		return;
+		status = eStatusSkip;
 	}
 
 	if( parent != nullptr && ! parent->_isOrdered && status == eStatusInvalid )
 	{
 		LOG_TRACE( "[checker] " << element->_id << " : unordered group -> invalid but skipped" );
-		element->_status = eStatusInvalidButSkip;
-		if( element->getSpecNode()->next() == nullptr )
-			checkLastUnorderedElement( element );
-		return;
+		status = eStatusSkip;
 	}
 
-	element->_status = status;
-
-	// if element invalid and repeated : checked if iterations valid
 	if( status == eStatusInvalid && ! element->_repetExpr.empty() )
 	{
-		LOG_TRACE( "[checker] check Repetitions" );
-		element->_status = eStatusInvalidButSkip;
+		LOG_TRACE( "[checker] " << element->_id << " : check repetitions" );
+		status = eStatusSkip;
 		std::string errorMessage;
 		ShPtrElement previous = element->getPrevious();
 		if( ! isIterationValid( previous, errorMessage ) )
 		{
-			LOG_ERROR( "[checker] " << element->_id << ": " << errorMessage );
+			LOG_ERROR( errorMessage << " (" << element->_id << " )" );
 			element->_error.push_back( errorMessage );
-			_exprParser->addElementToContext( element );
-			element->_status = eStatusInvalidForIteration;
+			status = eStatusInvalid;
 		}
-		LOG_TRACE( "[checker] repetitions " << previous );
-		return;
 	}
 
-	LOG_TRACE( "[checker] " << element->_id << " : return status = " << statusMap.at( status ) );
-	_exprParser->addElementToContext( element );
+	if( element->getSpecNode()->next() == nullptr && status == eStatusSkip && parent != nullptr && ! parent->_isOrdered )
+		checkLastUnorderedElement( element );
 
+	element->_status = status;
+
+	switch( status )
+	{
+		case eStatusValid    :
+		case eStatusInvalid  :
+		case eStatusPassOver : _exprParser->addElementToContext( element ); break;
+		default : break;
+	}
+
+	setParentGroupSize( element );
+
+	LOG_TRACE( "[checker] " << element->_id << " : return status = " << statusMap.at( status ) );
+}
+
+void Checker::setParentGroupSize( const ShPtrElement element )
+{
+	ShPtrElement parent = element->getParent();
+
+	if( parent == nullptr                         ||
+		element->getPrevious() == nullptr         ||
+		element->getSpecNode()->next() != nullptr ||
+		parent->_groupSizeExpr.empty()            )
+		return;
+	
+	parent->_specGroupSize = _exprParser->getExpressionResult< size_t >( parent->_groupSizeExpr );
+	LOG_TRACE( "[checker] set " << element->_id << "'s parent (" << parent->_id << ") groupSize (" << parent->_groupSizeExpr << "): " << parent->_specGroupSize );
 }
 
 size_t Checker::getSize( const ShPtrElement element )
 {
-	size_t size = 0;
 	try
 	{
+		size_t size = 0;
 		if( ! element->_values.empty() )
 		{
 			size = element->_values.at( 0 ).size();
@@ -215,13 +192,17 @@ size_t Checker::getSize( const ShPtrElement element )
 			size = _exprParser->getExpressionResult< size_t >( element->_countExpr );
 			LOG_TRACE( "[checker] get " << element->_id << "'s size: " << size );
 		}
+
+		if( size == 0 )
+			element->_warning.push_back( "[checker] Null data size " );
+
 		return size;
 	}
 	catch( std::runtime_error e )
 	{
 		LOG_ERROR( "[checker] " << e.what() << " (" << element->_id << ")" );
+		throw;
 	}
-	return size;
 }
 
 bool Checker::isIterationValid( const ShPtrElement element, std::string& errorMessage )
@@ -259,7 +240,6 @@ bool Checker::isIterationValid( const ShPtrElement element, std::string& errorMe
 		}
 	}
 	errorMessage = "[checker] Out of repetition range (" + error.str() + ") ";
-	LOG_ERROR( errorMessage );
 	return false;
 }
 
@@ -275,6 +255,7 @@ bool Checker::isRequirementValid( const ShPtrElement element )
 
 void Checker::checkLastUnorderedElement( const ShPtrElement element )
 {
+	LOG_COLOR( common::details::kColorMagenta, "checkLastUnorderedElement" << std::endl );
 	if( element->getPrevious() == nullptr )
 		throw std::runtime_error( "[checker] Invalid tree" );
 
@@ -286,7 +267,6 @@ void Checker::checkLastUnorderedElement( const ShPtrElement element )
 	{
 		for( std::string id : childIds )
 		{
-
 			if( prev->_id == id && prev->_status == eStatusValid )
 			{
 				// LOG_TRACE( "[checker] childId's: " << id );
@@ -296,7 +276,7 @@ void Checker::checkLastUnorderedElement( const ShPtrElement element )
 					LOG_ERROR( "(" << prev->_id << ") " << errorMessage );
 					prev->_error.push_back( errorMessage );
 					_exprParser->addElementToContext( prev );
-					prev->getParent()->_status = eStatusInvalidGroupForIteration;
+					prev->getParent()->_status = eStatusInvalid;
 				}
 
 				childIds.erase( id );
@@ -318,7 +298,7 @@ void Checker::checkLastUnorderedElement( const ShPtrElement element )
 	if( childIds.size() != 0 )
 	{
 		LOG_WARNING( "[checker] " << element->_id << ": End of unordered group, remaining children: " << childIds.size() );
-		parent->_status = eStatusInvalidForUnordered;
+		parent->_status = eStatusInvalid;
 	}
 	else
 	{
