@@ -132,16 +132,17 @@ BOOST_AUTO_TEST_SUITE( element_checker_tests_expression_parser )
 
 BOOST_AUTO_TEST_CASE( element_checker_expression_parser_shared_ptr )
 {
-	LOG_WARNING( ">>> element_checker_expression_parser_shared_ptr <<<" );
+	LOG_INFO( ">>> element_checker_expression_parser_shared_ptr <<<" );
 	{
 		std::string jsonString = R"*(
 				{
-					"header": [
+					"content": [
 						{ "id": "value1", "label": "Value1", "type": "uint32" },
 						{ "id": "value2", "label": "Value2", "type": "uint16" },
 						{ "id": "value3", "label": "Value3", "type": "float" },
 						{ "id": "value4", "label": "Value4", "type": "ascii" },
-						{ "id": "value0", "label": "Value0", "type": "uint32" }
+						{ "id": "value0", "label": "Value0", "type": "uint32" },
+						{ "id": "value5", "label": "Value5", "type": "ascii" }
 					]
 				}
 			)*";
@@ -155,31 +156,37 @@ BOOST_AUTO_TEST_CASE( element_checker_expression_parser_shared_ptr )
 		std::shared_ptr< basic_element::Element > num3( new basic_element::Element( node->next()->next() ) );
 		std::shared_ptr< basic_element::Element > num4( new basic_element::Element( node->next()->next()->next() ) );
 		std::shared_ptr< basic_element::Element > num0( new basic_element::Element( node->next()->next()->next()->next() ) );
+		std::shared_ptr< basic_element::Element > num5( new basic_element::Element( node->next()->next()->next()->next()->next() ) );
 
 		char buffer1[] = { 0x00, 0x00, 0x00, 0x01 };
 		char buffer2[] = { 0x00, 0x02 };
 		char buffer3[] = { 0x3f, 0x7f, 0x00, 0x00 };
 		char buffer0[] = { 0x00, 0x00, 0x00, 0x00 };
+		char buffer5[] = { 'w', 'o', 'r', 'd' };
 		
 		num1->set( buffer1, 4 );
 		num2->set( buffer2, 2 );
 		num3->set( buffer3, 4 );
 		num0->set( buffer0, 4 );
+		num5->set( buffer5, 4 );
 
 		std::ostringstream res1;
 		std::ostringstream res2;
 		std::ostringstream res3;
 		std::ostringstream res0;
+		std::ostringstream res5;
 
 		res1 << Translator( num1 ).get< basic_element::uint32 >();
 		res2 << Translator( num2 ).get< basic_element::uint16 >();
 		res3 << Translator( num3 ).get< float >();
 		res0 << Translator( num0 ).get< basic_element::uint32 >();
+		res5 << Translator( num5 ).get();
 
 		BOOST_CHECK_EQUAL( res1.str(), "1"        );
 		BOOST_CHECK_EQUAL( res2.str(), "2"        );
 		BOOST_CHECK_EQUAL( res3.str(), "0.996094" );
 		BOOST_CHECK_EQUAL( res0.str(), "0" );
+		BOOST_CHECK_EQUAL( res5.str(), "word" );
 
 		std::vector< std::shared_ptr< basic_element::Element > > elementList;
 		elementList.push_back( num1 );
@@ -187,6 +194,7 @@ BOOST_AUTO_TEST_CASE( element_checker_expression_parser_shared_ptr )
 		elementList.push_back( num3 );
 		elementList.push_back( num4 );
 		elementList.push_back( num0 );
+		elementList.push_back( num5 );
 
 		ExpressionParser expParser( elementList );
 		BOOST_CHECK_EQUAL( expParser.getExpressionResult< int   >( "value1" ), 1 );
@@ -198,14 +206,12 @@ BOOST_AUTO_TEST_CASE( element_checker_expression_parser_shared_ptr )
 		BOOST_CHECK_CLOSE( expParser.getExpressionResult< float >( "value1 * value3" ),  0.996094, 0.001 );
 		BOOST_CHECK_CLOSE( expParser.getExpressionResult< float >( "value3 / value2" ),  0.498047, 0.001 );
 		
-		BOOST_CHECK_EQUAL( expParser.getExpressionResult< bool  >( "value4" ), true );
-		BOOST_CHECK_EQUAL( expParser.getExpressionResult< int   >( "value4" ), 1 );
-		BOOST_CHECK_EQUAL( expParser.getExpressionResult< int   >( "value4 * value2" ), 2 );
+		BOOST_CHECK_EQUAL( expParser.getExpressionResult< bool  >( "value4 == ''" ), true );
 		
 		BOOST_CHECK_EQUAL( expParser.getExpressionResult< int   >( "value0" ), 0 );
 		BOOST_CHECK_EQUAL( expParser.getExpressionResult< bool  >( "value0" ), false );
 
-		BOOST_CHECK_EQUAL( expParser.getExpressionResult< bool  >( "value5" ), false );
+		BOOST_CHECK_EQUAL( expParser.getExpressionResult< bool  >( "value5 is 'word'" ), true );
 	}
 }
 

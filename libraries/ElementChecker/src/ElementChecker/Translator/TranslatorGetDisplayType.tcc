@@ -4,8 +4,8 @@ namespace element_checker
 
 std::string Translator::get( const EDisplayType dispType )
 {
-	if( _ref->_data == nullptr )
-		throw std::runtime_error( "Undefined data" );
+	if( _ref->_data.empty() )
+		return "";
 
 	std::ostringstream osstr;
 	switch( dispType )

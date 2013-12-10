@@ -14,7 +14,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_1 )
 						"type": "type",
 						"display": "display",
 						"size": "123",
-						"requirement": true,
+						"requirement": "True",
 						"groupSize": "size",
 						"group": [
 							"123"
