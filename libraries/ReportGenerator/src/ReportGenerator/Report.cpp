@@ -94,6 +94,7 @@ void Report::print( const ShPtrElement element )
 	{
 		case eStatusValid    : color = common::details::kColorGreen; break;
 		case eStatusInvalid  : color = common::details::kColorRed;   break;
+		case eStatusUnknown  : color = common::details::kColorCyan;  break;
 		default: return;
 	}
 	
@@ -110,10 +111,10 @@ void Report::print( const ShPtrElement element )
 		LOG( ".t: " << std::setfill( ' ' ) << std::setw( 12 ) << typeStringMap.at( element->_type ) << " " );
 
 	if( _verbosity >= eReportDisplaySize )
-		LOG( ".s: " << std::setfill( ' ' ) << std::setw( 16 ) << element->_data.size() << " " );
+		LOG( ".s: " << std::setfill( ' ' ) << std::setw( 12 ) << element->_data.size() << " " );
 
 	if( _verbosity >= eReportDisplayAddress )
-		LOG( ".@: " << std::setfill( ' ' ) << std::setw( 16 ) << element << " " );
+		LOG( ".@: " << std::setfill( ' ' ) << std::setw( 9 ) << element << " " );
 
 	if( _verbosity >= eReportDisplayID )
 	{
@@ -184,6 +185,7 @@ bool Report::isPrintable( const ShPtrElement element )
 	bool ret = false;
 	switch( element->_status )
 	{
+		case eStatusUnknown  :
 		case eStatusValid    :
 		case eStatusInvalid  : ret = true;
 		default: break;
