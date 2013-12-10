@@ -140,7 +140,7 @@ void Report::print( const ShPtrElement element )
 		LOG( " >> " );
 		LOG_COLOR( common::details::kColorYellow, "W: " );
 		for( std::string w : element->_warning )
-			LOG_COLOR( common::details::kColorRed, w );
+			LOG_COLOR( common::details::kColorYellow, w );
 	}
 
 	LOG_ENDL();
@@ -240,7 +240,7 @@ void Report::writeXml( const std::string& filename )
 		addXmlNodeAttribute( doc, node, kType,        typeStringMap.at( element->_type) );
 		
 		std::stringstream sizeSstr;
-		sizeSstr << element->_size;
+		sizeSstr << element->_data.size();
 		addXmlNodeAttribute( doc, node, kSize,        sizeSstr.str()                    );
 
 		std::string value = "";
