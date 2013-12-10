@@ -60,8 +60,7 @@ Element::ShPtrSpecNode Element::next( )
 	if( _parent.use_count() != 0 )
 		parent = _parent.lock();
 	
-	// Optional: if element optional & invalid, go to the next SpecNode
-	if( ( _isOptional && _status == eStatusInvalidButOptional ) || _status == eStatusSkip )
+	if( _status == eStatusSkip )
 	{
 		LOG_TRACE( "[element] Next: next node of " << _id<< " ( optional / skip )" << std::endl);
 		if( _specNode->next() != nullptr )
@@ -78,7 +77,7 @@ Element::ShPtrSpecNode Element::next( )
 	}
 	
 	// Groups: if element has a group not already checked and is valid or first time parsed, go to the first child
-	if( _specNode->isGroup() && ! _checkedGroup && ( _iteration == 1 || _status == eStatusValid ) && _status != eStatusInvalidButSkip )
+	if( _specNode->isGroup() && ! _checkedGroup && ( _iteration == 1 || _status == eStatusValid ) && _status != eStatusSkip )
 	{
 		_checkedGroup = true;
 		ShPtrSpecNode child( _specNode->firstChild() );
