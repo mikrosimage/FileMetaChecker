@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE( report_generator_test_report )
 	ShPtrElement elem4  = checkElement( elem3->next(),  report, elem3,   elem0,   "value12",   eStatusValid );
 	ShPtrElement elem5  = checkElement( elem4->next(),  report, elem4,   elem4,   "value121",  eStatusValid );
 	ShPtrElement elem6  = checkElement( elem5->next(),  report, elem5,   elem5,   "value1211", eStatusInvalid );
-	ShPtrElement elem7  = checkElement( elem6->next(),  report, elem6,   elem5,   "value1212", eStatusPassOver );
+	ShPtrElement elem7  = checkElement( elem6->next(),  report, elem6,   elem5,   "value1212", eStatusValid );
 	ShPtrElement elem8  = checkElement( elem7->next(),  report, elem7,   elem5,   "value1213", eStatusSkip  );
 	ShPtrElement elem9  = checkElement( elem8->next(),  report, elem8,   elem4,   "value122",  eStatusValid );
 	ShPtrElement elem10 = checkElement( elem9->next(),  report, elem9,   elem0,   "value13",   eStatusValid );

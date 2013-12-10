@@ -65,8 +65,10 @@ void Report::update( const ShPtrElement newElement )
 
 void Report::printHelper()
 {
-	if( _verbosity > eReportDisplayNone )
-		LOG_COLOR( common::details::kColorBoldWhite, basic_element::getPropertiesLegend() );
+	if( _verbosity == eReportDisplayNone )
+		return;
+	LOG_COLOR( common::details::kColorBoldWhite, basic_element::Element::getLabelsLegend() );
+	LOG_COLOR( common::details::kColorBoldWhite, basic_element::Element::getElementPropertiesLegend() );
 }
 
 void Report::print()
@@ -91,14 +93,13 @@ void Report::print( const ShPtrElement element )
 	switch( element->_status )
 	{
 		case eStatusValid    : color = common::details::kColorGreen; break;
-		case eStatusPassOver : color = common::details::kColorCyan;  break;
 		case eStatusInvalid  : color = common::details::kColorRed;   break;
 		default: return;
 	}
 	
 	if( _verbosity >= eReportDisplayStatus )
 	{
-		LOG( "s: " );
+		LOG( "S: " );
 		LOG_COLOR( color, tabulation( 14, statusMap.at( element->_status ) ) );
 	}
 
@@ -107,7 +108,10 @@ void Report::print( const ShPtrElement element )
 
 	if( _verbosity >= eReportDisplayType )
 		LOG( ".t: " << std::setfill( ' ' ) << std::setw( 12 ) << typeStringMap.at( element->_type ) << " " );
-	
+
+	if( _verbosity >= eReportDisplayType )
+		LOG( ".s: " << std::setfill( ' ' ) << std::setw( 16 ) << element->_data.size() << " " );
+
 	if( _verbosity >= eReportDisplayID )
 	{
 		LOG( "." );
@@ -178,7 +182,6 @@ bool Report::isPrintable( const ShPtrElement element )
 	switch( element->_status )
 	{
 		case eStatusValid    :
-		case eStatusPassOver :
 		case eStatusInvalid  : ret = true;
 		default: break;
 	}
@@ -215,8 +218,7 @@ void Report::writeXml( const std::string& filename )
 
 	for( std::shared_ptr< basic_element::Element > element : _elementList )
 	{
-		if( element->_status == eStatusSkip
-		 || element->_status == eStatusNotChecked         )
+		if( element->_status == eStatusSkip )
 			continue;
 
 		std::shared_ptr< basic_element::Element > parent   = element->getParent();
