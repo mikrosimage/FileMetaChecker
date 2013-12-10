@@ -145,6 +145,7 @@ public:
 		legend << " i = iteration            " << std::endl;
 		legend << " S = status               " << std::endl;
 		legend << " s = size                 " << std::endl;
+		legend << " @ = address              " << std::endl;
 		legend << " E = Error                " << std::endl;
 		legend << " W = Warning              " << std::endl;
 		legend                                 << std::endl;
