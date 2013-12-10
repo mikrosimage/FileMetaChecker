@@ -130,13 +130,17 @@ void Report::print( const ShPtrElement element )
 	if( ! element->_error.empty() )
 	{
 		LOG( " >> " );
-		LOG_COLOR( common::details::kColorRed, "E: " << element->_error );
+		LOG_COLOR( common::details::kColorRed, "E: " );
+		for( std::string e : element->_error )
+			LOG_COLOR( common::details::kColorRed, e );
 	}
 
 	if( ! element->_warning.empty() )
 	{
 		LOG( " >> " );
-		LOG_COLOR( common::details::kColorYellow, "W: " << element->_warning );
+		LOG_COLOR( common::details::kColorYellow, "W: " );
+		for( std::string w : element->_warning )
+			LOG_COLOR( common::details::kColorRed, w );
 	}
 
 	LOG_ENDL();
@@ -194,6 +198,14 @@ void addXmlNodeAttribute( rapidxml::xml_document<>& doc, rapidxml::xml_node<>* n
 	node->append_attribute( doc.allocate_attribute( name.c_str(), value.c_str() ) );
 }
 
+void addXmlNodeAttribute( rapidxml::xml_document<>& doc, rapidxml::xml_node<>* node, const std::string& attrName, const std::vector< std::string >& attrValues )
+{
+	std::string name  = attrName;
+	std::string value;
+	for( std::string v : attrValues )
+		value += v;
+	node->append_attribute( doc.allocate_attribute( name.c_str(), value.c_str() ) );
+}
 
 void Report::writeXml( const std::string& filename )
 {
@@ -230,7 +242,12 @@ void Report::writeXml( const std::string& filename )
 		std::stringstream sizeSstr;
 		sizeSstr << element->_size;
 		addXmlNodeAttribute( doc, node, kSize,        sizeSstr.str()                    );
-		addXmlNodeAttribute( doc, node, kValue,       element->_dispValue               );
+
+		std::string value = "";
+		if( element->_displayType != eDisplayTypeDefault || element->_type != eTypeRaw )
+			value = element->_dispValue;
+		addXmlNodeAttribute( doc, node, kValue,       value                             );
+
 		addXmlNodeAttribute( doc, node, kMap,         element->_mapValue                );
 		addXmlNodeAttribute( doc, node, kStatus,      statusMap.at( element->_status )  );
 

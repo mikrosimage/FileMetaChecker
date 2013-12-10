@@ -164,10 +164,10 @@ BOOST_AUTO_TEST_CASE( report_generator_test_report )
 	report.update( elem6 );
 	BOOST_CHECK_EQUAL( report.get( elem6->_id )->_status, eStatusValid );
 
-	BOOST_CHECK_EQUAL( elem1->_error, "" );
-	elem1->_error = "Error";
+	BOOST_CHECK( elem1->_error.empty() );
+	elem1->_error.push_back( "Error" );
 	report.update( elem1 );
-	BOOST_CHECK_EQUAL( report.get( elem1->_id )->_error, elem1->_error  );
+	BOOST_CHECK_EQUAL( report.get( elem1->_id )->_error.at( 0 ), elem1->_error.at( 0 ) );
 	BOOST_CHECK_EQUAL( report.get( elem1->_id    )->_uId, elem1->_uId  );
 	BOOST_CHECK_EQUAL( report.get( elem1->_id, 2 )->_uId, elem2->_uId );
 	BOOST_CHECK( report.get( "other" ) == nullptr );
