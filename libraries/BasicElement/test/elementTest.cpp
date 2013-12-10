@@ -66,14 +66,14 @@ BOOST_AUTO_TEST_CASE( basic_element_element )
 		BOOST_CHECK_EQUAL( elem._isOptional,  node->isOptional()  );
 		BOOST_CHECK_EQUAL( elem._isBigEndian, node->isBigEndian() );
 
-		BOOST_CHECK( elem._data == nullptr );
+		BOOST_CHECK( elem._data.empty() );
 	
 		const size_t size = 5;
 		const char buffer[] = { 0x7d, 0x21, 0x32, 'c', '!' };
 		elem.set( buffer, size );
 		BOOST_CHECK_EQUAL( elem._size, size );
 		for( size_t i = 0; i < size; ++i )
-			BOOST_CHECK_EQUAL( elem._data[i], buffer[i] );
+			BOOST_CHECK_EQUAL( elem._data.at( i ), buffer[i] );
 
 		elem._error.push_back( kError );
 		BOOST_CHECK_EQUAL( elem._error.at( 0 ), kError );

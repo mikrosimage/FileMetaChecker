@@ -37,7 +37,6 @@ Element::Element( const ShPtrSpecNode node,
 	, _isOptional    ( node->isOptional()  )
 	, _isBigEndian   ( node->isBigEndian() )
 	, _checkedGroup  ( false )
-	, _data          ( nullptr )
 {
 	if( ! _parent.expired() )
 		_parent.lock()->_children.push_back( std::make_shared< Element >( *this ) );
@@ -109,10 +108,9 @@ Element::ShPtrSpecNode Element::next( )
 
 void Element::set( const char* data, const size_t& size )
 {
-	_data = new char [size];
 	_size = size;
-	
-	std::memcpy( _data, data, _size );
+	_data.resize( _size );
+	std::memcpy( &_data[0], data, _size );
 }
 
 std::string Element::getPropertiesFlag()
