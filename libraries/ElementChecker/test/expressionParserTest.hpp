@@ -158,11 +158,11 @@ BOOST_AUTO_TEST_CASE( element_checker_expression_parser_shared_ptr )
 		std::shared_ptr< basic_element::Element > num0( new basic_element::Element( node->next()->next()->next()->next() ) );
 		std::shared_ptr< basic_element::Element > num5( new basic_element::Element( node->next()->next()->next()->next()->next() ) );
 
-		char buffer1[] = { 0x00, 0x00, 0x00, 0x01 };
-		char buffer2[] = { 0x00, 0x02 };
-		char buffer3[] = { 0x3f, 0x7f, 0x00, 0x00 };
-		char buffer0[] = { 0x00, 0x00, 0x00, 0x00 };
-		char buffer5[] = { 'w', 'o', 'r', 'd' };
+		std::vector< char > buffer1 { 0x00, 0x00, 0x00, 0x01 };
+		std::vector< char > buffer2 { 0x00, 0x02 };
+		std::vector< char > buffer3 { 0x3f, 0x7f, 0x00, 0x00 };
+		std::vector< char > buffer0 { 0x00, 0x00, 0x00, 0x00 };
+		std::vector< char > buffer5 { 'w', 'o', 'r', 'd' };
 		
 		num1->set( buffer1, 4 );
 		num2->set( buffer2, 2 );

@@ -20,11 +20,11 @@ BOOST_AUTO_TEST_CASE( element_checker_test_checker_requirement )
 			}
 		)*";
 
-	const char buff1[5] { 'W', 'A', 'V', 'E', '1' };
-	const char buff2[5] { 'W', 'A', 'V', 'E', '2' };
-	const char buff3[5] { 'W', 'A', 'V', 'E', '3' };
-	const char buff4[4] { 0x00, 0x00, 0x00, 0x01 };
-	const char buff5[4] { 0x00, 0x00, 0x00, 0x00 };
+	std::vector< char > buff1 { 'W', 'A', 'V', 'E', '1' };
+	std::vector< char > buff2 { 'W', 'A', 'V', 'E', '2' };
+	std::vector< char > buff3 { 'W', 'A', 'V', 'E', '3' };
+	std::vector< char > buff4 { 0x00, 0x00, 0x00, 0x01 };
+	std::vector< char > buff5 { 0x00, 0x00, 0x00, 0x00 };
 
 
 	LOG_INFO( "\n>>> element_checker_test_checker_requirement 1 <<<" );
@@ -49,21 +49,21 @@ BOOST_AUTO_TEST_CASE( element_checker_test_checker_requirement )
 		std::shared_ptr< basic_element::Element > elem1( new basic_element::Element( node ) );
 		BOOST_CHECK_EQUAL( elem1->_id, node->getId() );
 		BOOST_CHECK( elem1->_requiredExpr.empty() );
-		elem1->set( (const char*)&buff1, checker.getSize( elem1 ) );
+		elem1->set( buff1, checker.getSize( elem1 ) );
 		checker.check( elem1 );
 		BOOST_CHECK_EQUAL( elem1->_status, eStatusValid );
 
 		std::shared_ptr< basic_element::Element > elem2( new basic_element::Element( elem1->next(), elem1 ) );
 		BOOST_CHECK_EQUAL( elem2->_id, node->next()->getId() );
 		BOOST_CHECK( ! elem2->_requiredExpr.empty() );
-		elem2->set( (const char*)&buff2, checker.getSize( elem2 ) );
+		elem2->set( buff2, checker.getSize( elem2 ) );
 		checker.check( elem2 );
 		BOOST_CHECK_EQUAL( elem2->_status, eStatusValid );
 
 		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2 ) );
 		BOOST_CHECK_EQUAL( elem3->_id, node->next()->next()->getId() );
 		BOOST_CHECK( elem3->_requiredExpr.empty() );
-		elem3->set( (const char*)&buff3, checker.getSize( elem3 ) );
+		elem3->set( buff3, checker.getSize( elem3 ) );
 		checker.check( elem3 );
 		BOOST_CHECK_EQUAL( elem3->_status, eStatusValid );
 
@@ -91,21 +91,21 @@ BOOST_AUTO_TEST_CASE( element_checker_test_checker_requirement )
 		std::shared_ptr< basic_element::Element > elem1( new basic_element::Element( node ) );
 		BOOST_CHECK_EQUAL( elem1->_id, node->getId() );
 		BOOST_CHECK( elem1->_requiredExpr.empty() );
-		elem1->set( (const char*)&buff4, checker.getSize( elem1 ) );
+		elem1->set( buff4, checker.getSize( elem1 ) );
 		checker.check( elem1 );
 		BOOST_CHECK_EQUAL( elem1->_status, eStatusPassOver );
 
 		std::shared_ptr< basic_element::Element > elem2( new basic_element::Element( elem1->next(), elem1 ) );
 		BOOST_CHECK_EQUAL( elem2->_id, node->next()->getId() );
 		BOOST_CHECK( ! elem2->_requiredExpr.empty() );
-		elem2->set( (const char*)&buff2, checker.getSize( elem2 ) );
+		elem2->set( buff2, checker.getSize( elem2 ) );
 		checker.check( elem2 );
 		BOOST_CHECK_EQUAL( elem2->_status, eStatusValid );
 
 		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2 ) );
 		BOOST_CHECK_EQUAL( elem3->_id, node->next()->next()->getId() );
 		BOOST_CHECK( elem3->_requiredExpr.empty() );
-		elem3->set( (const char*)&buff3, checker.getSize( elem3 ) );
+		elem3->set( buff3, checker.getSize( elem3 ) );
 		checker.check( elem3 );
 		BOOST_CHECK_EQUAL( elem3->_status, eStatusValid );
 
@@ -133,21 +133,21 @@ BOOST_AUTO_TEST_CASE( element_checker_test_checker_requirement )
 		std::shared_ptr< basic_element::Element > elem1( new basic_element::Element( node ) );
 		BOOST_CHECK_EQUAL( elem1->_id, node->getId() );
 		BOOST_CHECK( elem1->_requiredExpr.empty() );
-		elem1->set( (const char*)&buff4, checker.getSize( elem1 ) );
+		elem1->set( buff4, checker.getSize( elem1 ) );
 		checker.check( elem1 );
 		BOOST_CHECK_EQUAL( elem1->_status, eStatusPassOver );
 
 		std::shared_ptr< basic_element::Element > elem2( new basic_element::Element( elem1->next(), elem1 ) );
 		BOOST_CHECK_EQUAL( elem2->_id, node->next()->getId() );
 		BOOST_CHECK( ! elem2->_requiredExpr.empty() );
-		elem2->set( (const char*)&buff2, checker.getSize( elem2 ) );
+		elem2->set( buff2, checker.getSize( elem2 ) );
 		checker.check( elem2 );
 		BOOST_CHECK_EQUAL( elem2->_status, eStatusValid );
 
 		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2 ) );
 		BOOST_CHECK_EQUAL( elem3->_id, node->next()->next()->getId() );
 		BOOST_CHECK( elem3->_requiredExpr.empty() );
-		elem3->set( (const char*)&buff3, checker.getSize( elem3 ) );
+		elem3->set( buff3, checker.getSize( elem3 ) );
 		checker.check( elem3 );
 		BOOST_CHECK_EQUAL( elem3->_status, eStatusValid );
 
@@ -175,21 +175,21 @@ BOOST_AUTO_TEST_CASE( element_checker_test_checker_requirement )
 		std::shared_ptr< basic_element::Element > elem1( new basic_element::Element( node ) );
 		BOOST_CHECK_EQUAL( elem1->_id, node->getId() );
 		BOOST_CHECK( elem1->_requiredExpr.empty() );
-		elem1->set( (const char*)&buff4, checker.getSize( elem1 ) );
+		elem1->set( buff4, checker.getSize( elem1 ) );
 		checker.check( elem1 );
 		BOOST_CHECK_EQUAL( elem1->_status, eStatusPassOver );
 
 		std::shared_ptr< basic_element::Element > elem2( new basic_element::Element( elem1->next(), elem1 ) );
 		BOOST_CHECK_EQUAL( elem2->_id, node->next()->getId() );
 		BOOST_CHECK( ! elem2->_requiredExpr.empty() );
-		elem2->set( (const char*)&buff2, checker.getSize( elem2 ) );
+		elem2->set( buff2, checker.getSize( elem2 ) );
 		checker.check( elem2 );
 		BOOST_CHECK_EQUAL( elem2->_status, eStatusSkip );
 
 		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2 ) );
 		BOOST_CHECK_EQUAL( elem3->_id, node->next()->next()->getId() );
 		BOOST_CHECK( elem3->_requiredExpr.empty() );
-		elem3->set( (const char*)&buff3, checker.getSize( elem3 ) );
+		elem3->set( buff3, checker.getSize( elem3 ) );
 		checker.check( elem3 );
 		BOOST_CHECK_EQUAL( elem3->_status, eStatusValid );
 
@@ -217,21 +217,21 @@ BOOST_AUTO_TEST_CASE( element_checker_test_checker_requirement )
 		std::shared_ptr< basic_element::Element > elem1( new basic_element::Element( node ) );
 		BOOST_CHECK_EQUAL( elem1->_id, node->getId() );
 		BOOST_CHECK( elem1->_requiredExpr.empty() );
-		elem1->set( (const char*)&buff1, checker.getSize( elem1 ) );
+		elem1->set( buff1, checker.getSize( elem1 ) );
 		checker.check( elem1 );
 		BOOST_CHECK_EQUAL( elem1->_status, eStatusValid );
 
 		std::shared_ptr< basic_element::Element > elem2( new basic_element::Element( elem1->next(), elem1 ) );
 		BOOST_CHECK_EQUAL( elem2->_id, node->next()->getId() );
 		BOOST_CHECK( ! elem2->_requiredExpr.empty() );
-		elem2->set( (const char*)&buff2, checker.getSize( elem2 ) );
+		elem2->set( buff2, checker.getSize( elem2 ) );
 		checker.check( elem2 );
 		BOOST_CHECK_EQUAL( elem2->_status, eStatusValid );
 
 		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2 ) );
 		BOOST_CHECK_EQUAL( elem3->_id, node->next()->next()->getId() );
 		BOOST_CHECK( elem3->_requiredExpr.empty() );
-		elem3->set( (const char*)&buff3, checker.getSize( elem3 ) );
+		elem3->set( buff3, checker.getSize( elem3 ) );
 		checker.check( elem3 );
 		BOOST_CHECK_EQUAL( elem3->_status, eStatusValid );
 
@@ -259,21 +259,21 @@ BOOST_AUTO_TEST_CASE( element_checker_test_checker_requirement )
 		std::shared_ptr< basic_element::Element > elem1( new basic_element::Element( node ) );
 		BOOST_CHECK_EQUAL( elem1->_id, node->getId() );
 		BOOST_CHECK( elem1->_requiredExpr.empty() );
-		elem1->set( (const char*)&buff5, checker.getSize( elem1 ) );
+		elem1->set( buff5, checker.getSize( elem1 ) );
 		checker.check( elem1 );
 		BOOST_CHECK_EQUAL( elem1->_status, eStatusValid );
 
 		std::shared_ptr< basic_element::Element > elem2( new basic_element::Element( elem1->next(), elem1 ) );
 		BOOST_CHECK_EQUAL( elem2->_id, node->next()->getId() );
 		BOOST_CHECK( ! elem2->_requiredExpr.empty() );
-		elem2->set( (const char*)&buff2, checker.getSize( elem2 ) );
+		elem2->set( buff2, checker.getSize( elem2 ) );
 		checker.check( elem2 );
 		BOOST_CHECK_EQUAL( elem2->_status, eStatusValid );
 
 		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2 ) );
 		BOOST_CHECK_EQUAL( elem3->_id, node->next()->next()->getId() );
 		BOOST_CHECK( elem3->_requiredExpr.empty() );
-		elem3->set( (const char*)&buff3, checker.getSize( elem3 ) );
+		elem3->set( buff3, checker.getSize( elem3 ) );
 		checker.check( elem3 );
 		BOOST_CHECK_EQUAL( elem3->_status, eStatusValid );
 
