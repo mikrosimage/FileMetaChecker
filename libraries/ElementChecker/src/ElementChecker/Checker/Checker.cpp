@@ -42,8 +42,8 @@ void Checker::check( const ShPtrElement element )
 	if( element->_size == 0 && element->_countExpr.empty() )
 	{
 		std::string warning = "Null data size ";
-		LOG_WARNING( "[checker] " << element->_id << ": " << warning );
-		element->_warning += "[checker] " + warning;
+		// LOG_WARNING( "[checker] " << element->_id << ": " << warning );
+		element->_warning.push_back( "[checker] " + warning );
 	}
 	
 	element->_dispValue = Translator( element ).get( element->_displayType );
@@ -114,7 +114,7 @@ void Checker::check( const ShPtrElement element )
 				status = eStatusPassOver;
 
 			if( status == eStatusInvalid )
-				element->_error += "[checker] Invalid value ";
+				element->_error.push_back( "[checker] Invalid value " );
 			break;
 		}
 
@@ -176,7 +176,7 @@ void Checker::check( const ShPtrElement element )
 		if( ! isIterationValid( previous, errorMessage ) )
 		{
 			LOG_ERROR( "[checker] " << element->_id << ": " << errorMessage );
-			element->_error += errorMessage;
+			element->_error.push_back( errorMessage );
 			_exprParser->addElementToContext( element );
 			element->_status = eStatusInvalidForIteration;
 		}
@@ -271,7 +271,7 @@ void Checker::checkLastUnorderedElement( const ShPtrElement element )
 				if( ! prev->_repetExpr.empty() && ! isIterationValid( prev, errorMessage ) )
 				{
 					LOG_ERROR( "(" << prev->_id << ") " << errorMessage );
-					prev->_error += errorMessage;
+					prev->_error.push_back( errorMessage );
 					_exprParser->addElementToContext( prev );
 					prev->getParent()->_status = eStatusInvalidGroupForIteration;
 				}

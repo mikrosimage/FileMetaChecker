@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_data )
 
 		checker.check( elem );
 		BOOST_CHECK_EQUAL( elem->_status, eStatusInvalid );
-		BOOST_CHECK( elem->_error.find( "Invalid value" ) != std::string::npos );
+		BOOST_CHECK( ! elem->_error.empty() );
 		BOOST_CHECK( node->next() == nullptr );
 		BOOST_CHECK( elem->next() == nullptr );
 	}
