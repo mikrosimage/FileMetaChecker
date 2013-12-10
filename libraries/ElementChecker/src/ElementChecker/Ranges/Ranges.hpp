@@ -36,6 +36,9 @@ public:
 
 	bool isInRanges( const ValueType& value )
 	{
+		if( ! _ranges.size() )
+			return true;
+
 		for( Range< ValueType > range : _ranges )
 		{
 			if( range.isInRange( value ) )

@@ -24,11 +24,9 @@ namespace utils
 
 		element->_mapValue = Map< NumberType >( element->_map ).getLabel( value );
 		
-		if( element->_rangeExpr.empty() )
-			return eStatusPassOver;
-		if( Ranges< NumberType >( element->_rangeExpr ).isInRanges( value ) )
-			return eStatusValid;
-		return eStatusInvalid;
+		if( ! Ranges< NumberType >( element->_rangeExpr ).isInRanges( value ) )
+			return eStatusInvalid;
+		return eStatusValid;
 	}
 }
 
@@ -48,7 +46,7 @@ void Checker::check( const ShPtrElement element )
 
 	switch( element->_type )
 	{
-		case eTypeUnknown      : LOG_ERROR( "[checker] Unknown element type, cannot check it" ); break;
+		case eTypeUnknown      : status = eStatusUnknown; break;
 		
 		case eTypeInt8         : status = utils::checkNumberElement< be::int8         >( element ); break;
 		case eTypeUInt8        : status = utils::checkNumberElement< be::uint8        >( element ); break;
@@ -77,9 +75,8 @@ void Checker::check( const ShPtrElement element )
 			if( element->_mapValue.empty() && ! element->_isCaseSensitive )
 				element->_mapValue = Map< std::string >( element->_map ).getLabel( lowCase );
 
-			if( ( element->_values.empty() && ! element->_mapValue.empty() ) ||
-				( element->_values.empty() && element->_mapValue.empty() && element->_map.empty() ) )
-				status = eStatusPassOver;
+			if( element->_values.empty() && ! element->_mapValue.empty() && getSize( element ) )
+				status = eStatusValid;
 
 			if( status == eStatusInvalid )
 				element->_error.push_back( "[checker] Invalid value " );
@@ -88,7 +85,7 @@ void Checker::check( const ShPtrElement element )
 
 		case eTypeRaw   :
 		{
-			status = eStatusPassOver;
+			status = eStatusUnknown;
 			break;
 		}
 	}
@@ -133,8 +130,7 @@ void Checker::check( const ShPtrElement element )
 	switch( status )
 	{
 		case eStatusValid    :
-		case eStatusInvalid  :
-		case eStatusPassOver : _exprParser->addElementToContext( element ); break;
+		case eStatusInvalid  : _exprParser->addElementToContext( element ); break;
 		default : break;
 	}
 

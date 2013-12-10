@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_repetition )
 		Checker checker;
 
 		std::shared_ptr< basic_element::Element > elem1( new basic_element::Element( node ) );
-		BOOST_CHECK_EQUAL( elem1->_status, eStatusNotChecked );
+		BOOST_CHECK_EQUAL( elem1->_status, eStatusUnknown );
 		elem1->set( buff1, 5 );
 		checker.check( elem1 );
 		BOOST_CHECK_EQUAL( elem1->_status, eStatusValid );
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_repetition )
 		Checker checker;
 
 		std::shared_ptr< basic_element::Element > elem1( new basic_element::Element( node ) );
-		BOOST_CHECK_EQUAL( elem1->_status, eStatusNotChecked );
+		BOOST_CHECK_EQUAL( elem1->_status, eStatusUnknown );
 		elem1->set( buff1, 5 );
 		checker.check( elem1 );
 		BOOST_CHECK_EQUAL( elem1->_status, eStatusValid );
@@ -151,7 +151,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_repetition )
 		Checker checker;
 
 		std::shared_ptr< basic_element::Element > elem1( new basic_element::Element( node ) );
-		BOOST_CHECK_EQUAL( elem1->_status, eStatusNotChecked );
+		BOOST_CHECK_EQUAL( elem1->_status, eStatusUnknown );
 		elem1->set( buff1, 5 );
 		checker.check( elem1 );
 		BOOST_CHECK_EQUAL( elem1->_status, eStatusValid );
@@ -201,7 +201,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_repetition )
 		Checker checker;
 
 		std::shared_ptr< basic_element::Element > elem1( new basic_element::Element( node ) );
-		BOOST_CHECK_EQUAL( elem1->_status, eStatusNotChecked );
+		BOOST_CHECK_EQUAL( elem1->_status, eStatusUnknown );
 		elem1->set( buff1, 5 );
 		checker.check( elem1 );
 		BOOST_CHECK_EQUAL( elem1->_status, eStatusValid );
@@ -285,7 +285,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_repetition_invalid )
 
 		Checker checker;
 		std::shared_ptr< basic_element::Element > elem1( new basic_element::Element( node ) );
-		BOOST_CHECK_EQUAL( elem1->_status, eStatusNotChecked );
+		BOOST_CHECK_EQUAL( elem1->_status, eStatusUnknown );
 		elem1->set( buff1, 5 );
 		checker.check( elem1 );
 		BOOST_CHECK_EQUAL( elem1->_status, eStatusValid );
@@ -330,7 +330,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_repetition_invalid )
 		Checker checker;
 
 		std::shared_ptr< basic_element::Element > elem1( new basic_element::Element( node ) );
-		BOOST_CHECK_EQUAL( elem1->_status, eStatusNotChecked );
+		BOOST_CHECK_EQUAL( elem1->_status, eStatusUnknown );
 		elem1->set( buff1, 5 );
 		checker.check( elem1 );
 		BOOST_CHECK_EQUAL( elem1->_status, eStatusValid );
@@ -370,7 +370,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_repetition_invalid )
 		Checker checker;
 
 		std::shared_ptr< basic_element::Element > elem1( new basic_element::Element( node ) );
-		BOOST_CHECK_EQUAL( elem1->_status, eStatusNotChecked );
+		BOOST_CHECK_EQUAL( elem1->_status, eStatusUnknown );
 		elem1->set( buff1, 5 );
 		checker.check( elem1 );
 		BOOST_CHECK_EQUAL( elem1->_status, eStatusValid );
@@ -430,7 +430,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_repetition_invalid )
 		Checker checker;
 
 		std::shared_ptr< basic_element::Element > elem1( new basic_element::Element( node ) );
-		BOOST_CHECK_EQUAL( elem1->_status, eStatusNotChecked );
+		BOOST_CHECK_EQUAL( elem1->_status, eStatusUnknown );
 		elem1->set( buff1, 5 );
 		checker.check( elem1 );
 		BOOST_CHECK_EQUAL( elem1->_status, eStatusValid );

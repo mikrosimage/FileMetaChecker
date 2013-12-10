@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE( element_checker_test_checker_map )
 		BOOST_CHECK( ! elem2->_map.empty() );
 		elem2->set( buff2, checker.getSize( elem2 ) );
 		checker.check( elem2 );
-		BOOST_CHECK_EQUAL( elem2->_status, eStatusPassOver );
+		BOOST_CHECK_EQUAL( elem2->_status, eStatusValid );
 		BOOST_CHECK_EQUAL( elem2->_mapValue, "First Label" );
 
 		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2 ) );
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE( element_checker_test_checker_map )
 		BOOST_CHECK( ! elem2->_map.empty() );
 		elem2->set( buff2, checker.getSize( elem2 ) );
 		checker.check( elem2 );
-		BOOST_CHECK_EQUAL( elem2->_status, eStatusPassOver );
+		BOOST_CHECK_EQUAL( elem2->_status, eStatusValid );
 		BOOST_CHECK_EQUAL( elem2->_mapValue, "Second Label" );
 
 		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2 ) );
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE( element_checker_test_checker_map )
 		BOOST_CHECK( ! elem2->_map.empty() );
 		elem2->set( buff2, checker.getSize( elem2 ) );
 		checker.check( elem2 );
-		BOOST_CHECK_EQUAL( elem2->_status, eStatusPassOver );
+		BOOST_CHECK_EQUAL( elem2->_status, eStatusValid );
 		BOOST_CHECK_EQUAL( elem2->_mapValue, "Third Label" );
 
 		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2 ) );
@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE( element_checker_test_checker_map )
 		BOOST_CHECK( ! elem2->_map.empty() );
 		elem2->set( buff2, checker.getSize( elem2 ) );
 		checker.check( elem2 );
-		BOOST_CHECK_EQUAL( elem2->_status, eStatusPassOver );
+		BOOST_CHECK_EQUAL( elem2->_status, eStatusValid );
 		BOOST_CHECK( elem2->_mapValue.empty() );
 
 		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2 ) );
@@ -189,7 +189,7 @@ BOOST_AUTO_TEST_CASE( element_checker_test_checker_map_hexa )
 		BOOST_CHECK( ! elem2->_map.empty() );
 		elem2->set( buff2, checker.getSize( elem2 ) );
 		checker.check( elem2 );
-		BOOST_CHECK_EQUAL( elem2->_status, eStatusPassOver );
+		BOOST_CHECK_EQUAL( elem2->_status, eStatusValid );
 		BOOST_CHECK_EQUAL( elem2->_mapValue, "First Label" );
 
 		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2 ) );
@@ -217,7 +217,7 @@ BOOST_AUTO_TEST_CASE( element_checker_test_checker_map_hexa )
 		BOOST_CHECK( ! elem2->_map.empty() );
 		elem2->set( buff2, checker.getSize( elem2 ) );
 		checker.check( elem2 );
-		BOOST_CHECK_EQUAL( elem2->_status, eStatusPassOver );
+		BOOST_CHECK_EQUAL( elem2->_status, eStatusValid );
 		BOOST_CHECK_EQUAL( elem2->_mapValue, "Second Label" );
 
 		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2 ) );
@@ -245,7 +245,7 @@ BOOST_AUTO_TEST_CASE( element_checker_test_checker_map_hexa )
 		BOOST_CHECK( ! elem2->_map.empty() );
 		elem2->set( buff2, checker.getSize( elem2 ) );
 		checker.check( elem2 );
-		BOOST_CHECK_EQUAL( elem2->_status, eStatusPassOver );
+		BOOST_CHECK_EQUAL( elem2->_status, eStatusValid );
 		BOOST_CHECK_EQUAL( elem2->_mapValue, "Third Label" );
 
 		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2 ) );

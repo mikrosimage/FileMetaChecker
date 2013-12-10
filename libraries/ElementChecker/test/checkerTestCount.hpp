@@ -48,12 +48,12 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_count )
 		Checker checker;
 
 		std::shared_ptr< basic_element::Element > elem1( new basic_element::Element( node ) );
-		BOOST_CHECK_EQUAL( elem1->_status, eStatusNotChecked );
+		BOOST_CHECK_EQUAL( elem1->_status, eStatusUnknown );
 		BOOST_CHECK_EQUAL( checker.getSize( elem1 ), 4 );
 		elem1->set( buff1, checker.getSize( elem1 ) );
 		BOOST_CHECK_EQUAL( elem1->_data.size(),      4 );
 		checker.check( elem1 );
-		BOOST_CHECK_EQUAL( elem1->_status, eStatusPassOver );
+		BOOST_CHECK_EQUAL( elem1->_status, eStatusValid );
 
 		std::shared_ptr< basic_element::Element > elem2( new basic_element::Element( elem1->next(), elem1 ) );
 		BOOST_CHECK_EQUAL( elem2->_data.size(),      0 );
@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_count )
 		elem2->set( buff2, checker.getSize( elem2 ) );
 		checker.check( elem2 );
 		BOOST_CHECK_EQUAL( elem2->_data.size(),      5 );
-		BOOST_CHECK_EQUAL( elem2->_status, eStatusPassOver );
+		BOOST_CHECK_EQUAL( elem2->_status, eStatusUnknown );
 
 		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2 ) );
 		BOOST_CHECK_EQUAL( checker.getSize( elem3 ), 5 );
@@ -87,12 +87,12 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_count )
 		Checker checker;
 
 		std::shared_ptr< basic_element::Element > elem1( new basic_element::Element( node ) );
-		BOOST_CHECK_EQUAL( elem1->_status, eStatusNotChecked );
+		BOOST_CHECK_EQUAL( elem1->_status, eStatusUnknown );
 		BOOST_CHECK_EQUAL( checker.getSize( elem1 ), 4 );
 		elem1->set( buff1, checker.getSize( elem1 ) );
 		BOOST_CHECK_EQUAL( elem1->_data.size(),      4 );
 		checker.check( elem1 );
-		BOOST_CHECK_EQUAL( elem1->_status, eStatusPassOver );
+		BOOST_CHECK_EQUAL( elem1->_status, eStatusValid );
 
 		std::shared_ptr< basic_element::Element > elem2( new basic_element::Element( elem1->next(), elem1 ) );
 		BOOST_CHECK_EQUAL( elem2->_data.size(),      0 );
@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_count )
 		elem2->set( buff2, checker.getSize( elem2 ) );
 		checker.check( elem2 );
 		BOOST_CHECK_EQUAL( elem2->_data.size(),      3 );
-		BOOST_CHECK_EQUAL( elem2->_status, eStatusPassOver );
+		BOOST_CHECK_EQUAL( elem2->_status, eStatusUnknown );
 
 		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2 ) );
 		BOOST_CHECK_EQUAL( checker.getSize( elem3 ), 5 );

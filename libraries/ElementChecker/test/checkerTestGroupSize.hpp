@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_groupSize )
 		BOOST_CHECK_EQUAL( elem1->_id, node->getId() );
 		elem1->set( buff1, checker.getSize( elem1 ) );
 		checker.check( elem1 );
-		BOOST_CHECK_EQUAL( elem1->_status, eStatusPassOver );
+		BOOST_CHECK_EQUAL( elem1->_status, eStatusValid );
 
 		std::shared_ptr< basic_element::Element > elem2( new basic_element::Element( elem1->next(), elem1 ) );
 		BOOST_CHECK_EQUAL( elem2->_id, node->next()->getId() );
@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_groupSize_2 )
 		BOOST_CHECK_EQUAL( elem3->_id, node->next()->firstChild()->getId() );
 		elem3->set( buff4, checker.getSize( elem3 ) );
 		checker.check( elem3 );
-		BOOST_CHECK_EQUAL( elem3->_status, eStatusPassOver );
+		BOOST_CHECK_EQUAL( elem3->_status, eStatusValid );
 		BOOST_CHECK_EQUAL( elem3->_dispValue, "14" );
 
 		std::shared_ptr< basic_element::Element > elem4( new basic_element::Element( elem3->next(), elem3, elem2 ) );
@@ -217,7 +217,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_groupSize_3 )
 		BOOST_CHECK_EQUAL( elem3->_id, node->next()->firstChild()->getId() );
 		elem3->set( buff4, checker.getSize( elem3 ) );
 		checker.check( elem3 );
-		BOOST_CHECK_EQUAL( elem3->_status, eStatusPassOver );
+		BOOST_CHECK_EQUAL( elem3->_status, eStatusValid );
 		BOOST_CHECK_EQUAL( elem3->_dispValue, "4" );
 
 		std::shared_ptr< basic_element::Element > elem4( new basic_element::Element( elem3->next(), elem3 ) );

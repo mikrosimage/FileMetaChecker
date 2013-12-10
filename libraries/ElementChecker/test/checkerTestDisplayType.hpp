@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE( element_checker_test_checker_display_type )
 		BOOST_CHECK_EQUAL( elem1->_displayType, eDisplayTypeAscii );
 		elem1->set( buff1, checker.getSize( elem1 ) );
 		checker.check( elem1 );
-		BOOST_CHECK_EQUAL( elem1->_status, eStatusPassOver );
+		BOOST_CHECK_EQUAL( elem1->_status, eStatusUnknown );
 		BOOST_CHECK_EQUAL( elem1->_dispValue, "WAVE1" );
 
 		std::shared_ptr< basic_element::Element > elem2( new basic_element::Element( elem1->next(), elem1 ) );
@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE( element_checker_test_checker_display_type )
 		BOOST_CHECK_EQUAL( elem2->_displayType, eDisplayTypeNumbers );
 		elem2->set( buff2, checker.getSize( elem2 ) );
 		checker.check( elem2 );
-		BOOST_CHECK_EQUAL( elem2->_status, eStatusPassOver );
+		BOOST_CHECK_EQUAL( elem2->_status, eStatusUnknown );
 		BOOST_CHECK_EQUAL( elem2->_dispValue, "8765866950" );
 
 		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2 ) );
@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE( element_checker_test_checker_display_type )
 		BOOST_CHECK_EQUAL( elem3->_displayType, eDisplayTypeDefault );
 		elem3->set( buff3, checker.getSize( elem3 ) );
 		checker.check( elem3 );
-		BOOST_CHECK_EQUAL( elem3->_status, eStatusPassOver );
+		BOOST_CHECK_EQUAL( elem3->_status, eStatusUnknown );
 		BOOST_CHECK_EQUAL( elem3->_dispValue, "WAV" );
 
 		std::shared_ptr< basic_element::Element > elem4( new basic_element::Element( elem3->next(), elem3 ) );
