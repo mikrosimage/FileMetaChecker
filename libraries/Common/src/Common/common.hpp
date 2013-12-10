@@ -75,25 +75,11 @@ static const std::string kStatus  = "status";
 static const std::string kDefault = "default";
 static const std::string kNumbers = "numbers";
 
-static const std::string kNotChecked               = "Not checked";
-static const std::string kValid                    = "Valid";
-static const std::string kInvalid                  = "Invalid";
-static const std::string kInvalidButOptional       = "Invalid but optional";
-static const std::string kInvalidForUnordered      = "Invalid for unordered";
-static const std::string kInvalidButSkip           = "Invalid but skip";
-static const std::string kInvalidForIteration      = "Invalid for iteration";
-static const std::string kInvalidGroupForIteration = "Invalid group for iteration";
-static const std::string kPassOver                 = "Pass over";
-static const std::string kSkip                     = "Skip";
-
-static const std::string kShortValid                    = kValid;
-static const std::string kShortInvalid                  = kInvalid;
-static const std::string kShortInvalidButOptional       = "Inv. & Opt.";
-static const std::string kShortInvalidForUnordered      = "Inv. order";
-static const std::string kShortInvalidButSkip           = "Inv. & Skip";
-static const std::string kShortInvalidForIteration      = "Inv. iter.";
-static const std::string kShortInvalidGroupForIteration = "Inv. group";
-static const std::string kShortPassOver                 = kPassOver;
+static const std::string kNotChecked  = "Not checked";
+static const std::string kValid       = "Valid";
+static const std::string kInvalid     = "Invalid";
+static const std::string kPassOver    = "Pass over";
+static const std::string kSkip        = "Skip";
 
 static const std::string kError    = "error";
 static const std::string kWarning  = "warning";
@@ -140,11 +126,6 @@ enum EStatus
 	eStatusNotChecked = 0,
 	eStatusValid,
 	eStatusInvalid,
-	eStatusInvalidButOptional,
-	eStatusInvalidForUnordered,
-	eStatusInvalidButSkip,
-	eStatusInvalidForIteration,
-	eStatusInvalidGroupForIteration,
 	eStatusPassOver,
 	eStatusSkip,
 };
@@ -197,34 +178,13 @@ static const std::map< std::string, EDisplayType > displayTypeMap
  */
 static const std::map< EStatus, std::string > statusMap
 {
-	{ eStatusNotChecked,               kNotChecked               },
-	{ eStatusValid,                    kValid                    },
-	{ eStatusInvalid,                  kInvalid                  },
-	{ eStatusInvalidButOptional,       kInvalidButOptional       },
-	{ eStatusInvalidForUnordered,      kInvalidForUnordered      },
-	{ eStatusInvalidButSkip,           kInvalidButSkip           },
-	{ eStatusInvalidForIteration,      kInvalidForIteration      },
-	{ eStatusInvalidGroupForIteration, kInvalidGroupForIteration },
-	{ eStatusPassOver,                 kPassOver                 },
-	{ eStatusSkip,                     kSkip                     },
+	{ eStatusNotChecked, kNotChecked },
+	{ eStatusValid,      kValid      },
+	{ eStatusInvalid,    kInvalid    },
+	{ eStatusPassOver,   kPassOver   },
+	{ eStatusSkip,       kSkip       },
 };
 
-/**
- * Element status to short string map
- */
-static const std::map< EStatus, std::string > shortStatusMap
-{
-	{ eStatusNotChecked,               kNotChecked                    },
-	{ eStatusValid,                    kShortValid                    },
-	{ eStatusInvalid,                  kShortInvalid                  },
-	{ eStatusInvalidButOptional,       kShortInvalidButOptional       },
-	{ eStatusInvalidForUnordered,      kShortInvalidForUnordered      },
-	{ eStatusInvalidButSkip,           kShortInvalidButSkip           },
-	{ eStatusInvalidForIteration,      kShortInvalidForIteration      },
-	{ eStatusInvalidGroupForIteration, kShortInvalidGroupForIteration },
-	{ eStatusPassOver,                 kShortPassOver                 },
-	{ eStatusSkip,                     kSkip                          },
-};
 
 /**
  * Element types to string map
