@@ -26,7 +26,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 	element_checker::Checker checker;
 	size_t size = checker.getSize( element );
 
-	char buffer1[ size ];
+	std::vector< char > buffer1;
 	if( ! file.readData( buffer1, size ) )
 		throw std::runtime_error( "[comparator] End of file, cannot read data" );
 	element->set( buffer1, size );
@@ -62,7 +62,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 				break;
 		}
 
-		char buffer[ size ];
+		std::vector< char > buffer;
 		if( ! file.readData( buffer, size ) )
 			throw std::runtime_error( "[comparator] End of file, cannot read data" );
 		element->set( buffer, size );
