@@ -21,14 +21,15 @@ static const std::string kRange  = "range";
 static const std::string kMin    = "min";
 static const std::string kMax    = "max";
 
-static const std::string kGroup       = "group";
-static const std::string kGroupSize   = "groupSize";
-static const std::string kRepetition  = "repetition";
-static const std::string kRequirement = "requirement";
-static const std::string kEndian      = "endian";
-static const std::string kOptional    = "optional";
-static const std::string kOrdered     = "ordered";
-static const std::string kDisplayType = "display";
+static const std::string kGroup         = "group";
+static const std::string kGroupSize     = "groupSize";
+static const std::string kRepetition    = "repetition";
+static const std::string kRequirement   = "requirement";
+static const std::string kEndian        = "endian";
+static const std::string kOptional      = "optional";
+static const std::string kOrdered       = "ordered";
+static const std::string kDisplayType   = "display";
+static const std::string kCaseSensitive = "caseSensitive";
 
 static const std::string kFile        = "file";
 
