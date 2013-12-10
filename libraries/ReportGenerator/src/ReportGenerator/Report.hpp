@@ -24,8 +24,10 @@ enum EReportDisplayLevel
 	eReportDisplayType,
 	eReportDisplayValue,
 	eReportDisplayStatus,
+	eReportDisplaySize,
 	eReportDisplayIteration,
 	eReportDisplayComments,
+	eReportDisplayAddress,
 };
 
 /**

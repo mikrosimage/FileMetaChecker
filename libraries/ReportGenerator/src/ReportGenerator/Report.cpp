@@ -109,8 +109,11 @@ void Report::print( const ShPtrElement element )
 	if( _verbosity >= eReportDisplayType )
 		LOG( ".t: " << std::setfill( ' ' ) << std::setw( 12 ) << typeStringMap.at( element->_type ) << " " );
 
-	if( _verbosity >= eReportDisplayType )
+	if( _verbosity >= eReportDisplaySize )
 		LOG( ".s: " << std::setfill( ' ' ) << std::setw( 16 ) << element->_data.size() << " " );
+
+	if( _verbosity >= eReportDisplayAddress )
+		LOG( ".@: " << std::setfill( ' ' ) << std::setw( 16 ) << element << " " );
 
 	if( _verbosity >= eReportDisplayID )
 	{
