@@ -88,7 +88,6 @@ public:
 
 	std::string getPropertiesFlag();
 protected:
-	static size_t getElementSize( const std::string& id, const EType type, const std::vector<std::string>& values );
 	static size_t getElementIteration( const std::string& id, const ExpressionList& repetExpr, const ShPtrElement& previous, const ShPtrElement& parent );
 
 protected:
@@ -121,7 +120,6 @@ public:
 	const EType         _type;
 	const EDisplayType  _displayType;
 	
-	size_t        _size;
 	const size_t  _iteration;
 
 	EStatus       _status;

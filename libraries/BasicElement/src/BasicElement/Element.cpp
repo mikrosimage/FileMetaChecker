@@ -29,7 +29,6 @@ Element::Element( const ShPtrSpecNode node,
 	, _repetExpr     ( node->getRepetitions() )
 	, _type          ( node->getType()        )
 	, _displayType   ( node->getDisplayType() )
-	, _size          ( getElementSize( _id, _type, _values )            )
 	, _iteration     ( getElementIteration( _id, _repetExpr, previous, parent ) )
 	, _status        ( eStatusNotChecked )
 	, _isGroup       ( node->isGroup()     )
@@ -108,9 +107,8 @@ Element::ShPtrSpecNode Element::next( )
 
 void Element::set( const char* data, const size_t& size )
 {
-	_size = size;
-	_data.resize( _size );
-	std::memcpy( &_data[0], data, _size );
+	_data.resize( size );
+	std::memcpy( &_data[0], data, size );
 }
 
 std::string Element::getPropertiesFlag()
@@ -122,42 +120,6 @@ std::string Element::getPropertiesFlag()
 	props += ( ! _isOrdered         ) ? "U" : ".";
 	props += ( ! _repetExpr.empty() ) ? "R" : ".";
 	return props;
-}
-
-size_t Element::getElementSize( const std::string& id, const EType type, const std::vector<std::string>& values )
-{
-	size_t size = 0;
-	try
-	{
-		if( ! values.empty() )
-		{
-			size = values.at( 0 ).size();
-			for( std::string value : values )
-				if( value.size() != size )
-					throw std::runtime_error( "Values must have the same size" );
-		}
-
-		switch( type )
-		{
-			case eTypeInt8         :
-			case eTypeUInt8        : return  1;
-			case eTypeInt16        :
-			case eTypeUInt16       : return  2;
-			case eTypeInt32        :
-			case eTypeUInt32       :
-			case eTypeFloat        : return  4;
-			case eTypeInt64        :
-			case eTypeUInt64       :
-			case eTypeDouble       : return  8;
-			case eTypeIeeeExtended : return 10;
-			default: break;
-		}
-	}
-	catch( std::runtime_error e )
-	{
-		LOG_ERROR( "[element] " << e.what() << " (" << id << ")" );
-	}
-	return size;
 }
 
 size_t Element::getElementIteration( const std::string& id, const ExpressionList& repetExpr, const ShPtrElement& previous, const ShPtrElement& parent )
