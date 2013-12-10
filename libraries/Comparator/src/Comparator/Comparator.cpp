@@ -175,14 +175,14 @@ void Comparator::checkGroupSize( const ShPtrElement element, file_reader::FileRe
 				{
 					std::stringstream errorMessage;
 					errorMessage << "[comparator] Group size difference: " << sizeDiff << " missing bytes ";
-					parent->_error = errorMessage.str();
+					parent->_error.push_back( errorMessage.str() );
 					throw std::runtime_error( errorMessage.str() );
 				}
 				if( sizeDiff < 0 )
 				{
 					std::stringstream warningMessage;
 					warningMessage << "[comparator] Group size difference: " << abs( sizeDiff ) << " unexpected bytes ";
-					parent->_warning += warningMessage.str();
+					parent->_warning.push_back( warningMessage.str() );
 					file.goForward( abs( sizeDiff ) );
 					LOG_WARNING( warningMessage.str() << ": go forward..." );
 				}
