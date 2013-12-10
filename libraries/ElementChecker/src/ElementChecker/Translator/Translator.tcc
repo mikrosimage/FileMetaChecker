@@ -59,7 +59,7 @@ std::string Translator::get< std::string >()	// get ascii character !
 template< typename NumberType >
 std::vector< NumberType > Translator::convertToVector()
 {
-	if( _ref->_size % sizeof( NumberType ) != 0 )
+	if( _ref->_data.size() % sizeof( NumberType ) != 0 )
 		throw std::runtime_error( "invalid data size" );
 
 	std::vector< NumberType > vector;
@@ -74,7 +74,7 @@ std::vector< NumberType > Translator::convertToVector()
 		else
 			std::memcpy( buffer, &_ref->_data[0], _ref->_data.size() );
 
-		std::memcpy( num.data, &buffer[i], _ref->_size );
+		std::memcpy( num.data, &buffer[i], _ref->_data.size() );
 		delete[] buffer;
 		vector.push_back( num.value );
 	}

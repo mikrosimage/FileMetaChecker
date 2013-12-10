@@ -39,7 +39,7 @@ Checker::Checker()
 
 void Checker::check( const ShPtrElement element )
 {
-	if( element->_size == 0 && element->_countExpr.empty() )
+	if( element->_data.size() == 0 && element->_countExpr.empty() )
 	{
 		std::string warning = "Null data size ";
 		// LOG_WARNING( "[checker] " << element->_id << ": " << warning );
@@ -191,14 +191,46 @@ void Checker::check( const ShPtrElement element )
 
 size_t Checker::getSize( const ShPtrElement element )
 {
-	if( element->_type == eTypeHexa )
-		element->_size = element->_size >> 1;
-	if( ! element->_countExpr.empty() && element->_size == 0 )
+	size_t size = 0;
+	try
 	{
-		element->_size = _exprParser->getExpressionResult< size_t >( element->_countExpr );
-		LOG_TRACE( "[checker] get " << element->_id << "'s size: " << element->_size );
+		if( ! element->_values.empty() )
+		{
+			size = element->_values.at( 0 ).size();
+			for( std::string value : element->_values )
+				if( value.size() != size )
+					throw std::runtime_error( "[checker] Values must have the same size (" +  element->_id + ")" );
+		}
+
+		switch( element->_type )
+		{
+			case eTypeHexa         : size = size >> 1; break;
+			case eTypeInt8         :
+			case eTypeUInt8        : return  1;
+			case eTypeInt16        :
+			case eTypeUInt16       : return  2;
+			case eTypeInt32        :
+			case eTypeUInt32       :
+			case eTypeFloat        : return  4;
+			case eTypeInt64        :
+			case eTypeUInt64       :
+			case eTypeDouble       : return  8;
+			case eTypeIeeeExtended : return 10;
+			default: break;
+		}
+
+		if( ! element->_countExpr.empty() && size == 0 )
+		{
+			size = _exprParser->getExpressionResult< size_t >( element->_countExpr );
+			LOG_TRACE( "[checker] get " << element->_id << "'s size: " << size );
+		}
+		return size;
 	}
-	return element->_size;
+	catch( std::runtime_error e )
+	{
+		LOG_ERROR( "[checker] " << e.what() << " (" << element->_id << ")" );
+	}
+	return size;
 }
 
 bool Checker::isIterationValid( const ShPtrElement element, std::string& errorMessage )
