@@ -35,7 +35,7 @@ int main( int argc, char** argv )
 		// ( "color",         "display the output with colors"                                                                  )
 		( "verbose,v",     bpo::value<int>()->default_value( 1 ),      "verbose level (trace, debug, warning, error, fatal)" )
 		// ( "script",        "format the output such as it could be dump in a file"                                            )
-		( "display-level,d", bpo::value<int>()->default_value( 5 ), "report display verbosity level." )
+		( "display-level,d", bpo::value<int>()->default_value( 8 ), "report display verbosity level." )
 	;
 
 	// Default option
