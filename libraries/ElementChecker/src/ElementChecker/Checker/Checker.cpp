@@ -127,12 +127,7 @@ void Checker::check( const ShPtrElement element )
 
 	element->_status = status;
 
-	switch( status )
-	{
-		case eStatusValid    :
-		case eStatusInvalid  : _exprParser->addElementToContext( element ); break;
-		default : break;
-	}
+	_exprParser->addElementToContext( element );
 
 	setParentGroupSize( element );
 
