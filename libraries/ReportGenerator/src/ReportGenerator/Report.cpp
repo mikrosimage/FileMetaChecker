@@ -90,19 +90,16 @@ void Report::print( const ShPtrElement element )
 	std::string color;
 	switch( element->_status )
 	{
-		case eStatusValid                    : color = common::details::kColorGreen; break;
-		case eStatusPassOver                 : color = common::details::kColorCyan;  break;
-		case eStatusInvalid                  :
-		case eStatusInvalidForUnordered      :
-		case eStatusInvalidForIteration      :
-		case eStatusInvalidGroupForIteration : color = common::details::kColorRed;   break;
+		case eStatusValid    : color = common::details::kColorGreen; break;
+		case eStatusPassOver : color = common::details::kColorCyan;  break;
+		case eStatusInvalid  : color = common::details::kColorRed;   break;
 		default: return;
 	}
 	
 	if( _verbosity >= eReportDisplayStatus )
 	{
 		LOG( "s: " );
-		LOG_COLOR( color, tabulation( 14, shortStatusMap.at( element->_status ) ) );
+		LOG_COLOR( color, tabulation( 14, statusMap.at( element->_status ) ) );
 	}
 
 	if( _verbosity >= eReportDisplayIteration )
@@ -180,12 +177,9 @@ bool Report::isPrintable( const ShPtrElement element )
 	bool ret = false;
 	switch( element->_status )
 	{
-		case eStatusValid                    :
-		case eStatusPassOver                 :
-		case eStatusInvalid                  :
-		case eStatusInvalidForUnordered      :
-		case eStatusInvalidForIteration      :
-		case eStatusInvalidGroupForIteration : ret = true;
+		case eStatusValid    :
+		case eStatusPassOver :
+		case eStatusInvalid  : ret = true;
 		default: break;
 	}
 	return ret;
@@ -222,8 +216,6 @@ void Report::writeXml( const std::string& filename )
 	for( std::shared_ptr< basic_element::Element > element : _elementList )
 	{
 		if( element->_status == eStatusSkip
-		 || element->_status == eStatusInvalidButSkip
-		 || element->_status == eStatusInvalidButOptional
 		 || element->_status == eStatusNotChecked         )
 			continue;
 
