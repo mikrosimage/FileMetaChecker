@@ -30,7 +30,7 @@ Element::Element( const ShPtrSpecNode node,
 	, _type            ( node->getType()        )
 	, _displayType     ( node->getDisplayType() )
 	, _iteration       ( getElementIteration( _id, _repetExpr, previous, parent ) )
-	, _status          ( eStatusNotChecked )
+	, _status          ( eStatusUnknown )
 	, _isGroup         ( node->isGroup()         )
 	, _isOrdered       ( node->isOrdered()       )
 	, _isOptional      ( node->isOptional()      )
@@ -51,10 +51,6 @@ Element::Element( const ShPtrSpecNode node,
 
 Element::ShPtrSpecNode Element::next( )
 {
-	// if element has been checked, back to the same SpecNode
-	if( _status == eStatusNotChecked )
-		return _specNode;
-
 	ShPtrElement  parent;
 	// if parent exists, copy it
 	if( _parent.use_count() != 0 )
@@ -132,7 +128,7 @@ size_t Element::getElementIteration( const std::string& id, const ExpressionList
 	ShPtrElement prev = previous;
 	while( prev != nullptr || ( parent != nullptr && prev->_id != parent->_id ) )
 	{
-		if( prev->_id == id && ( prev->_status == eStatusValid || prev->_status == eStatusPassOver ) )
+		if( prev->_id == id && ( prev->_status == eStatusValid ) )
 		{
 			iteration = prev->_iteration + 1;
 			break;

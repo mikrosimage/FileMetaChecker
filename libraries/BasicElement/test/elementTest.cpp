@@ -316,7 +316,6 @@ BOOST_AUTO_TEST_CASE( basic_element_data_unordered_group )
 					"content": [
 						{ "id": "value1",
 						  "label": "Value1",
-						  "type": "ascii",
 						  "ordered": false,
 						  "group": [
 								{ "id": "value11",
@@ -340,11 +339,11 @@ BOOST_AUTO_TEST_CASE( basic_element_data_unordered_group )
 		std::shared_ptr< Element > elem1( new Element( node ) );
 		BOOST_CHECK_EQUAL( elem1->_id,        "value1"      );
 		BOOST_CHECK_EQUAL( elem1->_label,     "Value1"      );
-		BOOST_CHECK_EQUAL( elem1->_type,      eTypeAscii );
+		BOOST_CHECK_EQUAL( elem1->_type,      eTypeUnknown );
 		BOOST_CHECK_EQUAL( elem1->_isGroup,   true  );
 		BOOST_CHECK_EQUAL( elem1->_isOrdered, false );
-		BOOST_CHECK_EQUAL( elem1->_status,    eStatusNotChecked );
-		elem1->_status = eStatusPassOver;
+		BOOST_CHECK_EQUAL( elem1->_status,    eStatusUnknown );
+		elem1->_status = eStatusUnknown;
 
 		std::shared_ptr< Element > elem2( new Element( elem1->next(), elem1, elem1 ) );
 		BOOST_CHECK_EQUAL( elem2->_id, "value11" );
@@ -383,7 +382,7 @@ BOOST_AUTO_TEST_CASE( basic_element_data_unordered_group )
 		elem0->_status = eStatusSkip;
 
 		BOOST_CHECK( elem0->next() == nullptr );
-		BOOST_CHECK_EQUAL( elem1->_status,  eStatusPassOver );
+		BOOST_CHECK_EQUAL( elem1->_status,  eStatusUnknown );
 	}
 }
 
@@ -414,7 +413,7 @@ BOOST_AUTO_TEST_CASE( basic_element_next_repetition_one )
 		BOOST_CHECK_EQUAL( elem1->_id,        "value1"      );
 		BOOST_CHECK_EQUAL( elem1->_label,     "Value1"      );
 		BOOST_CHECK_EQUAL( elem1->_type,      eTypeAscii );
-		BOOST_CHECK_EQUAL( elem1->_status,    eStatusNotChecked );
+		BOOST_CHECK_EQUAL( elem1->_status,    eStatusUnknown );
 		elem1->_status = eStatusSkip;
 
 		std::shared_ptr< Element > elem2( new Element( elem1->next(), elem1 ) );
@@ -468,7 +467,7 @@ BOOST_AUTO_TEST_CASE( basic_element_next_repetition_first )
 		BOOST_CHECK_EQUAL( elem1->_id,        "value1"      );
 		BOOST_CHECK_EQUAL( elem1->_label,     "Value1"      );
 		BOOST_CHECK_EQUAL( elem1->_type,      eTypeAscii );
-		BOOST_CHECK_EQUAL( elem1->_status,    eStatusNotChecked );
+		BOOST_CHECK_EQUAL( elem1->_status,    eStatusUnknown );
 		elem1->_status = eStatusValid;
 
 		std::shared_ptr< Element > elem2( new Element( elem1->next(), elem1 ) );
@@ -512,7 +511,7 @@ BOOST_AUTO_TEST_CASE( basic_element_next_repetition_last )
 		BOOST_CHECK_EQUAL( elem1->_id,        "value1"      );
 		BOOST_CHECK_EQUAL( elem1->_label,     "Value1"      );
 		BOOST_CHECK_EQUAL( elem1->_type,      eTypeAscii );
-		BOOST_CHECK_EQUAL( elem1->_status,    eStatusNotChecked );
+		BOOST_CHECK_EQUAL( elem1->_status,    eStatusUnknown );
 		elem1->_status = eStatusValid;
 
 		std::shared_ptr< Element > elem2( new Element( elem1->next(), elem1 ) );
@@ -573,7 +572,7 @@ BOOST_AUTO_TEST_CASE( basic_element_next_repetition_group )
 		BOOST_CHECK_EQUAL( elem1->_id,        "value1"      );
 		BOOST_CHECK_EQUAL( elem1->_label,     "Value1"      );
 		BOOST_CHECK_EQUAL( elem1->_type,      eTypeAscii );
-		BOOST_CHECK_EQUAL( elem1->_status,    eStatusNotChecked );
+		BOOST_CHECK_EQUAL( elem1->_status,    eStatusUnknown );
 		elem1->_status = eStatusValid;
 
 		std::shared_ptr< Element > elem2( new Element( elem1->next(), elem1, elem1 ) );
@@ -650,7 +649,7 @@ BOOST_AUTO_TEST_CASE( basic_element_next_repetition_group )
 		BOOST_CHECK_EQUAL( elem1->_id,        "value1"      );
 		BOOST_CHECK_EQUAL( elem1->_label,     "Value1"      );
 		BOOST_CHECK_EQUAL( elem1->_type,      eTypeAscii );
-		BOOST_CHECK_EQUAL( elem1->_status,    eStatusNotChecked );
+		BOOST_CHECK_EQUAL( elem1->_status,    eStatusUnknown );
 		elem1->_status = eStatusValid;
 
 		std::shared_ptr< Element > elem2( new Element( elem1->next(), elem1, elem1 ) );

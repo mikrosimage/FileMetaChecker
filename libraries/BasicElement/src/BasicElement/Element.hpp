@@ -136,30 +136,36 @@ public:
 	const bool    _isCaseSensitive;
 	bool          _checkedGroup;
 
+	static std::string getLabelsLegend()
+	{
+		std::stringstream legend;
+		legend << "========= LEGEND =========" << std::endl;
+		legend << " v = value                " << std::endl;
+		legend << " t = type                 " << std::endl;
+		legend << " i = iteration            " << std::endl;
+		legend << " S = status               " << std::endl;
+		legend << " s = size                 " << std::endl;
+		legend << " E = Error                " << std::endl;
+		legend << " W = Warning              " << std::endl;
+		legend                                 << std::endl;
+		return legend.str();
+	}
+
+	static std::string getElementPropertiesLegend()
+	{
+		std::stringstream props;
+		props << "=== ELEMENT PROPERTIES ===" << std::endl;
+		props << "B.... = Big endian        " << std::endl;
+		props << "l.... = little endian     " << std::endl;
+		props << ".O... = Optional          " << std::endl;
+		props << "..G.. = Group             " << std::endl;
+		props << "...U. = Unordered         " << std::endl;
+		props << "....R = Repeated          " << std::endl;
+		props                                 << std::endl;
+		return props.str();
+	}
 
 };
-
-static std::string getPropertiesLegend()
-{
-	std::stringstream legend;
-	legend << "========= LEGEND =========" << std::endl;
-	legend << " v = value                " << std::endl;
-	legend << " t = type                " << std::endl;
-	legend << " i = iteration            " << std::endl;
-	legend << " s = status               " << std::endl;
-	legend << " E = Error                " << std::endl;
-	legend << " W = Warning              " << std::endl;
-	legend                                 << std::endl;
-	legend << "=== ELEMENT PROPERTIES ===" << std::endl;
-	legend << "B.... = Big endian        " << std::endl;
-	legend << "l.... = little endian     " << std::endl;
-	legend << ".O... = Optional          " << std::endl;
-	legend << "..G.. = Group             " << std::endl;
-	legend << "...U. = Unordered         " << std::endl;
-	legend << "....R = Repeated          " << std::endl;
-	legend                                 << std::endl;
-	return legend.str();
-}
 
 }
 
