@@ -124,7 +124,7 @@ void Comparator::updateParentSize( const ShPtrElement element )
 	ShPtrElement parent = element->getParent();
 	while( ! skipElementCheck( element ) && parent != nullptr )
 	{
-		parent->_childrenSize += element->_size;
+		parent->_childrenSize += element->_data.size();
 		// LOG_COLOR( common::details::kColorBlue, "[comparator] " << parent->_id << "'s children size : " << parent->_childrenSize << std::endl );
 		parent = parent->getParent();
 	}
