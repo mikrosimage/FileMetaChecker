@@ -18,6 +18,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode )
 							"requirement": "true",
 							"optional": false,
 							"endian": "little",
+							"caseSensitive": true,
 							"groupSize": "size",
 							"group": [
 								"123"
@@ -31,15 +32,16 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode )
 		spec.setFromString( jsonString );
 		SpecNode node = *spec.getFirstNode();
 
-		BOOST_CHECK_EQUAL( node.getId(),          "id"                );
-		BOOST_CHECK_EQUAL( node.getLabel(),       "label"             );
-		BOOST_CHECK_EQUAL( node.getType(),        eTypeUnknown        );
-		BOOST_CHECK_EQUAL( node.getDisplayType(), eDisplayTypeDefault );
-		BOOST_CHECK_EQUAL( node.getCount(),       "123"               );
-		BOOST_CHECK_EQUAL( node.getRequirement(), "true"              );
-		BOOST_CHECK_EQUAL( node.isGroup(),        true                );
-		BOOST_CHECK_EQUAL( node.isOptional(),     false               );
-		BOOST_CHECK_EQUAL( node.getGroupSize(),   "size"              );
+		BOOST_CHECK_EQUAL( node.getId(),           "id"                );
+		BOOST_CHECK_EQUAL( node.getLabel(),        "label"             );
+		BOOST_CHECK_EQUAL( node.getType(),         eTypeUnknown        );
+		BOOST_CHECK_EQUAL( node.getDisplayType(),  eDisplayTypeDefault );
+		BOOST_CHECK_EQUAL( node.getCount(),        "123"               );
+		BOOST_CHECK_EQUAL( node.getRequirement(),  "true"              );
+		BOOST_CHECK_EQUAL( node.isGroup(),         true                );
+		BOOST_CHECK_EQUAL( node.isOptional(),      false               );
+		BOOST_CHECK_EQUAL( node.isCaseSensitive(), true                );
+		BOOST_CHECK_EQUAL( node.getGroupSize(),    "size"              );
 	}
 	{
 		std::string jsonString = R"*(

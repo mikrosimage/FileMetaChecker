@@ -145,6 +145,11 @@ bool SpecNode::isBigEndian() const
 	return ( property_parser::getProperty< std::string >( _node, kEndian, kEndianBig ) == kEndianBig );
 }
 
+bool SpecNode::isCaseSensitive() const
+{
+	return property_parser::getProperty< bool >( _node, kCaseSensitive, false );
+}
+
 std::vector< std::string > SpecNode::getValues() const
 {
 	std::vector< std::string > values;

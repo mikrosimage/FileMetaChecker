@@ -57,10 +57,11 @@ public:
 	std::string  getRequirement() const; /**< @return Requirement value  */
 	std::string  getGroupSize()   const; /**< @return Group Size value   */
 	
-	bool isGroup()     const; /**< @return true if the node contains a group, false otherwise. */
-	bool isOrdered()   const; /**< @return true if the node contains an unordered group, false otherwise. */
-	bool isOptional()  const; /**< @return true if the node is optional, false otherwise. */
-	bool isBigEndian() const; /**< @return true if the node's endianness is big-endian, false otherwise. */
+	bool isGroup()         const; /**< @return true if the node contains a group, false otherwise. */
+	bool isOrdered()       const; /**< @return true if the node contains an unordered group, false otherwise. */
+	bool isOptional()      const; /**< @return true if the node is optional, false otherwise. */
+	bool isBigEndian()     const; /**< @return true if the node's endianness is big-endian, false otherwise. */
+	bool isCaseSensitive() const; /**< @return true if the node's value is case sensitive, false otherwise. */
 
 	std::vector< std::string >                           getValues()      const; /**< @return Vector of the node values */
 	std::vector< std::pair< std::string, std::string > > getRange()       const; /**< @return Vector of the node value ranges */
