@@ -123,15 +123,6 @@ void Checker::check( const ShPtrElement element )
 			status = eStatusPassOver;
 			break;
 		}
-
-		case eTypeExif :
-		{
-			break;
-		}
-		case eTypeKlv  :
-		{
-			break;
-		}
 	}
 	
 	if( ! isRequirementValid( element ) )
