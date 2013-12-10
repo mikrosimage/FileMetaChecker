@@ -39,8 +39,6 @@ static const std::string kFalse        = "false";
 static const std::string kEndianBig    = "big";
 static const std::string kEndianLittle = "little";
 
-static const std::string kUnknown = "unknown";
-
 static const std::string kAscii   = "ascii";
 static const std::string kHexa    = "hexa";
 static const std::string kRaw     = "raw";
@@ -75,10 +73,10 @@ static const std::string kStatus  = "status";
 static const std::string kDefault = "default";
 static const std::string kNumbers = "numbers";
 
-static const std::string kNotChecked  = "Not checked";
-static const std::string kValid       = "Valid";
-static const std::string kInvalid     = "Invalid";
-static const std::string kSkip        = "Skip";
+static const std::string kUnknown = "unknown";
+static const std::string kValid   = "Valid";
+static const std::string kInvalid = "Invalid";
+static const std::string kSkip    = "Skip";
 
 static const std::string kError    = "error";
 static const std::string kWarning  = "warning";
