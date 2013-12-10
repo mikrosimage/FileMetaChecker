@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE( fileReader_test_streambuffer )
 
 		BOOST_CHECK_EQUAL( fr.getPosition(), 0 );
 
-		char out[4] = { 0, 0, 0, 0 };
+		std::vector< char > out { 0, 0, 0, 0 };
 
 		ret= fr.readData( out, 2 );
 		BOOST_CHECK_EQUAL( ret, true );
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE( fileReader_test_streambuffer )
 
 		BOOST_CHECK_EQUAL( fr.getPosition(), 0 );
 
-		char out1[1] = { 0 };
+		std::vector< char > out1 { 0 };
 
 		ret= fr.readData( out1, 1 );
 		BOOST_CHECK_EQUAL( ret, true );
@@ -125,10 +125,10 @@ BOOST_AUTO_TEST_CASE( fileReader_test_streambuffer )
 		fr.goBack( 3 );
 		BOOST_CHECK_EQUAL( fr.getPosition(), 0 );
 
-		char out2[4] = { 0, 0, 0, 0 };
+		std::vector< char > out2 { 0, 0, 0, 0 };
 		ret= fr.readData( out2, 4 );
 		BOOST_CHECK_EQUAL( ret, true );
-		BOOST_CHECK_EQUAL( strcmp( std::string( out2, 4 ).c_str(), "WAVE" ), 0 );
+		BOOST_CHECK_EQUAL( strcmp( std::string( &out2[0], 4 ).c_str(), "WAVE" ), 0 );
 		BOOST_CHECK_EQUAL( fr.getPosition(), 4 );
 		BOOST_CHECK_EQUAL( fr.isEndOfFile(), true );
 	}
@@ -154,17 +154,17 @@ BOOST_AUTO_TEST_CASE( fileReader_test_filebuffer )
 
 	file_reader::FileReader fr( fb );
 
-	BOOST_CHECK_EQUAL( fr.getLength(),  content.size() );
+	BOOST_CHECK_EQUAL( fr.getLength(), content.size() );
 	BOOST_CHECK_EQUAL( fr.getPosition(), 0 );
 
-	char buffer[ content.size() + 1 ];
-	std::memset( buffer, 0, content.size() + 1 );	// "+ 1" to compensate the NULL char ending std::strings
+	std::vector< char > buffer;
+	buffer.resize( content.size() + 1 );	// "+ 1" to compensate the NULL char ending std::strings
 	bool ret;
 
 	ret= fr.readData( buffer, content.size() );
 	BOOST_CHECK_EQUAL( ret, true );
 
-	BOOST_CHECK_EQUAL( strcmp( content.c_str(), buffer ), 0 );
+	BOOST_CHECK_EQUAL( strcmp( content.c_str(), &buffer[0] ), 0 );
 
 	BOOST_CHECK_EQUAL( fr.getPosition(), content.size() );
 	BOOST_CHECK_EQUAL( fr.getLength(),   content.size() );
