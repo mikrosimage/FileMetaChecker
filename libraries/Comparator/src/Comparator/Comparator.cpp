@@ -44,7 +44,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 		// LOG_FATAL( node->getId() );
 		ShPtrElement previous = element;
 		
-		if( skipElementCheck( previous ) )
+		if( previous->_status == eStatusSkip )
 		{
 			LOG_TRACE( "[comparator] Go back in file (" << size << " bytes)" );
 			file.goBack( size );
@@ -106,23 +106,10 @@ bool Comparator::isInUnorderedGroup( const ShPtrElement element )
 	return false;
 }
 
-bool Comparator::skipElementCheck( const ShPtrElement element )
-{
-	switch( element->_status )
-	{
-		case eStatusInvalidButOptional  :
-		case eStatusInvalidButSkip      :
-		case eStatusInvalidForIteration :
-		case eStatusSkip                : return true;
-		default: break;
-	}
-	return false;
-}
-
 void Comparator::updateParentSize( const ShPtrElement element )
 {
 	ShPtrElement parent = element->getParent();
-	while( ! skipElementCheck( element ) && parent != nullptr )
+	while( element->_status != eStatusSkip && parent != nullptr )
 	{
 		parent->_childrenSize += element->_data.size();
 		// LOG_COLOR( common::details::kColorBlue, "[comparator] " << parent->_id << "'s children size : " << parent->_childrenSize << std::endl );
@@ -133,10 +120,9 @@ void Comparator::updateParentSize( const ShPtrElement element )
 Comparator::ShPtrElement Comparator::getNextParent( const ShPtrElement element, const ShPtrSpecNode node )
 {
 	ShPtrElement parent = element->getParent();
-	bool isLastInGroup = ( node->next() == nullptr && ( parent == nullptr || ( parent->_isOrdered || ( ! parent->_isOrdered && element->_status == eStatusInvalidButSkip ) ) ) );
-	bool isNotSkipped = ( element->_status != eStatusInvalidButOptional && element->_status != eStatusInvalidButSkip && element->_status != eStatusInvalidForIteration && element->_status != eStatusSkip );
+	bool isLastInGroup = ( node->next() == nullptr && ( parent == nullptr || ( parent->_isOrdered || ( ! parent->_isOrdered && element->_status == eStatusSkip ) ) ) );
 
-	if( element->_isGroup && ! element->_checkedGroup && isNotSkipped )
+	if( element->_isGroup && ! element->_checkedGroup && element->_status != eStatusSkip )
 		return element;
 	
 	if( isLastInGroup && element->getParent() != nullptr )
