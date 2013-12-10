@@ -75,11 +75,11 @@ BOOST_AUTO_TEST_CASE( basic_element_element )
 		for( size_t i = 0; i < size; ++i )
 			BOOST_CHECK_EQUAL( elem._data[i], buffer[i] );
 
-		elem._error = kError + kError;
-		BOOST_CHECK_EQUAL( elem._error, kError + kError );
+		elem._error.push_back( kError );
+		BOOST_CHECK_EQUAL( elem._error.at( 0 ), kError );
 
-		elem._warning = kWarning + kWarning;
-		BOOST_CHECK_EQUAL( elem._warning, kWarning + kWarning );
+		elem._warning.push_back( kWarning );
+		BOOST_CHECK_EQUAL( elem._warning.at( 0 ), kWarning );
 	}
 }
 

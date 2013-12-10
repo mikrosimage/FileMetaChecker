@@ -126,8 +126,8 @@ public:
 
 	EStatus       _status;
 	
-	std::string   _error;
-	std::string   _warning;
+	std::vector< std::string > _error;
+	std::vector< std::string > _warning;
 	
 	const bool    _isGroup;
 	const bool    _isOrdered;

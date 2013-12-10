@@ -32,8 +32,6 @@ Element::Element( const ShPtrSpecNode node,
 	, _size          ( getElementSize( _id, _type, _values )            )
 	, _iteration     ( getElementIteration( _id, _repetExpr, previous, parent ) )
 	, _status        ( eStatusNotChecked )
-	, _error         ( "" )
-	, _warning       ( "" )
 	, _isGroup       ( node->isGroup()     )
 	, _isOrdered     ( node->isOrdered()   )
 	, _isOptional    ( node->isOptional()  )
