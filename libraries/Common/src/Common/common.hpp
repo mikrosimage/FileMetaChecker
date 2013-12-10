@@ -78,7 +78,6 @@ static const std::string kNumbers = "numbers";
 static const std::string kNotChecked  = "Not checked";
 static const std::string kValid       = "Valid";
 static const std::string kInvalid     = "Invalid";
-static const std::string kPassOver    = "Pass over";
 static const std::string kSkip        = "Skip";
 
 static const std::string kError    = "error";
@@ -123,10 +122,9 @@ enum EDisplayType
  */
 enum EStatus
 {
-	eStatusNotChecked = 0,
+	eStatusUnknown = 0,
 	eStatusValid,
 	eStatusInvalid,
-	eStatusPassOver,
 	eStatusSkip,
 };
 
@@ -178,10 +176,9 @@ static const std::map< std::string, EDisplayType > displayTypeMap
  */
 static const std::map< EStatus, std::string > statusMap
 {
-	{ eStatusNotChecked, kNotChecked },
+	{ eStatusUnknown,    kUnknown    },
 	{ eStatusValid,      kValid      },
 	{ eStatusInvalid,    kInvalid    },
-	{ eStatusPassOver,   kPassOver   },
 	{ eStatusSkip,       kSkip       },
 };
 
