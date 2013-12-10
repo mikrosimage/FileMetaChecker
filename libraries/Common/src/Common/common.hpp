@@ -116,9 +116,7 @@ enum EType
 	eTypeIeeeExtended,
 	eTypeAscii,
 	eTypeHexa,
-	eTypeRaw,
-	eTypeExif,
-	eTypeKlv,
+	eTypeRaw
 };
 
 /**
@@ -169,8 +167,6 @@ static const std::map< std::string, EType > typeMap
 	{ kAscii,        eTypeAscii        },
 	{ kHexa,         eTypeHexa         },
 	{ kRaw,          eTypeRaw          },
-	{ kExif,         eTypeExif         },
-	{ kKlv,          eTypeKlv          },
 };
 
 /**
@@ -249,8 +245,6 @@ static const std::map< EType, std::string > typeStringMap
 	{ eTypeAscii,        kAscii         },
 	{ eTypeHexa,         kHexa          },
 	{ eTypeRaw,          kRaw           },
-	{ eTypeExif,         kExif          },
-	{ eTypeKlv,          kKlv           },
 };
 
 /**
