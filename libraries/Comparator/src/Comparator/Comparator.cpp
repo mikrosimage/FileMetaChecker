@@ -25,6 +25,9 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 
 	element_checker::Checker checker;
 	size_t size = checker.getSize( element );
+	
+	if( size == 0 && ( size = getWordLength( element, file ) ) == 0 )
+		element->_warning.push_back( "[checker] Null data size " );
 
 	std::vector< char > buffer1;
 	if( ! file.readData( buffer1, size ) )
@@ -61,6 +64,9 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 			if( size == 0 )
 				break;
 		}
+
+		if( size == 0 && ( size = getWordLength( element, file ) ) == 0 )
+			element->_warning.push_back( "[checker] Null data size " );
 
 		std::vector< char > buffer;
 		if( ! file.readData( buffer, size ) )
@@ -102,6 +108,30 @@ bool Comparator::isInUnorderedGroup( const ShPtrElement element )
 		parent = parent->getParent();
 	}
 	return false;
+}
+
+size_t Comparator::getWordLength( const ShPtrElement element, file_reader::FileReader& file )
+{
+	if( element->_type != eTypeAscii )
+		return 0;
+
+	size_t length = 0;
+	char endChar;
+	std::vector< char > buff;
+
+	while( 1 )
+	{
+		if( ! file.readData( buff, 1 ) )
+			throw std::runtime_error( "[comparator] End of file, cannot read data" );
+		endChar = buff.at(0);
+		++length;
+		if( element->_endChar == endChar )
+			break;
+	}
+	LOG_TRACE( "[comparator] " << element->_id << " is a " << length << "-char word" );
+
+	file.goBack( length );
+	return length;
 }
 
 void Comparator::updateParentSize( const ShPtrElement element )

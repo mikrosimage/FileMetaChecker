@@ -51,6 +51,7 @@ public:
 
 private:
 	bool         isInUnorderedGroup( const ShPtrElement element );
+	size_t       getWordLength     ( const ShPtrElement element, file_reader::FileReader& file );
 	void         updateParentSize  ( const ShPtrElement element );
 	ShPtrElement getNextParent     ( const ShPtrElement element, const ShPtrSpecNode node );
 	void         checkGroupSize    ( const ShPtrElement element, file_reader::FileReader& file );

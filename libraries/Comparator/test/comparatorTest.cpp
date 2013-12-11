@@ -401,4 +401,59 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_4 )
 	BOOST_CHECK_THROW( comp.check( spec, file, report ), std::runtime_error );
 }
 
+BOOST_AUTO_TEST_CASE( comparator_test_comparator_word )
+{
+	LOG_INFO( "\n>>> comparator_test_comparator word <<<" );
+	std::string jsonString = R"*(
+			{
+				"content": [
+					{
+						"id": "value1",
+						"label": "Value1",
+						"type": "ascii"
+					},
+					{
+						"id": "value2",
+						"label": "Value2",
+						"type": "ascii",
+						"endsWith": "x"
+					},
+					{
+						"id": "valueEnd",
+						"label": "ValueEnd",
+						"type": "ascii",
+						"values": "END"
+					}
+				]
+			}
+		)*";
+
+	spec_reader::Specification spec;
+	spec.setFromString( jsonString );
+	std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
+	BOOST_CHECK_EQUAL( node->getId(),                  "value1"   );
+	BOOST_CHECK_EQUAL( node->next()->getId(),          "value2"  );
+	BOOST_CHECK_EQUAL( node->next()->next()->getId(),  "valueEnd" );
+
+	Comparator comp;
+
+	std::stringbuf buffer;
+	file_reader::FileReader file( &buffer );
+
+	std::string str { 'H','E', 'L', 'L', 'O', '\0' };
+	str += { 'W', 'O', 'R', 'L', 'D', 'x' };
+	str += { 'E', 'N', 'D' };
+
+	buffer.sputn( str.c_str(), str.size() );
+	BOOST_CHECK_EQUAL( file.getLength(), str.size() );
+
+	report_generator::Report report;
+	report.printHelper();
+
+
+	comp.check( spec, file, report );
+
+	BOOST_CHECK_EQUAL( file.isEndOfFile(), true );
+}
+
 BOOST_AUTO_TEST_SUITE_END()
