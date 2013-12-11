@@ -56,6 +56,7 @@ public:
 	std::string  getCount()       const; /**< @return Count value        */
 	std::string  getRequirement() const; /**< @return Requirement value  */
 	std::string  getGroupSize()   const; /**< @return Group Size value   */
+	char         getEndChar()     const;
 	
 	bool isGroup()         const; /**< @return true if the node contains a group, false otherwise. */
 	bool isOrdered()       const; /**< @return true if the node contains an unordered group, false otherwise. */

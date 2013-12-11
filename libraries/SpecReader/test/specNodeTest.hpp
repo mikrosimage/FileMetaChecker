@@ -4,8 +4,8 @@ BOOST_AUTO_TEST_SUITE( spec_reader_test_specNode )
 
 BOOST_AUTO_TEST_CASE( spec_reader_specNode )
 {
-	LOG_INFO( "\n>>> spec_reader_specNode <<<" );
 	{
+		LOG_INFO( "\n>>> spec_reader_specNode <<<" );
 		std::string jsonString = R"*(
 				{
 					"content": [
@@ -44,6 +44,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode )
 		BOOST_CHECK_EQUAL( node.getGroupSize(),    "size"              );
 	}
 	{
+		LOG_INFO( "\n>>> spec_reader_specNode_error <<<" );
 		std::string jsonString = R"*(
 				{
 					"content": [
@@ -61,6 +62,45 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode )
 		BOOST_CHECK_THROW( node.getId(),    std::runtime_error );
 		BOOST_CHECK_THROW( node.getLabel(), std::runtime_error );
 		BOOST_CHECK_EQUAL( node.getType(),  eTypeUnknown       );
+	}
+	{
+		LOG_INFO( "\n>>> spec_reader_specNode_endchar <<<" );
+		std::string jsonString = R"*(
+				{
+					"content": [
+						{
+							"id": "id1",
+							"label": "label1",
+							"endsWith": "a"
+						},
+						{
+							"id": "id2",
+							"label": "label2",
+							"endsWith": 1
+						},
+						{
+							"id": "id3",
+							"label": "label3"
+						}
+					]
+				}
+			)*";
+
+		Specification spec;
+		spec.setFromString( jsonString );
+		SpecNode node = *spec.getFirstNode();
+
+		BOOST_CHECK_EQUAL( node.getId(),      "id1"    );
+		BOOST_CHECK_EQUAL( node.getLabel(),   "label1" );
+		BOOST_CHECK_EQUAL( node.getEndChar(), 'a'      );
+
+		BOOST_CHECK_EQUAL( node.next()->getId(),      "id2"    );
+		BOOST_CHECK_EQUAL( node.next()->getLabel(),   "label2" );
+		BOOST_CHECK_EQUAL( node.next()->getEndChar(), 1        );
+
+		BOOST_CHECK_EQUAL( node.next()->next()->getId(),      "id3"    );
+		BOOST_CHECK_EQUAL( node.next()->next()->getLabel(),   "label3" );
+		BOOST_CHECK_EQUAL( node.next()->next()->getEndChar(), 0        );
 	}
 }
 

@@ -11,6 +11,20 @@ namespace spec_reader
 
 namespace property_parser
 {
+	std::string valueToString( const rapidjson::Value* value )
+	{
+		std::string ret;
+		if( value->IsInt() )
+			ret = std::to_string( value->GetInt() );
+
+		if( value->IsDouble() )
+			ret = std::to_string( value->GetDouble() );
+
+		if( value->IsString() )
+			ret = value->GetString();
+		return ret;
+	}
+
 	template< typename ValueType >
 	ValueType getProperty( const TreeNodeIt node, const std::string& prop );
 
@@ -37,8 +51,23 @@ namespace property_parser
 	std::string getProperty< std::string >( const TreeNodeIt node, const std::string& prop, const std::string& defaultValue )
 	{
 		if( ! node->HasMember( std::string( prop ).c_str() ) )
-			return defaultValue; 
-		return node->FindMember( std::string( prop ).c_str() )->value.GetString();
+			return defaultValue;
+		return valueToString( &node->FindMember( std::string( prop ).c_str() )->value );
+	}
+
+	template< >
+	char getProperty< char >( const TreeNodeIt node, const std::string& prop, const char& defaultValue )
+	{
+		char ret = defaultValue;
+		if( ! node->HasMember( std::string( prop ).c_str() ) )
+			return ret;
+
+		const rapidjson::Value* val = &node->FindMember( std::string( prop ).c_str() )->value;
+		if( val->IsInt() )
+			ret = (char) val->GetInt();
+		if( val->IsString() )
+			ret = (char) val->GetString()[0];
+		return ret;
 	}
 
 	template< >
@@ -47,20 +76,6 @@ namespace property_parser
 		if( ! node->HasMember( std::string( prop ).c_str() ) )
 			return defaultValue; 
 		return node->FindMember( std::string( prop ).c_str() )->value.GetBool();
-	}
-
-	std::string valueToString( const rapidjson::Value* value )
-	{
-		std::string ret;
-		if( value->IsInt() )
-			ret = std::to_string( value->GetInt() );
-
-		if( value->IsDouble() )
-			ret = std::to_string( value->GetDouble() );
-
-		if( value->IsString() )
-			ret = value->GetString();
-		return ret;
 	}
 }
 
@@ -123,6 +138,11 @@ std::string SpecNode::getRequirement() const
 std::string SpecNode::getGroupSize() const
 {
 	return property_parser::getProperty< std::string >( _node, kGroupSize, "" );
+}
+
+char SpecNode::getEndChar() const
+{
+	return property_parser::getProperty< char >( _node, kEndsWith, 0 );
 }
 
 bool SpecNode::isGroup() const
