@@ -121,7 +121,7 @@ void Report::print( const ShPtrElement element, const size_t& fileOffset )
 	if( _verbosity >= eReportDisplayID )
 	{
 		LOG( "." );
-		LOG_COLOR( color, tabulation( getDisplayOffset( element ) ) << element->_id );
+		LOG_COLOR( color, tabulation( getDisplayOffset( element ) ) << element->_label );
 	}
 
 	if( _verbosity >= eReportDisplayValue && ( element->_type != eTypeRaw || element->_displayType != eDisplayTypeDefault ) && ! element->_dispValue.empty() )
