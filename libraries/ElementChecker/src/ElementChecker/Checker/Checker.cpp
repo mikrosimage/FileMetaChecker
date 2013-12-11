@@ -61,6 +61,30 @@ void Checker::check( const ShPtrElement element )
 		case eTypeIeeeExtended : status = utils::checkNumberElement< be::ieeeExtended >( element ); break;
 		
 		case eTypeAscii :
+		{
+			std::string orig = Translator( element ).get();
+			std::string lowCase = orig;
+			std::transform( lowCase.begin(), lowCase.end(), lowCase.begin(), ::tolower );
+		
+			for( std::string value : element->_values )
+				if( value == orig || ( ! element->_isCaseSensitive && value == lowCase ) )
+					status = eStatusValid;
+
+			element->_mapValue = Map< std::string >( element->_map ).getLabel( orig );
+			if( element->_mapValue.empty() && ! element->_isCaseSensitive )
+				element->_mapValue = Map< std::string >( element->_map ).getLabel( lowCase );
+
+			if( element->_values.empty() && ! element->_mapValue.empty() && getSize( element ) )
+				status = eStatusValid;
+
+			if( element->_values.empty() && getSize( element ) == 0 && element->_data.back() == element->_endChar )
+				status = eStatusValid;
+
+			if( status == eStatusInvalid )
+				element->_error.push_back( "[checker] Invalid value " );
+			break;
+		}
+
 		case eTypeHexa  :
 		{
 			std::string orig = Translator( element ).get();
@@ -85,7 +109,8 @@ void Checker::check( const ShPtrElement element )
 
 		case eTypeRaw   :
 		{
-			status = eStatusUnknown;
+			if( element->_data.size() == getSize( element ) )
+				status = eStatusValid;
 			break;
 		}
 	}
@@ -183,9 +208,6 @@ size_t Checker::getSize( const ShPtrElement element )
 			size = _exprParser->getExpressionResult< size_t >( element->_countExpr );
 			LOG_TRACE( "[checker] get " << element->_id << "'s size: " << size );
 		}
-
-		if( size == 0 )
-			element->_warning.push_back( "[checker] Null data size " );
 
 		return size;
 	}
