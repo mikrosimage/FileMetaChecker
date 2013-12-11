@@ -268,7 +268,7 @@ bool Checker::isRequirementValid( const ShPtrElement element )
 
 void Checker::checkLastUnorderedElement( const ShPtrElement element )
 {
-	LOG_COLOR( common::details::kColorMagenta, "checkLastUnorderedElement" << std::endl );
+	// LOG_COLOR( common::details::kColorMagenta, "checkLastUnorderedElement" << std::endl );
 	if( element->getPrevious() == nullptr )
 		throw std::runtime_error( "[checker] Invalid tree" );
 

@@ -89,7 +89,8 @@ public:
 
 	/**
 	 * Print one Element of the list.
-	 * @param element   Element reference to print.
+	 * @param element    Element reference to print.
+	 * @param fileOffset Position of the Element in the file.
 	 */
 	void print( const ShPtrElement element, const size_t& fileOffset );
 

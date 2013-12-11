@@ -41,7 +41,6 @@ public:
 	 * @param[in]  size Buffer size (in byte) to copy.
 	 * @return     Whether data have been correctly read and copied from file, or not.
 	 */
-	// bool readData( char* data, const size_t size );
 	bool readData( std::vector< char >& data, const size_t size );
 
 	/**

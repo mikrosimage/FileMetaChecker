@@ -86,6 +86,10 @@ public:
 	 */
 	std::vector< ShPtrElement > getChildren() { return _children; }
 
+	/**
+	 * Get flags for the Element properties.
+	 * @return Properties flags.
+	 */
 	std::string getPropertiesFlag();
 protected:
 	static size_t getElementIteration( const std::string& id, const ExpressionList& repetExpr, const ShPtrElement& previous, const ShPtrElement& parent );
