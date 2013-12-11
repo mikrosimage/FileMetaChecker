@@ -129,6 +129,8 @@ public:
 	
 	std::vector< char > _data;
 
+	const char    _endChar;
+
 	const bool    _isGroup;
 	const bool    _isOrdered;
 	const bool    _isOptional;

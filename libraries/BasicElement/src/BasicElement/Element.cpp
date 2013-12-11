@@ -31,6 +31,7 @@ Element::Element( const ShPtrSpecNode node,
 	, _displayType     ( node->getDisplayType() )
 	, _iteration       ( getElementIteration( _id, _repetExpr, previous, parent ) )
 	, _status          ( eStatusUnknown )
+	, _endChar         ( node->getEndChar()      )
 	, _isGroup         ( node->isGroup()         )
 	, _isOrdered       ( node->isOrdered()       )
 	, _isOptional      ( node->isOptional()      )
