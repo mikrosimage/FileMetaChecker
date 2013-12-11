@@ -155,17 +155,7 @@ static const std::map< std::string, EType > typeMap
 static const std::map< std::string, EDisplayType > displayTypeMap
 {
 	{ "",            eDisplayTypeDefault },
-	{ kInt8,         eDisplayTypeNumbers },
-	{ kUInt8,        eDisplayTypeNumbers },
-	{ kInt16,        eDisplayTypeNumbers },
-	{ kUInt16,       eDisplayTypeNumbers },
-	{ kInt32,        eDisplayTypeNumbers },
-	{ kUInt32,       eDisplayTypeNumbers },
-	{ kInt64,        eDisplayTypeNumbers },
-	{ kUInt64,       eDisplayTypeNumbers },
-	{ kFloat,        eDisplayTypeNumbers },
-	{ kDouble,       eDisplayTypeNumbers },
-	{ kIeeeExtended, eDisplayTypeNumbers },
+	{ kNumbers,      eDisplayTypeNumbers },
 	{ kAscii,        eDisplayTypeAscii   },
 	{ kHexa,         eDisplayTypeHexa    },
 	{ kRaw,          eDisplayTypeRaw     },
