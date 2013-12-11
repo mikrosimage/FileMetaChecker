@@ -37,7 +37,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 	std::shared_ptr< basic_element::Element > parent;
 	parent = getNextParent( element, node );
 	report.add( element );
-	report.print( element, file.getPosition() - element->_data.size() );
+	report.print( element, file.getPosition() - size );
 
 	while( ( node = element->next() ) != nullptr )
 	{
