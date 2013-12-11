@@ -37,7 +37,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 	std::shared_ptr< basic_element::Element > parent;
 	parent = getNextParent( element, node );
 	report.add( element );
-	report.print( element );
+	report.print( element, file.getPosition() - element->_data.size() );
 
 	while( ( node = element->next() ) != nullptr )
 	{
@@ -71,8 +71,6 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 		LOG_TRACE( "[comparator] checked: " << element->_id << " = " << element->_dispValue << " (" << statusMap.at( element->_status ) << ") @ " << element << " << Previous: " << previous << " << Parent: " );
 		// LOG_COLOR( common::details::kColorMagenta, "[comparator] checked: " << element->_id << " = " << element->_dispValue << " (" << statusMap.at( element->_status ) << ") @ " << element << " << Previous: " << previous << " << Parent: " << parent << std::endl );
 
-		// if( ! skipElementCheck( element ) && parent != nullptr )
-		// 	parent->_childrenSize += element->_size;
 		updateParentSize( element );
 
 		checkGroupSize( element, file );
@@ -87,7 +85,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 		}
 		else
 			LOG_TRACE( "[comparator] next parent: null" );
-		report.print( element );
+		report.print( element, file.getPosition() - size );
 	}
 
 	if( ! file.isEndOfFile() )
