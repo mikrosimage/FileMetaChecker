@@ -75,13 +75,15 @@ void Report::print()
 {
 	if( _verbosity == eReportDisplayNone )
 		return;
+	size_t offset = 0;
 	for( ShPtrElement element : _elementList )
 	{
-		print( element );
+		print( element, offset );
+		offset += element->_data.size();
 	}
 }
 
-void Report::print( const ShPtrElement element )
+void Report::print( const ShPtrElement element, const size_t& fileOffset )
 {
 	if( ! isPrintable( element ) || _verbosity == eReportDisplayNone )
 		return;
@@ -113,8 +115,8 @@ void Report::print( const ShPtrElement element )
 	if( _verbosity >= eReportDisplaySize )
 		LOG( ".s: " << std::setfill( ' ' ) << std::setw( 12 ) << element->_data.size() << " " );
 
-	if( _verbosity >= eReportDisplayAddress )
-		LOG( ".@: " << std::setfill( ' ' ) << std::setw( 9 ) << element << " " );
+	if( _verbosity >= eReportDisplayOffset )
+		LOG( ".@: " << std::setfill( ' ' ) << std::setw( 9 ) << fileOffset << " " );
 
 	if( _verbosity >= eReportDisplayID )
 	{

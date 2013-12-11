@@ -27,7 +27,7 @@ enum EReportDisplayLevel
 	eReportDisplaySize,
 	eReportDisplayIteration,
 	eReportDisplayComments,
-	eReportDisplayAddress,
+	eReportDisplayOffset,
 };
 
 /**
@@ -91,7 +91,7 @@ public:
 	 * Print one Element of the list.
 	 * @param element   Element reference to print.
 	 */
-	void print( const ShPtrElement element );
+	void print( const ShPtrElement element, const size_t& fileOffset );
 
 	/**
 	 * Write the Elements from the list in a XML file.
