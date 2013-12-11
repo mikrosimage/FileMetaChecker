@@ -85,8 +85,8 @@ int main( int argc, char** argv )
 		case 5  : displayLevel = report_generator::eReportDisplaySize;      break;
 		case 6  : displayLevel = report_generator::eReportDisplayIteration; break;
 		case 7  : displayLevel = report_generator::eReportDisplayComments;  break;
-		case 8  : displayLevel = report_generator::eReportDisplayAddress;   break;
-		default : displayLevel = report_generator::eReportDisplayAddress;   break;
+		case 8  : displayLevel = report_generator::eReportDisplayOffset;   break;
+		default : displayLevel = report_generator::eReportDisplayOffset;   break;
 	}
 
 	if( vm.count( "input" ) )
