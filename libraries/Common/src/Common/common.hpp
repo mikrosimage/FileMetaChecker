@@ -56,6 +56,7 @@ static const std::string kFloat   =  "float";
 static const std::string kDouble  = "double";
 
 static const std::string kIeeeExtended  = "ieeeExtended";
+static const std::string kIeeeExtShort  = "ieeeExt";
 
 static const std::string kExif  = "exif";
 static const std::string kKlv   = "klv";
@@ -197,7 +198,7 @@ static const std::map< EType, std::string > typeStringMap
 	{ eTypeUInt64,       kUInt64        },
 	{ eTypeFloat,        kFloat         },
 	{ eTypeDouble,       kDouble        },
-	{ eTypeIeeeExtended, kIeeeExtended  },
+	{ eTypeIeeeExtended, kIeeeExtShort  },
 	{ eTypeAscii,        kAscii         },
 	{ eTypeHexa,         kHexa          },
 	{ eTypeRaw,          kRaw           },
