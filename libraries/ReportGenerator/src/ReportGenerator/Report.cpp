@@ -88,7 +88,7 @@ void Report::print( const ShPtrElement element, const size_t& fileOffset )
 	if( ! isPrintable( element ) || _verbosity == eReportDisplayNone )
 		return;
 	
-	if( _verbosity == eReportDisplayComments )
+	if( _verbosity >= eReportDisplayComments )
 		LOG( element->getPropertiesFlag() << " | " );
 
 	std::string color;
@@ -107,20 +107,20 @@ void Report::print( const ShPtrElement element, const size_t& fileOffset )
 	}
 
 	if( _verbosity >= eReportDisplayIteration )
-		LOG( ".i: " << std::setfill( ' ' ) << std::setw( 4 ) << element->_iteration << " " );
+		LOG( "| i: " << std::setfill( ' ' ) << std::setw( 4 ) << element->_iteration << " " );
 
 	if( _verbosity >= eReportDisplayType )
-		LOG( ".t: " << std::setfill( ' ' ) << std::setw( 12 ) << typeStringMap.at( element->_type ) << " " );
+		LOG( "| t: " << std::setfill( ' ' ) << std::setw( 8 ) << typeStringMap.at( element->_type ) << " " );
 
 	if( _verbosity >= eReportDisplaySize )
-		LOG( ".s: " << std::setfill( ' ' ) << std::setw( 12 ) << element->_data.size() << " " );
+		LOG( "| s: " << std::setfill( ' ' ) << std::setw( 11 ) << element->_data.size() << " " );
 
 	if( _verbosity >= eReportDisplayOffset )
-		LOG( ".@: " << std::setfill( ' ' ) << std::setw( 9 ) << fileOffset << " " );
+		LOG( "| @: " << std::setfill( ' ' ) << std::setw( 11 ) << fileOffset << " " );
 
 	if( _verbosity >= eReportDisplayID )
 	{
-		LOG( "." );
+		LOG( "| " );
 		LOG_COLOR( color, tabulation( getDisplayOffset( element ) ) << element->_label );
 	}
 
