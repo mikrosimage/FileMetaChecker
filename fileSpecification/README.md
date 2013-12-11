@@ -6,40 +6,46 @@ Specification dictionary
 
 ### Element keys
 
-* __id__     _(compulsory)_
-* __label__  _(compulsory)_
-* type
-* size
-* values
-* range
-* map
-* group
-* groupSize
-* repetition
-* requirement
-* endian
-* optional
-* ordered
-* display
-* file
-
-### Data types
-
-* unknown _(default)_
-* ascii
-* hexa
-* raw
-* int8
-* uint8
-* int16
-* uint16
-* int32
-* uint32
-* int64
-* uint64
-* float
-* double
-* ieeeExtended
+* __id__        _(compulsory)_
+* __label__     _(compulsory)_
+* type          _(choice)_
+	* unknown   _(default)_
+	* ascii
+	* hexa
+	* raw
+	* int8
+	* uint8
+	* int16
+	* uint16
+	* int32
+	* uint32
+	* int64
+	* uint64
+	* float
+	* double
+	* ieeeExtended
+* size          _(Python expression or number)_
+* values        _(string, number or array)_
+* range         _(array)_
+* map           _(array)_
+* group         _(array)_
+* groupSize     _(Python expression or number)_
+* repetition    _(number or array)_
+* requirement   _(Python expression)_
+* endian        _(choice)_
+	* big       _(default)_
+	* little
+* optional      _(boolean, false by default)_
+* ordered       _(boolean, true by default)_
+* display       _(choice)_
+	* default   _(default)_
+	* number
+	* ascii
+	* hexa
+	* raw
+* caseSensitive _(boolean, false by default)_
+* endsWith      _(char or number, null by default)_
+* file          _(string)_
 
 
 Write a specification file
@@ -49,15 +55,9 @@ FileMetaChecker works as a comparator between a file and a reference, which is g
 ### Element description
 Most of the time, it is suitable to describe a file format as a row of basic elements, which represent different data types. These elements can have parent-child relationships, can be compulsory, optional, repeated, and so on. FileMetaChecker use this kind of basic element trees to describe file formats, and define Element objects to represent those basic elements. At the end of the comparison process, each Element includes a status :
 
-* Not checked
+* Unknown
 * Valid
 * Invalid
-* Invalid but optional
-* Invalid for unordered
-* Invalid but skip
-* Invalid for iteration
-* Invalid group for iteration
-* Pass over
 * Skip
 
 
@@ -99,7 +99,12 @@ An Element may have no specified type, but it will not represent any data.
 
 
 #### Element value
-An Element may have specified values. If its type is "ascii" or "hexa", the Element must have one or several possible values. If the value of the data extract from the file is not one of these specified values, the Element is not valid.
+An Element may have specified values.
+
+* If its type is "ascii", the Element may have zero, one or several possible values. 
+    * If there is no value specified, the Element is considered as an ASCII WORD, with an ending char (which default value is null, but can be specified with the "endsWith" key). In this case, if the ending char is not found, the Element is not valid.
+    * If the value of the data extract from the file is not one of these specified values, the Element is not valid.
+* If its type is "hexa", the Element must have one or several possible values. If the value of the data extract from the file is not one of these specified values, the Element is not valid.
 
 Single value:
 
@@ -124,8 +129,12 @@ Several values:
 
 In the multi-values case, every values must have the same length.
 
-If the type is a number (integer or floating-point), a value range may be defined, and can be composed with several ranges. Each range must contain a "min" value, a "max" value or both. If the Element's value is in the range, it becomes Valid, Invalid otherwise. If no range is defined, the Element value is only extracted from the file and its status becomes "Pass Over".
-	
+* If the type is a number (integer or floating-point), a value range may be defined, and can be composed with several ranges. Each range must contain a "min" value, a "max" value or both.
+    * If the Element's value is in the range, it becomes Valid, Invalid otherwise.
+    * If no range is defined, the Element value is only extracted from the file and its status becomes "Pass Over".
+
+Number Element with complex range:
+
 	{
 		"id": "thisIsABasicElement",
 		"label": "This is a basic element",
@@ -137,16 +146,20 @@ If the type is a number (integer or floating-point), a value range may be define
 		]
 	}
 
+
 > Here, the Element'value must be less than -10, between -2 and 4, or more than 6 to be Valid.
 
 
-If the type is "raw", no value can be specified, data are extracted directly from file, and the status becomes "Pass Over".
+* If the type is "raw", no value can be specified, data are extracted directly from file. If data are correctly extracted, the Element's status becomes "Valid".
 
 #### Element's size
 The size of each Element must be specified to deduce the size of data to be extracted from the file. However, the size specification depends on the type of the Element:
+
 * For number elements (integer and floating-point), the data size of the Element is directly deduce from the type, so it must not be specified.
 * For "ascii" and "hexa" elements, the data size is deduce from the specified value(s).
 * For "raw" element, the size MUST be specified with the "size" field. This field handles 'Python' expressions, and can refer to another Element's value.
+
+Example of size assignment:
 
 	{
 		"id": "element1",
