@@ -133,17 +133,22 @@ void Checker::check( const ShPtrElement element )
 		status = eStatusSkip;
 	}
 
-	if( status == eStatusInvalid && ! element->_repetExpr.empty() )
+	if( ! element->_repetExpr.empty() )
 	{
 		LOG_TRACE( "[checker] " << element->_id << " : check repetitions" );
-		status = eStatusSkip;
 		std::string errorMessage;
-		ShPtrElement previous = element->getPrevious();
-		if( ! isIterationValid( previous, errorMessage ) )
-		{
-			LOG_ERROR( errorMessage << " (" << element->_id << " )" );
-			element->_error.push_back( errorMessage );
+		if( status == eStatusValid && ! continueRepetition( element ) )
 			status = eStatusInvalid;
+		if( status == eStatusInvalid )
+		{
+			status = eStatusSkip;
+			ShPtrElement previous = element->getPrevious();
+			if( ! isIterationValid( previous, errorMessage ) )
+			{
+				LOG_ERROR( errorMessage << " (" << element->_id << " )" );
+				element->_error.push_back( errorMessage );
+				status = eStatusInvalid;
+			}
 		}
 	}
 
@@ -157,20 +162,6 @@ void Checker::check( const ShPtrElement element )
 	setParentGroupSize( element );
 
 	LOG_TRACE( "[checker] " << element->_id << " : return status = " << statusMap.at( status ) );
-}
-
-void Checker::setParentGroupSize( const ShPtrElement element )
-{
-	ShPtrElement parent = element->getParent();
-
-	if( parent == nullptr                         ||
-		element->getPrevious() == nullptr         ||
-		element->getSpecNode()->next() != nullptr ||
-		parent->_groupSizeExpr.empty()            )
-		return;
-	
-	parent->_specGroupSize = _exprParser->getExpressionResult< size_t >( parent->_groupSizeExpr );
-	LOG_TRACE( "[checker] set " << element->_id << "'s parent (" << parent->_id << ") groupSize (" << parent->_groupSizeExpr << "): " << parent->_specGroupSize );
 }
 
 size_t Checker::getSize( const ShPtrElement element )
@@ -216,6 +207,40 @@ size_t Checker::getSize( const ShPtrElement element )
 		LOG_ERROR( "[checker] " << e.what() << " (" << element->_id << ")" );
 		throw;
 	}
+}
+
+void Checker::setParentGroupSize( const ShPtrElement element )
+{
+	ShPtrElement parent = element->getParent();
+
+	if( parent == nullptr                         ||
+		element->getPrevious() == nullptr         ||
+		element->getSpecNode()->next() != nullptr ||
+		parent->_groupSizeExpr.empty()            )
+		return;
+	
+	parent->_specGroupSize = _exprParser->getExpressionResult< size_t >( parent->_groupSizeExpr );
+	LOG_TRACE( "[checker] set " << element->_id << "'s parent (" << parent->_id << ") groupSize (" << parent->_groupSizeExpr << "): " << parent->_specGroupSize );
+}
+
+bool Checker::continueRepetition( const ShPtrElement element )
+{
+	if( element->_repetExpr.empty() )
+		return true;
+	size_t repetMax = 0;
+	for( std::pair< std::string, std::string > repetPair : element->_repetExpr )
+	{
+		if( repetPair.first != repetPair.second )
+			continue;
+		repetMax = std::max( _exprParser->getExpressionResult< size_t >( repetPair.first ), repetMax );
+	}
+
+	if( repetMax != 0 && element->_iteration > repetMax )
+	{
+		LOG_TRACE( "[checker] repetition : " << element->_iteration << " / " << repetMax << ": continue...");
+		return false;
+	}
+	return true;
 }
 
 bool Checker::isIterationValid( const ShPtrElement element, std::string& errorMessage )

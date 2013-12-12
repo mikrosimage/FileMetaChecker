@@ -38,6 +38,7 @@ public:
 	size_t getSize( const ShPtrElement element );
 private:
 	void setParentGroupSize       ( const ShPtrElement element );
+	bool continueRepetition       ( const ShPtrElement element );
 	bool isIterationValid         ( const ShPtrElement element, std::string& errorMessage );
 	bool isRequirementValid       ( const ShPtrElement element );
 	void checkLastUnorderedElement( const ShPtrElement element );
