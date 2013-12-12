@@ -137,7 +137,7 @@ void Checker::check( const ShPtrElement element )
 	{
 		LOG_TRACE( "[checker] " << element->_id << " : check repetitions" );
 		std::string errorMessage;
-		if( status == eStatusValid && ! continueRepetition( element ) )
+		if( ( status == eStatusValid || status == eStatusUnknown ) && ! continueRepetition( element ) )
 			status = eStatusInvalid;
 		if( status == eStatusInvalid )
 		{
@@ -150,6 +150,8 @@ void Checker::check( const ShPtrElement element )
 				status = eStatusInvalid;
 			}
 		}
+		if( status == eStatusUnknown && continueRepetition( element ) )
+			status = eStatusValid;
 	}
 
 	if( element->getSpecNode()->next() == nullptr && status == eStatusSkip && parent != nullptr && ! parent->_isOrdered )
