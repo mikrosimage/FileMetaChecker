@@ -53,11 +53,11 @@ void Report::update( const ShPtrElement newElement )
 {
 	if( newElement == nullptr )
 		return;
-	for( ShPtrElement element : _elementList )
+	for( size_t i = 0; i < _elementList.size(); ++i )
 	{
-		if( element->_uId == newElement->_uId )
+		if( _elementList.at(i)->_uId == newElement->_uId )
 		{
-			element = newElement;
+			_elementList.at(i) = newElement;
 			return;
 		}
 	}
@@ -79,7 +79,8 @@ void Report::print()
 	for( ShPtrElement element : _elementList )
 	{
 		print( element, offset );
-		offset += element->_data.size();
+		if( element->_status != eStatusSkip )
+			offset += element->_data.size();
 	}
 }
 
