@@ -31,6 +31,8 @@ public:
 	std::string getContextString();
 
 protected:
+	template< typename NumberType >
+	std::string getElementValue( const ShPtrElement element );
 	void printPythonError( const bpy::error_already_set& exception );
 
 private:

@@ -22,6 +22,20 @@ ExpressionParser::~ExpressionParser()
 	Py_Finalize();
 }
 
+template< typename NumberType >
+std::string ExpressionParser::getElementValue( const ShPtrElement element )
+{
+	NumberType value = Translator( element ).get< NumberType >();
+	std::stringstream sstr;
+	if( isnan( value ) )
+	{
+		sstr << "'" << value << "'";
+		return sstr.str();
+	}
+	sstr << value;
+	return sstr.str();
+}
+
 void ExpressionParser::addElementToContext( const ShPtrElement elem )
 {
 	if( elem->_iteration > 1 )
@@ -32,17 +46,17 @@ void ExpressionParser::addElementToContext( const ShPtrElement elem )
 	{
 		case eTypeInt8         : oss << elem->_id << " = " << (short) Translator( elem ).get< basic_element::int8  >() << std::endl; break;
 		case eTypeUInt8        : oss << elem->_id << " = " << (short) Translator( elem ).get< basic_element::uint8 >() << std::endl; break;
-		case eTypeInt16        : oss << elem->_id << " = " << Translator( elem ).get< basic_element::int16         >() << std::endl; break;
-		case eTypeUInt16       : oss << elem->_id << " = " << Translator( elem ).get< basic_element::uint16        >() << std::endl; break;
-		case eTypeInt32        : oss << elem->_id << " = " << Translator( elem ).get< basic_element::int32         >() << std::endl; break;
-		case eTypeUInt32       : oss << elem->_id << " = " << Translator( elem ).get< basic_element::uint32        >() << std::endl; break;
-		case eTypeInt64        : oss << elem->_id << " = " << Translator( elem ).get< basic_element::int64         >() << std::endl; break;
-		case eTypeUInt64       : oss << elem->_id << " = " << Translator( elem ).get< basic_element::uint64        >() << std::endl; break;
-		case eTypeFloat        : oss << elem->_id << " = " << Translator( elem ).get< float                        >() << std::endl; break;
-		case eTypeDouble       : oss << elem->_id << " = " << Translator( elem ).get< double                       >() << std::endl; break;
-		case eTypeIeeeExtended : oss << elem->_id << " = " << Translator( elem ).get< basic_element::ieeeExtended  >() << std::endl; break;
-		case eTypeAscii        : oss << elem->_id << " = '" << Translator( elem ).get( eDisplayTypeAscii ) << "'" << std::endl; break;
-		case eTypeHexa         : oss << elem->_id << " = '" << Translator( elem ).get( eDisplayTypeHexa  ) << "'" << std::endl; break;
+		case eTypeInt16        : oss << elem->_id << " = " << getElementValue< basic_element::int16         >( elem )  << std::endl; break;
+		case eTypeUInt16       : oss << elem->_id << " = " << getElementValue< basic_element::uint16        >( elem )  << std::endl; break;
+		case eTypeInt32        : oss << elem->_id << " = " << getElementValue< basic_element::int32         >( elem )  << std::endl; break;
+		case eTypeUInt32       : oss << elem->_id << " = " << getElementValue< basic_element::uint32        >( elem )  << std::endl; break;
+		case eTypeInt64        : oss << elem->_id << " = " << getElementValue< basic_element::int64         >( elem )  << std::endl; break;
+		case eTypeUInt64       : oss << elem->_id << " = " << getElementValue< basic_element::uint64        >( elem )  << std::endl; break;
+		case eTypeFloat        : oss << elem->_id << " = " << getElementValue< float                        >( elem )  << std::endl; break;
+		case eTypeDouble       : oss << elem->_id << " = " << getElementValue< double                       >( elem )  << std::endl; break;
+		case eTypeIeeeExtended : oss << elem->_id << " = " << getElementValue< basic_element::ieeeExtended  >( elem )  << std::endl; break;
+		case eTypeAscii        : oss << elem->_id << " = '" << Translator( elem ).get( eDisplayTypeAscii ) << "'"      << std::endl; break;
+		case eTypeHexa         : oss << elem->_id << " = '" << Translator( elem ).get( eDisplayTypeHexa  ) << "'"      << std::endl; break;
 		default: oss << elem->_id << " = " << "True" << std::endl; break;
 	}
 	_contextString += oss.str();
