@@ -31,7 +31,7 @@ bool SpecChecker::check()
 		_document->Parse<0>( content.c_str() );
 		file.close();
 
-		if(  _document->HasParseError() )
+		if( _document->HasParseError() )
 			throw std::runtime_error( std::string( _document->GetParseError() ) + "  @char:# " + std::to_string( _document->GetErrorOffset() ) );
 		
 		LOG_TRACE( "[speccheker] _document OK !" );
@@ -120,10 +120,22 @@ void SpecChecker::includeExtNode( rapidjson::Value::Member* member, rapidjson::V
 					{
 						switch( child->GetType() )
 						{	
-							case rapidjson::kNullType   : object.FindMember( itr->name.GetString() )->value.PushBack( std::string( kNull ).c_str(), _document->GetAllocator() ); break;
-							case rapidjson::kFalseType  :
-							case rapidjson::kTrueType   : object.FindMember( itr->name.GetString() )->value.PushBack( child->GetBool(), _document->GetAllocator() );              break;
-							case rapidjson::kStringType : object.FindMember( itr->name.GetString() )->value.PushBack( child->GetString(), _document->GetAllocator() );            break;
+							case rapidjson::kNullType :
+							{
+								object.FindMember( itr->name.GetString() )->value.PushBack( std::string( kNull ).c_str(), _document->GetAllocator() );
+								break;
+							}
+							case rapidjson::kFalseType :
+							case rapidjson::kTrueType :
+							{
+								object.FindMember( itr->name.GetString() )->value.PushBack( child->GetBool(), _document->GetAllocator() );
+								break;
+							}
+							case rapidjson::kStringType :
+							{
+								object.FindMember( itr->name.GetString() )->value.PushBack( child->GetString(), _document->GetAllocator() );
+								break;
+							}
 							case rapidjson::kNumberType :
 							{
 								if( itr->value.IsInt() )
@@ -132,7 +144,8 @@ void SpecChecker::includeExtNode( rapidjson::Value::Member* member, rapidjson::V
 									object.FindMember( itr->name.GetString() )->value.PushBack( child->GetDouble(), _document->GetAllocator() );
 								break;
 							}
-							default: break;
+							default:
+								break;
 						}
 					}
 					else
@@ -175,6 +188,5 @@ std::string SpecChecker::getSpecString()
 		throw;
 	}
 }
-
 
 }
