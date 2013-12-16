@@ -102,10 +102,10 @@ Element::ShPtrSpecNode Element::next( )
 	return nextNode;
 }
 
-void Element::set( const std::vector< char >& data, const size_t& size )
+void Element::set( const std::vector< char >& data )
 {
-	_data.resize( size );
-	std::memcpy( &_data[0], &data[0], size );
+	_data.resize( data.size() );
+	std::memcpy( &_data[0], &data[0], data.size() );
 }
 
 

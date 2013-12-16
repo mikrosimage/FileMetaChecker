@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE( basic_element_element )
 	
 		const size_t size = 5;
 		std::vector< char > buffer { 0x7d, 0x21, 0x32, 'c', '!' };
-		elem.set( buffer, size );
+		elem.set( buffer );
 		BOOST_CHECK_EQUAL( elem._data.size(), size );
 		for( size_t i = 0; i < size; ++i )
 			BOOST_CHECK_EQUAL( elem._data.at( i ), buffer[i] );

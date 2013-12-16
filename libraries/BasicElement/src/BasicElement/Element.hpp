@@ -60,7 +60,7 @@ public:
 	 * @param[in] data Data buffer to copy from.
 	 * @param[in] size Buffer size (in bytes).
 	 */
-	void  set( const std::vector< char >& data, const size_t& size );
+	void  set( const std::vector< char >& data );
 
 	/**
 	 * Get the current Element parent.
