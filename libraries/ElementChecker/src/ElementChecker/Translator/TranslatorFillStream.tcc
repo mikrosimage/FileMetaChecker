@@ -11,7 +11,10 @@ void Translator::fillStream( std::ostringstream& osstr )
 template< >
 void Translator::fillStream< eDisplayTypeAscii >( std::ostringstream& osstr )
 {
-	for( size_t i = 0; i < _ref->_data.size(); ++i )
+	size_t size = _ref->_data.size();
+	if( ! _ref->_keepEndingChar )
+		--size;
+	for( size_t i = 0; i < size; ++i )
 		osstr << _ref->_data.at( i );
 }
 
