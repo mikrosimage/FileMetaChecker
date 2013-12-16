@@ -63,6 +63,7 @@ public:
 	bool isOptional()      const; /**< @return true if the node is optional, false otherwise. */
 	bool isBigEndian()     const; /**< @return true if the node's endianness is big-endian, false otherwise. */
 	bool isCaseSensitive() const; /**< @return true if the node's value is case sensitive, false otherwise. */
+	bool keepEndingChar()  const; /**< @return true if the node's ending char is kept, false otherwise. */
 
 	std::vector< std::string >                           getValues()      const; /**< @return Vector of the node values */
 	std::vector< std::pair< std::string, std::string > > getRange()       const; /**< @return Vector of the node value ranges */

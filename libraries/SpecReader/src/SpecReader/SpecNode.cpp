@@ -170,6 +170,11 @@ bool SpecNode::isCaseSensitive() const
 	return property_parser::getProperty< bool >( _node, kCaseSensitive, false );
 }
 
+bool SpecNode::keepEndingChar() const
+{
+	return property_parser::getProperty< bool >( _node, kKeepEnd, true );
+}
+
 std::vector< std::string > SpecNode::getValues() const
 {
 	std::vector< std::string > values;
