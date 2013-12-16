@@ -31,6 +31,7 @@ static const std::string kOrdered       = "ordered";
 static const std::string kDisplayType   = "display";
 static const std::string kCaseSensitive = "caseSensitive";
 static const std::string kEndsWith      = "endsWith";
+static const std::string kKeepEnd       = "keepEnd";
 
 static const std::string kFile        = "file";
 
