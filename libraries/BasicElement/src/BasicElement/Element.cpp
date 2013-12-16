@@ -37,6 +37,7 @@ Element::Element( const ShPtrSpecNode node,
 	, _isOptional      ( node->isOptional()      )
 	, _isBigEndian     ( node->isBigEndian()     )
 	, _isCaseSensitive ( node->isCaseSensitive() )
+	, _keepEndingChar  ( node->keepEndingChar()  )
 	, _checkedGroup    ( false )
 {
 	if( ! _parent.expired() )

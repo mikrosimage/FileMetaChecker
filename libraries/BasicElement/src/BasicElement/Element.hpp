@@ -140,6 +140,7 @@ public:
 	const bool    _isOptional;
 	const bool    _isBigEndian;
 	const bool    _isCaseSensitive;
+	const bool    _keepEndingChar;
 	bool          _checkedGroup;
 
 	static std::string getLabelsLegend()
