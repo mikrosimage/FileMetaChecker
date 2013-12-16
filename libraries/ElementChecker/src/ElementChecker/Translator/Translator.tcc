@@ -85,11 +85,11 @@ bool Translator::isSystemLittleEndian()
 {
 	union
 	{
-		unsigned int i;
-		char c[4];
-	} binInt = { 0x01020304 };
+		unsigned short i;
+		char c[2];
+	} binInt = { 0x0001 };
 
-	return ( binInt.c[0] == 4 ); 
+	return binInt.c[0];
 }
 
 void Translator::getOrderedData( char* buffer )
@@ -99,23 +99,30 @@ void Translator::getOrderedData( char* buffer )
 	else
 		std::memcpy( buffer, &_ref->_data[0], _ref->_data.size() );
 
-	if( ( _ref->_type == eTypeInt8
-	   || _ref->_type == eTypeUInt8
-	   || _ref->_type == eTypeInt16
-	   || _ref->_type == eTypeUInt16
-	   || _ref->_type == eTypeInt32
-	   || _ref->_type == eTypeUInt32
-	   || _ref->_type == eTypeInt64
-	   || _ref->_type == eTypeUInt64
-	   || _ref->_type == eTypeFloat
-	   || _ref->_type == eTypeDouble
-	   || _ref->_type == eTypeIeeeExtended )
-	   && isSystemLittleEndian() )
+	if( ! isSystemLittleEndian() )
+		return;
+
+	switch( _ref->_type )
 	{
-		char* temp = new char[ _ref->_data.size() ];
-		std::memcpy( temp, buffer, _ref->_data.size() );
-		std::reverse_copy( temp, temp + _ref->_data.size(), buffer );	// swap if system little endian
-		delete[] temp;
+		case eTypeInt16 :
+		case eTypeUInt16 :
+		case eTypeInt32 :
+		case eTypeUInt32 :
+		case eTypeInt64 :
+		case eTypeUInt64 :
+		case eTypeFloat :
+		case eTypeDouble :
+		case eTypeIeeeExtended :
+		{
+			std::vector<char> temp;
+			temp.resize( _ref->_data.size() );
+
+			std::memcpy( &temp[0], buffer, _ref->_data.size() );
+			std::reverse_copy( &temp[0], &temp[0] + _ref->_data.size(), buffer ); // swap if system little endian
+			break;
+		}
+		default:
+			break;
 	}
 }
 
