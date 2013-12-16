@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_data )
 	// 	std::shared_ptr< basic_element::Element > elem( new basic_element::Element( node ) );
 	
 	// 	std::vector< char > buff { 'W', 'A', 'V', 'E' };
-	// 	elem->set( buff, 4 );
+	// 	elem->set( buff );
 
 	// 	checker.check( elem );
 	// 	BOOST_CHECK_EQUAL( elem->_status, eStatusPassOver );	// @todo: support WORD types (end char = null)
@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_data )
 		std::shared_ptr< basic_element::Element > elem( new basic_element::Element( node ) );
 	
 		std::vector< char > buff { 'W', 'A', 'V', 'E' };
-		elem->set( buff, 4 );
+		elem->set( buff );
 
 		checker.check( elem );
 		BOOST_CHECK_EQUAL( elem->_status, eStatusValid );
@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_data )
 		std::shared_ptr< basic_element::Element > elem( new basic_element::Element( node ) );
 	
 		std::vector< char > buff { 'W', 'A', 'V', 'E' };
-		elem->set( buff, 4 );
+		elem->set( buff );
 
 		checker.check( elem );
 		BOOST_CHECK_EQUAL( elem->_status, eStatusValid );
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_data )
 		std::shared_ptr< basic_element::Element > elem( new basic_element::Element( node ) );
 	
 		std::vector< char > buff { 'W', 'A', 'V', 'E' };
-		elem->set( buff, 4 );
+		elem->set( buff );
 
 		checker.check( elem );
 		BOOST_CHECK_EQUAL( elem->_status, eStatusInvalid );
@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_number )
 		std::shared_ptr< basic_element::Element > elem( new basic_element::Element( node ) );
 	
 		std::vector< char > buff { 0x00, 0x00, 0x00, 0x01 };
-		elem->set( buff, 4 );
+		elem->set( buff );
 
 		checker.check( elem );
 		BOOST_CHECK_EQUAL( elem->_type, eTypeUInt32 );
@@ -126,7 +126,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_number )
 		std::shared_ptr< basic_element::Element > elem( new basic_element::Element( node ) );
 	
 		std::vector< char > buff { 0x00, 0x00, 0x00, 0x05 };
-		elem->set( buff, 4 );
+		elem->set( buff );
 
 		checker.check( elem );
 		BOOST_CHECK_EQUAL( elem->_type, eTypeUInt32 );
@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_number )
 		std::shared_ptr< basic_element::Element > elem( new basic_element::Element( node ) );
 	
 		std::vector< char > buff { 0x05, 0x00, 0x00, 0x00 };
-		elem->set( buff, 4 );
+		elem->set( buff );
 
 		checker.check( elem );
 		BOOST_CHECK_EQUAL( elem->_type, eTypeUInt32 );
@@ -156,7 +156,7 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_number )
 		std::shared_ptr< basic_element::Element > elem( new basic_element::Element( node ) );
 	
 		std::vector< char > buff { 0x00, 0x00, 0x00, 0x08 };
-		elem->set( buff, 4 );
+		elem->set( buff );
 
 		checker.check( elem );
 		BOOST_CHECK_EQUAL( elem->_type, eTypeUInt32 );

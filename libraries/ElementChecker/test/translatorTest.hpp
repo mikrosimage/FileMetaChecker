@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_1 )
 	}
 	{
 		std::vector< char > buff { 'W', 'A', 'V', 'E' };
-		elem->set( buff, 4 );
+		elem->set( buff );
 
 		BOOST_CHECK_EQUAL( Translator( elem ).get< std::string >(), "WAVE" );
 		BOOST_CHECK_EQUAL( Translator( elem ).get< std::vector< int > >().at(0), 1163280727 );
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_1 )
 	}
 	{
 		std::vector< char > buff { 'a', 'b' };
-		elem->set( buff, 2 );
+		elem->set( buff );
 
 		BOOST_CHECK_EQUAL( Translator( elem ).get< std::string >(), "ab" );
 		BOOST_CHECK_EQUAL( Translator( elem ).get< std::vector< short > >().at(0), 25185 );
@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_1 )
 	}
 	{
 		std::vector< char > buff { 'W', 'A', 'V', 'E' };
-		elem->set( buff, 4 );
+		elem->set( buff );
 
 		BOOST_CHECK_EQUAL( Translator( elem ).get( eDisplayTypeDefault ), "" );
 		BOOST_CHECK_EQUAL( Translator( elem ).get( eDisplayTypeNumbers ), "87658669" );
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_1 )
 	{
 		std::shared_ptr< basic_element::Element > data( new basic_element::Element( node ) );
 		std::vector< char > buff { 'W', 'A', 'V', 'E' };
-		data->set( buff, 4 );
+		data->set( buff );
 
 		BOOST_CHECK_EQUAL( Translator( data ).get( eDisplayTypeDefault ), "" );
 		BOOST_CHECK_EQUAL( Translator( data ).get( eDisplayTypeNumbers ), "87658669" );
@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 		std::shared_ptr< basic_element::Element > elem( new basic_element::Element( node ) );
 	
 		std::vector< char > buff { 'W', 'A', 'V', 'E' };
-		elem->set( buff, 4 );
+		elem->set( buff );
 
 
 		BOOST_CHECK_EQUAL( Translator( elem ).get< std::string >(), "WAVE" );
@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 		std::shared_ptr< basic_element::Element > elem( new basic_element::Element( node ) );
 	
 		std::vector< char > buff { 'W', 'A', 'V', 'E' };
-		elem->set( buff, 4 );
+		elem->set( buff );
 
 
 		BOOST_CHECK_EQUAL( Translator( elem ).get< std::string >(), "WAVE" );
@@ -188,7 +188,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 		std::shared_ptr< basic_element::Element > elem( new basic_element::Element( node ) );
 	
 		std::vector< char > buff { 'W' };
-		elem->set( buff, 1 );
+		elem->set( buff );
 
 
 		BOOST_CHECK_EQUAL( Translator( elem ).get< std::string >(), "W" );
@@ -227,7 +227,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 		std::shared_ptr< basic_element::Element > elem( new basic_element::Element( node ) );
 	
 		std::vector< char > buff { 0x01, 0x00, 0x00, 0x00 };
-		elem->set( buff, 4 );
+		elem->set( buff );
 
 		BOOST_CHECK_EQUAL( elem->_isBigEndian, false );
 		BOOST_CHECK_EQUAL( Translator( elem ).get<   int >(), 1 );
@@ -264,7 +264,7 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 		std::shared_ptr< basic_element::Element > elem( new basic_element::Element( node ) );
 	
 		std::vector< char > buff { 0x62, 0x61, 0x62, 0x61 };
-		elem->set( buff, 4 );
+		elem->set( buff );
 
 		BOOST_CHECK_EQUAL( Translator( elem ).get<   int >(), 1650549345 );
 		BOOST_CHECK_EQUAL( Translator( elem ).get< std::string >(), "baba" );

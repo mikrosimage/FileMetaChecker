@@ -164,11 +164,11 @@ BOOST_AUTO_TEST_CASE( element_checker_expression_parser_shared_ptr )
 		std::vector< char > buffer0 { 0x00, 0x00, 0x00, 0x00 };
 		std::vector< char > buffer5 { 'w', 'o', 'r', 'd' };
 		
-		num1->set( buffer1, 4 );
-		num2->set( buffer2, 2 );
-		num3->set( buffer3, 4 );
-		num0->set( buffer0, 4 );
-		num5->set( buffer5, 4 );
+		num1->set( buffer1 );
+		num2->set( buffer2 );
+		num3->set( buffer3 );
+		num0->set( buffer0 );
+		num5->set( buffer5 );
 
 		std::ostringstream res1;
 		std::ostringstream res2;
