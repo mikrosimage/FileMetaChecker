@@ -233,24 +233,27 @@ std::vector< std::pair< std::string, std::string > > SpecNode::getRepetitions() 
 
 	if( ! repetitionsNode->IsArray() )
 	{
-		std::pair< std::string, std::string > repetitionPair { "", "" };
-		repetitionPair.first  = property_parser::valueToString( repetitionsNode );
-		repetitionPair.second = property_parser::valueToString( repetitionsNode );
+		std::pair< std::string, std::string > repetitionPair {
+			property_parser::valueToString( repetitionsNode ),
+			property_parser::valueToString( repetitionsNode )
+			};
+
 		repetitions.push_back( repetitionPair );
 		return repetitions;
 	}
 
 	for( rapidjson::Value::ConstValueIterator itr = repetitionsNode->Begin(); itr != repetitionsNode->End(); ++itr  )
 	{
-		std::pair< std::string, std::string > repetitionRange { "", "" };
 		if( ! itr->IsObject() )
 		{
-			repetitionRange.first  = property_parser::valueToString( itr );
-			repetitionRange.second = property_parser::valueToString( itr );
+			std::string value = property_parser::valueToString( itr );
+			std::pair< std::string, std::string > repetitionRange { value, value };
 			repetitions.push_back( repetitionRange );
 			continue;
 		}
 
+		std::pair< std::string, std::string > repetitionRange { "", "" };
+		
 		if( itr->HasMember( std::string( kMin ).c_str() ) )
 			repetitionRange.first = property_parser::valueToString( &itr->FindMember( std::string( kMin ).c_str() )->value );
 		
