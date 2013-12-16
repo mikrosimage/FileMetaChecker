@@ -267,9 +267,9 @@ bool Checker::isIterationValid( const ShPtrElement element, std::string& errorMe
 			size_t repetMin = 0;
 			size_t repetMax = 0;
 
-			if( ! repetPair.first.empty() )
+			if( repetPair.first.size() )
 				repetMin = _exprParser->getExpressionResult< size_t >( repetPair.first );
-			if( ! repetPair.second.empty() )
+			if( repetPair.second.size() )
 				repetMax = _exprParser->getExpressionResult< size_t >( repetPair.second );
 
 			LOG_TRACE( "[checker] repetitions : " << element->_iteration << " / [" << repetMin << ", " << repetMax << "]" );
