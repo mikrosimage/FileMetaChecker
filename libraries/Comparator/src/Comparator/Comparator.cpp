@@ -20,34 +20,20 @@ Comparator::Comparator()
 
 void Comparator::check( spec_reader::Specification& spec, file_reader::FileReader& file, report_generator::Report& report )
 {
-	ShPtrSpecNode node = spec.getFirstNode();
-	ShPtrElement element( new basic_element::Element( node ) );
-
+	ShPtrSpecNode node    = spec.getFirstNode();
+	ShPtrElement element  = nullptr;
+	ShPtrElement parent   = nullptr;
+	ShPtrElement previous = nullptr;
 	element_checker::Checker checker;
-	size_t size = checker.getSize( element );
-	
-	if( size == 0 && ( size = getWordLength( element, file ) ) == 0 )
-		element->_warning.push_back( "[checker] Null data size " );
+	size_t size = 0;
+	bool end = false;
 
-	std::vector< char > buffer1;
-	if( ! file.readData( buffer1, size ) )
-		throw std::runtime_error( "[comparator] End of file, cannot read data" );
-	element->set( buffer1, size );
-
-	checker.check( element );
-	LOG_TRACE( "[comparator] checked:" << element->_id << " = " << element->_dispValue << " (" << statusMap.at( element->_status ) << ")" );
-
-	std::shared_ptr< basic_element::Element > parent;
-	parent = getNextParent( element, node );
-	report.add( element );
-	report.print( element, file.getPosition() - size );
-
-	while( ( node = element->next() ) != nullptr )
+	while( ! end )
 	{
 		// LOG_FATAL( node->getId() );
-		ShPtrElement previous = element;
+		previous = element;
 		
-		if( previous->_status == eStatusSkip )
+		if( previous != nullptr && previous->_status == eStatusSkip )
 		{
 			LOG_TRACE( "[comparator] Go back in file (" << size << " bytes)" );
 			file.goBack( size );
@@ -65,13 +51,20 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 				break;
 		}
 
-		if( size == 0 && ( size = getWordLength( element, file ) ) == 0 )
-			element->_warning.push_back( "[checker] Null data size " );
-
 		std::vector< char > buffer;
-		if( ! file.readData( buffer, size ) )
-			throw std::runtime_error( "[comparator] End of file, cannot read data" );
-		element->set( buffer, size );
+
+		if( size == 0 )
+		{
+			getWord( element, file, buffer );
+			if( buffer.empty() )
+				element->_warning.push_back( "[comparator] Null data size " );
+		}
+		else
+		{
+			if( ! file.readData( buffer, size ) )
+				throw std::runtime_error( "[comparator] End of file, cannot read data" );
+		}
+		element->set( buffer );
 
 		checker.check( element );
 		LOG_TRACE( "[comparator] checked: " << element->_id << " = " << element->_dispValue << " (" << statusMap.at( element->_status ) << ") @ " << element << " << Previous: " << previous << " << Parent: " );
@@ -82,16 +75,14 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 		checkGroupSize( element, file );
 
 		report.add( element );
-		report.update( parent );
+
 		parent = getNextParent( element, node );
 
-		if( parent != nullptr )
-		{
-			LOG_TRACE( "[comparator] next parent: id = " << parent->_id );
-		}
-		else
-			LOG_TRACE( "[comparator] next parent: null" );
+		LOG_TRACE( "[comparator] next parent: " << ( ( parent == nullptr ) ? "null" : "id = " + parent->_id ) );
 		report.print( element, file.getPosition() - size );
+
+		node = element->next();
+		end = ( node == nullptr );
 	}
 
 	if( ! file.isEndOfFile() )
@@ -110,28 +101,26 @@ bool Comparator::isInUnorderedGroup( const ShPtrElement element )
 	return false;
 }
 
-size_t Comparator::getWordLength( const ShPtrElement element, file_reader::FileReader& file )
+void Comparator::getWord( const ShPtrElement element, file_reader::FileReader& file, std::vector<char>& word )
 {
 	if( element->_type != eTypeAscii )
-		return 0;
+		return;
 
-	size_t length = 0;
-	char endChar;
-	std::vector< char > buff;
+	std::vector<char> buff;
 
 	while( 1 )
 	{
 		if( ! file.readData( buff, 1 ) )
 			throw std::runtime_error( "[comparator] End of file, cannot read data" );
-		endChar = buff.at(0);
-		++length;
-		if( element->_endChar == endChar )
-			break;
-	}
-	LOG_TRACE( "[comparator] " << element->_id << " is a " << length << "-char word" );
+		
+		word.push_back( buff.at( 0 ) );
 
-	file.goBack( length );
-	return length;
+		if( element->_endChar == buff.at( 0 ) )
+		{
+			LOG_TRACE( "[comparator] " << element->_id << " is a " << word.size() << "-char word" );
+			return;
+		}
+	}
 }
 
 void Comparator::updateParentSize( const ShPtrElement element )

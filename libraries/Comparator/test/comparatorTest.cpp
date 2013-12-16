@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_1 )
 	BOOST_CHECK_EQUAL( report.get( "value12"     )->_status, eStatusValid    );
 	BOOST_CHECK_EQUAL( report.get( "value121"    )->_status, eStatusValid    );
 	BOOST_CHECK_EQUAL( report.get( "value1211"   )->_status, eStatusInvalid  );
-	BOOST_CHECK_EQUAL( report.get( "value1212"   )->_status, eStatusValid );
+	BOOST_CHECK_EQUAL( report.get( "value1212"   )->_status, eStatusValid    );
 	BOOST_CHECK_EQUAL( report.get( "value122"    )->_status, eStatusValid    );
 	BOOST_CHECK_EQUAL( report.get( "value13"     )->_status, eStatusValid    );
 	BOOST_CHECK_EQUAL( report.get( "valueEnd"    )->_status, eStatusValid    );

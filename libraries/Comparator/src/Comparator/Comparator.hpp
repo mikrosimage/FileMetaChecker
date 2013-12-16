@@ -2,6 +2,7 @@
 #define _COMPARATOR_COMPARATOR_HPP_
 
 #include <memory>
+#include <vector>
 
 namespace basic_element
 {
@@ -51,7 +52,7 @@ public:
 
 private:
 	bool         isInUnorderedGroup( const ShPtrElement element );
-	size_t       getWordLength     ( const ShPtrElement element, file_reader::FileReader& file );
+	void         getWord           ( const ShPtrElement element, file_reader::FileReader& file, std::vector<char>& word );
 	void         updateParentSize  ( const ShPtrElement element );
 	ShPtrElement getNextParent     ( const ShPtrElement element, const ShPtrSpecNode node );
 	void         checkGroupSize    ( const ShPtrElement element, file_reader::FileReader& file );
