@@ -3,7 +3,7 @@
 #include <SpecReader/SpecChecker.hpp>
 #include <SpecReader/Specification.hpp>
 #include <FileReader/FileReader.hpp>
-#include <ReportGenerator/Report.hpp>
+#include <Report/Report.hpp>
 #include <Comparator/Comparator.hpp>
 
 #include <iomanip>

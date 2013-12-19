@@ -42,7 +42,7 @@ SConscript(
 				'libraries/BasicElement',
 				'libraries/ElementChecker',
 				'libraries/FileReader',
-				'libraries/ReportGenerator',
+				'libraries/Report',
 				'libraries/Comparator',
 				# 'libraries/systemInfo',
 				'apps',

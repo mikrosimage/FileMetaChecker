@@ -8,9 +8,14 @@ project.StaticLibrary(
 			libs.common,
 			libs.fileReader,
 			libs.elementChecker,
-			libs.reportGenerator,
+			libs.report,
 			],
 		shared = True
 	)
 
-
+project.pySwigBinding(
+		packageName = "pyFileMetaChecker",
+		moduleName  = "comparator",
+		sources     = [ 'src/Comparator/Comparator.i' ],
+		libraries   = [ libs.comparator ],
+	)

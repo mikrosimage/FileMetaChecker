@@ -9,7 +9,7 @@
 
 #include <SpecReader/Specification.hpp>
 #include <FileReader/FileReader.hpp>
-#include <ReportGenerator/Report.hpp>
+#include <Report/Report.hpp>
 
 namespace comparator
 {

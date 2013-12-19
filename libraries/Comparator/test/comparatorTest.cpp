@@ -5,7 +5,7 @@
 #include <BasicElement/Element.hpp>
 #include <SpecReader/Specification.hpp>
 #include <FileReader/FileReader.hpp>
-#include <ReportGenerator/Report.hpp>
+#include <Report/Report.hpp>
 
 #include <boost/test/unit_test.hpp>
 // #include <boost/property_tree/ptree.hpp>

@@ -4,10 +4,13 @@ project.StaticLibrary(
 		'fileReader',
 		dirs      = ['src'],
 		includes  = ['src'],
-		libraries = [
-			libs.boost,
-			],
+		libraries = [ ],
 		shared = True
 	)
 
-
+project.pySwigBinding(
+		packageName = "pyFileMetaChecker",
+		moduleName  = "fileReader",
+		sources     = [ 'src/FileReader/FileReader.i' ],
+		libraries   = [ libs.fileReader ],
+	)

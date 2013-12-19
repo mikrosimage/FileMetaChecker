@@ -10,7 +10,7 @@ qc = project.Program(
 		libs.common,
 		libs.fileReader,
 		libs.specReader,
-		libs.reportGenerator,
+		libs.report,
 		libs.comparator,
 	]
 )

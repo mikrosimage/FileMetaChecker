@@ -11,4 +11,9 @@ project.StaticLibrary(
 		shared = True
 	)
 
-
+project.pySwigBinding(
+		packageName = "pyFileMetaChecker",
+		moduleName  = "element",
+		sources     = [ 'src/BasicElement/Element.i' ],
+		libraries   = [ libs.basicElement ],
+	)

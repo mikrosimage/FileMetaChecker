@@ -36,10 +36,10 @@ typedef long double  ieeeExtended;    /**< 10 bytes IEEE Standard 754 floating p
  */
 class Element
 {
+public:
 	typedef std::vector< std::pair< std::string, std::string > > ExpressionList;
 	typedef std::shared_ptr< basic_element::Element > ShPtrElement;
 	typedef std::shared_ptr< spec_reader::SpecNode  > ShPtrSpecNode;
-public:
 	
 	/**
 	 * Element's constructor.

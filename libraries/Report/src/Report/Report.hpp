@@ -1,5 +1,5 @@
-#ifndef _REPORT_GENERATOR_REPORT_HPP_
-#define _REPORT_GENERATOR_REPORT_HPP_
+#ifndef _REPORT_REPORT_HPP_
+#define _REPORT_REPORT_HPP_
 
 #include <iomanip>
 #include <memory>
@@ -35,9 +35,8 @@ enum EReportDisplayLevel
  */
 class Report
 {
-	typedef std::shared_ptr< basic_element::Element > ShPtrElement;
-	
 public:
+	typedef std::shared_ptr< basic_element::Element > ShPtrElement;
 
 	/**
 	 * Report's constructor.

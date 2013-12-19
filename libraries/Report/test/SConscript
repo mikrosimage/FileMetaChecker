@@ -1,10 +1,10 @@
 Import( 'project', 'libs' )
 
 project.UnitTest(
-	target = "TestReportGenerator",
-	sources = ['reportGeneratorTest.cpp'],
+	target = "TestReport",
+	sources = ['reportTest.cpp'],
 	libraries = [
-		libs.reportGenerator,
+		libs.report,
 		libs.boost_unit_test_framework,
 	]
 )

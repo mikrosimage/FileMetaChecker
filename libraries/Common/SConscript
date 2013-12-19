@@ -2,7 +2,12 @@ Import( 'project', 'libs' )
 
 project.ObjectLibrary(
 		'common',
-		includes=[project.getRealAbsoluteCwd('src')],
+		includes = [ project.getRealAbsoluteCwd( 'src' ) ],
 	)
 
-
+project.pySwigBinding(
+		packageName = "pyFileMetaChecker",
+		moduleName  = "spec",
+		sources     = [ 'src/Common/common.i' ],
+		libraries   = [ libs.common ],
+	)

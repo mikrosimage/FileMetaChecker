@@ -13,4 +13,9 @@ project.StaticLibrary(
 		shared = True
 	)
 
-
+project.pySwigBinding(
+		packageName = "pyFileMetaChecker",
+		moduleName  = "specReader",
+		sources     = [ 'src/SpecReader/Spec.i' ],
+		libraries   = [ libs.specReader ],
+	)
