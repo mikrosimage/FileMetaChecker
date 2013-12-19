@@ -1,0 +1,21 @@
+Import( 'project', 'libs' )
+
+project.StaticLibrary(
+		'processor',
+		dirs      = ['src'],
+		includes  = ['src'],
+		libraries = [
+				libs.fileReader,
+				libs.specReader,
+				libs.report,
+				libs.comparator,
+			],
+		shared = True
+	)
+
+project.pySwigBinding(
+		packageName = "pyFileMetaChecker",
+		moduleName  = "processor",
+		sources     = [ 'src/Processor/Processor.i' ],
+		libraries   = [ libs.processor ],
+	)
