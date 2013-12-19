@@ -63,6 +63,12 @@ public:
 	void add( const std::vector< ShPtrElement >& elementList );
 
 	/**
+	 * Get vector of Elements.
+	 * @return Elements present in Report.
+	 */
+	std::vector< ShPtrElement > get( );
+
+	/**
 	 * Get an Element from the list.
 	 * @param elementId Element's ID.
 	 * @param iteration Element's iteration. Default is 1.

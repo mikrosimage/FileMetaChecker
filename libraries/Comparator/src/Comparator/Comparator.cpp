@@ -11,6 +11,8 @@
 #include <FileReader/FileReader.hpp>
 #include <Report/Report.hpp>
 
+extern common::ELogLevel common::level;
+
 namespace comparator
 {
 

@@ -6,6 +6,8 @@
 #include <sstream>
 #include <stdexcept>
 
+extern common::ELogLevel common::level;
+
 namespace spec_reader
 {
 

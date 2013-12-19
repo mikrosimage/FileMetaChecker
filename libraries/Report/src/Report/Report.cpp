@@ -38,6 +38,11 @@ void Report::add( const std::vector< ShPtrElement >& elementList )
 	}
 }
 
+std::vector< Report::ShPtrElement > Report::get( )
+{
+	return _elementList;
+}
+
 Report::ShPtrElement Report::get( const std::string& elementId, const size_t& iteration )
 {
 	for( ShPtrElement element : _elementList )
