@@ -55,7 +55,7 @@ public:
 	 * Add an Element to the list.
 	 * @param element Element reference to add.
 	 */
-	void add( const ShPtrElement element );
+	void add( const ShPtrElement& element );
 
 	/**
 	 * Add several Elements to the list.
@@ -69,13 +69,25 @@ public:
 	 * @param iteration Element's iteration. Default is 1.
 	 * @return          Corresponding Element reference.
 	 */
-	ShPtrElement get( const std::string& elementId, const size_t& iteration = 1 );
+	ShPtrElement getElement( const std::string& elementId, const size_t& iteration = 1 ) const;
+	
+	/**
+	 * Get the Element list size.
+	 * @return  Size of the list of Elements.
+	 */
+	size_t getElementListSize() const;
+
+	/**
+	 * Get the Element list.
+	 * @return  Vector of Elements.
+	 */
+	std::vector< ShPtrElement > getElementList() const;
 
 	/**
 	 * Replace an Element from the list by another with the same unique ID.
 	 * @param newElement Element reference to update.
 	 */
-	void update( const ShPtrElement newElement );
+	void update( const ShPtrElement& newElement );
 	
 	/**
 	 * Print the report legend.
@@ -101,7 +113,7 @@ public:
 	void writeXml( const std::string& filename );
 	
 protected:
-	size_t getDisplayOffset( const ShPtrElement element );
+	size_t getDisplayOffset( const ShPtrElement& element );
 	std::string tabulation( size_t tabNum );
 	std::string tabulation( size_t tabNum, const std::string& str );
 	bool isPrintable( const ShPtrElement element );
