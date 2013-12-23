@@ -40,9 +40,6 @@ Element::Element( const ShPtrSpecNode node,
 	, _keepEndingChar  ( node->keepEndingChar()  )
 	, _checkedGroup    ( false )
 {
-	if( ! _parent.expired() )
-		_parent.lock()->_children.push_back( std::make_shared< Element >( *this ) );
-
 	LOG_TRACE( "[element] Create new Element " << _id << " :"       );
 	if( ! _parent.expired() )
 		LOG_TRACE(" [element]   - Parent   : " << _parent.lock()->_id   );
@@ -53,22 +50,25 @@ Element::Element( const ShPtrSpecNode node,
 
 Element::ShPtrSpecNode Element::next( )
 {
-	ShPtrElement  parent;
+	ShPtrElement parent;
 	// if parent exists, copy it
 	if( _parent.use_count() != 0 )
 		parent = _parent.lock();
 	
+	if( parent != nullptr && parent->_status == eStatusSkip )
+		return parent->next( );
+
 	if( _status == eStatusSkip )
 	{
-		LOG_TRACE( "[element] Next: next node of " << _id<< " ( optional / skip )" << std::endl);
-		if( _specNode->next() != nullptr )
+		LOG_TRACE( "[element] Next: next node of " << _id<< " ( optional / skip )" );
+		if( _specNode->next() != nullptr  && ( parent == nullptr || parent->_status != eStatusSkip ) )
 			return _specNode->next();
 		if( parent != nullptr )
 			return parent->next( );
 	}
 	
 	// Unordered Groups: if element valid and parent is unordered, go to the first child of the parent
-	if( _status == eStatusValid && _parent.use_count() != 0 && ( ! parent->_isOrdered ) && ( ! _isGroup || _checkedGroup ) )
+	if( ( _status == eStatusValid || _status == eStatusUnknown ) && _parent.use_count() != 0 && ( ! parent->_isOrdered ) && ( ! _isGroup || _checkedGroup ) )
 	{
 		LOG_TRACE( "[element] Next: " << _id << "'s parent first child ( unordered group )" );
 		return parent->_specNode->firstChild();
@@ -109,6 +109,15 @@ void Element::set( const std::vector< char >& data )
 	std::memcpy( &_data[0], &data[0], data.size() );
 }
 
+void Element::addChild( const ShPtrElement& element )
+{
+	if( element->getParent()->_uId != _uId )
+	{
+		LOG_TRACE( "[element] wrong parent, cannot add child." );
+		return;
+	}
+	_children.push_back( element );
+}
 
 std::string Element::getPropertiesFlag()
 {

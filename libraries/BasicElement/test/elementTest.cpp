@@ -236,6 +236,7 @@ inline ShPtrElement checkElement( ShPtrElement& elem, ShPtrElement& previous, Sh
 	BOOST_CHECK_EQUAL( newElem->getPrevious()->_uId, elem->_uId );
 	BOOST_CHECK_EQUAL( node->getId(), nodeId );
 	newElem->_status = eStatusValid;
+	parent->addChild( newElem );
 	return newElem;
 }
 
@@ -878,13 +879,31 @@ BOOST_AUTO_TEST_CASE( basic_element_get_children )
 		BOOST_CHECK( node->next() == nullptr );
 
 		BOOST_CHECK_EQUAL( elem1->getChildren().size(), 3 );
+		BOOST_CHECK_EQUAL( elem1->getChildren().at( 0 ), elem2 );
+		BOOST_CHECK_EQUAL( elem1->getChildren().at( 1 ), elem3 );
+		BOOST_CHECK_EQUAL( elem1->getChildren().at( 2 ), elem7 );
+		
 		BOOST_CHECK_EQUAL( elem2->getChildren().size(), 0 );
+		
 		BOOST_CHECK_EQUAL( elem3->getChildren().size(), 1 );
+		BOOST_CHECK_EQUAL( elem3->getChildren().at( 0 ), elem4 );
+
 		BOOST_CHECK_EQUAL( elem4->getChildren().size(), 2 );
+		BOOST_CHECK_EQUAL( elem4->getChildren().at( 0 ), elem5 );
+		BOOST_CHECK_EQUAL( elem4->getChildren().at( 1 ), elem6 );
+
 		BOOST_CHECK_EQUAL( elem5->getChildren().size(), 0 );
+		
 		BOOST_CHECK_EQUAL( elem6->getChildren().size(), 0 );
+		
 		BOOST_CHECK_EQUAL( elem7->getChildren().size(), 1 );
+		BOOST_CHECK_EQUAL( elem7->getChildren().at( 0 ), elem8 );
+
 		BOOST_CHECK_EQUAL( elem8->getChildren().size(), 0 );
+
+		elem8->_status = eStatusUnknown;
+		BOOST_CHECK_EQUAL( elem7->getChildren().at( 0 )->_status, eStatusUnknown );
+		BOOST_CHECK_EQUAL( elem1->getChildren().at( 2 )->getChildren().at( 0 )->_status, eStatusUnknown );
 	}
 }
 

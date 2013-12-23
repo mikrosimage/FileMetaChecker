@@ -58,7 +58,6 @@ public:
 	/**
 	 * Set raw data from buffer.
 	 * @param[in] data Data buffer to copy from.
-	 * @param[in] size Buffer size (in bytes).
 	 */
 	void  set( const std::vector< char >& data );
 
@@ -79,6 +78,12 @@ public:
 	 * @return Bound SpecNode reference.
 	 */
 	ShPtrSpecNode getSpecNode()       { return _specNode; }
+
+	/**
+	 * Add a child to the current Element.
+	 * @param[in] Child reference.
+	 */
+	void addChild( const ShPtrElement& element );
 
 	/**
 	 * Get the current Element children.
