@@ -111,19 +111,11 @@ size_t Checker::getBackOffset( const ShPtrElement element )
 	size_t backOffset = 0;
 	ShPtrElement parent = element->getParent();
 
-	LOG_COLOR( common::details::kColorRed, "[checker::getBackOffset] " << element->_id << " :" );
 	if( element->_status == eStatusSkip )
-	{
 		backOffset = element->_data.size();
-		LOG_COLOR( common::details::kColorRed, " CASE 2: " << backOffset  );
-	}
 
 	if( parent != nullptr && parent->_status == eStatusSkip )
-	{
 		backOffset = ( parent->_childrenSize == 0 )? backOffset : parent->_childrenSize;
-		LOG_COLOR( common::details::kColorRed, " CASE 1: " << backOffset );
-	}
-	LOG_ENDL();
 
 	if( backOffset > 0 )
 		LOG_WARNING( "[checker] Go back in file (" << backOffset << " bytes)" );
