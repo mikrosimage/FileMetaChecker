@@ -81,7 +81,7 @@ public:
 
 	/**
 	 * Add a child to the current Element.
-	 * @param[in] Child reference.
+	 * @param[in] element Child reference.
 	 */
 	void addChild( const ShPtrElement& element );
 
