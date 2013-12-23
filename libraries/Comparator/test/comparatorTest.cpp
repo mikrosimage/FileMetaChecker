@@ -23,6 +23,17 @@ BOOST_AUTO_TEST_CASE( comparator_test_init )
 	common::level = common::eLogTrace;
 }
 
+inline bool checkElementStatus( const report_generator::Report& report, const std::string id, const EStatus status )
+{
+	bool elementIsOk = false;
+	for( std::shared_ptr< basic_element::Element > elem : report.getElementList() )
+	{
+		if( elem->_id == id && elem->_status == status )
+			elementIsOk = true;
+	}
+	return elementIsOk;
+}
+
 BOOST_AUTO_TEST_CASE( comparator_test_comparator_1 )
 {
 	LOG_INFO( "\n>>> comparator_test_comparator 1 <<<" );
@@ -135,24 +146,24 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_1 )
 
 	comp.check( spec, file, report );
 
-	BOOST_CHECK_EQUAL( report.get( "value1"      )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.get( "value11",  1 )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.get( "value11",  2 )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.get( "value11",  3 )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.get( "value11",  4 )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.get( "value11",  5 )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.get( "value11",  6 )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.get( "value11",  7 )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.get( "value11",  8 )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.get( "value11",  9 )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.get( "value11", 10 )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.get( "value12"     )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.get( "value121"    )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.get( "value1211"   )->_status, eStatusInvalid  );
-	BOOST_CHECK_EQUAL( report.get( "value1212"   )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.get( "value122"    )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.get( "value13"     )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.get( "valueEnd"    )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.getElement( "value1"      )->_status, eStatusInvalid  );
+	BOOST_CHECK_EQUAL( report.getElement( "value11",  1 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.getElement( "value11",  2 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.getElement( "value11",  3 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.getElement( "value11",  4 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.getElement( "value11",  5 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.getElement( "value11",  6 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.getElement( "value11",  7 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.getElement( "value11",  8 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.getElement( "value11",  9 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.getElement( "value11", 10 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.getElement( "value12"     )->_status, eStatusInvalid  );
+	BOOST_CHECK_EQUAL( report.getElement( "value121"    )->_status, eStatusInvalid  );
+	BOOST_CHECK_EQUAL( report.getElement( "value1211"   )->_status, eStatusInvalid  );
+	BOOST_CHECK_EQUAL( report.getElement( "value1212"   )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.getElement( "value122"    )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.getElement( "value13"     )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.getElement( "valueEnd"    )->_status, eStatusValid    );
 
 	BOOST_CHECK_EQUAL( file.isEndOfFile(), true );
 
@@ -289,6 +300,28 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_2 )
 	comp.check( spec, file, report );
 
 	BOOST_CHECK_EQUAL( file.isEndOfFile(), true );
+
+
+	BOOST_CHECK_EQUAL( report.getElement( "value1"    )->_status, eStatusInvalid  );
+	BOOST_CHECK_EQUAL( report.getElement( "value14"   )->_status, eStatusInvalid  );
+	BOOST_CHECK_EQUAL( report.getElement( "value141"  )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.getElement( "value1411" )->_status, eStatusSkip     );
+	BOOST_CHECK_EQUAL( report.getElement( "value1412" )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.getElement( "value1413" )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.getElement( "value142"  )->_status, eStatusInvalid  );
+
+	BOOST_CHECK( checkElementStatus( report, "value1421", eStatusSkip ) );
+	BOOST_CHECK( checkElementStatus( report, "value1422", eStatusValid ) );
+
+	BOOST_CHECK_EQUAL( report.getElement( "value1423" )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.getElement( "value15"   )->_status, eStatusValid    );
+	
+	BOOST_CHECK( checkElementStatus( report, "value151", eStatusValid ) );
+
+	BOOST_CHECK_EQUAL( report.getElement( "value152"  )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.getElement( "value153"  )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.getElement( "value16"   )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.getElement( "valueEnd"  )->_status, eStatusValid    );
 
 	report.writeXml( "test.xml" );
 }
@@ -454,6 +487,308 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_word )
 	comp.check( spec, file, report );
 
 	BOOST_CHECK_EQUAL( file.isEndOfFile(), true );
+
+	BOOST_CHECK_EQUAL( report.getElement( "value1"   )->_status, eStatusValid );
+	BOOST_CHECK_EQUAL( report.getElement( "value2"   )->_status, eStatusValid );
+	BOOST_CHECK_EQUAL( report.getElement( "valueEnd" )->_status, eStatusValid );
+
 }
+
+BOOST_AUTO_TEST_CASE( comparator_test_comparator_5 )
+{
+	LOG_INFO( "\n>>> comparator_test_comparator 5 <<<" );
+	std::string jsonString = R"*(
+			{
+				"content": [
+					{
+						"id": "value0",
+						"label": "Value0"
+					},
+					{
+						"id": "value1",
+						"label": "Value1",
+						"group": [
+							{
+								"id": "value11",
+								"label": "Value11",
+								"type": "ascii",
+								"values": "ONE"
+							},
+							{
+								"id": "value12",
+								"label": "Value12",
+								"group": [
+									{
+										"id": "value121",
+										"label": "Value121",
+										"type": "ascii",
+										"values": "end"
+									}
+								]
+							}
+						]
+					},
+					{
+						"id": "value2",
+						"label": "Value2",
+						"group": [
+							{
+								"id": "value21",
+								"label": "Value21",
+								"type": "ascii",
+								"values": "TWO"
+							},
+							{
+								"id": "value22",
+								"label": "Value22",
+								"type": "ascii",
+								"values": "end",
+								"caseSensitive": true
+							}
+						]
+					},
+					{
+						"id": "value3",
+						"label": "Value3",
+						"group": [
+							{
+								"id": "value31",
+								"label": "Value31",
+								"type": "ascii",
+								"values": "THREE",
+								"optional": true
+							},
+							{
+								"id": "value32",
+								"label": "Value32",
+								"type": "ascii",
+								"values": "EERHT",
+								"optional": true
+							}
+						]
+					},
+					{
+						"id": "value4",
+						"label": "Value4",
+						"optional": true,
+						"group": [
+							{
+								"id": "value41",
+								"label": "Value41",
+								"type": "ascii",
+								"values": "DNE"
+							}
+						]
+					},
+					{
+						"id": "valueEnd",
+						"label": "ValueEnd",
+						"type": "ascii",
+						"values": "END"
+					}
+				]
+			}
+		)*";
+
+	spec_reader::Specification spec;
+	spec.setFromString( jsonString );
+	std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
+
+	Comparator comp;
+
+	std::stringbuf buffer;
+	file_reader::FileReader file( &buffer );
+
+	std::string str = "ONEENDTWOENDEND";
+
+	buffer.sputn( str.c_str(), str.size() );
+	BOOST_CHECK_EQUAL( file.getLength(), str.size() );
+
+	report_generator::Report report;
+	report.printHelper();
+
+	comp.check( spec, file, report );
+
+	BOOST_CHECK_EQUAL( file.isEndOfFile(), true );
+
+	BOOST_CHECK_EQUAL( report.getElement( "value0"   )->_status, eStatusUnknown );
+
+	BOOST_CHECK_EQUAL( report.getElement( "value1"   )->_status, eStatusUnknown );
+	BOOST_CHECK_EQUAL( report.getElement( "value11"  )->_status, eStatusValid   );
+	BOOST_CHECK_EQUAL( report.getElement( "value12"  )->_status, eStatusUnknown );
+	BOOST_CHECK_EQUAL( report.getElement( "value121" )->_status, eStatusValid   );
+
+	BOOST_CHECK_EQUAL( report.getElement( "value2"   )->_status, eStatusInvalid );
+	BOOST_CHECK_EQUAL( report.getElement( "value21"  )->_status, eStatusValid   );
+	BOOST_CHECK_EQUAL( report.getElement( "value22"  )->_status, eStatusInvalid );
+
+	BOOST_CHECK_EQUAL( report.getElement( "value3"   )->_status, eStatusSkip    );
+	BOOST_CHECK_EQUAL( report.getElement( "value31"  )->_status, eStatusSkip    );
+	BOOST_CHECK_EQUAL( report.getElement( "value32"  )->_status, eStatusSkip    );
+
+	BOOST_CHECK_EQUAL( report.getElement( "value4"   )->_status, eStatusSkip    );
+	BOOST_CHECK_EQUAL( report.getElement( "value41"  )->_status, eStatusSkip    );
+
+	BOOST_CHECK_EQUAL( report.getElement( "valueEnd" )->_status, eStatusValid   );
+}
+
+BOOST_AUTO_TEST_CASE( comparator_test_comparator_6 )
+{
+	LOG_INFO( "\n>>> comparator_test_comparator 6 <<<" );
+	std::string jsonString = R"*(
+			{
+				"content": [
+					{ "id": "value0", "label": "Value0" },
+					{ "id": "value1", "label": "Value1", "ordered": false, "group": [
+							{ "id": "value11", "label": "Value11", "type": "ascii", "values": "ONE" },
+							{ "id": "value12", "label": "Value12", "group": [
+									{ "id": "value121", "label": "Value121", "type": "ascii", "values": "end" } ] }
+					] },
+					{ "id": "value2", "label": "Value2", "group": [ 
+							{ "id": "value21", "label": "Value21", "type": "ascii", "values": "TWO" },
+							{ "id": "value22", "label": "Value22", "type": "ascii", "values": "end", "caseSensitive": true }
+					] },
+					{ "id": "value3", "label": "Value3", "group": [ 
+							{ "id": "value31", "label": "Value31", "type": "ascii", "values": "THREE", "optional": true },
+							{ "id": "value32", "label": "Value32", "type": "ascii", "values": "EERHT", "optional": true }
+					] },
+					{ "id": "value4", "label": "Value4", "optional": true, "group": [
+							{ "id": "value41", "label": "Value41", "type": "ascii", "values": "DNE" }
+					] },
+					{ "id": "value5", "label": "Value5", "ordered": false, "group": [
+							{ "id": "value51", "label": "Value51", "group": [
+									{ "id": "value511", "label": "Value511", "type": "ascii", "values": "00" },
+									{ "id": "value512", "label": "Value512", "type": "ascii", "values": "22" }
+							] },
+							{ "id": "value52", "label": "Value52", "group": [
+									{ "id": "value521", "label": "Value521", "type": "ascii", "values": "11" },
+									{ "id": "value522", "label": "Value522", "type": "ascii", "values": "22" }
+							] }
+					] },
+					{ "id": "valueEnd", "label": "ValueEnd", "type": "ascii", "values": "END" }
+				] }
+		)*";
+
+	spec_reader::Specification spec;
+	spec.setFromString( jsonString );
+	std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
+
+	Comparator comp;
+
+	std::stringbuf buffer;
+	file_reader::FileReader file( &buffer );
+
+	std::string str = "ENDONETWOEND";
+	str += "11220022";
+	str += "END";
+
+	buffer.sputn( str.c_str(), str.size() );
+	BOOST_CHECK_EQUAL( file.getLength(), str.size() );
+
+	report_generator::Report report;
+	report.printHelper();
+
+	comp.check( spec, file, report );
+
+	BOOST_CHECK_EQUAL( file.isEndOfFile(), true );
+
+	BOOST_CHECK_EQUAL( report.getElement( "value0"   )->_status, eStatusUnknown );
+
+	BOOST_CHECK_EQUAL( report.getElement( "value1"   )->_status, eStatusUnknown   );
+	BOOST_CHECK( checkElementStatus( report, "value11", eStatusValid ) );
+
+	BOOST_CHECK_EQUAL( report.getElement( "value12"  )->_status, eStatusUnknown   );
+	BOOST_CHECK_EQUAL( report.getElement( "value121" )->_status, eStatusValid   );
+
+	BOOST_CHECK_EQUAL( report.getElement( "value2"   )->_status, eStatusInvalid );
+	BOOST_CHECK_EQUAL( report.getElement( "value21"  )->_status, eStatusValid   );
+	BOOST_CHECK_EQUAL( report.getElement( "value22"  )->_status, eStatusInvalid );
+
+	BOOST_CHECK_EQUAL( report.getElement( "value3"   )->_status, eStatusSkip    );
+	BOOST_CHECK_EQUAL( report.getElement( "value31"  )->_status, eStatusSkip    );
+	BOOST_CHECK_EQUAL( report.getElement( "value32"  )->_status, eStatusSkip    );
+
+	BOOST_CHECK_EQUAL( report.getElement( "value4"   )->_status, eStatusSkip    );
+	BOOST_CHECK_EQUAL( report.getElement( "value41"  )->_status, eStatusSkip    );
+
+	BOOST_CHECK_EQUAL( report.getElement( "value5"   )->_status, eStatusUnknown );
+	BOOST_CHECK( checkElementStatus( report, "value51",  eStatusUnknown ) );
+	BOOST_CHECK( checkElementStatus( report, "value511", eStatusValid   ) );
+	BOOST_CHECK_EQUAL( report.getElement( "value512" )->_status, eStatusValid   );
+	BOOST_CHECK_EQUAL( report.getElement( "value52"  )->_status, eStatusUnknown );
+	BOOST_CHECK_EQUAL( report.getElement( "value521" )->_status, eStatusValid   );
+	BOOST_CHECK_EQUAL( report.getElement( "value522" )->_status, eStatusValid   );
+
+	BOOST_CHECK_EQUAL( report.getElement( "valueEnd" )->_status, eStatusValid   );
+}
+
+BOOST_AUTO_TEST_CASE( comparator_test_comparator_7 )
+{
+	LOG_INFO( "\n>>> comparator_test_comparator 7 <<<" );
+	std::string jsonString = R"*(
+			{
+				"content": [
+					{ "id": "value0", "label": "Value0" },
+					{ "id": "value6", "label": "Value6", "ordered": false, "group": [
+							{ "id": "value61", "label": "Value61", "group": [
+									{ "id": "value611", "label": "Value611", "ordered": false, "group": [
+											{ "id": "value6111", "label": "Value6111", "type": "ascii", "values": "123" },
+											{ "id": "value6112", "label": "Value6112", "type": "ascii", "values": "321" }
+									] },
+									{ "id": "value612", "label": "Value612", "type": "ascii", "values": "22" },
+									{ "id": "value613", "label": "Value613", "ordered": false, "group": [
+											{ "id": "value6131", "label": "Value6131", "type": "ascii", "values": "456" },
+											{ "id": "value6132", "label": "Value6132", "type": "ascii", "values": "654" }
+									] }
+							] },
+							{ "id": "value62", "label": "Value62", "ordered": false, "group": [
+									{ "id": "value621", "label": "Value621", "type": "ascii", "values": "11" },
+									{ "id": "value622", "label": "Value622", "type": "ascii", "values": "22" }
+							] }
+					] },
+					{ "id": "valueEnd", "label": "ValueEnd", "type": "ascii", "values": "END" }
+				] }
+		)*";
+
+	spec_reader::Specification spec;
+	spec.setFromString( jsonString );
+	std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
+
+	Comparator comp;
+
+	std::stringbuf buffer;
+	file_reader::FileReader file( &buffer );
+
+	std::string str = "221132112322654456";
+	str += "END";
+
+	buffer.sputn( str.c_str(), str.size() );
+	BOOST_CHECK_EQUAL( file.getLength(), str.size() );
+
+	report_generator::Report report;
+	report.printHelper();
+
+	comp.check( spec, file, report );
+
+	BOOST_CHECK_EQUAL( file.isEndOfFile(), true );
+
+	BOOST_CHECK_EQUAL( report.getElement(    "value0"   )->_status, eStatusUnknown );
+	BOOST_CHECK_EQUAL( report.getElement(    "value6"   )->_status, eStatusUnknown );
+	BOOST_CHECK( checkElementStatus( report, "value61",             eStatusUnknown ) );
+	BOOST_CHECK( checkElementStatus( report, "value611",            eStatusUnknown ) );
+	BOOST_CHECK( checkElementStatus( report, "value6111",           eStatusValid   ) );
+	BOOST_CHECK( checkElementStatus( report, "value6112",           eStatusValid   ) );
+	BOOST_CHECK_EQUAL( report.getElement(    "value612" )->_status, eStatusValid   );
+	BOOST_CHECK( checkElementStatus( report, "value613",            eStatusUnknown ) );
+	BOOST_CHECK( checkElementStatus( report, "value6131",           eStatusValid   ) );
+	BOOST_CHECK( checkElementStatus( report, "value6132",           eStatusValid   ) );
+	
+	BOOST_CHECK_EQUAL( report.getElement(    "value62"  )->_status, eStatusUnknown );
+	BOOST_CHECK( checkElementStatus( report, "value621",            eStatusValid ) );
+	BOOST_CHECK( checkElementStatus( report, "value622",            eStatusValid   ) );
+
+	BOOST_CHECK_EQUAL( report.getElement( "valueEnd" )->_status, eStatusValid   );
+}
+
 
 BOOST_AUTO_TEST_SUITE_END()
