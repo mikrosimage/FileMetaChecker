@@ -37,8 +37,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 		if( size > ( file.getLength() - file.getPosition() ) && ( isInUnorderedGroup( element ) || element->_isOptional ) )
 		{
 			LOG_TRACE( "[comparator] Critical remaining file data size: " << size << "/" << file.getLength() - file.getPosition() );
-			size = file.getLength() - file.getPosition();
-			if( size == 0 )
+			if( ( size = file.getLength() - file.getPosition() ) == 0 )
 				break;
 		}
 
@@ -50,11 +49,8 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 			if( buffer.empty() )
 				element->_warning.push_back( "[comparator] Null data size " );
 		}
-		else
-		{
-			if( ! file.readData( buffer, size ) )
-				throw std::runtime_error( "[comparator] End of file, cannot read data" );
-		}
+		else if( ! file.readData( buffer, size ) )
+			throw std::runtime_error( "[comparator] End of file, cannot read data" );
 		
 		element->set( buffer );
 		checker.check( element );
@@ -102,7 +98,7 @@ void Comparator::getWord( const ShPtrElement element, file_reader::FileReader& f
 
 	std::vector<char> buff;
 
-	while( 1 )
+	while( true )
 	{
 		if( ! file.readData( buff, 1 ) )
 			throw std::runtime_error( "[comparator] End of file, cannot read data" );
