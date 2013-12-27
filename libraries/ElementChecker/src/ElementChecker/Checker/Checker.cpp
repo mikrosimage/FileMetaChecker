@@ -373,11 +373,21 @@ void Checker::setParentGroupSize( const ShPtrElement element )
 	ShPtrElement parent   = element->getParent();
 	ShPtrElement previous = element->getPrevious();
 
+
 	if( parent == nullptr || previous == nullptr || ! isLastInGroup( element ) || parent->_groupSizeExpr.empty() )
 		return;
-	
-	parent->_specGroupSize = _exprParser->getExpressionResult< size_t >( parent->_groupSizeExpr );
-	LOG_TRACE( "[checker] set " << element->_id << "'s parent (" << parent->_id << ") groupSize (" << parent->_groupSizeExpr << "): " << parent->_specGroupSize );
+
+	while( true )
+	{
+		if( parent == nullptr || ( parent->_groupSizeExpr.size() && parent->_specGroupSize > 0 ) )
+			break;
+		if( parent->_groupSizeExpr.size() )
+		{
+			parent->_specGroupSize = _exprParser->getExpressionResult< size_t >( parent->_groupSizeExpr );
+			LOG_TRACE( "[checker] >>> set " << element->_id << "'s parent (" << parent->_id << ") groupSize (" << parent->_groupSizeExpr << "): " << parent->_specGroupSize );
+		}
+		parent = parent->getParent();
+	}
 }
 
 void Checker::updateParentSize( const ShPtrElement element )
