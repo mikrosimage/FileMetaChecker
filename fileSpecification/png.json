@@ -1,0 +1,553 @@
+{
+    "description": {
+        "label": "Portable Network Graphics",
+        "id": "png",
+        "type": "image",
+        "extension": [
+            ".png"
+        ]
+    },
+    "template": [
+        {
+            "id" : "chunk",
+            "uint32": "<sdf"
+        }
+    ],
+    "content": [
+        { "id": "magicNumber", "label": "Magic number", "type": "hexa", "values": "89504e470d0a1a0a" },
+        
+        {
+            "label": "Image header",
+            "id": "ihdr",
+            "optional": false,
+            "group": [
+                { "id": "ihdrChunkSize", "label": "ihdr chunk size",      "type": "uint32" },
+                { "id": "ihdrchunkName", "label": "ihdr chunk name/type", "type": "ascii", "values": "IHDR" },
+                { "id": "ihdrChunkData", "label": "ihdr chunk data", "type": "raw",   "groupSize": "ihdrChunkSize", "group": [
+                        { "id": "width",  "label": "image width",  "type": "uint32" },
+                        { "id": "height", "label": "image height", "type": "uint32" },
+                        {
+                            "id": "bitDepth",
+                            "label": "bit depth",
+                            "type": "uint8",
+                            "range": [
+                                { "min":  "1", "max":  "2" },
+                                { "min":  "4", "max":  "4" },
+                                { "min":  "8", "max":  "8" },
+                                { "min": "10", "max": "10" }
+                            ],
+                            "map" : [
+                                {  "1":   "1 bit per component, sample or palette index" },
+                                {  "2":  "2 bits per component, sample or palette index" },
+                                {  "4":  "4 bits per component, sample or palette index" },
+                                {  "8":  "8 bits per component, sample or palette index" },
+                                { "10": "16 bits per component, sample or palette index" }
+                            ]
+                        },
+                        {
+                            "id": "colorType",
+                            "label": "color type",
+                            "type": "uint8",
+                            "range": [
+                                { "min": "0", "max": "0" },
+                                { "min": "2", "max": "4" },
+                                { "min": "6", "max": "6" }
+                            ],
+                            "map" : [
+                                { "0": "Each pixel is a grayscale sample" },
+                                { "2": "Each pixel is an R,G,B triple" },
+                                { "3": "Each pixel is a palette index" },
+                                { "4": "Each pixel is a grayscale sample, followed by an alpha sample" },
+                                { "6": "Each pixel is an R,G,B triple, followed by an alpha sample" }
+                            ]
+                        },
+                       
+
+                        { "id": "compMethod",   "label": "compression method", "type": "hexa",  "values": "00" },
+                        { "id": "filterMethod", "label": "filter method",      "type": "uint8", "map": [
+                                { "0": "no interlace" },
+                                { "1": "Adam7 interlace" } ] }
+                    ]
+                },
+                { "id": "crc", "label": "cyclic redundancy code", "type": "raw", "size": "4", "display": "hexa" }
+            ]
+        },
+
+
+
+        {
+            "id": "pngChunks", 
+            "label": "Unordered PNG Chunks",
+            "ordered": false,
+            "group": [
+                {
+                    "id": "firstPart",
+                    "label": "First part Chunks",
+                    "group": [
+                        {
+                            "id": "beforeIDAT",
+                            "label": "Before IDAT Chunks",
+                            "ordered": false,
+                            "group": [
+                                {
+                                    "id": "firstPartPLTE",
+                                    "label": "First Part PLTE Chunks",
+                                    "group": [
+                                        {
+                                            "id": "beforePLTE",
+                                            "label": "Before PLTE Chunks",
+                                            "optional": true,
+                                            "ordered": false,
+                                            "group": [
+                                                {
+                                                    "label": "Primary chromaticities",
+                                                    "id": "cHRM",
+                                                    "optional": true,
+                                                    "group": [
+                                                        { "id": "cHRMChunkSize", "label": "cHRM chunk size",      "type": "uint32" },
+                                                        { "id": "cHRMchunkName", "label": "cHRM chunk name/type", "type": "ascii", "values": "cHRM" },
+                                                        { "id": "cHRMChunkData", "label": "cHRM chunk data", "groupSize": "cHRMChunkSize", "group": [
+                                                              { "id": "xWhitePoint", "label": "White Point x (value times 100000)", "type": "uint32" },
+                                                              { "id": "yWhitePoint", "label": "White Point y (value times 100000)", "type": "uint32" },
+                                                              { "id": "xRed",        "label": "Red x (value times 100000)",         "type": "uint32" },
+                                                              { "id": "yRed",        "label": "Red y (value times 100000)",         "type": "uint32" },
+                                                              { "id": "xGreen",      "label": "Green x (value times 100000)",       "type": "uint32" },
+                                                              { "id": "yGreen",      "label": "Green y (value times 100000)",       "type": "uint32" },
+                                                              { "id": "xBlue",       "label": "Blue x (value times 100000)",        "type": "uint32" },
+                                                              { "id": "yBlue",       "label": "Blue y (value times 100000)",        "type": "uint32" }
+                                                            ]
+                                                        },
+                                                        { "id": "crc", "label": "cyclic redundancy code", "type": "raw", "size": "4" }
+                                                    ]
+                                                },
+                                                {
+                                                    "label": "Image gamma",
+                                                    "id": "gAMA",
+                                                    "optional": true,
+                                                    "group": [
+                                                        { "id": "gAMAChunkSize", "label": "gAMA chunk size",      "type": "uint32" },
+                                                        { "id": "gAMAchunkName", "label": "gAMA chunk name/type", "type": "ascii", "values": "gAMA" },
+                                                        { "id": "gAMAChunkData", "label": "gAMA chunk data", "groupSize": "gAMAChunkSize", "group": [
+                                                                { "id": "imageGamma", "label": "image gamma (value times 100000)", "type": "uint32" }
+                                                            ] },
+                                                        { "id": "crc", "label": "cyclic redundancy code", "type": "raw", "size": "4" }
+                                                    ]
+                                                },
+                                                {
+                                                    "label": "Embedded ICC Profiles",
+                                                    "id": "ICCP",
+                                                    "optional": true,
+                                                    "group": [
+                                                        { "id": "ICCPChunkSize", "label": "ICCP chunk size",      "type": "uint32" },
+                                                        { "id": "ICCPchunkName", "label": "ICCP chunk name/type", "type": "ascii", "values": "ICCP" },
+                                                        { "id": "ICCPChunkData", "label": "ICCP chunk data", "groupSize": "ICCPChunkSize", "group": [
+                                                                { "id": "profileName", "label": "Profile name", "type": "ascii", "keepEnd": false },
+                                                                { "id": "compression_method", "label": "Compression Method", "type": "hexa",  "values": "00" },
+                                                                { "id": "compressed_text",    "label": "Compressed text",    "type": "raw",   "size": "ICCPChunkSize - len( profileName ) - 2" }
+                                                        ] },
+                                                        { "id": "crc",           "label": "cyclic redundancy code", "type": "raw",   "size": "4" }
+                                                    ]
+                                                },
+                                                {
+                                                    "label": "Significant bits",
+                                                    "id": "sBIT",
+                                                    "optional": true,
+                                                    "group": [
+                                                        { "id": "sBITChunkSize", "label": "sBIT chunk size",             "type": "uint32" },
+                                                        { "id": "sBITchunkName", "label": "sBIT chunk name/type",        "type": "ascii", "values": "sBIT"        },
+                                                        { "id": "sBITChunkData", "label": "sBIT chunk data",        "groupSize": "sBITChunkSize", "group": [
+                                                                { "id": "grayScaleBits", "label": "Gray scale bits", "type": "uint8", "requirement": "colorType is 0 or colorType is 4" },
+                                                                { "id": "redBits",   "label": "Red bits",   "type": "uint8", "requirement": "colorType is 2 or colorType is 3 or colorType is 6" },
+                                                                { "id": "greenBits", "label": "Green bits", "type": "uint8", "requirement": "colorType is 2 or colorType is 3 or colorType is 6" },
+                                                                { "id": "blueBits",  "label": "Blue bits",  "type": "uint8", "requirement": "colorType is 2 or colorType is 3 or colorType is 6" },
+                                                                { "id": "alphaBits", "label": "Alpha bits", "type": "uint8", "requirement": "colorType is 4 or colorType is 6" }
+                                                        ] },
+                                                        { "id": "crc",           "label": "cyclic redundancy code", "type": "raw",   "size": 4               }
+                                                    ]
+                                                },
+                                                {
+                                                    "label": "Standard RGB color space",
+                                                    "id": "sRGB",
+                                                    "optional": true,
+                                                    "group": [
+                                                        { "id": "sRGBChunkSize", "label": "sRGB chunk size",      "type": "uint32" },
+                                                        { "id": "sRGBchunkName", "label": "sRGB chunk name/type", "type": "ascii", "values": "sRGB" },
+                                                        { "id": "sRGBChunkData", "label": "sRGB chunk data", "groupSize": "sRGBChunkSize", "group": [
+                                                                { "id": "renderingIndent", "label": "Rendering indent", "type": "uint8", "map": [
+                                                                        { "0": "Perceptual"            },
+                                                                        { "1": "Relative colorimetric" },
+                                                                        { "2": "Saturation"            },
+                                                                        { "3": "Absolute colorimetric" }
+                                                                ] }
+                                                        ] },
+                                                        { "id": "crc",           "label": "cyclic redundancy code", "type": "raw",   "size": "4" }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "label": "Palette chunk",
+                                            "id": "PLTE",
+                                            "optional": true,
+                                            "group": [
+                                                { "id": "PLTEChunkSize", "label": "PLTE chunk size",             "type": "uint32" },
+                                                { "id": "PLTEchunkName", "label": "PLTE chunk name/type",        "type": "ascii", "values": "PLTE"        },
+                                                { "id": "PLTEChunkData", "label": "PLTE chunk data",        "groupSize": "PLTEChunkSize", "group": [
+                                                        { "id": "paletteEntry", "label": "Palette Entry", "groupSize": 3, "repetition": "PLTEChunkSize / 3", "group": [
+                                                            { "id": "red",   "label": "Red",   "type": "uint8" },
+                                                            { "id": "green", "label": "Green", "type": "uint8" },
+                                                            { "id": "blue",  "label": "Blue",  "type": "uint8" }
+                                                        ]}
+                                                ] },
+                                                { "id": "crc",           "label": "cyclic redundancy code", "type": "raw",   "size": "4"             }
+                                            ]
+                                        },
+                                        {
+                                            "id": "afterPLTE",
+                                            "label": "After PLTE Chunks",
+                                            "optional": true,
+                                            "ordered": false,
+                                            "group": [
+                                                {
+                                                    "label": "Background color",
+                                                    "id": "bKGD",
+                                                    "optional": true,
+                                                    "group": [
+                                                        { "id": "bKGDChunkSize", "label": "bKGD chunk size",      "type": "uint32" },
+                                                        { "id": "bKGDchunkName", "label": "bKGD chunk name/type", "type": "ascii", "values": "bKGD" },
+                                                        { "id": "bKGDChunkData", "label": "bKGD chunk data", "groupSize": "bKGDChunkSize", "group": [
+                                                                { "id": "paletteIndex", "label": "palette index", "type": "uint8",  "requirement": "colorType is 3" },
+                                                                { "id": "gray",         "label": "gray",          "type": "uint16", "requirement": "colorType is 0 or colorType is 4", "range": [ { "min": 0, "max": "pow(2, bitDepth) - 1" } ] },
+                                                                { "id": "red",          "label": "red",           "type": "uint16", "requirement": "colorType is 2 or colorType is 6", "range": [ { "min": 0, "max": "pow(2, bitDepth) - 1" } ] },
+                                                                { "id": "green",        "label": "green",         "type": "uint16", "requirement": "colorType is 2 or colorType is 6", "range": [ { "min": 0, "max": "pow(2, bitDepth) - 1" } ] },
+                                                                { "id": "blue",         "label": "blue",          "type": "uint16", "requirement": "colorType is 2 or colorType is 6", "range": [ { "min": 0, "max": "pow(2, bitDepth) - 1" } ] }
+                                                            ]
+                                                        },
+                                                        { "id": "crc", "label": "cyclic redundancy code", "type": "raw", "size": "4" }
+                                                    ]
+                                                },
+                                                {
+                                                    "label": "Histogram",
+                                                    "id": "hIST",
+                                                    "optional": true,
+                                                    "group": [
+                                                        { "id": "hISTChunkSize", "label": "hIST chunk size",             "type": "uint32" },
+                                                        { "id": "hISTchunkName", "label": "hIST chunk name/type",        "type": "ascii", "values": "hIST" },
+                                                        { "id": "hISTChunkData", "label": "hIST chunk data",        "groupSize": "hISTChunkSize", "group": [
+                                                                { "id": "frequency", "label": "Frequency", "type": "uint16", "repetition": "hISTChunkSize / 2" }
+                                                        ] }, 
+                                                        { "id": "crc",           "label": "cyclic redundancy code", "type": "raw",   "size": "4" }
+                                                    ]
+                                                },
+                                                {
+                                                    "label": "Transparency",
+                                                    "id": "tRNS",
+                                                    "optional": true,
+                                                    "group": [
+                                                        { "id": "tRNSChunkSize", "label": "tRNS chunk size",             "type": "uint32" },
+                                                        { "id": "tRNSchunkName", "label": "tRNS chunk name/type",        "type": "ascii", "values": "tRNS"        },
+                                                        { "id": "tRNSChunkData", "label": "tRNS chunk data",        "groupSize": "tRNSChunkSize", "group": [
+                                                                { "id": "gray",                 "label": "gray",                "type": "uint16", "requirement": "colorType is 0", "range": [ { "min": 0, "max": "pow(2, bitDepth) - 1" } ] },
+                                                                { "id": "red",                  "label": "red",                 "type": "uint16", "requirement": "colorType is 2", "range": [ { "min": 0, "max": "pow(2, bitDepth) - 1" } ] },
+                                                                { "id": "green",                "label": "green",               "type": "uint16", "requirement": "colorType is 2", "range": [ { "min": 0, "max": "pow(2, bitDepth) - 1" } ] },
+                                                                { "id": "blue",                 "label": "blue",                "type": "uint16", "requirement": "colorType is 2", "range": [ { "min": 0, "max": "pow(2, bitDepth) - 1" } ] },
+                                                                { "id": "alphaForPaletteEntry", "label": "Palette Entry Alpha", "type": "uint8",  "requirement": "colorType is 3", "range": [ { "min": 0, "max": "pow(2, bitDepth) - 1" } ], "repetition": "tRNSChunkSize" }
+                                                        ] },
+                                                        { "id": "crc",           "label": "cyclic redundancy code", "type": "raw",   "size": "4"             }
+                                                    ]
+                                                },
+                                                {
+                                                    "label": "Pixel Calibration",
+                                                    "id": "pCAL",
+                                                    "optional": true,
+                                                    "group": [
+                                                        { "id": "pCALChunkSize", "label": "pCAL chunk size",             "type": "uint32" },
+                                                        { "id": "pCALchunkName", "label": "pCAL chunk name/type",        "type": "ascii", "values": "pCAL"        },
+                                                        { "id": "pCALChunkData", "label": "pCAL chunk data",        "groupSize": "pCALChunkSize"," group" :[
+                                                            { "id": "calibrationName", "label": "Calibration name", "type": "ascii", "keepEnd": false },
+                                                            { "id": "originalZero",    "label": "Original zero",    "type": "int32", "range": [
+                                                                    { "min": "- pow( 2, bitDepth) + 1", "max": "- pow( 2, bitDepth) - 1" } ] },
+                                                            { "id": "originalMax",     "label": "Original maximum", "type": "int32", "range": [
+                                                                    { "min": "-pow( 2, bitDepth) + 1", "max": "originalZero - 1"       },
+                                                                    { "min": "originalZero + 1",       "max": "-pow( 2, bitDepth) - 1" } ] },
+                                                            { "id": "equationType",    "label": "Equation type",    "type": "int8", "map": [
+                                                                    { "0": "P0 + P1 * original_sample/(X1-X0)"                 },
+                                                                    { "1": "P0 + P1 * e^(P2* original_sample/(X1-X0)) "        },
+                                                                    { "2": "P0 + P1 * P2^(original_sample/(X1-X0))"            },
+                                                                    { "3": "P0 + P1 * sinh(P2*(original_sample - P3)/(X1-X0))" }
+                                                            ] },
+                                                            { "id": "numberOfParameters", "label": "Number of parameters", "type": "int8" },
+                                                            { "id": "parameter",          "label": "Parameter",            "type": "ascii", "keepEnd": false, "repetition": "numberOfParameters" }
+                                                        ] },
+                                                        { "id": "crc",           "label": "cyclic redundancy code", "type": "raw",   "size": "4"             }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                
+                                {
+                                    "label": "Image Offset",
+                                    "id": "oFFs",
+                                    "optional": true,
+                                    "group": [
+                                        { "id": "oFFsChunkSize", "label": "oFFs chunk size",      "type": "uint32" },
+                                        { "id": "oFFschunkName", "label": "oFFs chunk name/type", "type": "ascii", "values": "oFFs" },
+                                        { "id": "oFFsChunkData", "label": "oFFs chunk data", "groupSize": "oFFsChunkSize", "group": [
+                                                { "id": "xImagePosition", "label": "Image position, x axis (value times 100000)", "type": "int32" },
+                                                { "id": "yImagePosition", "label": "Image position, y axis (value times 100000)", "type": "int32" },
+                                                { "id": "unitSpecifier",  "label": "Unit specifier",                              "type": "uint8", "map": [
+                                                        { "0": "pixels"  },
+                                                        { "1": "microns" } ] }
+                                        ] },
+                                        { "id": "crc",  "label": "cyclic redundancy code",  "type": "raw",  "size": 4 }
+                                    ]
+                                },
+                                {
+                                    "label": "Physical Pixel Dimensions",
+                                    "id": "pHYs",
+                                    "optional": true,
+                                    "group": [
+                                        { "id": "pHYsChunkSize", "label": "pHYs chunk size",      "type": "uint32" },
+                                        { "id": "pHYschunkName", "label": "pHYs chunk name/type", "type": "ascii", "values": "pHYs" },
+                                        { "id": "pHYsChunkData", "label": "pHYs chunk data", "groupSize": "pHYsChunkSize", "group": [
+                                                { "id": "xPixelPerUnit", "label": "pixels per unit, x axis", "type": "uint32" },
+                                                { "id": "yPixelPerUnit", "label": "pixels per unit, y axis", "type": "uint32" },
+                                                { "id": "unitSpecifier", "label": "unit specifier",          "type": "uint8", "map" : [
+                                                    {  "0": "unit is unknown"   },
+                                                    {  "1": "unit is the meter" } ] }
+                                            ] },
+                                        { "id": "crc",  "label": "cyclic redundancy code",  "type": "raw",  "size": 4 }
+                                    ]
+                                },
+                                {
+                                    "label": "Physical Scale",
+                                    "id": "sCAL",
+                                    "optional": true,
+                                    "group": [
+                                        { "id": "sCALChunkSize", "label": "sCAL chunk size",      "type": "uint32" },
+                                        { "id": "sCALchunkName", "label": "sCAL chunk name/type", "type": "ascii", "values": "sCAL" },
+                                        { "id": "sCALChunkData", "label": "sCAL chunk data", "groupSize": "sCALChunkSize", "group": [
+                                                { "id": "unitSpecifier", "label": "Unit specifier",         "type": "uint8", "map": [
+                                                        { "0": "meters"  },
+                                                        { "1": "radians" } ] },
+                                                { "id": "xUnitPerPixel", "label": "Unit per pixel, x axis", "type": "ascii", "keepEnd": false, "display": "ascii" },
+                                                { "id": "yUnitPerPixel", "label": "Unit per pixel, y axis", "type": "ascii", "keepEnd": false, "display": "ascii" }
+                                            ] },
+                                        { "id": "crc",  "label": "cyclic redundancy code",  "type": "raw",  "size": 4 }
+                                    ]
+                                },
+                                {
+                                    "label": "Suggested Palette",
+                                    "id": "sPLT",
+                                    "optional": true,
+                                    "repetition": [ { "min": 0 } ],
+                                    "group": [
+                                        { "id": "sPLTChunkSize", "label": "sPLT chunk size",      "type": "uint32" },
+                                        { "id": "sPLTchunkName", "label": "sPLT chunk name/type", "type": "ascii", "values": "sPLT" },
+                                        { "id": "sPLTChunkData", "label": "sPLT chunk data", "groupSize": "sPLTChunkSize",     "group": [
+                                                { "id": "palette_name",    "label": "Palette name",    "type": "ascii", "keepEnd": false },
+                                                { "id": "sample_depth",    "label": "Sample depth",    "type": "uint8" },
+                                                { "id": "palette_entries", "label": "Palette entries", "groupSize": "sPLTChunkSize - len(palette_name) - 2",   "group": [
+                                                     { "id": "palette_entry", "label": "Palette entry", "requirement":"sample_depth is 8", "repetition": "( sPLTChunkSize - len(palette_name) - 2 ) / 6", "groupSize": "6", "group": [
+                                                            { "id": "red",       "label": "Red",       "type": "uint8"  },
+                                                            { "id": "green",     "label": "Green",     "type": "uint8"  },
+                                                            { "id": "blue",      "label": "Blue",      "type": "uint8"  },
+                                                            { "id": "alpha",     "label": "Alpha",     "type": "uint8"  },
+                                                            { "id": "frequency", "label": "Frequency", "type": "uint16" } ] },
+                                                    { "id": "palette_entry", "label": "Palette entry", "requirement":"sample_depth is 16", "repetition": "( sPLTChunkSize - len(palette_name) - 2 ) / 10", "groupSize": "10", "group": [
+                                                            { "id": "red",       "label": "Red",       "type": "uint16" },
+                                                            { "id": "green",     "label": "Green",     "type": "uint16" },
+                                                            { "id": "blue",      "label": "Blue",      "type": "uint16" },
+                                                            { "id": "alpha",     "label": "Alpha",     "type": "uint16" },
+                                                            { "id": "frequency", "label": "Frequency", "type": "uint16" } ] }
+
+                                                ] }
+                                        ] },
+                                        { "id": "crc",           "label": "cyclic redundancy code", "type": "raw",   "size": "4" }
+                                    ]
+                                }
+                                
+                            ]
+                        },
+                        {
+                            "label": "Image Data",
+                            "id": "IDAT",
+                            "optional": false,
+                            "repetition": [ { "min": 1 } ],
+                            "group": [
+                                { "id": "IDATChunkSize", "label": "IDAT chunk size",             "type": "uint32" },
+                                { "id": "IDATchunkName", "label": "IDAT chunk name/type",        "type": "ascii", "values": "IDAT"        },
+                                { "id": "IDATChunkData", "label": "IDAT chunk data",        "type": "raw",   "size": "IDATChunkSize" },
+                                { "id": "crc",           "label": "cyclic redundancy code", "type": "raw",   "size": "4"             }
+                            ]
+                        }
+                    ]
+                },
+
+                {
+                    "label": "Timestamp",
+                    "id": "tIME",
+                    "optional": true,
+                    "group": [
+                        { "id": "tIMEChunkSize", "label": "tIME chunk size",      "type": "uint32" },
+                        { "id": "tIMEchunkName", "label": "tIME chunk name/type", "type": "ascii", "values": "tIME" },
+                        { "id": "tIMEChunkData", "label": "tIME chunk data", "groupSize": "tIMEChunkSize", "group": [
+                                { "id": "year",   "label": "year (yyyy)", "type": "uint16" },
+                                { "id": "month",  "label": "month (mm)",  "type": "uint8"  },
+                                { "id": "day",    "label": "day (dd)",    "type": "uint8"  },
+                                { "id": "hour",   "label": "hour (hh)",   "type": "uint8"  },
+                                { "id": "minute", "label": "minute (mm)", "type": "uint8"  },
+                                { "id": "second", "label": "second (ss)", "type": "uint8"  }
+                            ]
+                        },
+                        { "id": "crc", "label": "cyclic redundancy code", "type": "raw", "size": "4" }
+                    ]
+                },
+                {
+                    "label": "Text Annotations",
+                    "id": "tEXt",
+                    "optional": true,
+                    "repetition": [ { "min": 0 } ],
+                    "group": [
+                        { "id": "tEXtChunkSize", "label": "tEXt chunk size",      "type": "uint32" },
+                        { "id": "tEXtchunkName", "label": "tEXt chunk name/type", "type": "ascii", "values": "tEXt" },
+                        { "id": "tEXtChunkData", "label": "tEXt chunk data", "groupSize": "tEXtChunkSize", "group": [
+                                { "id": "keyword", "label": "Key word", "type": "ascii", "keepEnd": false },
+                                { "id": "text",    "label": "Text",     "type": "raw",   "size": "tEXtChunkSize - len( keyword ) - 1", "display":"ascii" }
+                        ] },
+                        { "id": "crc",           "label": "cyclic redundancy code", "type": "raw",   "size": "4" }
+                    ]
+                },
+                {
+                    "label": "Compressed Text Annotations",
+                    "id": "zTXt",
+                    "optional": true,
+                    "repetition": [ { "min": 0 } ],
+                    "group": [
+                        { "id": "zTXtChunkSize", "label": "zTXt chunk size",      "type": "uint32" },
+                        { "id": "zTXtchunkName", "label": "zTXt chunk name/type", "type": "ascii", "values": "zTXt" },
+                        { "id": "zTXtChunkData", "label": "zTXt chunk data", "groupSize": "zTXtChunkSize",     "group": [
+                                { "id": "keyword",            "label": "Key word",           "type": "ascii", "keepEnd": false },
+                                { "id": "compression_method", "label": "Compression Method", "type": "hexa",  "values": "00" },
+                                { "id": "compressed_text",    "label": "Compressed text",    "type": "raw",   "size": "zTXtChunkSize - len( keyword ) - 2" }
+                        ] },
+                        { "id": "crc",           "label": "cyclic redundancy code", "type": "raw",   "size": "4" }
+                    ]
+                },
+                {
+                    "label": "International Text Annotations",
+                    "id": "iTXt",
+                    "optional": true,
+                    "repetition": [ { "min": 0 } ],
+                    "group": [
+                        { "id": "iTXtChunkSize", "label": "iTXt chunk size",             "type": "uint32" },
+                        { "id": "iTXtchunkName", "label": "iTXt chunk name/type",        "type": "ascii", "values": "iTXt"        },
+                        { "id": "iTXtChunkData", "label": "iTXt chunk data",        "groupSize": "iTXtChunkSize",     "group": [
+                                { "id": "keyword",            "label": "Key word",           "type": "ascii", "keepEnd": false },
+                                { "id": "compression_flag",   "label": "Compression Flag",   "type": "uint8", "map": [
+                                        { "0": "Uncompressed text" },
+                                        { "1": "Compressed text" }
+                                    ] },
+                                { "id": "compression_method", "label": "Compression Method", "type": "hexa",  "values": "00" },
+                                { "id": "languageTag",        "label": "Language tag",       "type": "ascii", "keepEnd": false },
+                                { "id": "translatedKeyword",  "label": "Translated keyword", "type": "ascii", "keepEnd": false },
+                                { "id": "text",               "label": "Text",               "type": "raw",   "size": "iTXtChunkSize - len(keyword) - len(languageTag) - len(translatedKeyword) - 5" }
+                        ] },
+                        { "id": "crc",           "label": "cyclic redundancy code", "type": "raw",   "size": "4"             }
+                    ]
+                },
+
+                {
+                    "label": "Fractal Parameters",
+                    "id": "fRAc",
+                    "optional": true,
+                    "repetition": [ { "min": 0 } ],
+                    "group": [
+                        { "id": "fRAcChunkSize", "label": "fRAc chunk size",             "type": "uint32" },
+                        { "id": "fRAcchunkName", "label": "fRAc chunk name/type",        "type": "ascii", "values": "fRAc"        },
+                        { "id": "fRAcChunkData", "label": "fRAc chunk data",        "type": "raw",   "size": "fRAcChunkSize" },
+                        { "id": "crc",           "label": "cyclic redundancy code", "type": "raw",   "size": "4"             }
+                    ]
+                },
+
+                {
+                    "label": "GIF Conversion Info (general)",
+                    "id": "gIFg",
+                    "optional": true,
+                    "repetition": [ { "min": 0 } ],
+                    "group": [
+                        { "id": "gIFgChunkSize", "label": "gIFg chunk size",             "type": "uint32" },
+                        { "id": "gIFgchunkName", "label": "gIFg chunk name/type",        "type": "ascii", "values": "gIFg"        },
+                        { "id": "gIFgChunkData", "label": "gIFg chunk data",        "groupSize": "gIFgChunkSize", "group": [
+                                { "id": "disposal_method", "label": "Disposal method", "type": "uint8", "range": [ { "min": 0, "max": 3 } ] },
+                                { "id": "user_input",      "label": "User input",      "type": "uint8", "range": [ { "min": 0, "max": 1 } ] },
+                                { "id": "delay_time",      "label": "Delay time",      "type": "uint16" }
+                        ] },
+                        { "id": "crc",           "label": "cyclic redundancy code", "type": "raw",   "size": "4"             }
+                    ]
+                },
+
+                {
+                    "label": "GIF Conversion Info (application)",
+                    "id": "gIFx",
+                    "optional": true,
+                    "repetition": [ { "min": 0 } ],
+                    "group": [
+                        { "id": "gIFxChunkSize", "label": "gIFx chunk size",             "type": "uint32" },
+                        { "id": "gIFxchunkName", "label": "gIFx chunk name/type",        "type": "ascii", "values": "gIFx"        },
+                        { "id": "gIFxChunkData", "label": "gIFx chunk data",        "groupSize": "gIFxChunkSize", "group": [
+                                { "id": "application_id",      "label": "Application identifier", "type": "raw", "size": 8,                    "display": "ascii" },
+                                { "id": "authentication_code", "label": "Authentication code",    "type": "raw", "size": 3,                    "display": "ascii" },
+                                { "id": "application_data",    "label": "Application data",       "type": "raw", "size": "gIFxChunkSize - 11", "display": "ascii" }
+                        ] },
+                        { "id": "crc",           "label": "cyclic redundancy code", "type": "raw",   "size": "4"             }
+                    ]
+                },
+
+                {
+                    "label": "GIF Plain Text",
+                    "id": "gIFt",
+                    "optional": true,
+                    "repetition": [ { "min": 0 } ],
+                    "group": [
+                        { "id": "gIFtChunkSize", "label": "gIFt chunk size",             "type": "uint32" },
+                        { "id": "gIFtchunkName", "label": "gIFt chunk name/type",        "type": "ascii", "values": "gIFt"        },
+                        { "id": "gIFtChunkData", "label": "gIFt chunk data",        "groupSize": "gIFtChunkSize", "group": [
+                                { "id": "textGridLeftPosition", "label": "Text grid left position, pixels", "type": "uint32" },
+                                { "id": "textGridTopPosition",  "label": "Text grid top position, pixels",  "type": "uint32" },
+                                { "id": "textGridWidth",        "label": "Text grid width, pixels",         "type": "uint32" },
+                                { "id": "textGridHeight",       "label": "Text grid heigth, pixels",        "type": "uint32" },
+                                { "id": "charCellWidth",        "label": "Character cell width, pixels",    "type": "uint8"  },
+                                { "id": "charCellHeight",       "label": "Character cell height, pixels",   "type": "uint8"  },
+                                { "id": "textForegroundColor",  "label": "Text foreground color",      "groupSize": 3,      "group": [
+                                        { "id": "red",       "label": "Red",       "type": "uint8"  },
+                                        { "id": "green",     "label": "Green",     "type": "uint8"  },
+                                        { "id": "blue",      "label": "Blue",      "type": "uint8"  } ] },
+                                { "id": "textBackgroundColor",  "label": "Text background color",      "groupSize": 3,      "group": [
+                                        { "id": "red",       "label": "Red",       "type": "uint8"  },
+                                        { "id": "green",     "label": "Green",     "type": "uint8"  },
+                                        { "id": "blue",      "label": "Blue",      "type": "uint8"  } ] },
+                                { "id": "plainTextData",        "label": "Plain text data",  "type": "raw", "size": "gIFtChunkSize - 24", "display": "ascii" }
+                        ] },
+                        { "id": "crc",           "label": "cyclic redundancy code", "type": "raw",   "size": "4"             }
+                    ]
+                }
+
+            ]
+        },
+        {
+            "label": "Image trailer",
+            "id": "IEND",
+            "optional": false,
+            "group": [
+                { "id": "IENDChunkSize", "label": "IEND chunk size",             "type": "uint32", "range": [ { "min": 0, "max": 0 } ] },
+                { "id": "IENDchunkName", "label": "IEND chunk name/type",        "type": "ascii",  "values": "IEND"        },
+                { "id": "IENDChunkData", "label": "IEND chunk data",        "type": "raw",    "size": "IENDChunkSize" },
+                { "id": "crc",           "label": "cyclic redundancy code", "type": "raw",    "size": "4"             }
+            ]
+        }
+
+    ]
+}
