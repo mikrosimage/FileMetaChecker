@@ -267,15 +267,21 @@ void Checker::checkValue( const ShPtrElement element, EStatus& status )
 
 		case eTypeHexa  :
 		{
-			std::string orig = Translator( element ).get();
-			std::string lowCase = orig;
-			std::transform( lowCase.begin(), lowCase.end(), lowCase.begin(), ::tolower );
-		
-			for( std::string value : element->_values )
-				if( value == orig || ( ! element->_isCaseSensitive && value == lowCase ) )
-					status = eStatusValid;
+			std::string rawValue = Translator( element ).get();
+			std::string lowCase;
 
-			element->_mapValue = Map< std::string >( element->_map ).getLabel( orig );
+			for( std::string value : element->_values )
+			{
+				lowCase = value;
+				std::transform( lowCase.begin(), lowCase.end(), lowCase.begin(), ::tolower );
+				if( value == rawValue || ( ! element->_isCaseSensitive && lowCase == rawValue ) )
+				{
+					status = eStatusValid;
+					break;
+				}
+			}
+
+			element->_mapValue = Map< std::string >( element->_map ).getLabel( rawValue );
 			if( element->_mapValue.empty() && ! element->_isCaseSensitive )
 				element->_mapValue = Map< std::string >( element->_map ).getLabel( lowCase );
 
