@@ -50,32 +50,30 @@ Element::Element( const ShPtrSpecNode node,
 
 Element::ShPtrSpecNode Element::next( )
 {
-	ShPtrElement parent;
-	// if parent exists, copy it
-	if( _parent.use_count() != 0 )
-		parent = _parent.lock();
-	
+	ShPtrElement parent = ( _parent.use_count() != 0 )? _parent.lock() : nullptr ;
+	ShPtrSpecNode nextNode = _specNode->next();
+
 	if( parent != nullptr && parent->_status == eStatusSkip )
 		return parent->next( );
 
 	if( _status == eStatusSkip )
 	{
 		LOG_TRACE( "[element] Next: next node of " << _id<< " ( optional / skip )" );
-		if( _specNode->next() != nullptr  && ( parent == nullptr || parent->_status != eStatusSkip ) )
-			return _specNode->next();
+		if( nextNode != nullptr  && ( parent == nullptr || parent->_status != eStatusSkip ) )
+			return nextNode;
 		if( parent != nullptr )
 			return parent->next( );
 	}
 	
 	// Unordered Groups: if element valid and parent is unordered, go to the first child of the parent
-	if( ( _status == eStatusValid || _status == eStatusUnknown ) && _parent.use_count() != 0 && ( ! parent->_isOrdered ) && ( ! _isGroup || _checkedGroup ) )
+	if( ( _status == eStatusValid || _status == eStatusUnknown ) && parent != nullptr && ! parent->_isOrdered && ( ! _isGroup || _checkedGroup ) )
 	{
 		LOG_TRACE( "[element] Next: " << _id << "'s parent first child ( unordered group )" );
 		return parent->_specNode->firstChild();
 	}
 	
 	// Groups: if element has a group not already checked and is valid or first time parsed, go to the first child
-	if( _specNode->isGroup() && ! _checkedGroup && ( _iteration == 1 || _status == eStatusValid ) && _status != eStatusSkip )
+	if( _isGroup && ! _checkedGroup && ( _iteration == 1 || _status == eStatusValid ) && _status != eStatusSkip )
 	{
 		_checkedGroup = true;
 		ShPtrSpecNode child( _specNode->firstChild() );
@@ -84,16 +82,14 @@ Element::ShPtrSpecNode Element::next( )
 	}
 	
 	// Repetition: if repeated element, go to the same SpecNode
-	if( ! _repetExpr.empty() && _status == eStatusValid )
+	if( _repetExpr.size() && _status == eStatusValid )
 	{
 		LOG_TRACE( "[element] Next: same node " << _id << " ( repetition )" );
 		return _specNode;
 	}
 
-	ShPtrSpecNode nextNode = _specNode->next();
-
 	// Last Element: if their is no more SpecNode after and parent exists, go to the node after the parent
-	if( nextNode == nullptr && _parent.use_count() != 0 )
+	if( nextNode == nullptr && parent != nullptr )
 	{
 		LOG_TRACE( "[element] Next: "<< _id << "'s parent next node ( end of group )" );
 		return parent->next( );
@@ -151,6 +147,36 @@ size_t Element::getElementIteration( const std::string& id, const ExpressionList
 		prev = prev->getPrevious();
 	}
 	return iteration;
+}
+
+std::string Element::getLabelsLegend()
+{
+	std::stringstream legend;
+	legend << "========= LEGEND =========" << std::endl;
+	legend << " v = value                " << std::endl;
+	legend << " t = type                 " << std::endl;
+	legend << " i = iteration            " << std::endl;
+	legend << " S = status               " << std::endl;
+	legend << " s = size                 " << std::endl;
+	legend << " @ = address              " << std::endl;
+	legend << " E = Error                " << std::endl;
+	legend << " W = Warning              " << std::endl;
+	legend                                 << std::endl;
+	return legend.str();
+}
+
+std::string Element::getElementPropertiesLegend()
+{
+	std::stringstream props;
+	props << "=== ELEMENT PROPERTIES ===" << std::endl;
+	props << "B.... = Big endian        " << std::endl;
+	props << "l.... = little endian     " << std::endl;
+	props << ".O... = Optional          " << std::endl;
+	props << "..G.. = Group             " << std::endl;
+	props << "...U. = Unordered         " << std::endl;
+	props << "....R = Repeated          " << std::endl;
+	props                                 << std::endl;
+	return props.str();
 }
 
 }

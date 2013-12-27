@@ -47,7 +47,9 @@ public:
 	 * @param previous Previous Element reference.
 	 * @param parent   Parent Element reference.
 	 */
-	Element( const ShPtrSpecNode node, const ShPtrElement previous = ShPtrElement(), const ShPtrElement parent = nullptr );
+	Element( const ShPtrSpecNode node,
+		     const ShPtrElement  previous = ShPtrElement(),
+		     const ShPtrElement  parent   = nullptr );
 	
 	/**
 	 * Get the next specification node.
@@ -77,7 +79,7 @@ public:
 	 * Get the bound specification node.
 	 * @return Bound SpecNode reference.
 	 */
-	ShPtrSpecNode getSpecNode()       { return _specNode; }
+	ShPtrSpecNode getSpecNode() { return _specNode; }
 
 	/**
 	 * Add a child to the current Element.
@@ -96,8 +98,24 @@ public:
 	 * @return Properties flags.
 	 */
 	std::string getPropertiesFlag();
+
+	/**
+	 * Get Element properties legend labels.
+	 * @return Properties legend.
+	 */
+	static std::string getLabelsLegend();
+
+	/**
+	 * Get Element properties flags legend.
+	 * @return Falges legend.
+	 */
+	static std::string getElementPropertiesLegend();
+
 protected:
-	static size_t getElementIteration( const std::string& id, const ExpressionList& repetExpr, const ShPtrElement& previous, const ShPtrElement& parent );
+	static size_t getElementIteration( const std::string&    id,
+		                               const ExpressionList& repetExpr,
+		                               const ShPtrElement&   previous,
+		                               const ShPtrElement&   parent );
 
 protected:
 	std::weak_ptr< Element >    _parent;
@@ -147,36 +165,6 @@ public:
 	const bool    _isCaseSensitive;
 	const bool    _keepEndingChar;
 	bool          _checkedGroup;
-
-	static std::string getLabelsLegend()
-	{
-		std::stringstream legend;
-		legend << "========= LEGEND =========" << std::endl;
-		legend << " v = value                " << std::endl;
-		legend << " t = type                 " << std::endl;
-		legend << " i = iteration            " << std::endl;
-		legend << " S = status               " << std::endl;
-		legend << " s = size                 " << std::endl;
-		legend << " @ = address              " << std::endl;
-		legend << " E = Error                " << std::endl;
-		legend << " W = Warning              " << std::endl;
-		legend                                 << std::endl;
-		return legend.str();
-	}
-
-	static std::string getElementPropertiesLegend()
-	{
-		std::stringstream props;
-		props << "=== ELEMENT PROPERTIES ===" << std::endl;
-		props << "B.... = Big endian        " << std::endl;
-		props << "l.... = little endian     " << std::endl;
-		props << ".O... = Optional          " << std::endl;
-		props << "..G.. = Group             " << std::endl;
-		props << "...U. = Unordered         " << std::endl;
-		props << "....R = Repeated          " << std::endl;
-		props                                 << std::endl;
-		return props.str();
-	}
 
 };
 
