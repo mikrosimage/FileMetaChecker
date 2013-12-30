@@ -5,7 +5,7 @@ project.StaticLibrary(
 		dirs      = ['src'],
 		includes  = ['src'],
 		libraries = [
-			libs.rapidxml,
+			libs.rapidparser,
 			libs.common,
 			libs.basicElement,
 			],

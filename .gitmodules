@@ -7,3 +7,6 @@
 [submodule "3rdParty/rapidjson"]
 	path = 3rdParty/rapidjson
 	url = https://github.com/MarcAntoine-Arnaud/rapidjson.git
+[submodule "3rdParty/rapidParser"]
+	path = 3rdParty/rapidParser
+	url = git@github.com:MarcAntoine-Arnaud/RapidParser.git

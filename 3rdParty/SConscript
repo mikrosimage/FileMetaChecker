@@ -9,3 +9,12 @@ project.ObjectLibrary(
 		'rapidjson',
 		includes  = ['./rapidjson/include'],
 	)
+
+
+project.ObjectLibrary(
+		'rapidparser',
+		includes  = [
+			'rapidParser/src',
+			'rapidParser/src/rapidjson/include'
+		],
+	)
