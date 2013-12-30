@@ -28,6 +28,19 @@ for f in args.file :
 	print "processing", f
 	print "number of elements in report", len( listOfElements )
 
-	#for e in listOfElements :
-	#	print qc.report.getElem( e )._id, qc.report.getElem( e )._label
+	idMaxSize = 0
+	labelMaxSize = 0
+
+	for e in listOfElements :
+		idMaxSize    = max( idMaxSize,    len( qc.report.getElem( e )._id    ) )
+		labelMaxSize = max( labelMaxSize, len( qc.report.getElem( e )._label ) )
+
+	print "**********"
+	for e in listOfElements :
+		#print qc.report.getElem( e )._id, qc.report.getElem( e )._label
+		idFormatter = '{0: <' + str( idMaxSize + 1 ) + '}'
+		labelFormatter = '{0: <' + str( labelMaxSize + 1 ) + '}'
+		elem = qc.report.getElem( e )
+		print idFormatter.format( elem._id ), labelFormatter.format( elem._label ), elem._dispValue
+	print "**********"
 
