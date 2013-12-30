@@ -322,8 +322,6 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_2 )
 	BOOST_CHECK_EQUAL( report.getElement( "value153"  )->_status, eStatusValid    );
 	BOOST_CHECK_EQUAL( report.getElement( "value16"   )->_status, eStatusValid    );
 	BOOST_CHECK_EQUAL( report.getElement( "valueEnd"  )->_status, eStatusValid    );
-
-	report.writeXml( "test.xml" );
 }
 
 BOOST_AUTO_TEST_CASE( comparator_test_comparator_3 )
