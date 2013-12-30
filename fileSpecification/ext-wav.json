@@ -114,20 +114,20 @@
 							"label": "Number of valid bits",
 							"type": "uint16",
 							"endian": "little",
-							"requirement": "cbSize >= 2 and formatType is not 1"
+							"requirement": "formatType is not 1 and cbSize >= 2"
 						},
 						{
 							"id":"dwChannelMask",
 							"label": "Speaker position mask",
 							"type": "uint32",
 							"endian": "little",
-							"requirement": "cbSize >= 6 and formatType is not 1"
+							"requirement": "formatType is not 1 and cbSize >= 6"
 						},
 						{
 							"id":"SubFormat",
 							"label": "GUID, including the data format code",
 							"groupSize": "16",
-							"requirement": "cbSize == 22 and formatType is not 1",
+							"requirement": "formatType is not 1 and cbSize == 22",
 							"group": [
 								{
 									"id": "dataFormatCode",
@@ -139,7 +139,7 @@
 									"id": "subFormatData",
 									"label": "SubFormat fixed string",
 									"type": "hexa",
-									"values": "000000001000800000AA00389B71"
+									"values": "000000001000800000aa00389b71"
 								}
 							]
 						}
@@ -311,11 +311,118 @@
 							"type": "uint32",
 							"endian": "little"
 						},
+						
 						{
-							"id": "labelsAndNamesList",
-							"label": "Text labels and names list",
-							"type": "raw",
-							"size": "listSize"
+							"id": "list",
+							"label": "Associated data list",
+							"groupSize": "listSize",
+							"ordered": false,
+							"group": [
+								{ "id": "associatedDataId", "label": "Associated data list type id", "ascii": "adtl", "optional": true, "ordered": false, "group": [
+										{ "id": "lablSubChunks", "label": "Label sub-chunk", "type": "ascii", "values": [ "labl", "note" ], "groupSize": "lablSize + 4", "optional": true, "group": [
+												{ "id": "lablSize",   "label": "Label bloc size", "type": "uint32", "endian": "little" },
+												{ "id": "cuePointId", "label": "Cue point id",    "type": "raw",    "endian": "little", "size": "4", "display": "hexa" },
+												{ "id": "lablText",   "label": "Label text",      "type": "raw",    "size": "lablSize - 4" }
+											]
+										},
+										{ "id": "ltxtSubChunks", "label": "Labeled text sub-chunk", "type": "ascii", "values": "ltxt", "groupSize": "ltxtSize + 4", "optional": true, "group": [
+												{ "id": "ltxtSize",     "label": "Labeled text bloc size", "type": "uint32",           "endian": "little" },
+												{ "id": "cuePointId",   "label": "Cue point id",           "type": "raw", "size": "4", "endian": "little", "display": "hexa" },
+												{ "id": "sampleLength", "label": "Sample length",          "type": "uint32",           "endian": "little" },
+												{ "id": "PurposeId",    "label": "Purpose id",             "type": "raw", "size": "4", "display": "hexa" },
+												{ "id": "countryId",    "label": "Country id",             "type": "raw", "size": "2", "display": "hexa" },
+												{ "id": "languageId",   "label": "Language id",            "type": "raw", "size": "2", "display": "hexa" },
+												{ "id": "dialectId",    "label": "Dialect id",             "type": "raw", "size": "2", "display": "hexa" },
+												{ "id": "pageCode",     "label": "Page code",              "type": "raw", "size": "2", "display": "hexa" },
+												{ "id": "labledText",   "label": "Labeled text",           "type": "raw", "size": "ltxtSize - 20", "display": "ascii" }
+											]
+										}
+									]
+								},
+								{ "id": "infoId", "label": "Text Information list type id", "type": "ascii", "values": "info", "optional": true, "ordered": false, "group": [
+										{ "id": "artistInfo", "label": "Artist Info", "type": "ascii", "values": "iart", "groupSize": "iartSize + 4", "optional": true, "group": [
+												{ "id": "iartSize", "label": "Artist Info size", "type": "uint32", "endian": "little" },
+												{ "id": "iartText", "label": "Artist Info text", "type": "raw",      "size": "iartSize", "display": "ascii" }
+											]
+										},
+										{ "id": "commissionerInfo", "label": "Commissioner Info", "type": "ascii", "values": "icms", "groupSize": "icmsSize + 4", "optional": true, "group": [
+												{ "id": "icmsSize", "label": "Commissioner Info size", "type": "uint32", "endian": "little" },
+												{ "id": "icmsText", "label": "Commissioner Info text", "type": "raw",      "size": "icmsSize", "display": "ascii" }
+											]
+										},
+										{ "id": "commentsInfo", "label": "Comments Info", "type": "ascii", "values": "icmt", "groupSize": "icmtSize + 4", "optional": true, "group": [
+												{ "id": "icmtSize", "label": "Comments Info size", "type": "uint32", "endian": "little" },
+												{ "id": "icmtText", "label": "Comments Info text", "type": "raw",      "size": "icmtSize", "display": "ascii" }
+											]
+										},
+										{ "id": "copyrightInfo", "label": "Copyright Info", "type": "ascii", "values": "icop", "groupSize": "icopSize + 4", "optional": true, "group": [
+												{ "id": "icopSize", "label": "Copyright Info size", "type": "uint32", "endian": "little" },
+												{ "id": "icopText", "label": "Copyright Info text", "type": "raw", "size": "icopSize", "display": "ascii" }
+											]
+										},
+										{ "id": "creationDateInfo", "label": "Creation Date Info", "type": "ascii", "values": "icrd", "groupSize": "icrdSize + 4", "optional": true, "group": [
+												{ "id": "icrdSize", "label": "Creation Date Info size", "type": "uint32", "endian": "little" },
+												{ "id": "icrdText", "label": "Creation Date Info text", "type": "raw", "size": "icrdSize", "display": "ascii" }
+											]
+										},
+										{ "id": "engineerInfo", "label": "Engineer Info", "type": "ascii", "values": "ieng", "groupSize": "iengSize + 4", "optional": true, "group": [
+												{ "id": "iengSize", "label": "Engineer Info size", "type": "uint32", "endian": "little" },
+												{ "id": "iengText", "label": "Engineer Info text", "type": "raw", "size": "iengSize", "display": "ascii" }
+											]
+										},
+										{ "id": "genreInfo", "label": "Genre Info", "type": "ascii", "values": "ignr", "groupSize": "ignrSize + 4", "optional": true, "group": [
+												{ "id": "ignrSize", "label": "Genre Info size", "type": "uint32", "endian": "little" },
+												{ "id": "ignrText", "label": "Genre Info text", "type": "raw", "size": "ignrSize", "display": "ascii" }
+											]
+										},
+										{ "id": "keywordsInfo", "label": "Keywords Info", "type": "ascii", "values": "ikey", "groupSize": "ikeySize + 4", "optional": true, "group": [
+												{ "id": "ikeySize", "label": "Keywords Info size", "type": "uint32", "endian": "little" },
+												{ "id": "ikeyText", "label": "Keywords Info text", "type": "raw", "size": "ikeySize", "display": "ascii" }
+											]
+										},
+										{ "id": "mediumInfo", "label": "Medium Info", "type": "ascii", "values": "imed", "groupSize": "imedSize + 4", "optional": true, "group": [
+												{ "id": "imedSize", "label": "Medium Info size", "type": "uint32", "endian": "little" },
+												{ "id": "imedText", "label": "Medium Info text", "type": "raw", "size": "imedSize", "display": "ascii" }
+											]
+										},
+										{ "id": "titleInfo", "label": "Title Info", "type": "ascii", "values": "inam", "groupSize": "inamSize + 4", "optional": true, "group": [
+												{ "id": "inamSize", "label": "Title Info size", "type": "uint32", "endian": "little" },
+												{ "id": "inamText", "label": "Title Info text", "type": "raw", "size": "inamSize", "display": "ascii" }
+											]
+										},
+										{ "id": "origTitleInfo", "label": "Original Title Info", "type": "ascii", "values": "iprd", "groupSize": "iprdSize + 4", "optional": true, "group": [
+												{ "id": "iprdSize", "label": "Original Title Info size", "type": "uint32", "endian": "little" },
+												{ "id": "iprdText", "label": "Original Title Info text", "type": "raw", "size": "iprdSize", "display": "ascii" }
+											]
+										},
+										{ "id": "subjectInfo", "label": "Subject Info", "type": "ascii", "values": "isbj", "groupSize": "isbjSize + 4", "optional": true, "group": [
+												{ "id": "isbjSize", "label": "Subject Info size", "type": "uint32", "endian": "little" },
+												{ "id": "isbjText", "label": "Subject Info text", "type": "raw", "size": "isbjSize", "display": "ascii" }
+											]
+										},
+										{ "id": "softwareInfo", "label": "Software Info", "type": "ascii", "values": "isft", "groupSize": "isftSize + 4", "optional": true, "group": [
+												{ "id": "isftSize", "label": "Software Info size", "type": "uint32", "endian": "little" },
+												{ "id": "isftText", "label": "Software Info text", "type": "raw", "size": "isftSize", "display": "ascii" }
+											]
+										},
+										{ "id": "sourceInfo", "label": "Source Info", "type": "ascii", "values": "isrc", "groupSize": "isrcSize + 4", "optional": true, "group": [
+												{ "id": "isrcSize", "label": "Source Info size", "type": "uint32", "endian": "little" },
+												{ "id": "isrcText", "label": "Source Info text", "type": "raw", "size": "isrcSize", "display": "ascii" }
+											]
+										},
+										{ "id": "sourceFormInfo", "label": "Source Form Info", "type": "ascii", "values": "isrf", "groupSize": "isrfSize + 4", "optional": true, "group": [
+												{ "id": "isrfSize", "label": "Source Form Info size", "type": "uint32", "endian": "little" },
+												{ "id": "isrfText", "label": "Source Form Info text", "type": "raw", "size": "isrfSize", "display": "ascii" }
+											]
+										},
+										{ "id": "technicianInfo", "label": "Technician Info", "type": "ascii", "values": "itch", "groupSize": "itchSize + 4", "optional": true, "group": [
+												{ "id": "itchSize", "label": "Technician Info size", "type": "uint32", "endian": "little" },
+												{ "id": "itchText", "label": "Technician Info text", "type": "raw", "size": "itchSize", "display": "ascii" }
+											]
+										}
+									]
+								}
+							]
 						}
 					]
 				},

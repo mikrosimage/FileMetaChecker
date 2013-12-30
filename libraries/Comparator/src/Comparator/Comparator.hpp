@@ -51,11 +51,9 @@ public:
 	void check( spec_reader::Specification& spec, file_reader::FileReader& reader, report_generator::Report& report );
 
 private:
-	bool         isInUnorderedGroup( const ShPtrElement element );
-	void         getWord           ( const ShPtrElement element, file_reader::FileReader& file, std::vector<char>& word );
-	void         updateParentSize  ( const ShPtrElement element );
-	ShPtrElement getNextParent     ( const ShPtrElement element, const ShPtrSpecNode node );
-	void         checkGroupSize    ( const ShPtrElement element, file_reader::FileReader& file );
+	bool  isInUnorderedGroup( const ShPtrElement element );
+	void  getWord           ( const ShPtrElement element, file_reader::FileReader& file, std::vector<char>& word );
+	void  displayElement    ( const ShPtrElement element, file_reader::FileReader& file );
 };
 
 }

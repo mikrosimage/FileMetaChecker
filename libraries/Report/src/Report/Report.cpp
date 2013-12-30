@@ -25,7 +25,7 @@ void Report::setPrintVerbosity( const EReportDisplayLevel level )
 	_verbosity = level;
 }
 
-void Report::add( const ShPtrElement element )
+void Report::add( const ShPtrElement& element )
 {
 	_elementList.push_back( element );
 }
@@ -53,8 +53,17 @@ Report::ShPtrElement Report::get( const std::string& elementId, const size_t& it
 	return nullptr;
 }
 
+size_t Report::getElementListSize() const
+{
+	return _elementList.size();
+}
 
-void Report::update( const ShPtrElement newElement )
+std::vector< Report::ShPtrElement > Report::getElementList() const
+{
+	return _elementList;
+}
+
+void Report::update( const ShPtrElement& newElement )
 {
 	if( newElement == nullptr )
 		return;
@@ -159,7 +168,7 @@ void Report::print( const ShPtrElement element, const size_t& fileOffset )
 	LOG_ENDL();
 }
 
-size_t Report::getDisplayOffset( const ShPtrElement element )
+size_t Report::getDisplayOffset( const ShPtrElement& element )
 {
 	size_t tab = 0;
 	std::shared_ptr< basic_element::Element > elemCopy( element );
@@ -190,15 +199,9 @@ std::string Report::tabulation( size_t tabNum, const std::string& str )
 
 bool Report::isPrintable( const ShPtrElement element )
 {
-	bool ret = false;
-	switch( element->_status )
-	{
-		case eStatusUnknown  :
-		case eStatusValid    :
-		case eStatusInvalid  : ret = true;
-		default: break;
-	}
-	return ret;
+	if( element->_status == eStatusSkip )
+		return false;
+	return true;
 }
 
 void addXmlNodeAttribute( rapidxml::xml_document<>& doc, rapidxml::xml_node<>* node, const std::string& attrName, const std::string& attrValue )
@@ -283,15 +286,24 @@ void Report::writeXml( const std::string& filename )
 		}
 		else if( previous == parent && prevNode != nullptr )
 		{
+			LOG_TRACE( "[report] " << element->_id << ": prev: " << previous->_id << " / parent: " << parent->_id << std::endl );
 			prevNode->append_node( node );
 		}
 		else
 		{
-			rapidxml::xml_node<>* nodeParent = prevNode->parent();
-			std::string idStr = kId;
-			while( nodeParent != 0 && nodeParent->first_attribute( idStr.c_str() )->value() != parent->_id )
+			LOG_TRACE( "[report] " << element->_id << ": prev: " << previous->_id << " / parent: " << parent->_id << std::endl );
+			rapidxml::xml_node<>* nodeParent = prevNode;
+			while( nodeParent != nullptr && nodeParent->first_attribute( std::string( kId ).c_str() )->value() != parent->_id )
 			{
+				if( nodeParent->parent() == nullptr )
+					break;
+
+				if( nodeParent->parent()->first_attribute( std::string( kId ).c_str() ) == nullptr )
+					break;
+
 				nodeParent = nodeParent->parent();
+				if( nodeParent->first_attribute( std::string( kId ).c_str() )->value() == parent->_id )
+					break;
 			}
 			nodeParent->append_node( node );
 		}		

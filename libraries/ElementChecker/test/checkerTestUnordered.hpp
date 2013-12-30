@@ -158,6 +158,141 @@ BOOST_AUTO_TEST_CASE( element_checker_checker_unordered_group )
 	}
 }
 
+BOOST_AUTO_TEST_CASE( element_checker_checker_unordered_group_2 )
+{
+	std::string jsonString = R"*(
+			{
+				"content": [
+					{ "id": "value1",
+					  "label": "Value1",
+					  "type": "ascii",
+					  "ordered": false,
+					  "values": "WAVE4",
+					  "group": [
+							{ "id": "value11",
+							  "label": "Value11",
+							  "type": "ascii",
+							  "values": "WAVE1" },
+							{ "id": "value12",
+							  "label": "Value12",
+							  "type": "ascii",
+							  "values": "WAVE2",
+							  "group": [
+								{ "id": "value121",
+								  "label": "Value121",
+								  "type": "ascii",
+								  "values": "WAVE3" }
+							] }
+					  ] }
+				]
+			}
+		)*";
+
+	std::vector< char > buff1 { 'W', 'A', 'V', 'E', '1' };
+	std::vector< char > buff2 { 'W', 'A', 'V', 'E', '2' };
+	std::vector< char > buff3 { 'W', 'A', 'V', 'E', '3' };
+	std::vector< char > buff4 { 'W', 'A', 'V', 'E', '4' };
+
+	LOG_INFO( "\n>>> element_checker_checker_unordered_group_2 <<<" );
+	{
+		spec_reader::Specification spec;
+		spec.setFromString( jsonString );
+		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
+		BOOST_CHECK_EQUAL( node->getId(),                                     "value1" );
+		BOOST_CHECK_EQUAL( node->firstChild()->getId(),                       "value11" );
+		BOOST_CHECK_EQUAL( node->firstChild()->next()->getId(),               "value12" );
+		BOOST_CHECK_EQUAL( node->firstChild()->next()->firstChild()->getId(), "value121" );
+		BOOST_CHECK( node->firstChild()->next()->firstChild()->next() == nullptr );
+		BOOST_CHECK( node->next() == nullptr );
+
+		Checker checker;
+
+		std::shared_ptr< basic_element::Element > elem0( new basic_element::Element( node ) );
+		BOOST_CHECK_EQUAL( elem0->_status, eStatusUnknown );
+		elem0->set( buff4 );
+		checker.check( elem0 );
+		BOOST_CHECK_EQUAL( elem0->_id,     node->getId() );
+		BOOST_CHECK_EQUAL( elem0->_status, eStatusValid );
+
+		std::shared_ptr< basic_element::Element > elem1( new basic_element::Element( elem0->next(), elem0, elem0 ) );
+		BOOST_CHECK_EQUAL( elem1->_status, eStatusUnknown );
+		elem1->set( buff2 );
+		checker.check( elem1 );
+		BOOST_CHECK_EQUAL( elem1->_id,     node->firstChild()->getId() );
+		BOOST_CHECK_EQUAL( elem1->_status, eStatusSkip );
+
+		std::shared_ptr< basic_element::Element > elem2( new basic_element::Element( elem1->next(), elem1, elem0 ) );
+		elem2->set( buff2 );
+		checker.check( elem2 );
+		BOOST_CHECK_EQUAL( elem2->_id,     node->firstChild()->next()->getId() );
+		BOOST_CHECK_EQUAL( elem2->_status, eStatusValid );
+
+		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( elem2->next(), elem2, elem2 ) );
+		elem3->set( buff3 );
+		checker.check( elem3 );
+		BOOST_CHECK_EQUAL( elem3->_id,     node->firstChild()->next()->firstChild()->getId() );
+		BOOST_CHECK_EQUAL( elem3->_status, eStatusValid );
+
+		std::shared_ptr< basic_element::Element > elem4( new basic_element::Element( elem3->next(), elem3, elem0 ) );
+		elem4->set( buff1 );
+		checker.check( elem4 );
+		BOOST_CHECK_EQUAL( elem4->_id,     node->firstChild()->getId() );
+		BOOST_CHECK_EQUAL( elem4->_status, eStatusValid );
+
+		std::shared_ptr< basic_element::Element > elem5( new basic_element::Element( elem4->next(), elem4, elem0 ) );
+		elem5->set( buff4 );
+		checker.check( elem5 );
+		BOOST_CHECK_EQUAL( elem5->_id,     node->firstChild()->getId() );
+		BOOST_CHECK_EQUAL( elem5->_status, eStatusSkip );
+
+		std::shared_ptr< basic_element::Element > elem6( new basic_element::Element( elem5->next(), elem5, elem0 ) );
+		elem6->set( buff4 );
+		checker.check( elem6 );
+		BOOST_CHECK_EQUAL( elem6->_id,     node->firstChild()->next()->getId() );
+		BOOST_CHECK_EQUAL( elem6->_status, eStatusSkip );
+
+		BOOST_CHECK( elem6->next() == nullptr );
+		BOOST_CHECK_EQUAL( elem0->_status,  eStatusValid );
+	}
+	LOG_INFO( "\n>>> element_checker_checker_unordered_group suite <<<" );
+	{
+		spec_reader::Specification spec;
+		spec.setFromString( jsonString );
+		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
+		BOOST_CHECK_EQUAL( node->getId(),                                     "value1" );
+		BOOST_CHECK_EQUAL( node->firstChild()->getId(),                       "value11" );
+		BOOST_CHECK_EQUAL( node->firstChild()->next()->getId(),               "value12" );
+		BOOST_CHECK_EQUAL( node->firstChild()->next()->firstChild()->getId(), "value121" );
+		BOOST_CHECK( node->firstChild()->next()->firstChild()->next() == nullptr );
+		BOOST_CHECK( node->next() == nullptr );
+
+		Checker checker;
+
+		std::shared_ptr< basic_element::Element > elem0( new basic_element::Element( node ) );
+		BOOST_CHECK_EQUAL( elem0->_status, eStatusUnknown );
+		elem0->set( buff4 );
+		checker.check( elem0 );
+		BOOST_CHECK_EQUAL( elem0->_id,     node->getId() );
+		BOOST_CHECK_EQUAL( elem0->_status, eStatusValid );
+
+		std::shared_ptr< basic_element::Element > elem1( new basic_element::Element( elem0->next(), elem0, elem0 ) );
+		BOOST_CHECK_EQUAL( elem1->_status, eStatusUnknown );
+		elem1->set( buff4 );
+		checker.check( elem1 );
+		BOOST_CHECK_EQUAL( elem1->_id,     node->firstChild()->getId() );
+		BOOST_CHECK_EQUAL( elem1->_status, eStatusSkip );
+
+		std::shared_ptr< basic_element::Element > elem2( new basic_element::Element( elem1->next(), elem1, elem0 ) );
+		elem2->set( buff4 );
+		checker.check( elem2 );
+		BOOST_CHECK_EQUAL( elem2->_id,     node->firstChild()->next()->getId() );
+		BOOST_CHECK_EQUAL( elem2->_status, eStatusSkip );
+
+		BOOST_CHECK( elem2->next() == nullptr );
+		BOOST_CHECK_EQUAL( elem0->_status,  eStatusInvalid );
+	}
+}
+
 BOOST_AUTO_TEST_CASE( element_checker_checker_unordered_group_and_repetitions )
 {
 	std::string jsonString = R"*(

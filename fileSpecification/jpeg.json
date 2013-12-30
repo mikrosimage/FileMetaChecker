@@ -1,100 +1,31 @@
 {
-	"standard": {
-		"label": "Jpeg",
-		"id": "jpeg",
-		"type": "image",
-		"extension": [
-			".jpg",
-			".jpeg",
-			".jpe",
-			".jfi",
-			".jfif",
-			".j",
-			".jif",
-			".jmh"
-		]
+	"description": {
+		"label": "Jpeg", "id": "jpeg", "type": "image",
+		"extension": [ ".jpg", ".jpeg", ".jpe", ".jfi", ".jfif", ".j", ".jif", ".jmh" ]
 	},
-	"header": [
+	"content": [
 		{
 			"id": "startOfImage",
 			"label": "Start Of Image",
-			"hexa": "ffd8"
+			"type" : "hexa",
+			"values": "ffd8"
 		},
 		{
-			"id": "segments",
-			"label": "Segments",
-			"ordered": false,
+			"id": "segments", "label": "Segments", "ordered": false,
 			"group": [
 				{
 					"id": "app0Marker",
 					"label": "App0 Segment marker",
-					"hexa": "ffe0",
-					"groupSize": "app0SegmentLength",
-					"group": [
-						{
-							"id": "app0SegmentLength",
-							"label": "App0 Segment length",
-							"type": "uint16"
-						},
-						{
-							"id": "jfifId",
-							"label": "JFIF Identifier",
-							"hexa": "4a46494600"
-						},
-						{
-							"id": "majorVersion",
-							"label": "Jfif major version",
-							"type": "uint8"
-						},
-						{
-							"id": "minorVersion",
-							"label": "Jfif minor version",
-							"type": "uint8"
-						},
-						{
-							"id": "densityUnit",
-							"label": "Density unit",
-							"type": "uint8",
-							"map": [
-								{ "00": "pixel aspect ratio" },
-								{ "01": "dots per inch" },
-								{ "02": "dots per cm" }
-							]
-						},
-						{
-							"id": "xDensity",
-							"label": "Horizontal pixel density",
-							"type": "uint16"
-						},
-						{
-							"id": "yDensity",
-							"label": "Vertical pixel density",
-							"type": "uint16"
-						},
-						{
-							"id": "tw",
-							"label": "Thumbnail width",
-							"type": "uint8"
-						},
-						{
-							"id": "th",
-							"label": "Thumbnail height",
-							"type": "uint8"
-						},
-						{
-							"id": "thumbnailData",
-							"label": "Thumbnail data",
-							"type": "data",
-							"count": "3 * tw * th"
-						}
-					]
+					"type" : "hexa",
+					"values": "ffe0",
+					"optional" : true
 				},
 				{
 					"id": "app1Marker",
 					"label": "App1 Segment marker",
-					"hexa": "ffe1",
-					"optional": true,
-					"groupSize": "app1SegmentLength",
+					"type" : "hexa",
+					"values": "ffe1",
+					"optional" : true,
 					"group": [
 						{
 							"id": "app1SegmentLength",
@@ -112,44 +43,14 @@
 							"type":  "exif"
 						}
 					]
-				},
-				{
-					"id": "appXMarkerP1",
-					"label": "AppX Segment marker Part1",
-					"hexa": "ff",
-					"optional": true,
-					"repeated": [
-						{ "min": 1 }
-					],
-					"group": [
-						{
-							"id": "appXMarkerP2",
-							"label": "AppX Segment marker Part2",
-							"type": "data",
-							"count": 1,
-							"displayType": "hexa"
-						},
-						{
-							"id": "appXSegmentLength",
-							"label": "AppX Segment length",
-							"type": "uint16"
-						},
-						{
-							"id": "appXSegmentData",
-							"label": "AppX Segment Data",
-							"type": "data",
-							"count": "appXSegmentLength - 3",
-							"displayType": "ascii"
-						}
-						
-					]
 				}
 			]
 		},
 		{
 			"id": "endOfImage",
 			"label": "End Of Image",
-			"hexa": "ffd9"
+			"type" : "hexa",
+			"values": "ffd9"
 		}
 	]
 }

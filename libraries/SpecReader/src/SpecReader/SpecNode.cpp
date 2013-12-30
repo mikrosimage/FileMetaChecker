@@ -109,7 +109,7 @@ EType SpecNode::getType() const
 	}
 	catch( const std::out_of_range& oor )
 	{
-		LOG_WARNING( "[specnode] Unknown type" );
+		LOG_TRACE( "[specnode] Unknown type" );
 		return eTypeUnknown;
 	}
 }

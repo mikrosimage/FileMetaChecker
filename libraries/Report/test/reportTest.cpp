@@ -136,25 +136,25 @@ BOOST_AUTO_TEST_CASE( report_generator_test_report )
 	ShPtrElement elem10 = checkElement( elem9->next(),  report, elem9,   elem0,   "value13",   eStatusValid );
 	ShPtrElement elem11 = checkElement( elem10->next(), report, elem10,  elem0,   "valueEnd",  eStatusValid );
 
-	ShPtrElement back = report.get( "value11" );
+	ShPtrElement back = report.getElement( "value11" );
 	BOOST_CHECK_EQUAL( back->_id,                    "value11" );
 	BOOST_CHECK_EQUAL( back->_iteration,             1 );
 	BOOST_CHECK_EQUAL( back->_status,                eStatusValid );
 	BOOST_CHECK_EQUAL( back->getSpecNode()->getId(), node->firstChild()->getId() );
 
-	back = report.get( "value11", 2 );
+	back = report.getElement( "value11", 2 );
 	BOOST_CHECK_EQUAL( back->_id,                    "value11" );
 	BOOST_CHECK_EQUAL( back->_iteration,             2 );
 	BOOST_CHECK_EQUAL( back->_status,                eStatusValid );
 	BOOST_CHECK_EQUAL( back->getSpecNode()->getId(), node->firstChild()->getId() );
 
-	back = report.get( "value11", 3 );
+	back = report.getElement( "value11", 3 );
 	BOOST_CHECK_EQUAL( back->_id,                    "value11" );
 	BOOST_CHECK_EQUAL( back->_iteration,             3 );
 	BOOST_CHECK_EQUAL( back->_status,                eStatusSkip );
 	BOOST_CHECK_EQUAL( back->getSpecNode()->getId(), node->firstChild()->getId() );
 
-	back = report.get( elem6->_id );
+	back = report.getElement( elem6->_id );
 	BOOST_CHECK_EQUAL( back->_id,                    "value1211" );
 	BOOST_CHECK_EQUAL( back->_iteration,             1 );
 	BOOST_CHECK_EQUAL( back->_status,                eStatusInvalid );
@@ -162,15 +162,20 @@ BOOST_AUTO_TEST_CASE( report_generator_test_report )
 
 	elem6->_status = eStatusValid;
 	report.update( elem6 );
-	BOOST_CHECK_EQUAL( report.get( elem6->_id )->_status, eStatusValid );
+	BOOST_CHECK_EQUAL( report.getElement( elem6->_id )->_status, eStatusValid );
 
 	BOOST_CHECK( elem1->_error.empty() );
 	elem1->_error.push_back( "Error" );
 	report.update( elem1 );
-	BOOST_CHECK_EQUAL( report.get( elem1->_id )->_error.at( 0 ), elem1->_error.at( 0 ) );
-	BOOST_CHECK_EQUAL( report.get( elem1->_id    )->_uId, elem1->_uId  );
-	BOOST_CHECK_EQUAL( report.get( elem1->_id, 2 )->_uId, elem2->_uId );
-	BOOST_CHECK( report.get( "other" ) == nullptr );
+	BOOST_CHECK_EQUAL( report.getElement( elem1->_id )->_error.at( 0 ), elem1->_error.at( 0 ) );
+	BOOST_CHECK_EQUAL( report.getElement( elem1->_id    )->_uId, elem1->_uId  );
+	BOOST_CHECK_EQUAL( report.getElement( elem1->_id, 2 )->_uId, elem2->_uId );
+	BOOST_CHECK( report.getElement( "other" ) == nullptr );
+
+	BOOST_CHECK_EQUAL( report.getElementListSize(),    12 );
+	BOOST_CHECK_EQUAL( report.getElementList().size(), 12 );
+	BOOST_CHECK_EQUAL( report.getElementList().at(0)->_id, "value1" );
+	BOOST_CHECK_EQUAL( report.getElementList().back()->_id, "valueEnd" );
 
 	report.printHelper();
 	report.print();
