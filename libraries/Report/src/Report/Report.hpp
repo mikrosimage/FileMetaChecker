@@ -74,7 +74,7 @@ public:
 	 * @param iteration Element's iteration. Default is 1.
 	 * @return          Corresponding Element reference.
 	 */
-	ShPtrElement getElement( const std::string& elementId, const size_t& iteration = 1 ) const;
+	ShPtrElement get( const std::string& elementId, const size_t iteration = 1 ) const;
 	
 	/**
 	 * Get the Element list size.

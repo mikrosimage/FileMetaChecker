@@ -43,7 +43,7 @@ std::vector< Report::ShPtrElement > Report::get( )
 	return _elementList;
 }
 
-Report::ShPtrElement Report::get( const std::string& elementId, const size_t& iteration )
+Report::ShPtrElement Report::get( const std::string& elementId, const size_t iteration ) const
 {
 	for( ShPtrElement element : _elementList )
 	{
