@@ -118,7 +118,7 @@ size_t Checker::getBackOffset( const ShPtrElement element )
 		backOffset = ( parent->_childrenSize == 0 )? backOffset : parent->_childrenSize;
 
 	if( backOffset > 0 )
-		LOG_WARNING( "[checker] Go back in file (" << backOffset << " bytes)" );
+		LOG_TRACE( "[checker] Go back in file (" << backOffset << " bytes)" );
 	return backOffset;
 }
 
@@ -493,7 +493,7 @@ void Checker::updateParentStatus( const ShPtrElement element )
 			
 			if( childIds.size() )
 			{
-				LOG_WARNING( "[checker] " << element->_id << ": End of unordered group, remaining children: " << childIds.size() );
+				LOG_TRACE( "[checker] " << element->_id << ": End of unordered group, remaining children: " << childIds.size() );
 				parent->_status = eStatusInvalid;
 				checkSpecialCases( parent, parent->_status );
 				checkRepetition( parent, parent->_status );
