@@ -25,17 +25,25 @@ size_t FileReader::getPosition()
 	return _fileBuffer.tellg();
 }
 
-// bool FileReader::readData( char* data, const size_t size )
-// {
-// 	_fileBuffer.readsome( data, size );
-// 	return ( _fileBuffer.gcount() == (int)size );
-// }
-
 bool FileReader::readData( std::vector< char >& data, const size_t size )
 {
 	data.resize( size );
 	_fileBuffer.readsome( &data[0], size );
 	return ( _fileBuffer.gcount() == (int)size );
+}
+
+bool FileReader::readData( std::vector< char >& data, const char endOfString )
+{
+	char character[1];
+	_fileBuffer.readsome( &character[0], 1 );
+	data.push_back( character[0] );
+	
+	while( endOfString != character[0] )
+	{
+		_fileBuffer.readsome( &character[0], 1 );
+		data.push_back( character[0] );
+	}
+	return true;
 }
 
 void FileReader::goToBegin()
