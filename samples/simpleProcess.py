@@ -10,8 +10,8 @@ parser.add_argument( '-f', '--file', metavar='file', nargs='+', help='input file
 args = parser.parse_args()
 
 
-print args.spec
-print args.file
+#print args.spec
+#print args.file
 
 
 for f in args.file :
@@ -25,8 +25,8 @@ for f in args.file :
 	p.process( f, args.spec, report )
 
 	listOfElements = report.get()
-	print "processing", f
-	print "number of elements in report", len( listOfElements )
+	#print "processing", f
+	p#rint "number of elements in report", len( listOfElements )
 
 	idMaxSize = 0
 	labelMaxSize = 0
@@ -35,12 +35,15 @@ for f in args.file :
 		idMaxSize    = max( idMaxSize,    len( qc.report.getElem( e )._id    ) )
 		labelMaxSize = max( labelMaxSize, len( qc.report.getElem( e )._label ) )
 
-	print "**********"
-	for e in listOfElements :
-		#print qc.report.getElem( e )._id, qc.report.getElem( e )._label
-		idFormatter = '{0: <' + str( idMaxSize + 1 ) + '}'
-		labelFormatter = '{0: <' + str( labelMaxSize + 1 ) + '}'
-		elem = qc.report.getElem( e )
-		print idFormatter.format( elem._id ), labelFormatter.format( elem._label ), elem._dispValue
-	print "**********"
+	#print "**********"
+	#for e in listOfElements :
+	#	#print qc.report.getElem( e )._id, qc.report.getElem( e )._label
+	#	idFormatter = '{0: <' + str( idMaxSize + 1 ) + '}'
+	#	labelFormatter = '{0: <' + str( labelMaxSize + 1 ) + '}'
+	#	elem = qc.report.getElem( e )
+	#	print idFormatter.format( elem._id ), labelFormatter.format( elem._label ), elem._dispValue
+	#print "**********"
 
+	print report.serialize( qc.report.Report.eExportTypeJson )
+	#print report.serialize( qc.report.Report.eExportTypeXml )
+	#print report.serialize( qc.report.Report.eExportTypeJson, True )
