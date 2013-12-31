@@ -142,28 +142,27 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_1 )
 	BOOST_CHECK_EQUAL( file.getLength(), str.size() );
 
 	report_generator::Report report;
-	report.printHelper();
 
 	comp.check( spec, file, report );
 
-	BOOST_CHECK_EQUAL( report.getElement( "value1"      )->_status, eStatusInvalid  );
-	BOOST_CHECK_EQUAL( report.getElement( "value11",  1 )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.getElement( "value11",  2 )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.getElement( "value11",  3 )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.getElement( "value11",  4 )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.getElement( "value11",  5 )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.getElement( "value11",  6 )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.getElement( "value11",  7 )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.getElement( "value11",  8 )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.getElement( "value11",  9 )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.getElement( "value11", 10 )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.getElement( "value12"     )->_status, eStatusInvalid  );
-	BOOST_CHECK_EQUAL( report.getElement( "value121"    )->_status, eStatusInvalid  );
-	BOOST_CHECK_EQUAL( report.getElement( "value1211"   )->_status, eStatusInvalid  );
-	BOOST_CHECK_EQUAL( report.getElement( "value1212"   )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.getElement( "value122"    )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.getElement( "value13"     )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.getElement( "valueEnd"    )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value1"      )->_status, eStatusInvalid  );
+	BOOST_CHECK_EQUAL( report.get( "value11",  1 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value11",  2 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value11",  3 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value11",  4 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value11",  5 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value11",  6 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value11",  7 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value11",  8 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value11",  9 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value11", 10 )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value12"     )->_status, eStatusInvalid  );
+	BOOST_CHECK_EQUAL( report.get( "value121"    )->_status, eStatusInvalid  );
+	BOOST_CHECK_EQUAL( report.get( "value1211"   )->_status, eStatusInvalid  );
+	BOOST_CHECK_EQUAL( report.get( "value1212"   )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value122"    )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value13"     )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "valueEnd"    )->_status, eStatusValid    );
 
 	BOOST_CHECK_EQUAL( file.isEndOfFile(), true );
 
@@ -295,33 +294,32 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_2 )
 	BOOST_CHECK_EQUAL( file.getLength(), str.size() );
 
 	report_generator::Report report;
-	report.printHelper();
 
 	comp.check( spec, file, report );
 
 	BOOST_CHECK_EQUAL( file.isEndOfFile(), true );
 
 
-	BOOST_CHECK_EQUAL( report.getElement( "value1"    )->_status, eStatusInvalid  );
-	BOOST_CHECK_EQUAL( report.getElement( "value14"   )->_status, eStatusInvalid  );
-	BOOST_CHECK_EQUAL( report.getElement( "value141"  )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.getElement( "value1411" )->_status, eStatusSkip     );
-	BOOST_CHECK_EQUAL( report.getElement( "value1412" )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.getElement( "value1413" )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.getElement( "value142"  )->_status, eStatusInvalid  );
+	BOOST_CHECK_EQUAL( report.get( "value1"    )->_status, eStatusInvalid  );
+	BOOST_CHECK_EQUAL( report.get( "value14"   )->_status, eStatusInvalid  );
+	BOOST_CHECK_EQUAL( report.get( "value141"  )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value1411" )->_status, eStatusSkip     );
+	BOOST_CHECK_EQUAL( report.get( "value1412" )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value1413" )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value142"  )->_status, eStatusInvalid  );
 
 	BOOST_CHECK( checkElementStatus( report, "value1421", eStatusSkip ) );
 	BOOST_CHECK( checkElementStatus( report, "value1422", eStatusValid ) );
 
-	BOOST_CHECK_EQUAL( report.getElement( "value1423" )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.getElement( "value15"   )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value1423" )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value15"   )->_status, eStatusValid    );
 	
 	BOOST_CHECK( checkElementStatus( report, "value151", eStatusValid ) );
 
-	BOOST_CHECK_EQUAL( report.getElement( "value152"  )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.getElement( "value153"  )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.getElement( "value16"   )->_status, eStatusValid    );
-	BOOST_CHECK_EQUAL( report.getElement( "valueEnd"  )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value152"  )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value153"  )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "value16"   )->_status, eStatusValid    );
+	BOOST_CHECK_EQUAL( report.get( "valueEnd"  )->_status, eStatusValid    );
 }
 
 BOOST_AUTO_TEST_CASE( comparator_test_comparator_3 )
@@ -479,16 +477,14 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_word )
 	BOOST_CHECK_EQUAL( file.getLength(), str.size() );
 
 	report_generator::Report report;
-	report.printHelper();
-
 
 	comp.check( spec, file, report );
 
 	BOOST_CHECK_EQUAL( file.isEndOfFile(), true );
 
-	BOOST_CHECK_EQUAL( report.getElement( "value1"   )->_status, eStatusValid );
-	BOOST_CHECK_EQUAL( report.getElement( "value2"   )->_status, eStatusValid );
-	BOOST_CHECK_EQUAL( report.getElement( "valueEnd" )->_status, eStatusValid );
+	BOOST_CHECK_EQUAL( report.get( "value1"   )->_status, eStatusValid );
+	BOOST_CHECK_EQUAL( report.get( "value2"   )->_status, eStatusValid );
+	BOOST_CHECK_EQUAL( report.get( "valueEnd" )->_status, eStatusValid );
 
 }
 
@@ -603,31 +599,30 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_5 )
 	BOOST_CHECK_EQUAL( file.getLength(), str.size() );
 
 	report_generator::Report report;
-	report.printHelper();
 
 	comp.check( spec, file, report );
 
 	BOOST_CHECK_EQUAL( file.isEndOfFile(), true );
 
-	BOOST_CHECK_EQUAL( report.getElement( "value0"   )->_status, eStatusUnknown );
+	BOOST_CHECK_EQUAL( report.get( "value0"   )->_status, eStatusUnknown );
 
-	BOOST_CHECK_EQUAL( report.getElement( "value1"   )->_status, eStatusUnknown );
-	BOOST_CHECK_EQUAL( report.getElement( "value11"  )->_status, eStatusValid   );
-	BOOST_CHECK_EQUAL( report.getElement( "value12"  )->_status, eStatusUnknown );
-	BOOST_CHECK_EQUAL( report.getElement( "value121" )->_status, eStatusValid   );
+	BOOST_CHECK_EQUAL( report.get( "value1"   )->_status, eStatusUnknown );
+	BOOST_CHECK_EQUAL( report.get( "value11"  )->_status, eStatusValid   );
+	BOOST_CHECK_EQUAL( report.get( "value12"  )->_status, eStatusUnknown );
+	BOOST_CHECK_EQUAL( report.get( "value121" )->_status, eStatusValid   );
 
-	BOOST_CHECK_EQUAL( report.getElement( "value2"   )->_status, eStatusInvalid );
-	BOOST_CHECK_EQUAL( report.getElement( "value21"  )->_status, eStatusValid   );
-	BOOST_CHECK_EQUAL( report.getElement( "value22"  )->_status, eStatusInvalid );
+	BOOST_CHECK_EQUAL( report.get( "value2"   )->_status, eStatusInvalid );
+	BOOST_CHECK_EQUAL( report.get( "value21"  )->_status, eStatusValid   );
+	BOOST_CHECK_EQUAL( report.get( "value22"  )->_status, eStatusInvalid );
 
-	BOOST_CHECK_EQUAL( report.getElement( "value3"   )->_status, eStatusSkip    );
-	BOOST_CHECK_EQUAL( report.getElement( "value31"  )->_status, eStatusSkip    );
-	BOOST_CHECK_EQUAL( report.getElement( "value32"  )->_status, eStatusSkip    );
+	BOOST_CHECK_EQUAL( report.get( "value3"   )->_status, eStatusSkip    );
+	BOOST_CHECK_EQUAL( report.get( "value31"  )->_status, eStatusSkip    );
+	BOOST_CHECK_EQUAL( report.get( "value32"  )->_status, eStatusSkip    );
 
-	BOOST_CHECK_EQUAL( report.getElement( "value4"   )->_status, eStatusSkip    );
-	BOOST_CHECK_EQUAL( report.getElement( "value41"  )->_status, eStatusSkip    );
+	BOOST_CHECK_EQUAL( report.get( "value4"   )->_status, eStatusSkip    );
+	BOOST_CHECK_EQUAL( report.get( "value41"  )->_status, eStatusSkip    );
 
-	BOOST_CHECK_EQUAL( report.getElement( "valueEnd" )->_status, eStatusValid   );
+	BOOST_CHECK_EQUAL( report.get( "valueEnd" )->_status, eStatusValid   );
 }
 
 BOOST_AUTO_TEST_CASE( comparator_test_comparator_6 )
@@ -684,40 +679,39 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_6 )
 	BOOST_CHECK_EQUAL( file.getLength(), str.size() );
 
 	report_generator::Report report;
-	report.printHelper();
 
 	comp.check( spec, file, report );
 
 	BOOST_CHECK_EQUAL( file.isEndOfFile(), true );
 
-	BOOST_CHECK_EQUAL( report.getElement( "value0"   )->_status, eStatusUnknown );
+	BOOST_CHECK_EQUAL( report.get( "value0"   )->_status, eStatusUnknown );
 
-	BOOST_CHECK_EQUAL( report.getElement( "value1"   )->_status, eStatusUnknown   );
+	BOOST_CHECK_EQUAL( report.get( "value1"   )->_status, eStatusUnknown   );
 	BOOST_CHECK( checkElementStatus( report, "value11", eStatusValid ) );
 
-	BOOST_CHECK_EQUAL( report.getElement( "value12"  )->_status, eStatusUnknown   );
-	BOOST_CHECK_EQUAL( report.getElement( "value121" )->_status, eStatusValid   );
+	BOOST_CHECK_EQUAL( report.get( "value12"  )->_status, eStatusUnknown   );
+	BOOST_CHECK_EQUAL( report.get( "value121" )->_status, eStatusValid   );
 
-	BOOST_CHECK_EQUAL( report.getElement( "value2"   )->_status, eStatusInvalid );
-	BOOST_CHECK_EQUAL( report.getElement( "value21"  )->_status, eStatusValid   );
-	BOOST_CHECK_EQUAL( report.getElement( "value22"  )->_status, eStatusInvalid );
+	BOOST_CHECK_EQUAL( report.get( "value2"   )->_status, eStatusInvalid );
+	BOOST_CHECK_EQUAL( report.get( "value21"  )->_status, eStatusValid   );
+	BOOST_CHECK_EQUAL( report.get( "value22"  )->_status, eStatusInvalid );
 
-	BOOST_CHECK_EQUAL( report.getElement( "value3"   )->_status, eStatusSkip    );
-	BOOST_CHECK_EQUAL( report.getElement( "value31"  )->_status, eStatusSkip    );
-	BOOST_CHECK_EQUAL( report.getElement( "value32"  )->_status, eStatusSkip    );
+	BOOST_CHECK_EQUAL( report.get( "value3"   )->_status, eStatusSkip    );
+	BOOST_CHECK_EQUAL( report.get( "value31"  )->_status, eStatusSkip    );
+	BOOST_CHECK_EQUAL( report.get( "value32"  )->_status, eStatusSkip    );
 
-	BOOST_CHECK_EQUAL( report.getElement( "value4"   )->_status, eStatusSkip    );
-	BOOST_CHECK_EQUAL( report.getElement( "value41"  )->_status, eStatusSkip    );
+	BOOST_CHECK_EQUAL( report.get( "value4"   )->_status, eStatusSkip    );
+	BOOST_CHECK_EQUAL( report.get( "value41"  )->_status, eStatusSkip    );
 
-	BOOST_CHECK_EQUAL( report.getElement( "value5"   )->_status, eStatusUnknown );
+	BOOST_CHECK_EQUAL( report.get( "value5"   )->_status, eStatusUnknown );
 	BOOST_CHECK( checkElementStatus( report, "value51",  eStatusUnknown ) );
 	BOOST_CHECK( checkElementStatus( report, "value511", eStatusValid   ) );
-	BOOST_CHECK_EQUAL( report.getElement( "value512" )->_status, eStatusValid   );
-	BOOST_CHECK_EQUAL( report.getElement( "value52"  )->_status, eStatusUnknown );
-	BOOST_CHECK_EQUAL( report.getElement( "value521" )->_status, eStatusValid   );
-	BOOST_CHECK_EQUAL( report.getElement( "value522" )->_status, eStatusValid   );
+	BOOST_CHECK_EQUAL( report.get( "value512" )->_status, eStatusValid   );
+	BOOST_CHECK_EQUAL( report.get( "value52"  )->_status, eStatusUnknown );
+	BOOST_CHECK_EQUAL( report.get( "value521" )->_status, eStatusValid   );
+	BOOST_CHECK_EQUAL( report.get( "value522" )->_status, eStatusValid   );
 
-	BOOST_CHECK_EQUAL( report.getElement( "valueEnd" )->_status, eStatusValid   );
+	BOOST_CHECK_EQUAL( report.get( "valueEnd" )->_status, eStatusValid   );
 }
 
 BOOST_AUTO_TEST_CASE( comparator_test_comparator_7 )
@@ -764,28 +758,27 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_7 )
 	BOOST_CHECK_EQUAL( file.getLength(), str.size() );
 
 	report_generator::Report report;
-	report.printHelper();
 
 	comp.check( spec, file, report );
 
 	BOOST_CHECK_EQUAL( file.isEndOfFile(), true );
 
-	BOOST_CHECK_EQUAL( report.getElement(    "value0"   )->_status, eStatusUnknown );
-	BOOST_CHECK_EQUAL( report.getElement(    "value6"   )->_status, eStatusUnknown );
+	BOOST_CHECK_EQUAL( report.get(    "value0"   )->_status, eStatusUnknown );
+	BOOST_CHECK_EQUAL( report.get(    "value6"   )->_status, eStatusUnknown );
 	BOOST_CHECK( checkElementStatus( report, "value61",             eStatusUnknown ) );
 	BOOST_CHECK( checkElementStatus( report, "value611",            eStatusUnknown ) );
 	BOOST_CHECK( checkElementStatus( report, "value6111",           eStatusValid   ) );
 	BOOST_CHECK( checkElementStatus( report, "value6112",           eStatusValid   ) );
-	BOOST_CHECK_EQUAL( report.getElement(    "value612" )->_status, eStatusValid   );
+	BOOST_CHECK_EQUAL( report.get(    "value612" )->_status, eStatusValid   );
 	BOOST_CHECK( checkElementStatus( report, "value613",            eStatusUnknown ) );
 	BOOST_CHECK( checkElementStatus( report, "value6131",           eStatusValid   ) );
 	BOOST_CHECK( checkElementStatus( report, "value6132",           eStatusValid   ) );
 	
-	BOOST_CHECK_EQUAL( report.getElement(    "value62"  )->_status, eStatusUnknown );
+	BOOST_CHECK_EQUAL( report.get(    "value62"  )->_status, eStatusUnknown );
 	BOOST_CHECK( checkElementStatus( report, "value621",            eStatusValid ) );
 	BOOST_CHECK( checkElementStatus( report, "value622",            eStatusValid   ) );
 
-	BOOST_CHECK_EQUAL( report.getElement( "valueEnd" )->_status, eStatusValid   );
+	BOOST_CHECK_EQUAL( report.get( "valueEnd" )->_status, eStatusValid   );
 }
 
 

@@ -1,15 +1,19 @@
 #include "Report.hpp"
 
-#include <iostream>
-#include <sstream>
-#include <fstream>
-
 #include <BasicElement/Element.hpp>
 
 #include <Common/color.hpp>
 #include <Common/log.hpp>
 
-#include <rapidxml/rapidxml_print.hpp>
+
+#include <Serializer.hpp>
+#include <SerializerJson.hpp>
+#include <SerializerXml.hpp>
+
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <string>
 
 namespace report_generator 
 {
@@ -77,97 +81,6 @@ void Report::update( const ShPtrElement& newElement )
 	}
 }
 
-void Report::printHelper()
-{
-	if( _verbosity == eReportDisplayNone )
-		return;
-	LOG_COLOR( common::details::kColorBoldWhite, basic_element::Element::getLabelsLegend() );
-	LOG_COLOR( common::details::kColorBoldWhite, basic_element::Element::getElementPropertiesLegend() );
-}
-
-void Report::print()
-{
-	if( _verbosity == eReportDisplayNone )
-		return;
-	size_t offset = 0;
-	for( ShPtrElement element : _elementList )
-	{
-		print( element, offset );
-		if( element->_status != eStatusSkip )
-			offset += element->_data.size();
-	}
-}
-
-void Report::print( const ShPtrElement element, const size_t& fileOffset )
-{
-	if( ! isPrintable( element ) || _verbosity == eReportDisplayNone )
-		return;
-	
-	if( _verbosity >= eReportDisplayComments )
-		LOG( element->getPropertiesFlag() << " | " );
-
-	std::string color;
-	switch( element->_status )
-	{
-		case eStatusValid    : color = common::details::kColorGreen; break;
-		case eStatusInvalid  : color = common::details::kColorRed;   break;
-		case eStatusUnknown  : color = common::details::kColorCyan;  break;
-		default: return;
-	}
-	
-	if( _verbosity >= eReportDisplayStatus )
-	{
-		LOG( "S: " );
-		LOG_COLOR( color, tabulation( 14, statusMap.at( element->_status ) ) );
-	}
-
-	if( _verbosity >= eReportDisplayIteration )
-		LOG( "| i: " << std::setfill( ' ' ) << std::setw( 4 ) << element->_iteration << " " );
-
-	if( _verbosity >= eReportDisplayType )
-		LOG( "| t: " << std::setfill( ' ' ) << std::setw( 8 ) << typeStringMap.at( element->_type ) << " " );
-
-	if( _verbosity >= eReportDisplaySize )
-		LOG( "| s: " << std::setfill( ' ' ) << std::setw( 11 ) << element->_data.size() << " " );
-
-	if( _verbosity >= eReportDisplayOffset )
-		LOG( "| @: " << std::setfill( ' ' ) << std::setw( 11 ) << fileOffset << " " );
-
-	if( _verbosity >= eReportDisplayID )
-	{
-		LOG( "| " );
-		LOG_COLOR( color, tabulation( getDisplayOffset( element ) ) << element->_label );
-	}
-
-	if( _verbosity >= eReportDisplayValue && ( element->_type != eTypeRaw || element->_displayType != eDisplayTypeDefault ) && ! element->_dispValue.empty() )
-	{
-		LOG( " => v: " );
-		LOG_COLOR( color, element->_dispValue );
-		if( ! element->_mapValue.empty() )
-			LOG_COLOR( color, " (" << element->_mapValue << ")" );
-		if( element->_specGroupSize != 0 )
-			LOG( " ( group size: " << element->_specGroupSize << " )" << std::endl );
-	}
-
-	if( ! element->_error.empty() )
-	{
-		LOG( " >> " );
-		LOG_COLOR( common::details::kColorRed, "E: " );
-		for( std::string e : element->_error )
-			LOG_COLOR( common::details::kColorRed, e );
-	}
-
-	if( ! element->_warning.empty() )
-	{
-		LOG( " >> " );
-		LOG_COLOR( common::details::kColorYellow, "W: " );
-		for( std::string w : element->_warning )
-			LOG_COLOR( common::details::kColorYellow, w );
-	}
-
-	LOG_ENDL();
-}
-
 size_t Report::getDisplayOffset( const ShPtrElement& element )
 {
 	size_t tab = 0;
@@ -220,102 +133,124 @@ void addXmlNodeAttribute( rapidxml::xml_document<>& doc, rapidxml::xml_node<>* n
 	node->append_attribute( doc.allocate_attribute( name.c_str(), value.c_str() ) );
 }
 
-void Report::writeXml( const std::string& filename )
+std::string Report::serialize( EExportType exportType, bool indent )
 {
-	rapidxml::xml_document<> doc;
+	std::vector<char*> path;
+	path.push_back( (char*)"report" );
+	path.push_back( (char*)kElement.c_str() );
 
-	rapidxml::xml_node<>* declaration = doc.allocate_node( rapidxml::node_declaration );
-	declaration->append_attribute( doc.allocate_attribute( "version",  "1.0"   ) );
-	declaration->append_attribute( doc.allocate_attribute( "encoding", "utf-8" ) );
-	doc.append_node( declaration );
-	
-	rapidxml::xml_node<>* prevNode = nullptr;
-	rapidxml::xml_node<>* node     = nullptr;
+	switch( exportType )
+	{
+		case eExportTypeJson :
+		{
+			rapid_parser::SerializerJson output;
+			output.indent( indent );
+			serialize( ( rapid_parser::Serializer* ) &output, _elementList, path );
+			return output.get();
+			break;
+		}
+		case eExportTypeXml :
+		{
+			rapid_parser::SerializerXml output;
+			output.indent( indent );
+			serialize( ( rapid_parser::Serializer* ) &output, _elementList, path );
+			return output.get();
+			break;
+		}
+	}
+	return "";
+}
 
-	for( std::shared_ptr< basic_element::Element > element : _elementList )
+void Report::serialize( rapid_parser::Serializer* serializer, const std::vector< ShPtrElement >& elements, std::vector<char*>& path )
+{
+	for( auto element : elements )
 	{
 		if( element->_status == eStatusSkip )
 			continue;
 
-		std::shared_ptr< basic_element::Element > parent   = element->getParent();
-		std::shared_ptr< basic_element::Element > previous = element->getPrevious();
+		serializer->addEmptyElement( path );
 
+		serializer->add( kId.c_str(), element->_id, path );
+		serializer->add( kLabel.c_str(), element->_label, path );
+		serializer->add( kType.c_str(), typeStringMap.at( element->_type), path );
+		serializer->add( kDisplayType.c_str(), displayTypeStringMap.at( element->_displayType ), path );
 
-		// create xml node
-		std::string elementStr = kElement;
-		node = doc.allocate_node( rapidxml::node_element, elementStr.c_str() );
+		serializer->add( kSize.c_str(), element->_data.size(), path );
 
-		addXmlNodeAttribute( doc, node, kId,          element->_id                      );
-		addXmlNodeAttribute( doc, node, kLabel,       element->_label                   );
-		addXmlNodeAttribute( doc, node, kType,        typeStringMap.at( element->_type) );
-		
-		std::stringstream sizeSstr;
-		sizeSstr << element->_data.size();
-		addXmlNodeAttribute( doc, node, kSize,        sizeSstr.str()                    );
-
-		std::string value = "";
-		if( element->_displayType != eDisplayTypeDefault || element->_type != eTypeRaw )
-			value = element->_dispValue;
-		addXmlNodeAttribute( doc, node, kValue,       value                             );
-
-		addXmlNodeAttribute( doc, node, kMap,         element->_mapValue                );
-		addXmlNodeAttribute( doc, node, kStatus,      statusMap.at( element->_status )  );
-
-		std::string endianStr = kEndianLittle;
-		if( element->_isBigEndian )
-			endianStr = kEndianBig;
-		addXmlNodeAttribute( doc, node, kEndian,      endianStr );
-
-		std::string optionStr = kFalse;
-		if( element->_isOptional )
-			optionStr = kTrue;
-		addXmlNodeAttribute( doc, node, kOptional,    optionStr );
-
-		std::string orderedStr = kFalse;
-		if( element->_isOrdered )
-			orderedStr = kTrue;
-		addXmlNodeAttribute( doc, node, kOrdered,     orderedStr );
-		addXmlNodeAttribute( doc, node, kDisplayType, displayTypeStringMap.at( element->_displayType ) );
-		addXmlNodeAttribute( doc, node, kError,       element->_error );
-		addXmlNodeAttribute( doc, node, kWarning,     element->_warning );
-		
-		// insert it in the xml doc
-		if( parent == nullptr )
+		if( element->_dispValue.size() )
 		{
-			doc.append_node( node );
-		}
-		else if( previous == parent && prevNode != nullptr )
-		{
-			LOG_TRACE( "[report] " << element->_id << ": prev: " << previous->_id << " / parent: " << parent->_id << std::endl );
-			prevNode->append_node( node );
-		}
-		else
-		{
-			LOG_TRACE( "[report] " << element->_id << ": prev: " << previous->_id << " / parent: " << parent->_id << std::endl );
-			rapidxml::xml_node<>* nodeParent = prevNode;
-			while( nodeParent != nullptr && nodeParent->first_attribute( std::string( kId ).c_str() )->value() != parent->_id )
+			serializer->add( kValue.c_str(), element->_dispValue, path );
+			/*
+			switch( element->_type )
 			{
-				if( nodeParent->parent() == nullptr )
+				case eTypeUnknown:
 					break;
-
-				if( nodeParent->parent()->first_attribute( std::string( kId ).c_str() ) == nullptr )
+				case eTypeInt8:
+				case eTypeInt16:
+				case eTypeInt32:
+				{
+					serializer->add( kValue.c_str(), std::stoi( element->_dispValue ), path );
 					break;
-
-				nodeParent = nodeParent->parent();
-				if( nodeParent->first_attribute( std::string( kId ).c_str() )->value() == parent->_id )
+				}
+				case eTypeInt64:
+				{
+					serializer->add( kValue.c_str(), std::stol( element->_dispValue ), path );
 					break;
-			}
-			nodeParent->append_node( node );
-		}		
+				}
+				case eTypeUInt8:
+				case eTypeUInt16:
+				case eTypeUInt32:
+				case eTypeUInt64:
+				{
+					serializer->add( kValue.c_str(), std::stoul( element->_dispValue ), path );
+					break;
+				}
+				case eTypeFloat:
+				{
+					serializer->add( kValue.c_str(), std::stof( element->_dispValue ), path );
+					break;
+				}
+				case eTypeDouble:
+				{
+					serializer->add( kValue.c_str(), std::stod( element->_dispValue ), path );
+					break;
+				}
+				case eTypeIeeeExtended:
+				case eTypeAscii:
+				case eTypeHexa:
+				case eTypeRaw:
+				{
+					serializer->add( kValue.c_str(), element->_dispValue, path );
+					break;
+				}
+			}*/
+		}
 
-		prevNode = node;
+		if( element->_mapValue.size() )
+			serializer->add( kMap.c_str(), element->_mapValue, path );
+
+		serializer->add( kStatus.c_str(), statusMap.at( element->_status ), path );
+
+		if( element->_warning.size() )
+		{
+			for( auto warning : element->_warning )
+				serializer->add( kWarning.c_str(), warning, path );
+		}
+		
+		if( element->_error.size() )
+		{
+			for( auto error : element->_error )
+				serializer->add( kError.c_str(), error, path );
+		}
+
+		if( element->getChildren().size() )
+		{
+			std::vector<char*> subPath = path;
+			subPath.push_back( (char*)kGroup.c_str() );
+			serialize( serializer, element->getChildren(), subPath );
+		}
 	}
-
-	// rapidxml::print( std::cout, doc, 0 );
-
-	std::ofstream file( filename );
-	file << doc;
-	file.close();
 }
 
 }
+

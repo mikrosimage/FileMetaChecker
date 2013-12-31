@@ -47,7 +47,9 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 
 		if( size == 0 )
 		{
-			getWord( element, file, buffer );
+			if( ! file.readData( buffer, element->_endChar ) )
+				throw std::runtime_error( "[comparator] End of file, cannot read data" );
+
 			if( buffer.empty() )
 				element->_warning.push_back( "[comparator] Null data size " );
 		}
@@ -75,8 +77,6 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 		end = ( node == nullptr );
 	}
 
-	report.print();
-
 	if( ! file.isEndOfFile() )
 		LOG_WARNING( "Did not reach the end of file, remaining " << file.getLength() - file.getPosition() << " bytes." );
 }
@@ -91,28 +91,6 @@ bool Comparator::isInUnorderedGroup( const ShPtrElement element )
 		parent = parent->getParent();
 	}
 	return false;
-}
-
-void Comparator::getWord( const ShPtrElement element, file_reader::FileReader& file, std::vector<char>& word )
-{
-	if( element->_type != eTypeAscii )
-		return;
-
-	std::vector<char> buff;
-
-	while( true )
-	{
-		if( ! file.readData( buff, 1 ) )
-			throw std::runtime_error( "[comparator] End of file, cannot read data" );
-		
-		word.push_back( buff.at( 0 ) );
-
-		if( element->_endChar == buff.at( 0 ) )
-		{
-			LOG_TRACE( "[comparator] " << element->_id << " is a " << word.size() << "-char word" );
-			return;
-		}
-	}
 }
 
 void  Comparator::displayElement( const ShPtrElement element, file_reader::FileReader& file )

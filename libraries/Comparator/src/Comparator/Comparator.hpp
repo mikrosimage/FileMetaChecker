@@ -52,7 +52,6 @@ public:
 
 private:
 	bool  isInUnorderedGroup( const ShPtrElement element );
-	void  getWord           ( const ShPtrElement element, file_reader::FileReader& file, std::vector<char>& word );
 	void  displayElement    ( const ShPtrElement element, file_reader::FileReader& file );
 };
 

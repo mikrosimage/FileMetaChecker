@@ -11,6 +11,11 @@ namespace basic_element
 	class Element;
 }
 
+namespace rapid_parser
+{
+	class Serializer;
+}
+
 namespace report_generator
 {
 
@@ -37,6 +42,12 @@ class Report
 {
 public:
 	typedef std::shared_ptr< basic_element::Element > ShPtrElement;
+
+	enum EExportType
+	{
+		eExportTypeJson = 0,
+		eExportTypeXml
+	};
 
 	/**
 	 * Report's constructor.
@@ -93,29 +104,12 @@ public:
 	 * @param newElement Element reference to update.
 	 */
 	void update( const ShPtrElement& newElement );
-	
-	/**
-	 * Print the report legend.
-	 */
-	void printHelper();
 
 	/**
-	 * Print every printable Elements of the list.
+	 * Serialize Elements from the list.
+	 * @param exportType Formatting type of export.
 	 */
-	void print();
-
-	/**
-	 * Print one Element of the list.
-	 * @param element    Element reference to print.
-	 * @param fileOffset Position of the Element in the file.
-	 */
-	void print( const ShPtrElement element, const size_t& fileOffset );
-
-	/**
-	 * Write the Elements from the list in a XML file.
-	 * @param filename Output file name.
-	 */
-	void writeXml( const std::string& filename );
+	std::string serialize( EExportType exportType = eExportTypeJson, bool indent = false );
 	
 protected:
 	size_t getDisplayOffset( const ShPtrElement& element );
@@ -123,6 +117,7 @@ protected:
 	std::string tabulation( size_t tabNum, const std::string& str );
 	bool isPrintable( const ShPtrElement element );
 
+	void serialize( rapid_parser::Serializer* serializer, const std::vector< ShPtrElement >& elements, std::vector<char*>& path );
 
 private:
 	std::vector< ShPtrElement > _elementList;
