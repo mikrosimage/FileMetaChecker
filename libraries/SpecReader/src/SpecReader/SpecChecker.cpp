@@ -7,6 +7,7 @@
 #include <rapidjson/writer.h>
 
 #include <fstream>
+#include <stdexcept>
 
 namespace spec_reader
 {
