@@ -151,13 +151,11 @@ int main( int argc, char** argv )
 		LOG_INFO( common::details::kColorCyan << "| Specification OK: " << spec.getId() << " (" << spec.getType() << ")" << common::details::kColorStd  );
 		LOG_INFO( common::details::kColorCyan << std::setfill( '=' ) << std::setw( filePath.size() + 14 ) << common::details::kColorStd );
 		// LOG( specChecker.getSpecString() << std::endl );
-		
-		report.printHelper();
 
 		comparator::Comparator comp;
 		comp.check( spec, file, report );
 
-		report.writeXml( filePath + ".xml" );
+		std::cout << report.serialize() << std::endl;
 		fb->close();
 	}
 	catch( std::runtime_error e )
