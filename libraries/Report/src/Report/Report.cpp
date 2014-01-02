@@ -139,13 +139,20 @@ std::string Report::serialize( EExportType exportType, bool indent )
 	path.push_back( (char*)"report" );
 	path.push_back( (char*)kElement.c_str() );
 
+	std::vector< ShPtrElement > rootElements;
+	for( auto element : _elementList )
+	{
+		if( element->getParent() == nullptr )
+			rootElements.push_back( element );
+	}
+
 	switch( exportType )
 	{
 		case eExportTypeJson :
 		{
 			rapid_parser::SerializerJson output;
 			output.indent( indent );
-			serialize( ( rapid_parser::Serializer* ) &output, _elementList, path );
+			serialize( ( rapid_parser::Serializer* ) &output, rootElements, path );
 			return output.get();
 			break;
 		}
@@ -153,7 +160,7 @@ std::string Report::serialize( EExportType exportType, bool indent )
 		{
 			rapid_parser::SerializerXml output;
 			output.indent( indent );
-			serialize( ( rapid_parser::Serializer* ) &output, _elementList, path );
+			serialize( ( rapid_parser::Serializer* ) &output, rootElements, path );
 			return output.get();
 			break;
 		}
