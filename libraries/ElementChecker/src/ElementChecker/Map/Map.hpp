@@ -14,10 +14,12 @@ public:
 	}
 
 	std::string getLabel( const KeyType& key );
+
 	size_t getSize();
 
 protected:
 	void setMap( const std::map< std::string, std::string >& map );
+	
 	KeyType fromString( const std::string& value );
 
 private:

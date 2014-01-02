@@ -485,7 +485,6 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_word )
 	BOOST_CHECK_EQUAL( report.get( "value1"   )->_status, eStatusValid );
 	BOOST_CHECK_EQUAL( report.get( "value2"   )->_status, eStatusValid );
 	BOOST_CHECK_EQUAL( report.get( "valueEnd" )->_status, eStatusValid );
-
 }
 
 BOOST_AUTO_TEST_CASE( comparator_test_comparator_5 )
@@ -780,6 +779,5 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_7 )
 
 	BOOST_CHECK_EQUAL( report.get( "valueEnd" )->_status, eStatusValid   );
 }
-
 
 BOOST_AUTO_TEST_SUITE_END()
