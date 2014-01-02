@@ -26,9 +26,12 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 	ShPtrElement element  = nullptr;
 	ShPtrElement parent   = nullptr;
 	ShPtrElement previous = nullptr;
+
 	element_checker::Checker checker;
+
 	size_t size = 0;
-	bool end = false;
+	size_t fileLength = file.getLength();
+	bool   end = false;
 
 	while( ! end )
 	{
@@ -36,10 +39,12 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 		element = std::make_shared< basic_element::Element >( node, previous, parent );
 		size = checker.getSize( element );
 
-		if( size > ( file.getLength() - file.getPosition() ) && ( isInUnorderedGroup( element ) || element->_isOptional ) )
+		size_t remainingData = fileLength - file.getPosition();
+
+		if( size > remainingData && ( isInUnorderedGroup( element ) || element->_isOptional ) )
 		{
-			LOG_TRACE( "[comparator] Critical remaining file data size: " << size << "/" << file.getLength() - file.getPosition() );
-			if( ( size = file.getLength() - file.getPosition() ) == 0 )
+			LOG_TRACE( "[comparator] Critical remaining file data size: " << size << "/" << remainingData );
+			if( ( size = remainingData ) == 0 )
 				break;
 		}
 
@@ -47,16 +52,28 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 
 		if( size == 0 )
 		{
-			if( ! file.readData( buffer, element->_endChar ) )
-				throw std::runtime_error( "[comparator] End of file, cannot read data" );
+			if( ( element->_type != eTypeUnknown )
+				&& ( ! file.readWord( buffer, element->_endChar ) ) )
+				throw std::runtime_error( "[comparator] End of file, cannot read word" );
 
 			if( buffer.empty() )
-				element->_warning.push_back( "[comparator] Null data size " );
+				element->_warning.push_back( "[comparator] Null data size" );
 		}
-		else if( ! file.readData( buffer, size ) )
-			throw std::runtime_error( "[comparator] End of file, cannot read data" );
+		else
+		{
+			if( ( element->_type == eTypeRaw ) && ( element->_displayType == eDisplayTypeDefault ) )
+			{
+				file.goForward( size );
+			}
+			else
+			{
+				if( ! file.readData( buffer, size ) )
+					throw std::runtime_error( "[comparator] End of file, cannot read data" );
+			}
+		}
 		
 		element->set( buffer );
+
 		checker.check( element );
 
 		size_t fileMoveLength = checker.checkGroupSize( element );
@@ -78,7 +95,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 	}
 
 	if( ! file.isEndOfFile() )
-		LOG_WARNING( "Did not reach the end of file, remaining " << file.getLength() - file.getPosition() << " bytes." );
+		LOG_WARNING( "Did not reach the end of file, remaining " << fileLength - file.getPosition() << " bytes." );
 }
 
 bool Comparator::isInUnorderedGroup( const ShPtrElement element )

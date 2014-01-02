@@ -146,14 +146,14 @@ size_t Checker::checkGroupSize( const ShPtrElement element )
 				if( sizeDiff > 0 )
 				{
 					std::stringstream errorMessage;
-					errorMessage << "[comparator] Group size difference: " << sizeDiff << " missing bytes ";
+					errorMessage << "[comparator] Group size difference: " << sizeDiff << " missing bytes";
 					parent->_error.push_back( errorMessage.str() );
 					throw std::runtime_error( errorMessage.str() );
 				}
 				if( sizeDiff < 0 )
 				{
 					std::stringstream warningMessage;
-					warningMessage << "[comparator] Group size difference: " << abs( sizeDiff ) << " unexpected bytes ";
+					warningMessage << "[comparator] Group size difference: " << abs( sizeDiff ) << " unexpected bytes";
 					parent->_warning.push_back( warningMessage.str() );
 					offset = abs( sizeDiff );
 					LOG_WARNING( warningMessage.str() );
@@ -261,7 +261,7 @@ void Checker::checkValue( const ShPtrElement element, EStatus& status )
 				status = eStatusValid;
 
 			if( status == eStatusInvalid )
-				element->_error.push_back( "[checker] Invalid value " );
+				element->_error.push_back( "[checker] Invalid value" );
 			break;
 		}
 
@@ -289,14 +289,14 @@ void Checker::checkValue( const ShPtrElement element, EStatus& status )
 				status = eStatusValid;
 
 			if( status == eStatusInvalid )
-				element->_error.push_back( "[checker] Invalid value " );
+				element->_error.push_back( "[checker] Invalid value" );
 			break;
 		}
 
 		case eTypeRaw   :
 		{
-			if( element->_data.size() == getSize( element ) )
-				status = eStatusValid;
+			//if( element->_data.size() == getSize( element ) )
+			status = eStatusValid;
 			break;
 		}
 	}
@@ -395,7 +395,10 @@ void Checker::updateParentSize( const ShPtrElement element )
 	ShPtrElement parent = element->getParent();
 	while( parent != nullptr && element->_status != eStatusSkip  )
 	{
-		parent->_childrenSize += element->_data.size();
+		if( element->_type == eTypeRaw && element->_displayType == eDisplayTypeDefault )
+			parent->_childrenSize += getSize( element );
+		else
+			parent->_childrenSize += element->_data.size();
 		LOG_TRACE( "[checker] " << parent->_id << "'s children size : " << parent->_childrenSize );
 		parent = parent->getParent();
 	}

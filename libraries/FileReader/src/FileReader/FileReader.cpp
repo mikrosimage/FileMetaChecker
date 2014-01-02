@@ -32,16 +32,16 @@ bool FileReader::readData( std::vector< char >& data, const size_t size )
 	return ( _fileBuffer.gcount() == (int)size );
 }
 
-bool FileReader::readData( std::vector< char >& data, const char endOfString )
+bool FileReader::readWord( std::vector< char >& data, const char endOfString )
 {
-	char character[1];
-	_fileBuffer.readsome( &character[0], 1 );
-	data.push_back( character[0] );
+	char character;
+	_fileBuffer.readsome( &character, 1 );
+	data.push_back( character );
 	
-	while( endOfString != character[0] )
+	while( endOfString != character )
 	{
-		_fileBuffer.readsome( &character[0], 1 );
-		data.push_back( character[0] );
+		_fileBuffer.readsome( &character, 1 );
+		data.push_back( character );
 	}
 	return true;
 }

@@ -44,12 +44,12 @@ public:
 	bool readData( std::vector< char >& data, const size_t size );
 
 	/**
-	 * Extract data "word" from file
+	 * Extract word from file
 	 * @param[out] data Buffer to fill.
 	 * @param[in]  caracter of end of string.
 	 * @return     Whether data have been correctly read and copied from file, or not.
 	 */
-	bool readData( std::vector< char >& data, const char endOfString );
+	bool readWord( std::vector< char >& data, const char endOfString );
 
 	/**
 	 * Set the pointer at the beginning of the file.
