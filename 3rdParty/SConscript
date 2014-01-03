@@ -1,17 +1,6 @@
 Import( 'project', 'libs' )
 
 project.ObjectLibrary(
-		'rapidxml',
-		includes  = ['.'],
-	)
-
-project.ObjectLibrary(
-		'rapidjson',
-		includes  = ['./rapidjson/include'],
-	)
-
-
-project.ObjectLibrary(
 		'rapidparser',
 		includes  = [
 			'rapidParser/src',
