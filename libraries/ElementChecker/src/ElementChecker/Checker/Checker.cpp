@@ -53,7 +53,8 @@ size_t Checker::getSize( const ShPtrElement element )
 			case eTypeInt8         :
 			case eTypeUInt8        : return  1;
 			case eTypeInt16        :
-			case eTypeUInt16       : return  2;
+			case eTypeUInt16       :
+			case eTypeHalf         : return  2;
 			case eTypeInt32        :
 			case eTypeUInt32       :
 			case eTypeFloat        : return  4;
@@ -236,6 +237,7 @@ void Checker::checkValue( const ShPtrElement element, EStatus& status )
 		case eTypeUInt32       : status = utils::checkNumberElement< be::uint32       >( element ); break;
 		case eTypeInt64        : status = utils::checkNumberElement< be::int64        >( element ); break;
 		case eTypeUInt64       : status = utils::checkNumberElement< be::uint64       >( element ); break;
+		case eTypeHalf         : status = utils::checkNumberElement< be::half         >( element ); break;
 		case eTypeFloat        : status = utils::checkNumberElement< float            >( element ); break;
 		case eTypeDouble       : status = utils::checkNumberElement< double           >( element ); break;
 		case eTypeIeeeExtended : status = utils::checkNumberElement< be::ieeeExtended >( element ); break;

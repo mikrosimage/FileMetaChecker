@@ -1,4 +1,5 @@
 #include <Common/log.hpp> 	// @todelete !
+
 #include <iomanip>
 #include <algorithm>
 #include <stdexcept>
@@ -19,6 +20,48 @@ OutType Translator::get()
 	NumberData< OutType > num;
 	char* buffer = new char [ _ref->_data.size() ];
 	
+	getOrderedData( buffer );
+	std::memcpy( num.data, buffer, _ref->_data.size() );
+	delete[] buffer;
+	return num.value;
+}
+
+template< >
+float Translator::get()
+{
+	if( _ref->_data.empty() )
+		throw std::runtime_error( "Undefined data" );
+
+	// LOG_TRACE( "Generic translator: to number type" );
+	if( _ref->_type == eTypeHalf )
+	{
+		if( _ref->_data.size() != 2 )
+			throw std::runtime_error( "invalid data size" );
+
+		NumberData< unsigned short > num;
+		char* buffer = new char [ _ref->_data.size() ];
+		getOrderedData( buffer );
+		std::memcpy( num.data, buffer, _ref->_data.size() );
+
+		// Following lines are extract from half.hpp of the Half library, version 1.11 : http://half.sourceforge.net
+		float out;
+		int abs = num.value & 0x7FFF;
+		if( abs > 0x7C00 )
+			out = std::numeric_limits< float >::has_quiet_NaN ? std::numeric_limits< float >::quiet_NaN() : 0.0f;
+		else if( abs == 0x7C00 )
+			out = std::numeric_limits< float >::has_infinity ? std::numeric_limits< float >::infinity() : std::numeric_limits<float>::max();
+		else if( abs > 0x3FF )
+			out = std::ldexp( static_cast< float >( ( num.value & 0x3FF ) | 0x400 ), ( abs >> 10 ) - 25 );
+		else
+			out = std::ldexp( static_cast< float >( abs ), -24 );
+		delete[] buffer;
+		return ( num.value & 0x8000 ) ? -out : out;
+	}
+	if( _ref->_data.size() != sizeof( float ) )
+		throw std::runtime_error( "invalid data size" );
+	
+	NumberData< float > num;
+	char* buffer = new char [ _ref->_data.size() ];
 	getOrderedData( buffer );
 	std::memcpy( num.data, buffer, _ref->_data.size() );
 	delete[] buffer;
@@ -110,6 +153,7 @@ void Translator::getOrderedData( char* buffer )
 		case eTypeUInt32 :
 		case eTypeInt64 :
 		case eTypeUInt64 :
+		case eTypeHalf :
 		case eTypeFloat :
 		case eTypeDouble :
 		case eTypeIeeeExtended :

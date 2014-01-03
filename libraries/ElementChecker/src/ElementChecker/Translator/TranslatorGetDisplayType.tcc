@@ -23,6 +23,7 @@ std::string Translator::get( const EDisplayType dispType )
 				case eTypeUInt32       : osstr << get< unsigned int       >(); break;
 				case eTypeInt64        : osstr << get<          long long >(); break;
 				case eTypeUInt64       : osstr << get< unsigned long long >(); break;
+				case eTypeHalf         : osstr << get<          float     >(); break;
 				case eTypeFloat        : osstr << get<          float     >(); break;
 				case eTypeDouble       : osstr << get<          double    >(); break;
 				case eTypeIeeeExtended : osstr << get<     long double    >(); break;

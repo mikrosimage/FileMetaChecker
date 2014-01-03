@@ -29,6 +29,7 @@ typedef          int        int32;    /**<   Signed 4-bytes integer */
 typedef unsigned int       uint32;    /**< Unsigned 4-bytes integer */
 typedef   signed long long  int64;    /**<   Signed 8-bytes integer */
 typedef unsigned long long uint64;    /**< Unsigned 8-bytes integer */
+typedef          float       half;    /**<  2 bytes IEEE Standard 754 floating point */
 typedef long double  ieeeExtended;    /**< 10 bytes IEEE Standard 754 floating point */
 
 /**

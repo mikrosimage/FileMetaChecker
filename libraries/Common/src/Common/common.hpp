@@ -54,6 +54,7 @@ static const std::string kUInt32  = "uint32";
 static const std::string kInt64   =  "int64";
 static const std::string kUInt64  = "uint64";
 
+static const std::string kHalf    =  "half";
 static const std::string kFloat   =  "float";
 static const std::string kDouble  = "double";
 
@@ -98,6 +99,7 @@ enum EType
 	eTypeUInt32,
 	eTypeInt64,
 	eTypeUInt64,
+	eTypeHalf,
 	eTypeFloat,
 	eTypeDouble,
 	eTypeIeeeExtended,
@@ -142,6 +144,7 @@ static const std::map< std::string, EType > typeMap
 	{ kUInt32,       eTypeUInt32       },
 	{ kInt64,        eTypeInt64        },
 	{ kUInt64,       eTypeUInt64       },
+	{ kHalf,         eTypeHalf         },
 	{ kFloat,        eTypeFloat        },
 	{ kDouble,       eTypeDouble       },
 	{ kIeeeExtended, eTypeIeeeExtended },
@@ -188,6 +191,7 @@ static const std::map< EType, std::string > typeStringMap
 	{ eTypeUInt32,       kUInt32        },
 	{ eTypeInt64,        kInt64         },
 	{ eTypeUInt64,       kUInt64        },
+	{ eTypeHalf,         kHalf          },
 	{ eTypeFloat,        kFloat         },
 	{ eTypeDouble,       kDouble        },
 	{ eTypeIeeeExtended, kIeeeExtShort  },

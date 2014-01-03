@@ -280,6 +280,112 @@ BOOST_AUTO_TEST_CASE( element_checker_translator_2 )
 		
 		BOOST_CHECK_THROW( Translator( elem ).get< short >(), std::runtime_error );
 	}
+	{
+		LOG_INFO( "\t>>> translator_2_6 <<<" );
+		std::string jsonString = R"*(
+				{
+					"content": [
+						{ 
+							"id": "id",
+							"label": "label",
+							"type": "half"
+						}
+					]
+				}
+			)*";
+
+		spec_reader::Specification spec;
+		spec.setFromString( jsonString );
+		std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
+
+		std::shared_ptr< basic_element::Element > elem1( new basic_element::Element( node ) );
+	
+		std::vector< char > buff { 0x3C, 0x00 };
+		elem1->set( buff );
+
+		BOOST_CHECK_EQUAL( elem1->_data.size(), 2 );
+
+		BOOST_CHECK_EQUAL( Translator( elem1 ).get< unsigned short >(), 15360 );
+		BOOST_CHECK_CLOSE( Translator( elem1 ).get< float >(), 1, 0.001 );
+		BOOST_CHECK_EQUAL( Translator( elem1 ).get< std::vector< char > >().size(), 2 );
+		BOOST_CHECK_EQUAL( Translator( elem1 ).get< std::vector< char > >().at(0), 0x3C );
+		BOOST_CHECK_EQUAL( Translator( elem1 ).get< std::vector< char > >().at(1), 0x00 );
+
+		std::shared_ptr< basic_element::Element > elem2( new basic_element::Element( node ) );
+	
+		buff.clear();
+		buff.push_back( 0xC0 );
+		buff.push_back( 0x00 );
+		elem2->set( buff );
+
+		BOOST_CHECK_EQUAL( elem2->_data.size(), 2 );
+
+		BOOST_CHECK_EQUAL( Translator( elem2 ).get< unsigned short >(), 49152 );
+		BOOST_CHECK_CLOSE( Translator( elem2 ).get< float >(), -2, 0.001 );
+		BOOST_CHECK_EQUAL( Translator( elem2 ).get< std::vector< char > >().size(), 2 );
+		BOOST_CHECK_EQUAL( Translator( elem2 ).get< std::vector< unsigned char > >().at(0), 0xC0 );
+		BOOST_CHECK_EQUAL( Translator( elem2 ).get< std::vector< char > >().at(1), 0x00 );
+
+		std::shared_ptr< basic_element::Element > elem3( new basic_element::Element( node ) );
+	
+		buff.clear();
+		buff.push_back( 0x35 );
+		buff.push_back( 0x55 );
+		elem3->set( buff );
+
+		BOOST_CHECK_EQUAL( elem3->_data.size(), 2 );
+
+		BOOST_CHECK_EQUAL( Translator( elem3 ).get< unsigned short >(), 13653 );
+		BOOST_CHECK_CLOSE( Translator( elem3 ).get< float >(), 0.333251953, 0.001 );
+		BOOST_CHECK_EQUAL( Translator( elem3 ).get< std::vector< char > >().size(), 2 );
+		BOOST_CHECK_EQUAL( Translator( elem3 ).get< std::vector< char > >().at(0), 0x35 );
+		BOOST_CHECK_EQUAL( Translator( elem3 ).get< std::vector< char > >().at(1), 0x55 );
+
+		std::shared_ptr< basic_element::Element > elem4( new basic_element::Element( node ) );
+	
+		buff.clear();
+		buff.push_back( 0x7C );
+		buff.push_back( 0x00 );
+		elem4->set( buff );
+
+		BOOST_CHECK_EQUAL( elem4->_data.size(), 2 );
+
+		BOOST_CHECK_EQUAL( Translator( elem4 ).get< unsigned short >(), 31744 );
+		BOOST_CHECK_EQUAL( Translator( elem4 ).get< float >(), std::numeric_limits< float >::infinity() );
+		BOOST_CHECK_EQUAL( Translator( elem4 ).get< std::vector< char > >().size(), 2 );
+		BOOST_CHECK_EQUAL( Translator( elem4 ).get< std::vector< char > >().at(0), 0x7C );
+		BOOST_CHECK_EQUAL( Translator( elem4 ).get< std::vector< char > >().at(1), 0x00 );
+
+		std::shared_ptr< basic_element::Element > elem5( new basic_element::Element( node ) );
+	
+		buff.clear();
+		buff.push_back( 0xFF );
+		buff.push_back( 0xFF );
+		elem5->set( buff );
+
+		BOOST_CHECK_EQUAL( elem5->_data.size(), 2 );
+
+		BOOST_CHECK_EQUAL( Translator( elem5 ).get< unsigned short >(), 65535 );
+		BOOST_CHECK( std::isnan( Translator( elem5 ).get< float >() ) );
+		BOOST_CHECK_EQUAL( Translator( elem5 ).get< std::vector< char > >().size(), 2 );
+		BOOST_CHECK_EQUAL( Translator( elem5 ).get< std::vector< unsigned char > >().at(0), 0xFF );
+		BOOST_CHECK_EQUAL( Translator( elem5 ).get< std::vector< unsigned char > >().at(1), 0xFF );
+
+		std::shared_ptr< basic_element::Element > elem6( new basic_element::Element( node ) );
+	
+		buff.clear();
+		buff.push_back( 0x00 );
+		buff.push_back( 0x01 );
+		elem6->set( buff );
+
+		BOOST_CHECK_EQUAL( elem6->_data.size(), 2 );
+
+		BOOST_CHECK_EQUAL( Translator( elem6 ).get< unsigned short >(), 1 );
+		BOOST_CHECK_CLOSE( Translator( elem6 ).get< float >(), 5.96046e-08, 0.001 );
+		BOOST_CHECK_EQUAL( Translator( elem6 ).get< std::vector< char > >().size(), 2 );
+		BOOST_CHECK_EQUAL( Translator( elem6 ).get< std::vector< unsigned char > >().at(0), 0x00 );
+		BOOST_CHECK_EQUAL( Translator( elem6 ).get< std::vector< unsigned char > >().at(1), 0x01 );
+	}
 }
 
 BOOST_AUTO_TEST_SUITE_END()
