@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <Common/log.hpp>
-#include <Common/common.hpp>
 
 #include <BasicElement/Element.hpp>
 #include <ElementChecker/Checker/Checker.hpp>
@@ -61,7 +60,7 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 		}
 		else
 		{
-			if( ( element->_type == eTypeRaw ) && ( element->_displayType == eDisplayTypeDefault ) )
+			if( ( element->_type == eTypeRaw ) && ( element->_displayType == eDisplayTypeDefault ) && ! element->_isDetailed )
 			{
 				file.goForward( size );
 			}
@@ -75,6 +74,27 @@ void Comparator::check( spec_reader::Specification& spec, file_reader::FileReade
 		element->set( buffer );
 
 		checker.check( element );
+
+		for( char c : element->_data )
+			LOG_TRACE( element->_id << ": " << c );
+
+		if( element->_isDetailed )
+		{
+			std::string str( &element->_data[0], element->_data.size() );
+			std::stringbuf buff( str );
+			
+			file_reader::FileReader elementData( &buff );
+			report_generator::Report detailsReport;
+			spec_reader::Specification detailsNodes;
+			detailsNodes.setFromNode( element->getSpecNode(), kDetails );
+
+			Comparator detailsComp;
+			
+			detailsComp.check( detailsNodes, elementData, detailsReport );
+
+			for( ShPtrElement elem : detailsReport.getElementList() )
+				report.add( elem );
+		}
 
 		size_t fileMoveLength = checker.checkGroupSize( element );
 		if( fileMoveLength > 0 )
@@ -123,10 +143,7 @@ void  Comparator::displayElement( const ShPtrElement element, file_reader::FileR
 
 	std::string rawData;
 	if( element->_data.size() < 30 )
-	{
-		for( char c : element->_data )
-			rawData.push_back( c );
-	}
+		rawData.assign( &element->_data[0], element->_data.size() );
 
 	ShPtrElement parent = element->getParent();
 	size_t fileOffset = file.getPosition() - element->_data.size();

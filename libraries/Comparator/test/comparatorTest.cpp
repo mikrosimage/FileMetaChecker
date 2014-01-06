@@ -780,4 +780,79 @@ BOOST_AUTO_TEST_CASE( comparator_test_comparator_7 )
 	BOOST_CHECK_EQUAL( report.get( "valueEnd" )->_status, eStatusValid   );
 }
 
+BOOST_AUTO_TEST_CASE( comparator_test_comparator_8 )
+{
+	LOG_INFO( "\n>>> comparator_test_comparator 8 <<<" );
+	std::string jsonString = R"*(
+			{
+				"content": [
+					{ "id": "value0", "label": "Value0", "type": "raw", "size": 3, "details": [
+							{ "id":"byte01", "label":"Byte1 of Value0", "type": "ascii", "values": "1" },
+							{ "id":"byte02", "label":"Byte2 of Value0", "type": "ascii", "values": "2" },
+							{ "id":"byte03", "label":"Byte3 of Value0", "type": "ascii", "values": "3" }
+						]
+					},
+					{ "id": "value1", "label": "Value1", "type": "raw", "size": 3, "details": [
+							{ "id":"byte11", "label":"Byte1 of Value1", "type": "ascii", "values": "4" },
+							{ "id": "value11", "label": "Value11", "type": "raw", "size": 2, "details": [
+									{ "id":"byte111", "label":"Byte1 of Value11", "type": "ascii", "values": "5" },
+									{ "id":"byte112", "label":"Byte2 of Value11", "type": "ascii", "values": "6" }
+								]
+							}
+						]
+					},
+					{ "id": "value2", "label": "Value2", "type": "raw", "size": 3, "details": [
+							{ "id":"byte21", "label":"Byte1 of Value2", "type": "ascii", "values": "7", "group": [
+									{ "id":"value211", "label":"Value211", "type": "ascii", "values": "8" },
+									{ "id":"value212", "label":"Value212", "type": "ascii", "values": "9" }
+								]
+							}
+						]
+					},
+					{ "id": "valueEnd", "label": "ValueEnd", "type": "ascii", "values": "END" }
+				] }
+		)*";
+
+	spec_reader::Specification spec;
+	spec.setFromString( jsonString );
+	std::shared_ptr< spec_reader::SpecNode > node = spec.getFirstNode();
+
+	Comparator comp;
+
+	std::stringbuf buffer;
+	file_reader::FileReader file( &buffer );
+
+	std::string str = "123";
+	str += "456";
+	str += "789";
+	str += "END";
+
+	buffer.sputn( str.c_str(), str.size() );
+	BOOST_CHECK_EQUAL( file.getLength(), str.size() );
+
+	report_generator::Report report;
+
+	comp.check( spec, file, report );
+
+	BOOST_CHECK_EQUAL( file.isEndOfFile(), true );
+
+	BOOST_CHECK_EQUAL( report.get( "value0"   )->_status, eStatusValid );
+	BOOST_CHECK_EQUAL( report.get( "byte01"   )->_status, eStatusValid );
+	BOOST_CHECK_EQUAL( report.get( "byte02"   )->_status, eStatusValid );
+	BOOST_CHECK_EQUAL( report.get( "byte03"   )->_status, eStatusValid );
+	
+	BOOST_CHECK_EQUAL( report.get( "value1"   )->_status, eStatusValid );
+	BOOST_CHECK_EQUAL( report.get( "byte11"   )->_status, eStatusValid );
+	BOOST_CHECK_EQUAL( report.get( "value11"  )->_status, eStatusValid );
+	BOOST_CHECK_EQUAL( report.get( "byte111"  )->_status, eStatusValid );
+	BOOST_CHECK_EQUAL( report.get( "byte112"  )->_status, eStatusValid );
+
+	BOOST_CHECK_EQUAL( report.get( "value2"   )->_status, eStatusValid );
+	BOOST_CHECK_EQUAL( report.get( "byte21"   )->_status, eStatusValid );
+	BOOST_CHECK_EQUAL( report.get( "value211" )->_status, eStatusValid );
+	BOOST_CHECK_EQUAL( report.get( "value212" )->_status, eStatusValid );
+
+	BOOST_CHECK_EQUAL( report.get( "valueEnd" )->_status, eStatusValid );
+}
+
 BOOST_AUTO_TEST_SUITE_END()

@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include <Common/common.hpp>
 
 namespace basic_element
 {
@@ -33,10 +34,10 @@ namespace comparator
  */
 class Comparator
 {
+public:
 	typedef std::shared_ptr< basic_element::Element > ShPtrElement;
 	typedef std::shared_ptr< spec_reader::SpecNode  > ShPtrSpecNode;
 	
-public:
 	/**
 	 * Comparator's constructor.
 	 */
