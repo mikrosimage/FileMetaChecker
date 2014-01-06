@@ -32,6 +32,7 @@ static const std::string kDisplayType   = "display";
 static const std::string kCaseSensitive = "caseSensitive";
 static const std::string kEndsWith      = "endsWith";
 static const std::string kKeepEnd       = "keepEnd";
+static const std::string kDetails       = "details";
 
 static const std::string kFile        = "file";
 
@@ -54,8 +55,8 @@ static const std::string kUInt32  = "uint32";
 static const std::string kInt64   =  "int64";
 static const std::string kUInt64  = "uint64";
 
-static const std::string kHalf    =  "half";
-static const std::string kFloat   =  "float";
+static const std::string kHalf    = "half";
+static const std::string kFloat   = "float";
 static const std::string kDouble  = "double";
 
 static const std::string kIeeeExtended  = "ieeeExtended";
