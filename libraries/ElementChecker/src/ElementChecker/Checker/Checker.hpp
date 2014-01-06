@@ -17,10 +17,10 @@ class ExpressionParser;
  */
 class Checker
 {
+public:
 	typedef std::shared_ptr< basic_element::Element > ShPtrElement;
 	typedef std::shared_ptr< spec_reader::SpecNode >  ShPtrSpecNode;
 	
-public:
 	/**
 	 * Checker's constructor.
 	 */

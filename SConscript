@@ -24,8 +24,7 @@ if project.env['mode'] == 'production' :
 if 'sharedNoUndefined' in project.CC:
 	projectFlags['SHLINKFLAGS'] = [project.CC['sharedNoUndefined']]
 
-if project.env['compiler'] == "gcc" :
-	projectFlags['CXXFLAGS'].append( '-std=c++11' )
+projectFlags['CXXFLAGS'].append( '-std=c++11' )
 
 # Creates a dependency target without associated code or compiled object,
 # but only associated with compilation flags
