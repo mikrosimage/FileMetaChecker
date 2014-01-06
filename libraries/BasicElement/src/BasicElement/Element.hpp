@@ -165,6 +165,7 @@ public:
 	const bool    _isBigEndian;
 	const bool    _isCaseSensitive;
 	const bool    _keepEndingChar;
+	const bool    _isDetailed;
 	bool          _checkedGroup;
 
 };

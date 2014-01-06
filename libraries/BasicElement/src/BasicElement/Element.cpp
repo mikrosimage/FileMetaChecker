@@ -38,6 +38,7 @@ Element::Element( const ShPtrSpecNode node,
 	, _isBigEndian     ( node->isBigEndian()     )
 	, _isCaseSensitive ( node->isCaseSensitive() )
 	, _keepEndingChar  ( node->keepEndingChar()  )
+	, _isDetailed      ( node->isDetailed()      )
 	, _checkedGroup    ( false )
 {
 	LOG_TRACE( "[element] Create new Element " << _id << " :"       );

@@ -65,6 +65,7 @@ BOOST_AUTO_TEST_CASE( basic_element_element )
 		BOOST_CHECK_EQUAL( elem._isOrdered,   node->isOrdered()   );
 		BOOST_CHECK_EQUAL( elem._isOptional,  node->isOptional()  );
 		BOOST_CHECK_EQUAL( elem._isBigEndian, node->isBigEndian() );
+		BOOST_CHECK_EQUAL( elem._isDetailed,  node->isDetailed()  );
 
 		BOOST_CHECK( elem._data.empty() );
 	
@@ -229,11 +230,12 @@ BOOST_AUTO_TEST_CASE( basic_element_next )
 
 typedef std::shared_ptr< Element > ShPtrElement;
 
-inline ShPtrElement checkElement( ShPtrElement& elem, ShPtrElement& previous, ShPtrElement& parent, const std::string& nodeId, const std::shared_ptr< spec_reader::SpecNode >& node )
+inline ShPtrElement checkElement( ShPtrElement& previous, ShPtrElement& parent, const std::string& nodeId, const std::shared_ptr< spec_reader::SpecNode >& node )
 {
-	ShPtrElement newElem( new Element( elem->next(), previous, parent ) );
+	ShPtrElement newElem( new Element( previous->next(), previous, parent ) );
 	BOOST_CHECK_EQUAL( newElem->_id, node->getId() );
-	BOOST_CHECK_EQUAL( newElem->getPrevious()->_uId, elem->_uId );
+	BOOST_CHECK_EQUAL( newElem->getPrevious(), previous );
+	BOOST_CHECK_EQUAL( newElem->getParent(), parent );
 	BOOST_CHECK_EQUAL( node->getId(), nodeId );
 	newElem->_status = eStatusValid;
 	parent->addChild( newElem );
@@ -262,15 +264,16 @@ BOOST_AUTO_TEST_CASE( basic_element_next_first_child_recursivity )
 							"label": "Value12",
 							"type": "ascii",
 							"group": [
-							{
-								"id": "value121",
-								"label": "Value121",
-								"type": "ascii",
-								"group": [
-								{ "id": "value1211", "label": "Value1211", "type": "ascii" },
-								{ "id": "value1212", "label": "Value1212", "type": "ascii" }
-								]
-							} ]
+								{
+									"id": "value121",
+									"label": "Value121",
+									"type": "ascii",
+									"group": [
+										{ "id": "value1211", "label": "Value1211", "type": "ascii" },
+										{ "id": "value1212", "label": "Value1212", "type": "ascii" }
+									]
+								}
+							]
 						},
 						{
 							"id": "value13",
@@ -279,7 +282,7 @@ BOOST_AUTO_TEST_CASE( basic_element_next_first_child_recursivity )
 							"group": [
 								{ "id": "value131", "label": "Value131", "type": "ascii" }
 							]
-						} 
+						}
 					]
 				} 
 			]
@@ -294,13 +297,13 @@ BOOST_AUTO_TEST_CASE( basic_element_next_first_child_recursivity )
 		BOOST_CHECK_EQUAL( node->getId(), "value1" );
 		elem1->_status = eStatusValid;
 
-		ShPtrElement elem2 = checkElement( elem1, elem1, elem1, "value11",   node->firstChild() );
-		ShPtrElement elem3 = checkElement( elem2, elem2, elem1, "value12",   node->firstChild()->next() );
-		ShPtrElement elem4 = checkElement( elem3, elem3, elem3, "value121",  node->firstChild()->next()->firstChild() );
-		ShPtrElement elem5 = checkElement( elem4, elem4, elem4, "value1211", node->firstChild()->next()->firstChild()->firstChild() );
-		ShPtrElement elem6 = checkElement( elem5, elem5, elem4, "value1212", node->firstChild()->next()->firstChild()->firstChild()->next() );
-		ShPtrElement elem7 = checkElement( elem6, elem6, elem1, "value13",   node->firstChild()->next()->next() );
-		ShPtrElement elem8 = checkElement( elem7, elem7, elem7, "value131",  node->firstChild()->next()->next()->firstChild() );
+		ShPtrElement elem2  = checkElement( elem1, elem1, "value11",   node->firstChild() );
+		ShPtrElement elem3  = checkElement( elem2, elem1, "value12",   node->firstChild()->next() );
+		ShPtrElement elem4  = checkElement( elem3, elem3, "value121",  node->firstChild()->next()->firstChild() );
+		ShPtrElement elem5  = checkElement( elem4, elem4, "value1211", node->firstChild()->next()->firstChild()->firstChild() );
+		ShPtrElement elem6  = checkElement( elem5, elem4, "value1212", node->firstChild()->next()->firstChild()->firstChild()->next() );
+		ShPtrElement elem7  = checkElement( elem6, elem1, "value13",   node->firstChild()->next()->next() );
+		ShPtrElement elem8  = checkElement( elem7, elem7, "value131",  node->firstChild()->next()->next()->firstChild() );
 
 		BOOST_CHECK( elem8->next() == nullptr );
 		BOOST_CHECK( node->firstChild()->next()->next()->firstChild()->next() == nullptr );
@@ -865,13 +868,13 @@ BOOST_AUTO_TEST_CASE( basic_element_get_children )
 		BOOST_CHECK_EQUAL( node->getId(), "value1" );
 		elem1->_status = eStatusValid;
 
-		ShPtrElement elem2 = checkElement( elem1, elem1, elem1, "value11",   node->firstChild() );
-		ShPtrElement elem3 = checkElement( elem2, elem2, elem1, "value12",   node->firstChild()->next() );
-		ShPtrElement elem4 = checkElement( elem3, elem3, elem3, "value121",  node->firstChild()->next()->firstChild() );
-		ShPtrElement elem5 = checkElement( elem4, elem4, elem4, "value1211", node->firstChild()->next()->firstChild()->firstChild() );
-		ShPtrElement elem6 = checkElement( elem5, elem5, elem4, "value1212", node->firstChild()->next()->firstChild()->firstChild()->next() );
-		ShPtrElement elem7 = checkElement( elem6, elem6, elem1, "value13",   node->firstChild()->next()->next() );
-		ShPtrElement elem8 = checkElement( elem7, elem7, elem7, "value131",  node->firstChild()->next()->next()->firstChild() );
+		ShPtrElement elem2 = checkElement( elem1, elem1, "value11",   node->firstChild() );
+		ShPtrElement elem3 = checkElement( elem2, elem1, "value12",   node->firstChild()->next() );
+		ShPtrElement elem4 = checkElement( elem3, elem3, "value121",  node->firstChild()->next()->firstChild() );
+		ShPtrElement elem5 = checkElement( elem4, elem4, "value1211", node->firstChild()->next()->firstChild()->firstChild() );
+		ShPtrElement elem6 = checkElement( elem5, elem4, "value1212", node->firstChild()->next()->firstChild()->firstChild()->next() );
+		ShPtrElement elem7 = checkElement( elem6, elem1, "value13",   node->firstChild()->next()->next() );
+		ShPtrElement elem8 = checkElement( elem7, elem7, "value131",  node->firstChild()->next()->next()->firstChild() );
 
 		BOOST_CHECK( elem8->next() == nullptr );
 		BOOST_CHECK( node->firstChild()->next()->next()->firstChild()->next() == nullptr );
