@@ -39,9 +39,17 @@ public:
 	/**
 	 * Set specification document from JSON file.
 	 * @param[in] filepath JSON file path.
-	 * @return             Returns true if the document has been correctly set, false else.
+	 * @return             Returns true if the document has been correctly set, false otherwise.
 	 */
 	bool setFromFile( const std::string& filepath );
+
+	/**
+	 * Set specification document from a tree node.
+	 * @param node Node reference.
+	 * @param key  Root member name.
+	 * @return     Returns true if the document has been correctly set, false otherwise.
+	 */
+	bool setFromNode( std::shared_ptr< SpecNode > node, const std::string& key );
 
 	/**
 	 * Get format specification ID.
@@ -73,6 +81,7 @@ public:
 	 */
 	std::shared_ptr< SpecNode > getFirstNode();
 
+
 	/**
 	 * Get the specification end iterator.
 	 * @return Format description end iterator.
@@ -81,9 +90,11 @@ public:
 
 protected:
 	std::string getSpecInfo( const std::string& key );
+	void includeExtNode( rapidjson::Value::Member* member, rapidjson::Value::ConstValueIterator node );
 
 private:
 	rapidjson::Document _specDoc;
+	std::string         _rootKey;
 };
 
 }

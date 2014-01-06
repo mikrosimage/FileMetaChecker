@@ -42,6 +42,7 @@ BOOST_AUTO_TEST_CASE( spec_reader_specNode )
 		BOOST_CHECK_EQUAL( node.isOptional(),      false               );
 		BOOST_CHECK_EQUAL( node.isCaseSensitive(), true                );
 		BOOST_CHECK_EQUAL( node.getGroupSize(),    "size"              );
+		BOOST_CHECK_EQUAL( node.isDetailed(),      false               );
 	}
 	{
 		LOG_INFO( "\n>>> spec_reader_specNode_error <<<" );

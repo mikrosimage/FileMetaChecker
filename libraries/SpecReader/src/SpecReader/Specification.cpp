@@ -8,12 +8,20 @@
 // #include <rapidjson/stringbuffer.h>
 // #include <rapidjson/writer.h>
 
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/writer.h>
+#include <rapidjson/prettywriter.h>
+
 #include <fstream>
 
 namespace spec_reader
 {
 
+
+
+
 Specification::Specification()
+	: _rootKey ( kContent )
 {
 }
 
@@ -63,6 +71,31 @@ bool Specification::setFromFile( const std::string& filepath )
 	}
 }
 
+bool Specification::setFromNode( std::shared_ptr< SpecNode > node, const std::string& key )
+{
+	try
+	{
+		_rootKey = key;
+		if( ! node->getIterator()->HasMember( std::string( _rootKey ).c_str() ) )
+			throw std::runtime_error( "Cannot set Specification, no such key ( " + _rootKey + " )" );
+
+		const rapidjson::Value* value = &node->getIterator()->FindMember( std::string( _rootKey ).c_str() )->value;
+
+		rapidjson::Value array( rapidjson::kArrayType );
+		_specDoc.AddMember( _rootKey.c_str(), array, _specDoc.GetAllocator() );
+
+		for( rapidjson::Value::ConstValueIterator itr = value->Begin(); itr != value->End(); ++itr )
+			includeExtNode( _specDoc.FindMember( _rootKey.c_str() ), itr );
+
+		return true;
+	}
+	catch( const std::exception& ex )
+	{
+		LOG_ERROR( "[specification] set from node ("<< node->getId() << "): "<<  ex.what() );
+		return false;
+	}
+}
+
 std::string Specification::getId( )
 {
 	return getSpecInfo( kId );
@@ -103,13 +136,13 @@ std::vector< std::string > Specification::getSupportedExtensions( )
 	}
 }
 
-std::shared_ptr< spec_reader::SpecNode > Specification::getFirstNode()
+std::shared_ptr< SpecNode > Specification::getFirstNode()
 {
 	try
 	{
-		rapidjson::Value::Member* content;
-		if( ! ( content = _specDoc.FindMember( std::string( kContent ).c_str() ) ) )
-			throw std::runtime_error( "[specification] Invalid specification file: must contain a content field" );
+		const rapidjson::Value::Member* content;
+		if( ! ( content = _specDoc.FindMember( std::string( _rootKey ).c_str() ) ) )
+			throw std::runtime_error( "[specification::getFirstNode] Invalid specification: must contain a " + _rootKey + " field" );
 
 		return std::make_shared< spec_reader::SpecNode >( this, content->value.Begin() );
 	}
@@ -125,8 +158,8 @@ rapidjson::Value::ConstValueIterator Specification::end() const
 	try
 	{
 		const rapidjson::Value::Member* content;
-		if( ! ( content = _specDoc.FindMember( std::string( kContent ).c_str() ) ) )
-			throw std::runtime_error( "[specification] Invalid specification file: must contain a content field" );
+		if( ! ( content = _specDoc.FindMember( std::string( _rootKey ).c_str() ) ) )
+			throw std::runtime_error( "[specification::end] Invalid specification: must contain a " + _rootKey + " field" );
 
 		return content->value.End();
 	}
@@ -143,11 +176,11 @@ std::string Specification::getSpecInfo( const std::string& key )
 	{
 		rapidjson::Value::Member* description;
 		if( ! ( description = _specDoc.FindMember( std::string( kDescription ).c_str() ) ) )
-			throw std::runtime_error( "[specification] Invalid specification file: must contain a format description field" );
+			throw std::runtime_error( "[specification::getSpecInfo] Invalid specification file: must contain a format description field" );
 		
 		rapidjson::Value::Member* field;
 		if( ! ( field = description->value.FindMember( std::string( key ).c_str() ) ) )
-			throw std::runtime_error( "[specification] No such node (" + key + ")" );
+			throw std::runtime_error( "[specification::getSpecInfo] No such node (" + key + ")" );
 		
 		return std::string( field->value.GetString() );
 	}
@@ -156,6 +189,87 @@ std::string Specification::getSpecInfo( const std::string& key )
 		LOG_ERROR( e.what() );
 		throw;
 	}
+}
+
+void Specification::includeExtNode( rapidjson::Value::Member* member, rapidjson::Value::ConstValueIterator node ) // @todo: clean ! Same as in SpecChecker...
+{
+	LOG_TRACE( "[Specification] includeExtNode " << member->name.GetString() << std::endl );
+	rapidjson::Value object( rapidjson::kObjectType );
+
+	for( rapidjson::Value::ConstMemberIterator itr = node->MemberBegin(); itr != node->MemberEnd(); ++itr )
+	{
+		switch( itr->value.GetType() )
+		{
+			case rapidjson::kNullType  : object.AddMember( itr->name.GetString(), std::string( kNull ).c_str(), _specDoc.GetAllocator() ); break;
+			case rapidjson::kFalseType :
+			case rapidjson::kTrueType  :
+			{
+				object.AddMember( itr->name.GetString(), itr->value.GetBool(), _specDoc.GetAllocator() );
+				break;
+			}
+			case rapidjson::kObjectType : break;
+			case rapidjson::kArrayType  :
+			{
+				rapidjson::Value array( rapidjson::kArrayType );
+				object.AddMember( itr->name.GetString(), array, _specDoc.GetAllocator() );
+
+				for( rapidjson::Value::ConstValueIterator child = itr->value.Begin(); child != itr->value.End(); ++child )
+				{
+					if( child->GetType() != rapidjson::kObjectType )
+					{
+						switch( child->GetType() )
+						{	
+							case rapidjson::kNullType :
+							{
+								object.FindMember( itr->name.GetString() )->value.PushBack( std::string( kNull ).c_str(), _specDoc.GetAllocator() );
+								break;
+							}
+							case rapidjson::kFalseType :
+							case rapidjson::kTrueType :
+							{
+								object.FindMember( itr->name.GetString() )->value.PushBack( child->GetBool(), _specDoc.GetAllocator() );
+								break;
+							}
+							case rapidjson::kStringType :
+							{
+								object.FindMember( itr->name.GetString() )->value.PushBack( child->GetString(), _specDoc.GetAllocator() );
+								break;
+							}
+							case rapidjson::kNumberType :
+							{
+								if( itr->value.IsInt() )
+									object.FindMember( itr->name.GetString() )->value.PushBack( child->GetInt(), _specDoc.GetAllocator() );
+								if( itr->value.IsDouble() )
+									object.FindMember( itr->name.GetString() )->value.PushBack( child->GetDouble(), _specDoc.GetAllocator() );
+								break;
+							}
+							default:
+								break;
+						}
+					}
+					else
+					{
+						includeExtNode( object.FindMember( itr->name.GetString() ), child );
+					}
+				}
+				break;
+			}
+			case rapidjson::kStringType :
+			{
+				object.AddMember( itr->name.GetString(), itr->value.GetString(), _specDoc.GetAllocator() );
+				break;
+			}
+			case rapidjson::kNumberType :
+			{
+				if( itr->value.IsInt() )
+					object.AddMember( itr->name.GetString(), itr->value.GetInt(), _specDoc.GetAllocator() );
+				if( itr->value.IsDouble() )
+					object.AddMember( itr->name.GetString(), itr->value.GetDouble(), _specDoc.GetAllocator() );
+				break;
+			} 
+		}
+	}
+	member->value.PushBack( object, _specDoc.GetAllocator() );
 }
 
 }

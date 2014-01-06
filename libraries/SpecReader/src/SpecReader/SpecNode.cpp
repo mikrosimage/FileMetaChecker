@@ -177,6 +177,11 @@ bool SpecNode::keepEndingChar() const
 	return property_parser::getProperty< bool >( _node, kKeepEnd, true );
 }
 
+bool SpecNode::isDetailed() const
+{
+	return _node->HasMember( std::string( kDetails ).c_str() );
+}
+
 std::vector< std::string > SpecNode::getValues() const
 {
 	std::vector< std::string > values;
