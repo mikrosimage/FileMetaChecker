@@ -72,6 +72,8 @@ static const std::string kValidator      = "fileValidator";
 static const std::string kSpecification  = "specification";
 static const std::string kElement        = "element";
 
+static const std::string kIteration  = "iteration";
+
 static const std::string kValue   = "value";
 static const std::string kStatus  = "status";
 

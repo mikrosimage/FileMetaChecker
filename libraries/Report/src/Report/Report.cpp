@@ -183,6 +183,9 @@ void Report::serialize( rapid_parser::Serializer* serializer, const std::vector<
 		serializer->add( kDisplayType.c_str(), displayTypeStringMap.at( element->_displayType ), path );
 
 		serializer->add( kSize.c_str(), element->_data.size(), path );
+		
+		if( element->_iteration > 1 )
+			serializer->add( kIteration.c_str(), element->_iteration, path );
 
 		if( element->_dispValue.size() )
 		{

@@ -148,7 +148,9 @@ void  Comparator::displayElement( const ShPtrElement element, file_reader::FileR
 	ShPtrElement parent = element->getParent();
 	size_t fileOffset = file.getPosition() - element->_data.size();
 
-	LOG_COLOR( color, "\t[comparator] @ " << std::setfill( ' ' ) << std::setw( 11 ) << fileOffset << " | " << std::setfill( ' ' ) << std::setw( 20 ) << element->_id << ( ( element->_dispValue.size() <= 30 )? ": " + element->_dispValue + " = " : "" ) );
+	LOG_COLOR( color, "\t[comparator] @ " << std::setfill( ' ' ) << std::setw( 11 ) << fileOffset << " | " );
+	LOG_COLOR( color, " i. " << std::setfill( ' ' ) << std::setw( 11 ) << element->_iteration << " | " );
+	LOG_COLOR( color, std::setfill( ' ' ) << std::setw( 20 ) << element->_id << ( ( element->_dispValue.size() <= 30 )? ": " + element->_dispValue + " = " : "" ) );
 	LOG_COLOR( color, rawData << " ( " << statusMap.at( element->_status ) << " )" );
 	LOG_COLOR( color, ", parent: " << ( ( parent == nullptr )? "null": parent->_id + " (" + statusMap.at( parent->_status ) + ")" ) << std::endl );
 }
