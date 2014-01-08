@@ -131,7 +131,10 @@ size_t Checker::checkGroupSize( const ShPtrElement element )
 			return 0;
 
 		ShPtrElement parent = element->getParent();
-		size_t offset = 0;
+		if( parent != nullptr && parent->_type == eTypeUnknown && continueRepetition( parent ) )
+			return 0;
+
+		size_t offset = 0; 
 		while(  parent != nullptr )
 		{
 			if( parent->_groupSizeExpr.empty() )
@@ -141,20 +144,20 @@ size_t Checker::checkGroupSize( const ShPtrElement element )
 			}
 
 			int sizeDiff = parent->_childrenSize - parent->_specGroupSize;
-			LOG_TRACE( "[comparator] group size difference (" << parent->_id << ") : " << parent->_specGroupSize << " - " << parent->_childrenSize << " = "<< sizeDiff );
+			LOG_TRACE( "[checker] group size difference (" << parent->_id << ") : " << parent->_specGroupSize << " - " << parent->_childrenSize << " = "<< sizeDiff );
 			if( sizeDiff != 0 )
 			{
 				if( sizeDiff > 0 )
 				{
 					std::stringstream errorMessage;
-					errorMessage << "[comparator] Group size difference: " << sizeDiff << " missing bytes";
+					errorMessage << "[checker] Group size difference: " << sizeDiff << " missing bytes";
 					parent->_error.push_back( errorMessage.str() );
 					throw std::runtime_error( errorMessage.str() );
 				}
 				if( sizeDiff < 0 )
 				{
 					std::stringstream warningMessage;
-					warningMessage << "[comparator] Group size difference: " << abs( sizeDiff ) << " unexpected bytes";
+					warningMessage << "[checker] Group size difference: " << abs( sizeDiff ) << " unexpected bytes";
 					parent->_warning.push_back( warningMessage.str() );
 					offset = abs( sizeDiff );
 					LOG_WARNING( warningMessage.str() );
